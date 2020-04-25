@@ -77,26 +77,27 @@ def depth(obj):
     while True:
         if iterable(obj):
             obj = iterFirstValue(obj)
+            depth += 1
         else:
             return depth
 
-def typeChecker(obj, fullIteration=False, raiseTypeError=True, *types):
+def typeChecker(obj, *types, fullIteration=False, raiseTypeError=True):
     try:
         if not types:
             raise TypeError("No types were given as args")
         objDepth = depth(obj)
         typesDepth = len(types) - 1
         if objDepth != typesDepth:
-            raise TypeError(f"Obj depth {objDepth} doesnt match types len {len(types)}")
+            raise TypeError(f"Obj depth {objDepth} doesnt match types depth {typesDepth}")
 
         for i, argType in enumerate(types):
             if not isinstance(obj, argType):
-                raise TypeError(f"obj {obj} wasn't type {argType} in depth {i} / {typesDepth}")
+                raise TypeError(f"obj {obj} wasn't type {argType.__name__} in depth {i}/{typesDepth}")
 
             if iterable(obj):
                 obj = iterFirstValue(obj)
             elif i < objDepth:
-                raise TypeError(f"obj {obj} is not iterable but atleast one more subtype is required in depth {i} / {typesDepth}")
+                raise TypeError(f"obj {obj} is not iterable but atleast one more subtype is required in depth {i}/{typesDepth}")
 
     except TypeError as e:
         if raiseTypeError:

@@ -1,3 +1,6 @@
 from generallibrary import *
 
-print(5)
+
+# print(typeChecker({"abc": [True]}, dict, list, bool))
+
+
