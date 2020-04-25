@@ -92,7 +92,7 @@ def typeChecker(obj, *types, fullIteration=False, raiseTypeError=True):
 
         for i, argType in enumerate(types):
             if not isinstance(obj, argType):
-                raise TypeError(f"obj {obj} wasn't type {argType.__name__} in depth {i}/{typesDepth}")
+                raise TypeError(f"obj {obj} wasn't type {argType} in depth {i}/{typesDepth}")
 
             if iterable(obj):
                 obj = iterFirstValue(obj)
