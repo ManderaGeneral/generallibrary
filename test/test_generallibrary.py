@@ -11,3 +11,8 @@ class LibTest(unittest.TestCase):
         self.assertTrue(typeChecker(["hello"], list, (bool, str)))
         self.assertFalse(typeChecker(["hello"], (tuple, dict), (bool, str), raiseTypeError=False))
 
+    def test_timer(self):
+        timer = Timer()
+        time.sleep(0.05)
+        secs = timer.seconds()
+        self.assertEqual(round(secs, 2), 0.05)

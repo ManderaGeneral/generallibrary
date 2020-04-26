@@ -1,4 +1,3 @@
-import traceback
 import time
 import datetime as dt
 
@@ -47,20 +46,19 @@ class Timer:
     """
     Callable class to easily time things and print
     """
-    def __init__(self, startDT = None):
-        if startDT is None:
-            self.time = dt.datetime.now()
+    def __init__(self, perfCounter = None):
+        if perfCounter is None:
+            self.perfCounter = time.perf_counter()
         else:
-            if not isinstance(startDT, dt.datetime):
-                raise TypeError(f"{startDT} is not a datetime object")
-            self.time = startDT
+            typeChecker(perfCounter, float)
+            self.perfCounter = perfCounter
 
     def seconds(self):
         """
         :return: Seconds passed since timer started
         :rtype: float
         """
-        return (dt.datetime.now() - self.time).seconds
+        return time.perf_counter() - self.perfCounter
 
 def iterable(obj):
     if isinstance(obj, tuple):
@@ -82,6 +80,14 @@ def depth(obj):
             return depth
 
 def typeChecker(obj, *types, fullIteration=False, raiseTypeError=True):
+    """
+    Check types of an obj. Intended for iterables with somewhat consistent structure in every layer.
+    :param obj:
+    :param types:
+    :param fullIteration:
+    :param raiseTypeError:
+    :return:
+    """
     try:
         if not types:
             raise TypeError("No types were given as args")
