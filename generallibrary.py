@@ -46,19 +46,19 @@ class Timer:
     """
     Callable class to easily time things and print
     """
-    def __init__(self, perfCounter = None):
-        if perfCounter is None:
-            self.perfCounter = time.perf_counter()
+    def __init__(self, startTime=None):
+        if startTime is None:
+            self.startTime = time.time()
         else:
-            typeChecker(perfCounter, float)
-            self.perfCounter = perfCounter
+            typeChecker(startTime, float)
+            self.startTime = startTime
 
     def seconds(self):
         """
         :return: Seconds passed since timer started
         :rtype: float
         """
-        return time.perf_counter() - self.perfCounter
+        return time.time() - self.startTime
 
 def iterable(obj):
     if isinstance(obj, tuple):
