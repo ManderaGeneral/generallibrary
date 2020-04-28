@@ -27,4 +27,4 @@ def sleep(seconds):
 
 
 
-from base.types import typeChecker
+from generallibrary.types import typeChecker

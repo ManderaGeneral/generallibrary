@@ -1,7 +1,7 @@
 
-from base.iterables import *
 import unittest
 
+from generallibrary.iterables import iterable, depth, dictFirstValue, iterFirstValue
 
 class IterablesTest(unittest.TestCase):
     def test_iterable(self):

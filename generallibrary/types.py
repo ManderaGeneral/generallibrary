@@ -54,4 +54,4 @@ def typeChecker(obj, *types, fullIteration=False, raiseTypeError=True):
 
 
 
-from base.iterables import depth, iterFirstValue, iterable
+from generallibrary.iterables import depth, iterFirstValue, iterable

@@ -1,7 +1,7 @@
 
-from base.types import *
 import unittest
 
+from generallibrary.types import strToDynamicType, typeChecker
 
 class TypesTest(unittest.TestCase):
     def test_strToDynamicType(self):
