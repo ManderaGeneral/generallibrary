@@ -10,6 +10,3 @@ setup(
     py_modules = ["generallibrary"]
 )
 
-
-from generalfile import test
-

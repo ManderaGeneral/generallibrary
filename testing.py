@@ -2,6 +2,9 @@ from generallibrary import *
 import pandas as pd
 
 
+
+# test.TypesTest()
+
 df = pd.DataFrame({
     "a": {"color": "red", "value": 5},
     "b": {"color": "red", "value": 2}
