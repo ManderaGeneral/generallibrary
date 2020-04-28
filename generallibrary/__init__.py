@@ -1,4 +1,4 @@
 
-from generallibrary.iterables import iterable, depth, dictFirstValue, iterFirstValue
-from generallibrary.time import Timer, sleep
-from generallibrary.types import strToDynamicType, typeChecker
+from generallibrary.base.iterables import iterable, depth, dictFirstValue, iterFirstValue
+from generallibrary.base.time import Timer, sleep
+from generallibrary.base.types import strToDynamicType, typeChecker

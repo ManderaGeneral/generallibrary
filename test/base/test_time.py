@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.time import Timer, sleep
+from generallibrary import Timer, sleep
 
 class TimeTest(unittest.TestCase):
     def test_timer(self):

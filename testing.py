@@ -1,6 +1,6 @@
 
-from generallibrary import depth
-
+# from generallibrary import depth
+import generallibrary
 
 
 
