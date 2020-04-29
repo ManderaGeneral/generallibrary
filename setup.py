@@ -1,14 +1,13 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name = "generallibrary",
-    version = "1.2.2",
+    version = "1.5.5",
     description = (""
-                   "Added 'base' folders inside packages 'test' and 'generallibrary'."
-                   " This extra step of folders stops importing from importing the files directly, and only being imported through the __init__ file."
                    " Random functions to help with native classes."
                    ""),
-    packages = ["generallibrary"]
+    packages = find_packages(),
+    install_requires = ['wheel']
 )
 
 
