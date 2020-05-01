@@ -32,3 +32,9 @@ def iterFirstValue(obj):
         return obj[0]
     elif isinstance(obj, dict):
         return dictFirstValue(obj)
+
+def joinWithStr(obj, delimeter):
+    if not (obj := iterable(obj)):
+        raise TypeError("obj is not iterable")
+    return delimeter.join([str(value) for value in obj])
+
