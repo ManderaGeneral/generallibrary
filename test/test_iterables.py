@@ -1,6 +1,6 @@
 import unittest
 
-from generallibrary.iterables import iterable, depth, dictFirstValue, iterFirstValue
+from generallibrary.iterables import iterable, depth, dictFirstValue, iterFirstValue, joinWithStr
 
 class IterablesTest(unittest.TestCase):
     def test_iterable(self):
