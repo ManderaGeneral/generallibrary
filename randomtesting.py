@@ -1,6 +1,6 @@
 
 from generallibrary.time import Timer
-from generallibrary.types import typeChecker
+from generallibrary.types import typeChecker, depth
 
-# HERE **
-print(typeChecker(5, float))
+print(True is True)
+

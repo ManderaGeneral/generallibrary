@@ -1,15 +1,29 @@
 
-def strToDynamicType(var):
-    if var == "true" or var == "True":
-        return True
-    if var == "false" or var == "False":
-        return False
 
+
+def strToDynamicType(var):
+    """
+    Try to convert a string to bool, None, int or float.
+    If failed then it returns the given var.
+
+    :param str var: String object to be converted
+    :return: Converted string or original string if failed
+    :raises TypeError: If var is not a string
+    """
+    if not isinstance(var, str):
+        raise TypeError(f"var {var} is not a string")
+
+    keyWords = {"true": True, "false": False, "none": None}
+    if var.lower() in keyWords:
+        return keyWords[var.lower()]
+
+    # int() doesn't declare 'raises' in doc type so catch everything
     try:
         return int(var)
     except:
         pass
 
+    # float() doesn't declare 'raises' in doc type so catch everything
     try:
         return float(var)
     except:
@@ -18,13 +32,14 @@ def strToDynamicType(var):
     return var
 
 
-def typeChecker(obj, *types, fullIteration=False, raiseTypeError=True):
+def typeChecker(obj, *types, error=True):
     """
     Check types of an obj. Intended for iterables with somewhat consistent structure in every layer.
-    :param obj:
-    :param types:
-    :param fullIteration:
-    :param raiseTypeError:
+    The first type correlates to the first layer of obj and so on.
+
+    :param obj: Generic obj, iterable or not
+    :param types: lists or tuples if obj at that level can be multiple types, single type if only one
+    :param error: Raise error if true, otherwise returns False when fail
     :return:
     """
     try:
@@ -38,13 +53,17 @@ def typeChecker(obj, *types, fullIteration=False, raiseTypeError=True):
         # Change types list of list of types and add int to floats
         newTypes = []
         for argType in types:
-            if typeChecker(argType, [[list, tuple]]):
-                newArgType = argType.copy()
-            else:
+            if isinstance(argType, (list, tuple)):
+                newArgType = list(argType)
+            elif isinstance(argType, type):
                 newArgType = [argType]
-            if float in argType and int not in argType:
+            else:
+                raise TypeError(f"Argument type {argType} is not a list, tuple or type")
+
+            if float in newArgType and int not in newArgType:
                 newArgType.append(int)
-            newTypes.append(newArgType)
+            newTypes.append(tuple(newArgType))
+        types = newTypes
 
         for i, argType in enumerate(types):
             if not isinstance(obj, argType):
@@ -56,7 +75,7 @@ def typeChecker(obj, *types, fullIteration=False, raiseTypeError=True):
                 raise TypeError(f"obj {obj} is not iterable but atleast one more subtype is required in depth {i}/{typesDepth}")
 
     except TypeError as e:
-        if raiseTypeError:
+        if error:
             raise e
         else:
             return False
