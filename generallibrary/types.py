@@ -35,6 +35,17 @@ def typeChecker(obj, *types, fullIteration=False, raiseTypeError=True):
         if objDepth != typesDepth:
             raise TypeError(f"Obj depth {objDepth} doesnt match types depth {typesDepth}")
 
+        # Change types list of list of types and add int to floats
+        newTypes = []
+        for argType in types:
+            if typeChecker(argType, [[list, tuple]]):
+                newArgType = argType.copy()
+            else:
+                newArgType = [argType]
+            if float in argType and int not in argType:
+                newArgType.append(int)
+            newTypes.append(newArgType)
+
         for i, argType in enumerate(types):
             if not isinstance(obj, argType):
                 raise TypeError(f"obj {obj} wasn't type {argType} in depth {i}/{typesDepth}")

@@ -2,10 +2,13 @@
 import time
 
 class Timer:
-    """
-    Callable class to easily time things and print
-    """
+    """Callable class to easily time things and print"""
     def __init__(self, startTime=None):
+        """
+        Instantiate Timer which starts it.
+
+        :param float startTime: Defaults to time in seconds since epoch (time.time())
+        """
         if startTime is None:
             self.startTime = time.time()
         else:
@@ -21,10 +24,11 @@ class Timer:
 
 def sleep(seconds):
     """
-    Could do a sweet loading animation in console
+    Stubbed for easy changing and whatnot.
+
+    :param float seconds: Time in seconds to sleep.
     """
     time.sleep(seconds)
-
 
 
 from generallibrary.types import typeChecker
