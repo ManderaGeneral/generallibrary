@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name = "generallibrary",
-    version = "1.7.0",
+    version = "1.7.1",
     description = (""
-                   "Added None support and changed bool to not be int."
+                   "Fixed None support not working when None was in tuple."
                    " Random functions to help with native classes."
                    ""),
     packages = find_packages(),
