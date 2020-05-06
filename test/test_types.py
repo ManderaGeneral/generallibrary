@@ -26,8 +26,16 @@ class TypesTest(unittest.TestCase):
         self.assertFalse(typeChecker(["hello"], (tuple, dict), (bool, str), error=False))
         self.assertFalse(typeChecker(["hello"], (tuple, dict), str, error=False))
 
+        self.assertTrue(typeChecker(None, None))
+        self.assertTrue(typeChecker(True, bool))
         self.assertTrue(typeChecker(5, int))
         self.assertTrue(typeChecker(5, float))
+
+        self.assertFalse(typeChecker(None, bool, error=False))
+        self.assertFalse(typeChecker(None, int, error=False))
+        self.assertFalse(typeChecker(True, None, error=False))
+        self.assertFalse(typeChecker(False, None, error=False))
+
         self.assertTrue(typeChecker(tuple(["hello"]), (tuple, dict), str, error=False))
         self.assertTrue(typeChecker("hello", (bool, str)))
         self.assertTrue(typeChecker("hello", [bool, str]))

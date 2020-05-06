@@ -42,6 +42,8 @@ def typeChecker(obj, *types, error=True):
     :param error: Raise error if true, otherwise returns False when fail
     :return:
     """
+    literalObjects = [None]
+
     try:
         if not types:
             raise TypeError("No types were given as args")
@@ -55,10 +57,13 @@ def typeChecker(obj, *types, error=True):
         for argType in types:
             if isinstance(argType, (list, tuple)):
                 newArgType = list(argType)
-            elif isinstance(argType, type):
-                newArgType = [argType]
             else:
-                raise TypeError(f"Argument type {argType} is not a list, tuple or type")
+                isType = isinstance(argType, type)
+                isLiteralObject = argType in literalObjects
+                if isType or isLiteralObject:
+                    newArgType = [argType]
+                else:
+                    raise TypeError(f"Argument type {argType} is not a list, tuple, type or literalObject")
 
             if float in newArgType and int not in newArgType:
                 newArgType.append(int)
@@ -66,8 +71,14 @@ def typeChecker(obj, *types, error=True):
         types = newTypes
 
         for i, argType in enumerate(types):
-            if not isinstance(obj, argType):
-                raise TypeError(f"obj {obj} wasn't type {argType} in depth {i}/{typesDepth}")
+            if obj in literalObjects:
+                if obj not in argType:
+                    raise TypeError(f"obj {obj} was literal object but not in {literalObjects} in depth {i}/{typesDepth}")
+            else:
+                isArgType = isinstance(obj, argType)
+                isBoolAndBoolNotInArgType = isinstance(obj, bool) and bool not in argType  # Because isinstance(False, int) = True
+                if not isArgType or isBoolAndBoolNotInArgType:
+                    raise TypeError(f"obj {obj} wasn't type {argType} in depth {i}/{typesDepth}")
 
             if iterable(obj):
                 obj = iterFirstValue(obj)
