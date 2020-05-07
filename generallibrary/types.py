@@ -54,9 +54,8 @@ def _typeChecker_checkObject(obj, types, literalObjects):
             argTypeWithoutLiteralObjects = tuple([singleType for singleType in argType if singleType not in literalObjects])
             isArgType = isinstance(obj, argTypeWithoutLiteralObjects)
             isBoolAndBoolNotInArgType = isinstance(obj, bool) and bool not in argType  # Because isinstance(False, int) = True
-            isClassInArgType = obj.__class__ in argType
-            print(argTypeWithoutLiteralObjects, isArgType, isBoolAndBoolNotInArgType, isClassInArgType)
-            if (not isClassInArgType and not isArgType) or isBoolAndBoolNotInArgType:
+
+            if not isArgType or isBoolAndBoolNotInArgType:
                 raise TypeError(f"obj {obj} wasn't type {argType} in depth {i}/{typesDepth}")
 
         if iterable(obj):
