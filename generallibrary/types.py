@@ -32,6 +32,56 @@ def strToDynamicType(var):
     return var
 
 
+
+def _typeChecker_checkObject(obj, types, literalObjects):
+    objDepth = depth(obj)
+    typesDepth = len(types) - 1
+    if objDepth != typesDepth:
+        raise TypeError(f"Obj depth {objDepth} doesnt match types depth {typesDepth}")
+
+    for i, argType in enumerate(types):
+        # Returned ValueError if obj was pandas.DataFrame, so there are probably more objects that can raise any error
+        # So catch every exception, it's a pretty simple statement so not too big of a problem
+        try:
+            objInLiteralObjects = obj in literalObjects
+        except:
+            objInLiteralObjects = False
+
+        if objInLiteralObjects:
+            if obj not in argType:
+                raise TypeError(f"obj {obj} was a literal object but not in literalObjects list {literalObjects} in depth {i}/{typesDepth}")
+        else:
+            argTypeWithoutLiteralObjects = tuple([singleType for singleType in argType if singleType not in literalObjects])
+            isArgType = isinstance(obj, argTypeWithoutLiteralObjects)
+            isBoolAndBoolNotInArgType = isinstance(obj, bool) and bool not in argType  # Because isinstance(False, int) = True
+            isClassInArgType = obj.__class__ in argType
+            print(argTypeWithoutLiteralObjects, isArgType, isBoolAndBoolNotInArgType, isClassInArgType)
+            if (not isClassInArgType and not isArgType) or isBoolAndBoolNotInArgType:
+                raise TypeError(f"obj {obj} wasn't type {argType} in depth {i}/{typesDepth}")
+
+        if iterable(obj):
+            obj = iterFirstValue(obj)
+        elif i < objDepth:
+            raise TypeError(f"obj {obj} is not iterable but atleast one more subtype is required in depth {i}/{typesDepth}")
+
+def _typeChecker_prepareTypesList(types, literalObjects):
+    newTypes = []
+    for argType in types:
+        if isinstance(argType, (list, tuple)):
+            newArgType = list(argType)
+        else:
+            isType = isinstance(argType, type)
+            isLiteralObject = argType in literalObjects
+            if isType or isLiteralObject:
+                newArgType = [argType]
+            else:
+                raise TypeError(f"Argument type {argType} is not a list, tuple, type or literalObject")
+
+        if float in newArgType and int not in newArgType:
+            newArgType.append(int)
+        newTypes.append(tuple(newArgType))
+    return newTypes
+
 def typeChecker(obj, *types, error=True):
     """
     Check types of an obj. Intended for iterables with somewhat consistent structure in every layer.
@@ -43,48 +93,12 @@ def typeChecker(obj, *types, error=True):
     :return:
     """
     literalObjects = [None]
-
     try:
         if not types:
             raise TypeError("No types were given as args")
-        objDepth = depth(obj)
-        typesDepth = len(types) - 1
-        if objDepth != typesDepth:
-            raise TypeError(f"Obj depth {objDepth} doesnt match types depth {typesDepth}")
 
-        # Change types list of list of types and add int to floats
-        newTypes = []
-        for argType in types:
-            if isinstance(argType, (list, tuple)):
-                newArgType = list(argType)
-            else:
-                isType = isinstance(argType, type)
-                isLiteralObject = argType in literalObjects
-                if isType or isLiteralObject:
-                    newArgType = [argType]
-                else:
-                    raise TypeError(f"Argument type {argType} is not a list, tuple, type or literalObject")
-
-            if float in newArgType and int not in newArgType:
-                newArgType.append(int)
-            newTypes.append(tuple(newArgType))
-        types = newTypes
-
-        for i, argType in enumerate(types):
-            if obj in literalObjects:
-                if obj not in argType:
-                    raise TypeError(f"obj {obj} was literal object but not in {literalObjects} in depth {i}/{typesDepth}")
-            else:
-                argTypeWithoutLiteralObjects = tuple([singleType for singleType in argType if singleType not in literalObjects])
-                isArgType = isinstance(obj, argTypeWithoutLiteralObjects)
-                isBoolAndBoolNotInArgType = isinstance(obj, bool) and bool not in argType  # Because isinstance(False, int) = True
-                if not isArgType or isBoolAndBoolNotInArgType:
-                    raise TypeError(f"obj {obj} wasn't type {argType} in depth {i}/{typesDepth}")
-
-            if iterable(obj):
-                obj = iterFirstValue(obj)
-            elif i < objDepth:
-                raise TypeError(f"obj {obj} is not iterable but atleast one more subtype is required in depth {i}/{typesDepth}")
+        types = _typeChecker_prepareTypesList(types, literalObjects)
+        _typeChecker_checkObject(obj, types, literalObjects)
 
     except TypeError as e:
         if error:

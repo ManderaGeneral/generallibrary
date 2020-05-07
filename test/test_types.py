@@ -3,6 +3,8 @@ import unittest
 
 from generallibrary.types import strToDynamicType, typeChecker
 
+import pandas as pd
+
 class TypesTest(unittest.TestCase):
     def test_strToDynamicType(self):
         self.assertIs(strToDynamicType("true"), True)
@@ -44,8 +46,11 @@ class TypesTest(unittest.TestCase):
         self.assertTrue(typeChecker("hello", (bool, str)))
         self.assertTrue(typeChecker("hello", [bool, str]))
         self.assertTrue(typeChecker(["hello"], list, (bool, str)))
-
         self.assertTrue(typeChecker({"hello": [5, "hi"]}, dict, list, int))
+
+        self.assertTrue(typeChecker(pd.DataFrame(), pd.DataFrame))
+        self.assertTrue(typeChecker(pd.DataFrame(), [None, pd.DataFrame]))
+        self.assertTrue(typeChecker(pd.DataFrame(), [int, None, pd.DataFrame]))
 
 
 
