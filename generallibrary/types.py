@@ -31,15 +31,13 @@ def strToDynamicType(var):
 
     return var
 
-
-
 def _typeChecker_checkObject(obj, types, literalObjects):
     objDepth = depth(obj)
     typesDepth = len(types) - 1
     if objDepth != typesDepth:
         raise TypeError(f"Obj depth {objDepth} doesnt match types depth {typesDepth}")
 
-    for i, argType in enumerate(types):
+    for i, typeTuple in enumerate(types):
         # Returned ValueError if obj was pandas.DataFrame, so there are probably more objects that can raise any error
         # So catch every exception, it's a pretty simple statement so not too big of a problem
         try:
@@ -48,15 +46,21 @@ def _typeChecker_checkObject(obj, types, literalObjects):
             objInLiteralObjects = False
 
         if objInLiteralObjects:
-            if obj not in argType:
+            if obj not in typeTuple:
                 raise TypeError(f"obj {obj} was a literal object but not in literalObjects list {literalObjects} in depth {i}/{typesDepth}")
         else:
-            argTypeWithoutLiteralObjects = tuple([singleType for singleType in argType if singleType not in literalObjects])
-            isArgType = isinstance(obj, argTypeWithoutLiteralObjects)
-            isBoolAndBoolNotInArgType = isinstance(obj, bool) and bool not in argType  # Because isinstance(False, int) = True
+            typeTupleWithoutLiteralObjects = tuple([t for t in typeTuple if t not in literalObjects])
+            typeTupleWithOnlyTypes = tuple([t for t in typeTupleWithoutLiteralObjects if not isinstance(t, str)])
+            typeTupleWithOnlyStrings = tuple([t.lower() for t in typeTuple if isinstance(t, str)])
 
-            if not isArgType or isBoolAndBoolNotInArgType:
-                raise TypeError(f"obj {obj} wasn't type {argType} in depth {i}/{typesDepth}")
+            objTypeInList = isinstance(obj, typeTupleWithOnlyTypes)
+            objClassNameInList = obj.__class__.__name__.lower() in typeTupleWithOnlyStrings
+
+            # Because isinstance(False, int) = True
+            isBoolAndBoolNotInList = isinstance(obj, bool) and bool not in typeTupleWithOnlyTypes and not objClassNameInList
+
+            if isBoolAndBoolNotInList or not (objTypeInList or objClassNameInList):
+                raise TypeError(f"obj {obj} wasn't type {typeTuple} in depth {i}/{typesDepth}")
 
         if iterable(obj):
             obj = iterFirstValue(obj)
@@ -71,13 +75,20 @@ def _typeChecker_prepareTypesList(types, literalObjects):
         else:
             isType = isinstance(argType, type)
             isLiteralObject = argType in literalObjects
-            if isType or isLiteralObject:
+            isNameOfClass = isinstance(argType, str)
+            if isType or isLiteralObject or isNameOfClass:
                 newArgType = [argType]
             else:
                 raise TypeError(f"Argument type {argType} is not a list, tuple, type or literalObject")
 
-        if float in newArgType and int not in newArgType:
+
+        newArgTypeWithOnlyStrings = tuple([t.lower() for t in newArgType if isinstance(t, str)])
+        floatInList = float in newArgType or "float" in newArgTypeWithOnlyStrings
+        intInList = int in newArgType or "int" in newArgTypeWithOnlyStrings
+
+        if floatInList and not intInList:
             newArgType.append(int)
+
         newTypes.append(tuple(newArgType))
     return newTypes
 
