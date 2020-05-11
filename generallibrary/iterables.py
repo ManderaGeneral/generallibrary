@@ -90,6 +90,88 @@ def joinWithStr(delimeter, obj):
 
     return delimeter.join([str(value) for value in obj])
 
+def addToListInDict(dictionary, key, value):
+    """
+    Add a value to a list inside a dictionary, if key doesn't exist then a new list is created.
+    Since list is mutable we can change dictionary directly.
+
+    :param dict dictionary:
+    :param str key:
+    :param any value:
+    :return:
+    """
+    if key not in dictionary:
+        dictionary[key] = [value]
+    else:
+        dictionary[key].append(value)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

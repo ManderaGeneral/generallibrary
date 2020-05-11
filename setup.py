@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name = "generallibrary",
-    version = "1.7.1",
+    version = "1.7.2",
     description = (""
-                   "Fixed None support not working when None was in tuple."
+                   "Added addToListInDict()."
                    " Random functions to help with native classes."
                    ""),
     packages = find_packages(),

@@ -1,6 +1,6 @@
 import unittest
 
-from generallibrary.iterables import iterable, depth, dictFirstValue, iterFirstValue, joinWithStr
+from generallibrary.iterables import iterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict
 
 class IterablesTest(unittest.TestCase):
     def test_iterable(self):
@@ -65,5 +65,65 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual(joinWithStr(".", tuple([1, 2, 3])), "1.2.3")
         self.assertEqual(joinWithStr(".", [["foo", "bar"]]), "['foo', 'bar']")
         self.assertEqual(joinWithStr(".", [["foo", "bar"], ["foo", "bar"]]), "['foo', 'bar'].['foo', 'bar']")
+
+    def test_addToListInDict(self):
+        d = {}
+        addToListInDict(d, "test", 5)
+        self.assertEqual(d, {"test": [5]})
+
+        addToListInDict(d, "test", 3)
+        self.assertEqual(d, {"test": [5, 3]})
+
+        addToListInDict(d, "test", None)
+        self.assertEqual(d, {"test": [5, 3, None]})
+
+        addToListInDict(d, "hello", "hi")
+        self.assertEqual(d, {"test": [5, 3, None], "hello": ["hi"]})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
