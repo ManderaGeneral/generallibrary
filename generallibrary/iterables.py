@@ -1,21 +1,21 @@
 
-def iterable(obj):
+def getIterable(obj):
     """
     Returns the iterable values of an object or False.
     Can be used for typechecking or iterating generic obj.
 
     Wrong way
     ---------
-    >>> not iterable(5)
+    >>> not getIterable(5)
     >>> True
-    >>> not iterable([])
+    >>> not getIterable([])
     >>> True
 
     Right way
     ---------
-    >>> iterable(5) is False
+    >>> getIterable(5) is False
     >>> True
-    >>> iterable([]) is False
+    >>> getIterable([]) is False
     >>> False
 
     :param obj: Generic obj
@@ -37,7 +37,7 @@ def isIterable(obj):
     :param obj: Generic obj
     :rtype: bool
     """
-    return iterable(obj) is not False
+    return getIterable(obj) is not False
 
 def depth(obj):
     """
@@ -47,7 +47,7 @@ def depth(obj):
     """
     depth = 0
     while True:
-        if iterable(obj):
+        if getIterable(obj):
             obj = iterFirstValue(obj)
             depth += 1
         else:
@@ -74,7 +74,7 @@ def iterFirstValue(obj):
     :param obj: Generic iterable
     :raises TypeError: If not iterable
     """
-    if iterable(obj) is False:
+    if isIterable(obj) is False:
         raise TypeError("obj is not iterable")
 
     if isinstance(obj, tuple) or isinstance(obj, list):
@@ -94,7 +94,7 @@ def joinWithStr(delimeter, obj):
     :raises TypeError: If obj is not iterable
     :return: A string containing values of obj with delimeter between each
     """
-    if not (obj := iterable(obj)):
+    if (obj := getIterable(obj)) is False:
         raise TypeError("obj is not iterable")
 
     return delimeter.join([str(value) for value in obj])

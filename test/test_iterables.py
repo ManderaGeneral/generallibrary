@@ -1,22 +1,22 @@
 
 import unittest
 
-from generallibrary.iterables import iterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows
+from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows
 
 class IterablesTest(unittest.TestCase):
-    def test_iterable(self):
-        self.assertEqual(iterable(tuple()), [])
-        self.assertEqual(iterable([]), [])
-        self.assertEqual(iterable({}), [])
-        self.assertEqual(iterable(tuple([5, 2])), [5, 2])
-        self.assertEqual(iterable([5, 2]), [5, 2])
-        self.assertEqual(iterable({"a": 5, "b": 2}), [5, 2])
+    def test_getIterable(self):
+        self.assertEqual(getIterable(tuple()), [])
+        self.assertEqual(getIterable([]), [])
+        self.assertEqual(getIterable({}), [])
+        self.assertEqual(getIterable(tuple([5, 2])), [5, 2])
+        self.assertEqual(getIterable([5, 2]), [5, 2])
+        self.assertEqual(getIterable({"a": 5, "b": 2}), [5, 2])
 
-        self.assertFalse(iterable(None))
-        self.assertFalse(iterable(5))
-        self.assertFalse(iterable("test"))
-        self.assertFalse(iterable(51.2))
-        self.assertFalse(iterable(True))
+        self.assertFalse(getIterable(None))
+        self.assertFalse(getIterable(5))
+        self.assertFalse(getIterable("test"))
+        self.assertFalse(getIterable(51.2))
+        self.assertFalse(getIterable(True))
 
     def test_isIterable(self):
         self.assertTrue(isIterable(tuple()), [])
@@ -74,6 +74,7 @@ class IterablesTest(unittest.TestCase):
         self.assertRaises(TypeError, joinWithStr, ".", 5)
         self.assertRaises(TypeError, joinWithStr, ".", "asdf")
 
+        self.assertEqual(joinWithStr(".", []), "")
         self.assertEqual(joinWithStr(".", [1, 2, 3]), "1.2.3")
         self.assertEqual(joinWithStr(".", {"a": 1, "b": 2, "c": 3}), "1.2.3")
         self.assertEqual(joinWithStr(".", {"a": "1", "b": 2, "c": 3}), "1.2.3")

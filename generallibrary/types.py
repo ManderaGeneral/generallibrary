@@ -62,7 +62,7 @@ def _typeChecker_checkObject(obj, types, literalObjects):
             if isBoolAndBoolNotInList or not (objTypeInList or objClassNameInList):
                 raise TypeError(f"obj {obj} wasn't type {typeTuple} in depth {i}/{typesDepth}")
 
-        if iterable(obj):
+        if isIterable(obj):
             obj = iterFirstValue(obj)
         elif i < objDepth:
             raise TypeError(f"obj {obj} is not iterable but atleast one more subtype is required in depth {i}/{typesDepth}")
@@ -120,4 +120,4 @@ def typeChecker(obj, *types, error=True):
 
 
 
-from generallibrary.iterables import depth, iterFirstValue, iterable
+from generallibrary.iterables import depth, iterFirstValue, isIterable
