@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.iterables import iterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict
+from generallibrary.iterables import iterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows
 
 class IterablesTest(unittest.TestCase):
     def test_iterable(self):
@@ -17,6 +17,20 @@ class IterablesTest(unittest.TestCase):
         self.assertFalse(iterable("test"))
         self.assertFalse(iterable(51.2))
         self.assertFalse(iterable(True))
+
+    def test_isIterable(self):
+        self.assertTrue(isIterable(tuple()), [])
+        self.assertTrue(isIterable([]), [])
+        self.assertTrue(isIterable({}), [])
+        self.assertTrue(isIterable(tuple([5, 2])), [5, 2])
+        self.assertTrue(isIterable([5, 2]), [5, 2])
+        self.assertTrue(isIterable({"a": 5, "b": 2}), [5, 2])
+
+        self.assertFalse(isIterable(None))
+        self.assertFalse(isIterable(5))
+        self.assertFalse(isIterable("test"))
+        self.assertFalse(isIterable(51.2))
+        self.assertFalse(isIterable(True))
 
     def test_depth(self):
         self.assertEqual(depth(5), 0)
@@ -81,8 +95,21 @@ class IterablesTest(unittest.TestCase):
         addToListInDict(d, "hello", "hi")
         self.assertEqual(d, {"test": [5, 3, None], "hello": ["hi"]})
 
+    def test_getRows(self):
+        self.assertEqual([[5]], getRows(5))
+        self.assertEqual([[1, 2, 3]], getRows([1, 2, 3]))
+        self.assertEqual([[1, 2, 3]], getRows([[1, 2, 3]]))
+        self.assertEqual([[1, 2, 3]], getRows({1: [2, 3]}))
 
+        self.assertEqual([[1, 2, 3], [4, 5, 6]], getRows({1: [2, 3], 4: [5, 6]}))
+        self.assertEqual([[1, 2, 3], [4, 5, 6]], getRows([[1, 2, 3], [4, 5, 6]]))
+        self.assertEqual([[1, 2, 3], [4, 5, 6]], getRows([{"a": 1,"b": 2,"c": 3}, {"d": 4, "e": 5, "f": 6}]))
+        self.assertEqual([[1, 2, 3], [4, 5, 6]], getRows({1: {"b": 2, "c": 3}, 4: {"e": 5, "f": 6}}))
 
+        # self.assertEqual([], getRows([]))
+        # self.assertEqual([], getRows([[], []]))
+        # self.assertEqual([], getRows(None))
+        # self.assertEqual([[0]], getRows(0))
 
 
 

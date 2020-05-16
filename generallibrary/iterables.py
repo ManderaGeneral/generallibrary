@@ -30,6 +30,15 @@ def iterable(obj):
     else:
         return False
 
+def isIterable(obj):
+    """
+    See if an obj is iterable or not, I kept using iterable function wrong.
+
+    :param obj: Generic obj
+    :rtype: bool
+    """
+    return iterable(obj) is not False
+
 def depth(obj):
     """
     Checks depths of an obj by keep going to the first value of obj.
@@ -107,6 +116,55 @@ def addToListInDict(dictionary, key, value):
 
 
 
+def _getRows_getRow(iterableObj, key=None):
+    """
+    Takes an object and returns a list of rows to use for appending.
+
+    :param iterableObj: Iterable
+    :param key: If iterableObj had a key to assigned it it's given here
+    :return: A
+    """
+    row = [key] if key else []
+    if isinstance(iterableObj, (list, tuple)):
+        row.extend(iterableObj)
+    elif isinstance(iterableObj, dict):
+        for _, value in sorted(iterableObj.items()):
+            row.append(value)
+    return row
+
+def getRows(obj):
+    """
+    All these objects result in [[1, 2, 3], [4, 5, 6]]
+     | [[1, 2, 3], [4, 5, 6]]
+     | [{"a": 1, "b": 2, "c": 3}, {"d": 4, "e": 5, "f": 6}]
+     | {1: {"b": 2, "c": 3}, 4: {"e": 5, "f": 6}}
+     | {1: [2, 3], 4: [5, 6]}
+
+    :param any obj: Iterable (Optionally inside another iterable) or a value for a single cell
+    :return:
+    """
+    rows = []
+    if obj is None:
+        return rows
+    if iterable(obj):
+        if not len(obj):
+            return rows
+
+        if isinstance(obj, (list, tuple)):
+            if iterable(obj[0]):
+                for subObj in obj:
+                    rows.append(_getRows_getRow(subObj))
+            else:
+                rows.append(_getRows_getRow(obj))
+        elif isinstance(obj, dict):
+            if iterable(dictFirstValue(obj)):
+                for key, subObj in obj.items():
+                    rows.append(_getRows_getRow(subObj, key))
+            else:
+                rows.append(_getRows_getRow(obj))
+    else:
+        rows.append([obj])
+    return rows
 
 
 
