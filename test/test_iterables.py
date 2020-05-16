@@ -106,10 +106,10 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual([[1, 2, 3], [4, 5, 6]], getRows([{"a": 1,"b": 2,"c": 3}, {"d": 4, "e": 5, "f": 6}]))
         self.assertEqual([[1, 2, 3], [4, 5, 6]], getRows({1: {"b": 2, "c": 3}, 4: {"e": 5, "f": 6}}))
 
-        # self.assertEqual([], getRows([]))
-        # self.assertEqual([], getRows([[], []]))
-        # self.assertEqual([], getRows(None))
-        # self.assertEqual([[0]], getRows(0))
+        self.assertEqual([], getRows([]))
+        self.assertEqual([[], []], getRows([[], []]))
+        self.assertEqual([], getRows(None))
+        self.assertEqual([[0]], getRows(0))
 
 
 

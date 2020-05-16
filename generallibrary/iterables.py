@@ -146,18 +146,18 @@ def getRows(obj):
     rows = []
     if obj is None:
         return rows
-    if iterable(obj):
+    if isIterable(obj):
         if not len(obj):
             return rows
 
         if isinstance(obj, (list, tuple)):
-            if iterable(obj[0]):
+            if isIterable(obj[0]):
                 for subObj in obj:
                     rows.append(_getRows_getRow(subObj))
             else:
                 rows.append(_getRows_getRow(obj))
         elif isinstance(obj, dict):
-            if iterable(dictFirstValue(obj)):
+            if isIterable(dictFirstValue(obj)):
                 for key, subObj in obj.items():
                     rows.append(_getRows_getRow(subObj, key))
             else:
