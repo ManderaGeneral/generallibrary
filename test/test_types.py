@@ -1,9 +1,12 @@
 
 import unittest
 
-from generallibrary.types import strToDynamicType, typeChecker
+from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames
 
 import pandas as pd
+
+class InheritStr(str):
+    pass
 
 class TypesTest(unittest.TestCase):
     def test_strToDynamicType(self):
@@ -63,6 +66,7 @@ class TypesTest(unittest.TestCase):
         self.assertFalse(typeChecker(None, "bool", error=False))
         self.assertFalse(typeChecker(None, int, error=False))
         self.assertFalse(typeChecker(None, "int", error=False))
+
         self.assertFalse(typeChecker(True, None, error=False))
         self.assertFalse(typeChecker(True, "None", error=False))
         self.assertFalse(typeChecker(False, None, error=False))
@@ -98,6 +102,61 @@ class TypesTest(unittest.TestCase):
         self.assertTrue(typeChecker(pd.DataFrame(), [None, pd.DataFrame]))
         self.assertTrue(typeChecker(pd.DataFrame(), [None, "dataframe"]))
         self.assertTrue(typeChecker(pd.DataFrame(), [int, None, pd.DataFrame]))
+
+        self.assertTrue(typeChecker(InheritStr(), str))
+        self.assertTrue(typeChecker(InheritStr(), "str"))
+
+        self.assertTrue(typeChecker(True, "bool"))
+        self.assertTrue(typeChecker(True, "object"))
+        self.assertTrue(typeChecker(True, object))
+
+        self.assertFalse(typeChecker(True, int, error=False))
+        self.assertFalse(typeChecker(True, "int", error=False))
+
+    def test_getBasesClasses(self):
+        self.assertEqual([int, object], getBaseClasses(True))
+        self.assertEqual(["int", "object"], getBaseClassNames(True))
+
+        self.assertEqual([object], getBaseClasses(5))
+        self.assertEqual(["object"], getBaseClassNames(5))
+
+        self.assertEqual([bool, int, object], getBaseClasses(True, includeSelf=True))
+        self.assertEqual(["bool", "int", "object"], getBaseClassNames(True, includeSelf=True))
+
+        self.assertEqual([int, object], getBaseClasses(5, includeSelf=True))
+        self.assertEqual(["int", "object"], getBaseClassNames(5, includeSelf=True))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

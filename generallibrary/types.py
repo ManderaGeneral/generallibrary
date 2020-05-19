@@ -1,6 +1,5 @@
 
 
-
 def strToDynamicType(var):
     """
     Try to convert a string to bool, None, int or float.
@@ -54,12 +53,19 @@ def _typeChecker_checkObject(obj, types, literalObjects):
             typeTupleWithOnlyStrings = tuple([t.lower() for t in typeTuple if isinstance(t, str)])
 
             objTypeInList = isinstance(obj, typeTupleWithOnlyTypes)
-            objClassNameInList = obj.__class__.__name__.lower() in typeTupleWithOnlyStrings
+
+            objClassNameInList = False
+            for className in getBaseClassNames(obj, includeSelf=True):
+                if isinstance(obj, bool) and className == "int":
+                    continue
+                if className in typeTupleWithOnlyStrings:
+                    objClassNameInList = True
+                    break
 
             # Because isinstance(False, int) = True
-            isBoolAndBoolNotInList = isinstance(obj, bool) and bool not in typeTupleWithOnlyTypes and not objClassNameInList
+            isBoolAndBoolOrObjectNotInList = isinstance(obj, bool) and bool not in typeTupleWithOnlyTypes and object not in typeTupleWithOnlyTypes and not objClassNameInList
 
-            if isBoolAndBoolNotInList or not (objTypeInList or objClassNameInList):
+            if isBoolAndBoolOrObjectNotInList or not (objTypeInList or objClassNameInList):
                 raise TypeError(f"obj {obj} wasn't type {typeTuple} in depth {i}/{typesDepth}")
 
         if isIterable(obj):
@@ -118,6 +124,38 @@ def typeChecker(obj, *types, error=True):
     else:
         return True
 
+def getBaseClasses(obj, includeSelf=False):
+    """
+    Get all base classes from an object's class.
 
+    :param any obj: Generic obj or class
+    :param includeSelf: Whether to include own class or not
+    :return: List of classes
+    :rtype: list[type]
+    """
+    if isinstance(obj, type):
+        cls = obj
+    else:
+        cls = obj.__class__
+
+    classes = list(cls.__bases__)
+    for base in classes:
+        classes.extend(getBaseClasses(base))
+
+    if includeSelf:
+        classes.insert(0, cls)
+
+    return classes
+
+def getBaseClassNames(obj, includeSelf=False):
+    """
+    Get all base classes from an object's class as lowered names.
+
+    :param any obj: Generic obj or class
+    :param includeSelf: Whether to include own class name or not
+    :return: List of lowered class names
+    :rtype: list[str]
+    """
+    return [cls.__name__.lower() for cls in getBaseClasses(obj, includeSelf)]
 
 from generallibrary.iterables import depth, iterFirstValue, isIterable
