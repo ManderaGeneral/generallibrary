@@ -2,17 +2,12 @@
 from generallibrary.time import Timer
 from generallibrary.types import typeChecker, depth, getBaseClasses, getBaseClassNames
 from generallibrary.iterables import getRows
+from generallibrary.functions import leadingArgsCount, getSignatureNames
 
 import tkinter as tk
 
-
-class Base:
-    pass
-
-class Top(Base):
-    pass
+import inspect
 
 
-print(getBaseClasses(True))
+print(getSignatureNames(str))
 
-print(isinstance(True, object))

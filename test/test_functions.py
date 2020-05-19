@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.functions import leadingArgsCount
+from generallibrary.functions import leadingArgsCount, getSignatureNames
 
 class FunctionsTest(unittest.TestCase):
     def test_leadingArgsCount(self):
@@ -16,4 +16,14 @@ class FunctionsTest(unittest.TestCase):
             pass
         self.assertEqual(2, leadingArgsCount(hello))
 
+    def test_getSignatureNames(self):
+        self.assertEqual(tuple(), getSignatureNames(lambda: 5))
+        self.assertEqual(("x", ), getSignatureNames(lambda x: 5))
+        self.assertEqual(("x", "y"), getSignatureNames(lambda x, y: 5))
+        self.assertEqual(("x", "y"), getSignatureNames(lambda x, y=2: 5))
+        self.assertEqual(("x", "y"), getSignatureNames(lambda x=3, y=2: 5))
 
+        def hello(x, y, z=None, *argz, **kwargz):
+            """2 arg, 1 kwarg function"""
+            pass
+        self.assertEqual(("x", "y", "z", "argz", "kwargz"), getSignatureNames(hello))
