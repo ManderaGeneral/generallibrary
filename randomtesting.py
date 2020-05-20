@@ -9,5 +9,5 @@ import tkinter as tk
 import inspect
 
 
-print(getSignatureNames(str))
+thread_link = str(input('Enter the thread you want to scrape...\n"board + /thread/ + thread number\n'))
 

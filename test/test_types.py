@@ -5,8 +5,10 @@ from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, 
 
 import pandas as pd
 
+
 class InheritStr(str):
     pass
+
 
 class TypesTest(unittest.TestCase):
     def test_strToDynamicType(self):

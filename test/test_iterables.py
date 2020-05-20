@@ -3,6 +3,7 @@ import unittest
 
 from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows
 
+
 class IterablesTest(unittest.TestCase):
     def test_getIterable(self):
         self.assertEqual(getIterable(tuple()), [])

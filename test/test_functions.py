@@ -3,6 +3,7 @@ import unittest
 
 from generallibrary.functions import leadingArgsCount, getSignatureNames
 
+
 class FunctionsTest(unittest.TestCase):
     def test_leadingArgsCount(self):
         self.assertEqual(0, leadingArgsCount(lambda: 5))

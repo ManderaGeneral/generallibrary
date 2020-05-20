@@ -22,6 +22,9 @@ class Timer:
         """
         return time.time() - self.startTime
 
+    def print(self):
+        print(f"Seconds passed: {self.seconds()}")
+
 def sleep(seconds):
     """
     Stubbed for easy changing and whatnot.
