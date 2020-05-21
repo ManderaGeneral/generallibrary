@@ -137,7 +137,7 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual([-1, 0, 1, 2, 2.5, 3], sortedList.objects)
 
 
-        sortedList = SortedList("a", "aaa", "aa", getObjectValue=lambda obj: len(obj))
+        sortedList = SortedList("a", "aaa", "aa", getValueFunc=lambda obj: len(obj))
         self.assertEqual(["a", "aa", "aaa"], sortedList.objects)
 
         sortedList.add("aa")

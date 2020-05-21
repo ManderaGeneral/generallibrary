@@ -4,15 +4,18 @@ class SortedList:
     """
     Controls a sorted list in ascending order.
     """
-    def __init__(self, *objects, getObjectValue=None):
+    def __init__(self, *objects, getValueFunc=None):
         """
         :param objects: Objects to be added instantly
-        :param function[any] -> float getObjectValue: A function that only takes obj as parameter and returns a float to be used for sorting.
+        :param function[any] -> float getValueFunc: A function that only takes obj as parameter and returns a float to be used for sorting.
         """
-        if getObjectValue is None:
-            getObjectValue = lambda obj: obj
+        if objects and typeChecker(objects[0], "function", error=False):
+            raise AttributeError("First object was a function, make sure to use the 'getValueFunc' key.")
 
-        self.getObjectValue = getObjectValue
+        if getValueFunc is None:
+            getValueFunc = lambda obj: obj
+
+        self.getValueFunc = getValueFunc
         self.objects = []
         self._values = []
         self.add(*objects)
@@ -28,7 +31,7 @@ class SortedList:
         Add objects to sorted list.
         """
         for newObj in objects:
-            newValue = self.getObjectValue(newObj)
+            newValue = self.getValueFunc(newObj)
             for i, obj in enumerate(self.objects):
                 value = self._values[i]
                 if newValue <= value:
@@ -219,7 +222,7 @@ def getRows(obj):
         rows.append([obj])
     return rows
 
-
+from generallibrary.types import typeChecker
 
 
 

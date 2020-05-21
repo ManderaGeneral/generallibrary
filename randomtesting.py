@@ -8,5 +8,3 @@ import tkinter as tk
 
 import inspect
 
-
-
