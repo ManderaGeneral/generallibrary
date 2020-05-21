@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows
+from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList
 
 
 class IterablesTest(unittest.TestCase):
@@ -113,14 +113,34 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual([], getRows(None))
         self.assertEqual([[0]], getRows(0))
 
+    def test_SortedList(self):
+        sortedList = SortedList(1, 2, 3)
+        self.assertEqual([1, 2, 3], sortedList.objects)
+
+        sortedList.add(2.5)
+        self.assertEqual([1, 2, 2.5, 3], sortedList.objects)
+
+        sortedList.add(0, 2)
+        self.assertEqual([0, 1, 2, 2, 2.5, 3], sortedList.objects)
+
+        sortedList.remove(2)
+        self.assertEqual([0, 1, 2, 2.5, 3], sortedList.objects)
+
+        sortedList.remove(2)
+        self.assertEqual([0, 1, 2.5, 3], sortedList.objects)
+
+        sortedList.remove(2)
+        self.assertEqual([0, 1, 2.5, 3], sortedList.objects)
+
+        sortedList.add(-1, 2)
+        self.assertEqual([-1, 0, 1, 2, 2.5, 3], sortedList.objects)
 
 
+        sortedList = SortedList("a", "aaa", "aa", getObjectValue=lambda obj: len(obj))
+        self.assertEqual(["a", "aa", "aaa"], sortedList.objects)
 
-
-
-
-
-
+        sortedList.add("aa")
+        self.assertEqual(["a", "aa", "aa", "aaa"], sortedList.objects)
 
 
 

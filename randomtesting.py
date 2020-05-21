@@ -9,5 +9,7 @@ import tkinter as tk
 import inspect
 
 
-thread_link = str(input('Enter the thread you want to scrape...\n"board + /thread/ + thread number\n'))
 
+x = lambda y: y
+
+print(x(5))

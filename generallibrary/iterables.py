@@ -1,4 +1,51 @@
 
+
+class SortedList:
+    """
+    Controls a sorted list in ascending order.
+    """
+    def __init__(self, *objects, getObjectValue=None):
+        """
+        :param objects: Objects to be added instantly
+        :param function[any] -> float getObjectValue: A function that only takes obj as parameter and returns a float to be used for sorting.
+        """
+        if getObjectValue is None:
+            getObjectValue = lambda obj: obj
+
+        self.getObjectValue = getObjectValue
+        self.objects = []
+        self._values = []
+        self.add(*objects)
+
+    def add(self, *objects):
+        """
+        Add objects to sorted list.
+        """
+        for newObj in objects:
+            newValue = self.getObjectValue(newObj)
+            for i, obj in enumerate(self.objects):
+                value = self._values[i]
+                if newValue <= value:
+                    index = i
+                    break
+            else:
+                index = len(self.objects)
+
+            self.objects.insert(index, newObj)
+            self._values.insert(index, newValue)
+
+    def remove(self, *objects):
+        """
+        Remove objects from sorted list.
+        """
+        for removeObj in objects:
+            if removeObj not in self.objects:
+                continue
+
+            index = self.objects.index(removeObj)
+            del self.objects[index]
+            del self._values[index]
+
 def getIterable(obj):
     """
     Returns the iterable values of an object or False.
