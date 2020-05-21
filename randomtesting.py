@@ -1,8 +1,8 @@
 
-from generallibrary.time import Timer
-from generallibrary.types import typeChecker, depth, getBaseClasses, getBaseClassNames
-from generallibrary.iterables import getRows
-from generallibrary.functions import leadingArgsCount, getSignatureNames
+from generallibrary.time import *
+from generallibrary.types import *
+from generallibrary.iterables import *
+from generallibrary.functions import *
 
 import tkinter as tk
 
@@ -10,6 +10,3 @@ import inspect
 
 
 
-x = lambda y: y
-
-print(x(5))

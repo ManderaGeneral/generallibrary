@@ -115,6 +115,7 @@ class IterablesTest(unittest.TestCase):
 
     def test_SortedList(self):
         sortedList = SortedList(1, 2, 3)
+        self.assertEqual([1, 2, 3], [obj for obj in sortedList])
         self.assertEqual([1, 2, 3], sortedList.objects)
 
         sortedList.add(2.5)

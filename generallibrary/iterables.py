@@ -17,6 +17,12 @@ class SortedList:
         self._values = []
         self.add(*objects)
 
+    def __contains__(self, item):
+        return item in self.objects
+
+    def __iter__(self):
+        return self.objects.__iter__()
+
     def add(self, *objects):
         """
         Add objects to sorted list.
