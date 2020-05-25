@@ -169,7 +169,7 @@ def addToListInDict(dictionary, key, value):
         dictionary[key] = [value]
     else:
         dictionary[key].append(value)
-
+    return len(dictionary[key])
 
 
 def _getRows_getRow(iterableObj, key=None):

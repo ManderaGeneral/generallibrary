@@ -8,3 +8,7 @@ import tkinter as tk
 
 import inspect
 
+
+import pandas as pd
+import random
+
