@@ -163,7 +163,7 @@ def addToListInDict(dictionary, key, value):
     :param dict dictionary:
     :param str key:
     :param any value:
-    :return:
+    :return: Length of new list
     """
     if key not in dictionary:
         dictionary[key] = [value]
@@ -171,6 +171,24 @@ def addToListInDict(dictionary, key, value):
         dictionary[key].append(value)
     return len(dictionary[key])
 
+def appendToDict(dictionary, value):
+    """
+    Puts value in the lowest free integer index and returns index.
+    Useful for returning an index that wont change, unlike a list.
+    Keys can be deleted using the returned index without affecting other values.
+
+    :param dict dictionary:
+    :param any value:
+    :return: Used index
+    """
+    index = 0
+    while True:
+        if index in dictionary:
+            index += 1
+        else:
+            break
+    dictionary[index] = value
+    return index
 
 def _getRows_getRow(iterableObj, key=None):
     """
