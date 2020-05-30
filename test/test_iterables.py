@@ -114,8 +114,6 @@ class IterablesTest(unittest.TestCase):
         appendToDict(d, "hello")
         self.assertEqual({0: 5, 1: "hello", 2: 3.2}, d)
 
-
-
     def test_getRows(self):
         self.assertEqual([[5]], getRows(5))
         self.assertEqual([[1, 2, 3]], getRows([1, 2, 3]))

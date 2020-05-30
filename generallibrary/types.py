@@ -5,12 +5,11 @@ def strToDynamicType(var):
     Try to convert a string to bool, None, int or float.
     If failed then it returns the given var.
 
-    :param str var: String object to be converted
+    :param any var: Object to be converted
     :return: Converted string or original string if failed
     :raises TypeError: If var is not a string
     """
-    if not isinstance(var, str):
-        raise TypeError(f"var {var} is not a string")
+    var = str(var)
 
     keyWords = {"true": True, "false": False, "none": None}
     if var.lower() in keyWords:
