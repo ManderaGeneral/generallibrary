@@ -10,10 +10,19 @@ import inspect
 
 import random
 
-def hello(self, x, *args, **kwargs):
-    """2 arg, 1 kwarg function"""
-    pass
-print(leadingArgsCount(hello))
+# HERE ** Make this work
+def wrapper(func):
+    def f(*args, **kwargs):
+        changeParameter(hello, kwargs, args, "x", 4)
+        return func(*args, **kwargs)
+    return f
 
+@wrapper
+def hello(x, y=5):
+
+    print(x, y)
+
+
+hello(2)
 
 

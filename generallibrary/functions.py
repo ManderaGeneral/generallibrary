@@ -16,12 +16,29 @@ def leadingArgsCount(func):
 
 def getSignatureNames(cls):
     """
-    Get a callable class' signature paramaeter keys as a tuple.
+    Get a callable class' or func's signature parameter keys as a tuple.
 
     :param type cls: Generic callable class
-    :rtype: tuple[str]
+    :rtype: list[str]
     """
-    return tuple(inspect.signature(cls).parameters.keys())
+    return list(inspect.signature(cls).parameters.keys())
+
+
+def changeParameter(func, kwargs, args, name, value):
+    parameters = getSignatureNames(func)
+    if "self" in parameters:
+        parameters.remove("self")
+
+    if name in parameters:
+        index = parameters.index(name)
+    else:
+        index = None
+    print(args, index)
+    if index is not None and len(args) > index:
+        args[index] = value
+    else:
+        kwargs[name] = value
+
 
 
 ignore = ["+", "-", "*", "/", "(", ")", "sqrt"]
