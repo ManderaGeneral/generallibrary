@@ -10,10 +10,8 @@ def leadingArgsCount(func):
     """
     count = 0
     for _, value in inspect.signature(func).parameters.items():
-        if value.default is inspect.Parameter.empty:
+        if value.default is inspect.Parameter.empty and value.kind.name == "POSITIONAL_OR_KEYWORD" and value.name != "self":
             count += 1
-        else:
-            break
     return count
 
 def getSignatureNames(cls):

@@ -8,7 +8,12 @@ import tkinter as tk
 
 import inspect
 
-
-import pandas as pd
 import random
+
+def hello(self, x, *args, **kwargs):
+    """2 arg, 1 kwarg function"""
+    pass
+print(leadingArgsCount(hello))
+
+
 

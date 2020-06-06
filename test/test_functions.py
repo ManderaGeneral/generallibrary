@@ -13,7 +13,17 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(0, leadingArgsCount(lambda x=3, y=2: 5))
 
         def hello(x, y, z=None):
-            """2 arg, 1 kwarg function"""
+            """2 args without default"""
+            pass
+        self.assertEqual(2, leadingArgsCount(hello))
+
+        def hello(self, x, y=5, *args, **kwargs):
+            """1 leading argument without a default value because self is ignored"""
+            pass
+        self.assertEqual(1, leadingArgsCount(hello))
+
+        def hello(x, y, *args):
+            """1 leading argument without a default value because self is ignored"""
             pass
         self.assertEqual(2, leadingArgsCount(hello))
 
