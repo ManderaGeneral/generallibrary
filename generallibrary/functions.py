@@ -24,20 +24,25 @@ def getSignatureNames(cls):
     return list(inspect.signature(cls).parameters.keys())
 
 
-def changeParameter(func, kwargs, args, name, value):
+def changeArgsAndKwargs(func, args, kwargs, **newParameters):
+    args = list(args)
+
     parameters = getSignatureNames(func)
     if "self" in parameters:
         parameters.remove("self")
 
-    if name in parameters:
-        index = parameters.index(name)
-    else:
-        index = None
-    print(args, index)
-    if index is not None and len(args) > index:
-        args[index] = value
-    else:
-        kwargs[name] = value
+    for name, value in newParameters.items():
+        if name in parameters:
+            index = parameters.index(name)
+        else:
+            index = None
+
+        if index is not None and len(args) > index:
+            args[index] = value
+        else:
+            kwargs[name] = value
+
+    return tuple(args), kwargs
 
 
 

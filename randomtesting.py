@@ -10,10 +10,9 @@ import inspect
 
 import random
 
-# HERE ** Make this work
 def wrapper(func):
     def f(*args, **kwargs):
-        changeParameter(hello, kwargs, args, "x", 4)
+        args, kwargs = changeArgsAndKwargs(func, args, kwargs, x=2)
         return func(*args, **kwargs)
     return f
 
@@ -22,7 +21,6 @@ def hello(x, y=5):
 
     print(x, y)
 
-
-hello(2)
+hello(x=3)
 
 

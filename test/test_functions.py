@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.functions import leadingArgsCount, getSignatureNames
+from generallibrary.functions import leadingArgsCount, getSignatureNames, changeArgsAndKwargs
 
 
 class FunctionsTest(unittest.TestCase):
@@ -38,3 +38,57 @@ class FunctionsTest(unittest.TestCase):
             """2 arg, 1 kwarg function"""
             pass
         self.assertEqual(("x", "y", "z", "argz", "kwargz"), getSignatureNames(hello))
+
+    def test_changeArgsAndKwargs(self):
+        def wrapper(func):
+            def f(*args, **kwargs):
+                args, kwargs = changeArgsAndKwargs(func, args, kwargs, x=2)
+                return func(*args, **kwargs)
+            return f
+
+        @wrapper
+        def hello(x, y=5):
+            return x * y
+
+        self.assertEqual(10, hello(5))
+        self.assertEqual(10, hello(x=5))
+        self.assertEqual(4, hello(5, 2))
+        self.assertEqual(4, hello(x=5, y=2))
+        self.assertEqual(4, hello(5, y=2))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
