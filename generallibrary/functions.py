@@ -25,6 +25,15 @@ def getSignatureNames(cls):
 
 
 def changeArgsAndKwargs(func, args, kwargs, **newParameters):
+    """
+    Return changed args and kwargs, if new parameter exists in args then it's changed there first, otherwise kwargs is changed
+
+    :param func: Function object to get signature names
+    :param args: Packed args
+    :param kwargs: Packed kwargs
+    :param newParameters: New parameters
+    :rtype: tuple[tuple, dict]
+    """
     args = list(args)
 
     parameters = getSignatureNames(func)
