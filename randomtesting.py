@@ -12,7 +12,8 @@ import random
 
 def wrapper(func):
     def f(*args, **kwargs):
-        args, kwargs = changeArgsAndKwargs(func, args, kwargs, x=2)
+        # args, kwargs = changeArgsAndKwargs(func, args, kwargs, x=2)
+        print(getParameter(func, args, kwargs, "x"))
         return func(*args, **kwargs)
     return f
 
@@ -21,6 +22,6 @@ def hello(x, y=5):
 
     print(x, y)
 
-hello(x=3)
+hello(2)
 
 

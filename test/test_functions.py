@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.functions import leadingArgsCount, getSignatureNames, changeArgsAndKwargs
+from generallibrary.functions import leadingArgsCount, getSignatureNames, changeArgsAndKwargs, getParameter
 
 
 class FunctionsTest(unittest.TestCase):
@@ -56,6 +56,22 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(4, hello(x=5, y=2))
         self.assertEqual(4, hello(5, y=2))
 
+    def test_getParameter(self):
+        def wrapper(func):
+            def f(*args, **kwargs):
+                self.assertEqual(2, getParameter(func, args, kwargs, "x"))
+                return func(*args, **kwargs)
+            return f
+
+        @wrapper
+        def hello(x, y=5):
+            return x * y
+
+        hello(2)
+        hello(x=2)
+        hello(2, 3)
+        hello(2, y=3)
+        hello(x=2, y=3)
 
 
 
