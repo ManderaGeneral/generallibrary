@@ -28,16 +28,16 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(2, leadingArgsCount(hello))
 
     def test_getSignatureNames(self):
-        self.assertEqual(tuple(), getSignatureNames(lambda: 5))
-        self.assertEqual(("x", ), getSignatureNames(lambda x: 5))
-        self.assertEqual(("x", "y"), getSignatureNames(lambda x, y: 5))
-        self.assertEqual(("x", "y"), getSignatureNames(lambda x, y=2: 5))
-        self.assertEqual(("x", "y"), getSignatureNames(lambda x=3, y=2: 5))
+        self.assertEqual([], getSignatureNames(lambda: 5))
+        self.assertEqual(["x"], getSignatureNames(lambda x: 5))
+        self.assertEqual(["x", "y"], getSignatureNames(lambda x, y: 5))
+        self.assertEqual(["x", "y"], getSignatureNames(lambda x, y=2: 5))
+        self.assertEqual(["x", "y"], getSignatureNames(lambda x=3, y=2: 5))
 
         def hello(x, y, z=None, *argz, **kwargz):
             """2 arg, 1 kwarg function"""
             pass
-        self.assertEqual(("x", "y", "z", "argz", "kwargz"), getSignatureNames(hello))
+        self.assertEqual(["x", "y", "z", "argz", "kwargz"], getSignatureNames(hello))
 
     def test_changeArgsAndKwargs(self):
         def wrapper(func):
