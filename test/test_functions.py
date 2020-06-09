@@ -59,14 +59,22 @@ class FunctionsTest(unittest.TestCase):
     def test_getParameter(self):
         def wrapper(func):
             def f(*args, **kwargs):
-                self.assertEqual(2, getParameter(func, args, kwargs, "x"))
+                self.assertEqual(None, getParameter(func, args, kwargs, "z"))
                 return func(*args, **kwargs)
             return f
-
         @wrapper
         def hello(x, y=5):
             return x * y
+        hello(2)
 
+        def wrapper(func):
+            def f(*args, **kwargs):
+                self.assertEqual(2, getParameter(func, args, kwargs, "x"))
+                return func(*args, **kwargs)
+            return f
+        @wrapper
+        def hello(x, y=5):
+            return x * y
         hello(2)
         hello(x=2)
         hello(2, 3)

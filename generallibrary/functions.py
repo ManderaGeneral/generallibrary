@@ -36,6 +36,8 @@ def getParameter(func, args, kwargs, name):
     if index is not None and len(args) > index:
         return args[index]
     else:
+        if name not in kwargs:
+            return None
         return kwargs[name]
 
 
