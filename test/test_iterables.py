@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict
+from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, getFreeIndex
 
 
 class IterablesTest(unittest.TestCase):
@@ -96,6 +96,27 @@ class IterablesTest(unittest.TestCase):
 
         addToListInDict(d, "hello", "hi")
         self.assertEqual(d, {"test": [5, 3, None], "hello": ["hi"]})
+
+    def test_getFreeIndex(self):
+        d = {}
+        self.assertEqual(0, getFreeIndex(d))
+
+        d = {1: True}
+        self.assertEqual(0, getFreeIndex(d))
+
+        d[0] = True
+        self.assertEqual(2, getFreeIndex(d))
+
+        d[0.2] = True
+        self.assertEqual(2, getFreeIndex(d))
+
+        d[2.2] = True
+        self.assertEqual(2, getFreeIndex(d))
+
+        d["2"] = True
+        d[2] = True
+        self.assertEqual(2, getFreeIndex(d))
+
 
     def test_appendToDict(self):
         d = {}

@@ -171,6 +171,19 @@ def addToListInDict(dictionary, key, value):
         dictionary[key].append(value)
     return len(dictionary[key])
 
+def getFreeIndex(dictionary):
+    """
+    Get the first free integer index of dictionary starting at 0
+
+    :param dict dictionary:
+    """
+    index = 0
+    while True:
+        if index in dictionary:
+            index += 1
+        else:
+            return index
+
 def appendToDict(dictionary, value):
     """
     Puts value in the lowest free integer index and returns index.
@@ -181,12 +194,7 @@ def appendToDict(dictionary, value):
     :param any value:
     :return: Used index
     """
-    index = 0
-    while True:
-        if index in dictionary:
-            index += 1
-        else:
-            break
+    index = getFreeIndex(dictionary)
     dictionary[index] = value
     return index
 
