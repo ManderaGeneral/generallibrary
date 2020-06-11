@@ -114,7 +114,6 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual(2, getFreeIndex(d))
 
         d["2"] = True
-        d[2] = True
         self.assertEqual(2, getFreeIndex(d))
 
 
