@@ -24,6 +24,14 @@ def getSignatureNames(cls):
     return list(inspect.signature(cls).parameters.keys())
 
 def getParameter(func, args, kwargs, name):
+    """
+    Get value of a parameter if it exists, otherwise None
+
+    :param function func: Function to get signature
+    :param list or tuple args:
+    :param dict kwargs:
+    :param str name: Name of parameter
+    """
     parameters = getSignatureNames(func)
     if "self" in parameters:
         parameters.remove("self")
