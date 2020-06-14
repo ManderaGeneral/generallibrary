@@ -18,6 +18,9 @@ def confineTo(value, minimum, maximum):
     if maximum < minimum:
         raise ValueError(f"{maximum} is smaller than {minimum}")
 
+    if maximum == minimum:
+        return maximum
+
     diff = maximum - minimum
     if value < minimum:
         value += ceil((minimum - value) / diff) * diff

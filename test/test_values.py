@@ -21,3 +21,5 @@ class ValuesTest(unittest.TestCase):
         self.assertEqual(8.2, confineTo(-5, -3, 10.2))
         self.assertEqual(-1.4, confineTo(-1.4, -3, 10.2))
 
+        self.assertEqual(3, confineTo(-1.4, 3, 3))
+
