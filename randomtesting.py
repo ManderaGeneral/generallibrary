@@ -10,18 +10,12 @@ import inspect
 
 import random
 
-def wrapper(func):
-    def f(*args, **kwargs):
-        # args, kwargs = changeArgsAndKwargs(func, args, kwargs, x=2)
-        print(getParameter(func, args, kwargs, "x"))
-        return func(*args, **kwargs)
-    return f
+class Class:
+    def __init__(self):
+        self.test = 1
 
-@wrapper
-def hello(x, y=5):
+    @property
+    def test(self):
+        return self._test
 
-    print(x, y)
-
-hello(2)
-
-
+print(Class.test())
