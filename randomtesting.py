@@ -10,12 +10,3 @@ import inspect
 
 import random
 
-class Class:
-    def __init__(self):
-        self.test = 1
-
-    @property
-    def test(self):
-        return self._test
-
-print(Class.test())
