@@ -11,6 +11,8 @@ setup(
     name="generallibrary",
     long_description=long_description,
     long_description_content_type='text/markdown',
+    author='Rickard "Mandera" Abraham',
+    url="https://github.com/Mandera/generallibrary",
     version="1.8.1",
     description=(
         "Added SortedList."
