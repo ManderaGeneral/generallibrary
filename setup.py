@@ -13,7 +13,7 @@ setup(
     long_description_content_type='text/markdown',
     author='Rickard "Mandera" Abraham',
     url="https://github.com/Mandera/generallibrary",
-    version="1.8.1",
+    version="1.8.2",
     description=(
         "Added SortedList."
         " Random functions to help with native classes."
@@ -28,5 +28,3 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ]
 )
-
-
