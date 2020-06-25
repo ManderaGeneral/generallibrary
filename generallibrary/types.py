@@ -75,7 +75,7 @@ def _typeChecker_checkObject(obj, types, literalObjects):
 def _typeChecker_prepareTypesList(types, literalObjects):
     newTypes = []
     for argType in types:
-        if isinstance(argType, (list, tuple)):
+        if isinstance(argType, (list, tuple, set)):
             newArgType = list(argType)
         else:
             isType = isinstance(argType, type)
@@ -84,7 +84,7 @@ def _typeChecker_prepareTypesList(types, literalObjects):
             if isType or isLiteralObject or isNameOfClass:
                 newArgType = [argType]
             else:
-                raise TypeError(f"Argument type {argType} is not a list, tuple, type or literalObject")
+                raise TypeError(f"Argument type {argType} is not a list, tuple, set, type or literalObject")
 
 
         newArgTypeWithOnlyStrings = tuple([t.lower() for t in newArgType if isinstance(t, str)])

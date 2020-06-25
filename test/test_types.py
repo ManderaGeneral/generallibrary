@@ -3,12 +3,10 @@ import unittest
 
 from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames
 
-import pandas as pd
 
 
 class InheritStr(str):
     pass
-
 
 class TypesTest(unittest.TestCase):
     def test_strToDynamicType(self):
@@ -97,13 +95,13 @@ class TypesTest(unittest.TestCase):
         self.assertTrue(typeChecker({"hello": [5, "hi"]}, dict, "list", int))
         self.assertTrue(typeChecker({"hello": [5, "hi"]}, "dict", list, int))
 
-        self.assertTrue(typeChecker(pd.DataFrame(), "dataframe"))
-        self.assertFalse(typeChecker(pd.DataFrame(), "dataframes", error=False))
-        self.assertTrue(typeChecker(pd.DataFrame(), pd.DataFrame))
+        self.assertTrue(typeChecker(InheritStr(), "InheritStr"))
+        self.assertFalse(typeChecker(InheritStr(), "InheritStrs", error=False))
+        self.assertTrue(typeChecker(InheritStr(), InheritStr))
 
-        self.assertTrue(typeChecker(pd.DataFrame(), [None, pd.DataFrame]))
-        self.assertTrue(typeChecker(pd.DataFrame(), [None, "dataframe"]))
-        self.assertTrue(typeChecker(pd.DataFrame(), [int, None, pd.DataFrame]))
+        self.assertTrue(typeChecker(InheritStr(), [None, InheritStr]))
+        self.assertTrue(typeChecker(InheritStr(), [None, "InheritStr"]))
+        self.assertTrue(typeChecker(InheritStr(), [int, None, InheritStr]))
 
         self.assertTrue(typeChecker(InheritStr(), str))
         self.assertTrue(typeChecker(InheritStr(), "str"))

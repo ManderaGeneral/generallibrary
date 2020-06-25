@@ -19,7 +19,7 @@ setup(
         " Random functions to help with native classes."
     ),
     packages=find_packages(),
-    install_requires=['wheel'],
+    install_requires=["wheel"],
     classifiers=[
         "Operating System :: Microsoft :: Windows :: Windows 7",
         "Programming Language :: Python :: 3.8",
