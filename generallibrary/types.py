@@ -45,7 +45,7 @@ def _typeChecker_checkObject(obj, types, literalObjects):
 
         if objInLiteralObjects:
             if obj not in typeTuple:
-                raise TypeError(f"obj {obj} was a literal object but not in literalObjects list {literalObjects} in depth {i}/{typesDepth}")
+                raise TypeError(f"obj {obj} was a literal object in {literalObjects} but not in {typeTuple} in depth {i}/{typesDepth}")
         else:
             typeTupleWithoutLiteralObjects = tuple([t for t in typeTuple if t not in literalObjects])
             typeTupleWithOnlyTypes = tuple([t for t in typeTupleWithoutLiteralObjects if not isinstance(t, str)])

@@ -13,10 +13,9 @@ setup(
     long_description_content_type='text/markdown',
     author='Rickard "Mandera" Abraham',
     url="https://github.com/Mandera/generallibrary",
-    version="1.8.2",
+    version="1.8.4",
     description=(
-        "Added SortedList."
-        " Random functions to help with native classes."
+        "Random useful code made by me, categorized into modules to be imported seperately."
     ),
     packages=find_packages(),
     install_requires=["wheel"],
