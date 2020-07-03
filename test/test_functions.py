@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.functions import leadingArgsCount, getSignatureNames, changeArgsAndKwargs, getParameter
+from generallibrary.functions import leadingArgsCount, getSignatureNames, getSignatureDefaults, changeArgsAndKwargs, getParameter
 
 
 class FunctionsTest(unittest.TestCase):
@@ -39,6 +39,14 @@ class FunctionsTest(unittest.TestCase):
             pass
         self.assertEqual(["x", "y", "z", "argz", "kwargz"], getSignatureNames(hello))
 
+    def test_getSignatureDefaults(self):
+        self.assertEqual({"y": 5}, getSignatureDefaults(lambda x, y=5: None))
+        self.assertEqual({"x": False, "y": 3.2}, getSignatureDefaults(lambda x=False, y=3.2: None))
+        self.assertEqual({"x": False}, getSignatureDefaults(lambda x=False, *y: None))
+        self.assertEqual({"y": None}, getSignatureDefaults(lambda x, y=None, *z: None))
+        self.assertEqual({"y": None}, getSignatureDefaults(lambda x, y=None, **z: None))
+        self.assertEqual({"y": "test"}, getSignatureDefaults(lambda x, y="test", *args, **z: None))
+
     def test_changeArgsAndKwargs(self):
         def wrapper(func):
             def f(*args, **kwargs):
@@ -59,6 +67,8 @@ class FunctionsTest(unittest.TestCase):
     def test_getParameter(self):
         def wrapper(func):
             def f(*args, **kwargs):
+                self.assertEqual(2, getParameter(func, args, kwargs, "x"))
+                self.assertEqual(5, getParameter(func, args, kwargs, "y"))
                 self.assertEqual(None, getParameter(func, args, kwargs, "z"))
                 return func(*args, **kwargs)
             return f
@@ -66,20 +76,10 @@ class FunctionsTest(unittest.TestCase):
         def hello(x, y=5):
             return x * y
         hello(2)
-
-        def wrapper(func):
-            def f(*args, **kwargs):
-                self.assertEqual(2, getParameter(func, args, kwargs, "x"))
-                return func(*args, **kwargs)
-            return f
-        @wrapper
-        def hello(x, y=5):
-            return x * y
-        hello(2)
         hello(x=2)
-        hello(2, 3)
-        hello(2, y=3)
-        hello(x=2, y=3)
+        hello(2, 5)
+        hello(2, y=5)
+        hello(x=2, y=5)
 
 
 

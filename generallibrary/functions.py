@@ -2,26 +2,41 @@
 import inspect
 import re
 
-def leadingArgsCount(func):
+def leadingArgsCount(funcOrClass):
     """
     Get number of leading args without a default value.
 
-    :param function func: Generic function
+    :param function funcOrClass: Generic callable
     """
     count = 0
-    for _, value in inspect.signature(func).parameters.items():
-        if value.default is inspect.Parameter.empty and value.kind.name == "POSITIONAL_OR_KEYWORD" and value.name != "self":
+    for param in inspect.signature(funcOrClass).parameters.values():
+        if param.default is inspect.Parameter.empty and param.kind.name == "POSITIONAL_OR_KEYWORD" and param.name != "self":
             count += 1
     return count
 
-def getSignatureNames(cls):
+def getSignatureNames(funcOrClass):
     """
     Get a callable class' or func's signature parameter keys as a tuple.
 
-    :param type cls: Generic callable class
+    :param function funcOrClass: Generic callable
     :rtype: list[str]
     """
-    return list(inspect.signature(cls).parameters.keys())
+    return list(inspect.signature(funcOrClass).parameters.keys())
+
+def getSignatureDefaults(funcOrClass):
+    """
+    Get a dict of each key that has a default value assigned
+
+    :param function funcOrClass: Generic callable
+    :return:
+    """
+    defaults = {}
+    for param in inspect.signature(funcOrClass).parameters.values():
+        if param.default is not param.empty:
+            defaults[param.name] = param.default
+    return defaults
+
+
 
 def getParameter(func, args, kwargs, name):
     """
@@ -42,11 +57,20 @@ def getParameter(func, args, kwargs, name):
         index = None
 
     if index is not None and len(args) > index:
+        # Args
         return args[index]
     else:
-        if name not in kwargs:
-            return None
-        return kwargs[name]
+        # Kwargs
+        if name in kwargs:
+            return kwargs[name]
+
+        # Default
+        if name in (defaults := getSignatureDefaults(func)):
+            return defaults[name]
+
+        # Doesn't exist at all
+        return None
+
 
 
 def changeArgsAndKwargs(func, args, kwargs, **newParameters):
