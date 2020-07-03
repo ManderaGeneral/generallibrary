@@ -28,7 +28,7 @@ def getSignatureDefaults(funcOrClass):
     Get a dict of each key that has a default value assigned
 
     :param function funcOrClass: Generic callable
-    :return:
+    :rtype: dict[str, any]
     """
     defaults = {}
     for param in inspect.signature(funcOrClass).parameters.values():
