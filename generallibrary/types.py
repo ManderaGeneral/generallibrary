@@ -157,4 +157,14 @@ def getBaseClassNames(obj, includeSelf=False):
     """
     return [cls.__name__.lower() for cls in getBaseClasses(obj, includeSelf)]
 
+def hasMethod(obj, method):
+    """
+    Return whether an obj has a method by checking if attr exists and that it is callable.
+
+    :param object obj: Any object
+    :param str method: String of method to check
+    """
+    return (attr := getattr(obj, method, False)) and callable(attr)
+
+
 from generallibrary.iterables import depth, iterFirstValue, isIterable

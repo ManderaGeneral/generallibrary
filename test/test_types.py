@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames
+from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames, hasMethod
 
 
 
@@ -126,7 +126,15 @@ class TypesTest(unittest.TestCase):
         self.assertEqual([int, object], getBaseClasses(5, includeSelf=True))
         self.assertEqual(["int", "object"], getBaseClassNames(5, includeSelf=True))
 
+    def test_hasMethod(self):
+        self.assertEqual(True, hasMethod([], "append"))
+        self.assertEqual(False, hasMethod([], "appends"))
 
+        self.assertEqual(True, hasMethod("hello", "lower"))
+        self.assertEqual(False, hasMethod("hello", "lowers"))
+
+        self.assertEqual(True, hasMethod("hello", "__contains__"))
+        self.assertEqual(False, hasMethod("hello", "__module__"))
 
 
 

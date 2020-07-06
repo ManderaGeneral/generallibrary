@@ -112,6 +112,7 @@ def _tokenize(expression):
     Taken from https://stackoverflow.com/questions/61948141/python-function-from-mathematical-expression-string/61949248
     """
     return re.findall(r"(\b\w*[\.]?\w+\b|[\(\)\+\*\-\/])", expression)
+
 def calculate(expression, *args):
     """
     Calculate function which can take any expression. Enter args in the order that they appear.
