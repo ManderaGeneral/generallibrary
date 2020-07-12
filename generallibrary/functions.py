@@ -18,10 +18,14 @@ def getSignatureNames(funcOrClass):
     """
     Get a callable class' or func's signature parameter keys as a tuple.
 
-    :param function funcOrClass: Generic callable
+    :param any funcOrClass: Generic callable
     :rtype: list[str]
     """
-    return list(inspect.signature(funcOrClass).parameters.keys())
+    if callable(funcOrClass):
+        try:
+            return list(inspect.signature(funcOrClass).parameters.keys())
+        except ValueError:
+            return None
 
 def getSignatureDefaults(funcOrClass):
     """

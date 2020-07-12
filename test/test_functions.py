@@ -28,6 +28,8 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(2, leadingArgsCount(hello))
 
     def test_getSignatureNames(self):
+        self.assertEqual(None, getSignatureNames(5))
+        self.assertEqual(None, getSignatureNames((5,).__init_subclass__))
         self.assertEqual([], getSignatureNames(lambda: 5))
         self.assertEqual(["x"], getSignatureNames(lambda x: 5))
         self.assertEqual(["x", "y"], getSignatureNames(lambda x, y: 5))
