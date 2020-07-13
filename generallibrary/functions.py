@@ -34,13 +34,18 @@ def getSignatureDefaults(funcOrClass):
     :param function funcOrClass: Generic callable
     :rtype: dict[str, any]
     """
-    defaults = {}
-    for param in inspect.signature(funcOrClass).parameters.values():
-        if param.default is not param.empty:
-            defaults[param.name] = param.default
-    return defaults
+    if callable(funcOrClass):
+        defaults = {}
 
+        try:
+            params = inspect.signature(funcOrClass).parameters.values()
+        except ValueError:
+            return None
 
+        for param in params:
+            if param.default is not param.empty:
+                defaults[param.name] = param.default
+        return defaults
 
 def getParameter(func, args, kwargs, name):
     """
@@ -74,8 +79,6 @@ def getParameter(func, args, kwargs, name):
 
         # Doesn't exist at all
         return None
-
-
 
 def changeArgsAndKwargs(func, args, kwargs, **newParameters):
     """
