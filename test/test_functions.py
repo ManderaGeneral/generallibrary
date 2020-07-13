@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.functions import leadingArgsCount, getSignatureNames, getSignatureDefaults, changeArgsAndKwargs, getParameter
+from generallibrary.functions import leadingArgsCount, getSignatureNames, getSignatureDefaults, changeArgsAndKwargs, getParameter, defaults
 
 
 class FunctionsTest(unittest.TestCase):
@@ -83,6 +83,12 @@ class FunctionsTest(unittest.TestCase):
         hello(2, y=5)
         hello(x=2, y=5)
 
+    def test_defaults(self):
+        self.assertEqual({"a": 5, "b": 3}, defaults({"a": 5}, b=3))
+        self.assertEqual({"a": 5, "b": 3}, defaults({"a": 5, "b": 3}, b=4))
+        self.assertEqual({"a": 5, "b": 3}, defaults({"a": 5, "b": 3}, a=4))
+        self.assertEqual({"a": 5, "b": 3}, defaults({"a": 5, "b": 3}, a=4, b=5))
+        self.assertEqual({"a": 5, "b": 3}, defaults({}, a=5, b=3))
 
 
 

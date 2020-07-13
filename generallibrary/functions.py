@@ -142,3 +142,51 @@ def calculate(expression, *args):
                 seenArgs[token] = str(args[len(seenArgs)])
             newTokens.append(seenArgs[token])
     return eval("".join(newTokens))
+
+def defaults(dictionary, **kwargs):
+    """
+    Like a reversed dict.update().
+    Returns given dictionary with values updated by kwargs unless they already existed.
+
+    :param dict dictionary:
+    :param kwargs:
+    """
+    kwargs.update(dictionary)
+    return kwargs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
