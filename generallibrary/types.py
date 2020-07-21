@@ -139,7 +139,9 @@ def getBaseClasses(obj, includeSelf=False):
 
     classes = list(cls.__bases__)
     for base in classes:
-        classes.extend(getBaseClasses(base))
+        for baseClassBase in getBaseClasses(base):
+            if baseClassBase not in classes:
+                classes.append(baseClassBase)
 
     if includeSelf:
         classes.insert(0, cls)
