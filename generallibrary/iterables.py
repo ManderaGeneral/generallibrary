@@ -248,6 +248,24 @@ def getRows(obj):
         rows.append([obj])
     return rows
 
+def exclusive(dictionary, *keys):
+    """
+    Returns a new dictionary without keys.
+
+    :param dict dictionary:
+    :param keys: Keys to be exluded.
+    """
+    return {key: value for key, value in dictionary.items() if key not in keys}
+
+def inclusive(dictionary, *keys):
+    """
+    Returns a new dictionary without keys not in keys.
+
+    :param dict dictionary:
+    :param keys: Keys to include
+    """
+    return {key: value for key, value in dictionary.items() if key in keys}
+
 from generallibrary.types import typeChecker
 
 

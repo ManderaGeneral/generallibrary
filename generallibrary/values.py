@@ -119,6 +119,9 @@ def debug(scope, *evals, printOut=False):
     Easily call eval() on an arbitrary amount of evaluation strings.
     Useful for debugging.
 
+    Example:
+        debug(locals(), "value", "value + jumpValue", printOut=True)
+
     :param dict scope: Just write locals()
     :param str evals: Variable names with or without operations
     :param printOut: Whether to print directly or not

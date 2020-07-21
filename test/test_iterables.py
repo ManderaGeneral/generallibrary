@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, getFreeIndex
+from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, getFreeIndex, exclusive, inclusive
 
 
 class IterablesTest(unittest.TestCase):
@@ -180,6 +180,15 @@ class IterablesTest(unittest.TestCase):
         sortedList.add("aa")
         self.assertEqual(["a", "aa", "aa", "aaa"], sortedList.objects)
 
+    def test_lusive(self):
+        d = {"a": 5, "b": 3, "c": 4}
+        self.assertEqual({'a': 5, 'c': 4}, exclusive(d, "b"))
+        self.assertEqual({'c': 4}, exclusive(d, "a", "b"))
+        self.assertEqual({}, exclusive(d, "a", "b", "c"))
+
+        self.assertEqual({'b': 3}, inclusive(d, "b"))
+        self.assertEqual({'a': 5, 'b': 3}, inclusive(d, "a", "b"))
+        self.assertEqual({"a": 5, "b": 3, "c": 4}, inclusive(d, "a", "b", "c"))
 
 
 
