@@ -20,6 +20,9 @@ class SortedList:
         self._values = []
         self.add(*objects)
 
+    def __repr__(self):
+        return f"<SortedList: {self.objects}>"
+
     def __contains__(self, item):
         return item in self.objects
 
