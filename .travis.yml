@@ -55,16 +55,9 @@ jobs:
       dist: bionic
       before_install: python --version
 
-    - name: "Python 3.7.x on MacOS 11.6"
+    - name: "Python 3.7.7 on MacOS 11.6"
       os: osx
       osx_image: xcode11.6
-      language: shell
-      before_install: python3 --version
-      script: python3 -m unittest discover
-
-    - name: "Python 3.7.x on MacOS 12"
-      os: osx
-      osx_image: xcode12
       language: shell
       before_install: python3 --version
       script: python3 -m unittest discover
