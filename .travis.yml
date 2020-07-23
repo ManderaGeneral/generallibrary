@@ -58,20 +58,16 @@ jobs:
     - name: "Python 3.7.x on MacOS 11.6"
       os: osx
       osx_image: xcode11.6
-      python: 3.7
       language: shell
-      before_install: /usr/local/opt/python@3.7/bin/python3 --version
-      install: /usr/local/opt/python@3.7/bin/python3 -m pip install generallibrary
-      script: /usr/local/opt/python@3.7/bin/python3 -m unittest discover
+      before_install: python3 --version
+      script: python3 -m unittest discover
 
     - name: "Python 3.7.x on MacOS 12"
       os: osx
       osx_image: xcode12
-      python: 3.7
       language: shell
-      before_install: /usr/local/opt/python@3.7/bin/python3 --version
-      install: /usr/local/opt/python@3.7/bin/python3 -m pip install generallibrary
-      script: /usr/local/opt/python@3.7/bin/python3 -m unittest discover
+      before_install: python3 --version
+      script: python3 -m unittest discover
 
     - name: "Python 3.7.0 on Windows 10.0.17763"
       os: windows
