@@ -1,0 +1,45 @@
+language: python
+install: pip3 install generallibrary
+script: python -m unittest discover
+
+jobs:
+  include:
+
+    - name: "Python 3.8.0 on Linux Xenial"
+      python: 3.8.0
+      os: linux
+      dist: xenial
+      before_install: python --version
+
+    - name: "Python 3.8.0 on Linux Bionic"
+      python: 3.8.0
+      os: linux
+      dist: bionic
+      before_install: python --version
+
+    - name: "Python 3.8.3 on MacOS 11.6"
+      os: osx
+      osx_image: xcode11.6
+      language: shell
+      before_install: /usr/local/opt/python@3.8/bin/python3 --version
+      install: /usr/local/opt/python@3.8/bin/python3 -m pip install generallibrary
+      script: /usr/local/opt/python@3.8/bin/python3 -m unittest discover
+
+    - name: "Python 3.8.3 on MacOS 12"
+      os: osx
+      osx_image: xcode12
+      language: shell
+      before_install: /usr/local/opt/python@3.8/bin/python3 --version
+      install: /usr/local/opt/python@3.8/bin/python3 -m pip install generallibrary
+      script: /usr/local/opt/python@3.8/bin/python3 -m unittest discover
+
+    - name: "Python 3.8.0 on Windows 10.0.17763"
+      os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.8.0
+        - python --version
+      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
+
+
+

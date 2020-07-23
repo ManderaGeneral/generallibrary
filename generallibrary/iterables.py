@@ -153,10 +153,11 @@ def joinWithStr(delimeter, obj):
     :raises TypeError: If obj is not iterable
     :return: A string containing values of obj with delimeter between each
     """
-    if (obj := getIterable(obj)) is False:
-        raise TypeError("obj is not iterable")
+    iterable = getIterable(obj)
+    if iterable is False:
+        raise TypeError(f"{obj} is not iterable")
 
-    return delimeter.join([str(value) for value in obj])
+    return delimeter.join([str(value) for value in iterable])
 
 def addToListInDict(dictionary, key, value):
     """

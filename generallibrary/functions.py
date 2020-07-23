@@ -74,7 +74,8 @@ def getParameter(func, args, kwargs, name):
             return kwargs[name]
 
         # Default
-        if name in (defaults := getSignatureDefaults(func)):
+        defaults = getSignatureDefaults(func)
+        if name in defaults:
             return defaults[name]
 
         # Doesn't exist at all

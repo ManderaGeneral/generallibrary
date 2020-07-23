@@ -166,7 +166,8 @@ def hasMethod(obj, method):
     :param object obj: Any object
     :param str method: String of method to check
     """
-    return (attr := getattr(obj, method, False)) and callable(attr)
+    attr = getattr(obj, method, False)
+    return attr and callable(attr)
 
 
 from generallibrary.iterables import depth, iterFirstValue, isIterable
