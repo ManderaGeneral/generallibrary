@@ -43,4 +43,42 @@ jobs:
 
 
 
+    - name: "Python 3.7.0 on Linux Xenial"
+      python: 3.7.0
+      os: linux
+      dist: xenial
+      before_install: python --version
+
+    - name: "Python 3.7.0 on Linux Bionic"
+      python: 3.7.0
+      os: linux
+      dist: bionic
+      before_install: python --version
+
+    - name: "Python 3.7.x on MacOS 11.6"
+      os: osx
+      osx_image: xcode11.6
+      language: shell
+      before_install: /usr/local/opt/python@3.7/bin/python3 --version
+      install: /usr/local/opt/python@3.7/bin/python3 -m pip install generallibrary
+      script: /usr/local/opt/python@3.7/bin/python3 -m unittest discover
+
+    - name: "Python 3.7.x on MacOS 12"
+      os: osx
+      osx_image: xcode12
+      language: shell
+      before_install: /usr/local/opt/python@3.7/bin/python3 --version
+      install: /usr/local/opt/python@3.7/bin/python3 -m pip install generallibrary
+      script: /usr/local/opt/python@3.7/bin/python3 -m unittest discover
+
+    - name: "Python 3.7.0 on Windows 10.0.17763"
+      os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.7.0
+        - python --version
+      env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+
+
+
 
