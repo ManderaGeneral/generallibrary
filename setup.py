@@ -13,7 +13,7 @@ setup(
     long_description_content_type='text/markdown',
     author='Rickard "Mandera" Abraham',
     url="https://github.com/Mandera/generallibrary",
-    version="1.8.6",
+    version="1.9.0",
     description=(
         "Random useful code made by me, categorized into modules to be imported seperately."
     ),
@@ -21,9 +21,14 @@ setup(
     install_requires=["wheel"],
     classifiers=[
         "Operating System :: Microsoft :: Windows :: Windows 7",
+        "Operating System :: Microsoft :: Windows :: Windows 10",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: MacOS",
+        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: MIT License",
+
         "Topic :: Software Development :: Libraries :: Python Modules",
     ]
 )
