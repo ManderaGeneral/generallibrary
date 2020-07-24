@@ -270,6 +270,26 @@ def inclusive(dictionary, *keys):
     """
     return {key: value for key, value in dictionary.items() if key in keys}
 
+def uniqueObjInList(l, obj, active):
+    """
+    Adds obj to list if active and obj isn't in list.
+    Removes obj from list if not active and obj in list.
+    Changes list directly because of mutable.
+
+    :param list l:
+    :param any obj:
+    :param bool active:
+    """
+    if active:
+        if obj not in l:
+            l.append(obj)
+    else:
+        if obj in l:
+            l.remove(obj)
+
+
+
+
 from generallibrary.types import typeChecker
 
 

@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, getFreeIndex, exclusive, inclusive
+from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, getFreeIndex, exclusive, inclusive, uniqueObjInList
 
 
 class IterablesTest(unittest.TestCase):
@@ -190,6 +190,34 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual({'a': 5, 'b': 3}, inclusive(d, "a", "b"))
         self.assertEqual({"a": 5, "b": 3, "c": 4}, inclusive(d, "a", "b", "c"))
 
+    def test_uniqueObjInList(self):
+        l = [5]
+        self.assertEqual([5], l)
+
+        uniqueObjInList(l, 5, True)
+        self.assertEqual([5], l)
+
+        uniqueObjInList(l, 5, False)
+        self.assertEqual([], l)
+
+        d = {"foo": "bar"}
+        uniqueObjInList(l, d, False)
+        self.assertEqual([], l)
+
+        uniqueObjInList(l, d, True)
+        self.assertEqual([d], l)
+
+        uniqueObjInList(l, d, True)
+        self.assertEqual([d], l)
+
+        uniqueObjInList(l, 4, True)
+        self.assertEqual([d, 4], l)
+
+        uniqueObjInList(l, d, False)
+        self.assertEqual([4], l)
+
+        uniqueObjInList(l, 4, False)
+        self.assertEqual([], l)
 
 
 
