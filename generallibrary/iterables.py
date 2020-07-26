@@ -114,7 +114,7 @@ def depth(obj):
 
 def dictFirstValue(dictionary):
     """
-    Get first 'random' value of a dictionary.
+    Get first 'random' value of a dictionary or None.
 
     :param dict dictionary: Generic dictionary
     :raises TypeError: If not dictionary
@@ -124,6 +124,7 @@ def dictFirstValue(dictionary):
 
     if not dictionary:
         return None
+
     return dictionary[list(dictionary.keys())[0]]
 
 def iterFirstValue(obj):
@@ -289,6 +290,21 @@ def uniqueObjInList(l, obj, active):
 
 
 
+def combine(**kwargs):
+    """
+    Create a list of dicts containing every unique combination.
+
+    :param any kwargs: Dict with string keys and any value.
+    """
+    execLines = []
+    for i, (key, value) in enumerate(kwargs.items()):
+        execLines.append(f"{' ' * i * 4}for {key} in (kwargs['{key}'] if isIterable(kwargs['{key}']) else [kwargs['{key}']]):")
+    lines = [f"'{key}': {key}" for key in list(kwargs.keys())]
+    execLines.append(f"{' ' * len(kwargs) * 4}combinations.append({{{', '.join(lines)}}})")
+
+    combinations = []
+    exec("\n".join(execLines))
+    return [] if combinations == [{}] else combinations
 
 from generallibrary.types import typeChecker
 

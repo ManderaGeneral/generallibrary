@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, getFreeIndex, exclusive, inclusive, uniqueObjInList
+from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, getFreeIndex, exclusive, inclusive, uniqueObjInList, combine
 
 
 class IterablesTest(unittest.TestCase):
@@ -219,8 +219,13 @@ class IterablesTest(unittest.TestCase):
         uniqueObjInList(l, 4, False)
         self.assertEqual([], l)
 
-
-
+    def test_combine(self):
+        self.assertEqual([{'a': 2, 'b': 4}, {'a': 2, 'b': 5}, {'a': 3, 'b': 4}, {'a': 3, 'b': 5}], combine(a=(2, 3), b=(4, 5)))
+        self.assertEqual([{'a': 'hi', 'b': 4, 'c': [5]}, {'a': 'hi', 'b': None, 'c': [5]}], combine(a=("hi",), b=(4, None), c=([5],)))
+        self.assertEqual([], combine())
+        self.assertEqual([{"hello": None}], combine(hello=None))
+        self.assertEqual([{"hello": 3, "there": 2}], combine(hello=3, there=2))
+        self.assertEqual([{'hello': 3, 'there': 2}, {'hello': 3, 'there': "foobar"}], combine(hello=3, there=[2, "foobar"]))
 
 
 
