@@ -114,7 +114,7 @@ def confineTo(value, minimum, maximum, margin=0):
 
     return value + jumpValue
 
-def debug(scope, *evals, printOut=False):
+def debug(scope, *evals, printOut=True):
     """
     Easily call eval() on an arbitrary amount of evaluation strings.
     Useful for debugging.
