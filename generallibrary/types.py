@@ -123,12 +123,13 @@ def typeChecker(obj, *types, error=True):
     else:
         return True
 
-def getBaseClasses(obj, includeSelf=False):
+def getBaseClasses(obj, includeSelf=False, includeObject=True):
     """
     Get all base classes from an object's class.
 
     :param any obj: Generic obj or class
     :param includeSelf: Whether to include own class or not
+    :param includeObject: Whether to include object class or not (Every object has object as base)
     :return: List of classes
     :rtype: list[type]
     """
@@ -145,6 +146,9 @@ def getBaseClasses(obj, includeSelf=False):
 
     if includeSelf:
         classes.insert(0, cls)
+
+    if not includeObject:
+        classes.remove(object)
 
     return classes
 

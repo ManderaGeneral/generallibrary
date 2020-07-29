@@ -36,10 +36,16 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(["x", "y"], getSignatureNames(lambda x, y=2: 5))
         self.assertEqual(["x", "y"], getSignatureNames(lambda x=3, y=2: 5))
 
+        self.assertEqual([], getSignatureNames(lambda x=3, y=2: 5, includeDefaulted=False))
+        self.assertEqual(["x"], getSignatureNames(lambda x, y=3: 5, includeDefaulted=False))
+        self.assertEqual(["x", "y"], getSignatureNames(lambda x, y: 5, includeDefaulted=False))
+
         def hello(x, y, z=None, *argz, **kwargz):
             """2 arg, 1 kwarg function"""
             pass
         self.assertEqual(["x", "y", "z", "argz", "kwargz"], getSignatureNames(hello))
+
+        self.assertEqual(["x", "y", "argz", "kwargz"], getSignatureNames(hello, includeDefaulted=False))
 
     def test_getSignatureDefaults(self):
         self.assertEqual({"y": 5}, getSignatureDefaults(lambda x, y=5: None))

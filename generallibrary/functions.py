@@ -14,18 +14,25 @@ def leadingArgsCount(funcOrClass):
             count += 1
     return count
 
-def getSignatureNames(funcOrClass):
+def getSignatureNames(funcOrClass, includeDefaulted=True):
     """
     Get a callable class' or func's signature parameter keys as a tuple.
 
     :param any funcOrClass: Generic callable
+    :param includeDefaulted: Whether to include argument names that have a default value or not
     :rtype: list[str]
     """
     if callable(funcOrClass):
         try:
-            return list(inspect.signature(funcOrClass).parameters.keys())
+            signatureNames = list(inspect.signature(funcOrClass).parameters.keys())
         except ValueError:
             return None
+
+        if includeDefaulted:
+            return signatureNames
+        else:
+            signatureDefaults = getSignatureDefaults(funcOrClass)
+            return [name for name in signatureNames if name not in signatureDefaults]
 
 def getSignatureDefaults(funcOrClass):
     """
