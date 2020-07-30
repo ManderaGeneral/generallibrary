@@ -151,15 +151,24 @@ def calculate(expression, *args):
             newTokens.append(seenArgs[token])
     return eval("".join(newTokens))
 
-def defaults(dictionary, **kwargs):
+def defaults(dictionary, overwriteNone=False, **kwargs):
     """
-    Like a reversed dict.update().
+    Overwrite kwargs with dictionary.
     Returns given dictionary with values updated by kwargs unless they already existed.
 
     :param dict dictionary:
+    :param overwriteNone: Whether to overwrite None values or not.
     :param kwargs:
     """
-    kwargs.update(dictionary)
+    for key, value in dictionary.items():
+        dictValueIsNone = value is None
+        kwargsHasValue = key in kwargs
+        if overwriteNone and dictValueIsNone and kwargsHasValue:
+            continue
+
+        # Overwrite kwargs with dictionary
+        kwargs[key] = value
+
     return kwargs
 
 

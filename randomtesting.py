@@ -39,11 +39,11 @@ def initBases(cls):
     return cls
 
 
-# HERE ** Do some test driven development here instead
-
 # TODO: Raise error if excess argument is given
 # TODO: Handle what happens if a Base requires *args or **kwargs -> Probably clean up library to get info regarding this too
 # TODO: Handle Base class without __init__
+# TODO: Handle Bases having same argument
+
 
 
 class Base:
@@ -53,13 +53,12 @@ class Base:
 
 @initBases
 class Parent(Base):
-    def __init__(self, x):
+    def __init__(self, x, z=None):
         self.y = 2
 
-
-# print(Parent(s=5, z=2).x)
-
 print(Parent(x=5).z)
+
+# print(Parent(x=5).z)
 
 
 
