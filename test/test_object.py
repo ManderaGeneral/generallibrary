@@ -47,6 +47,41 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(6, Parent(x=5).z)
         self.assertEqual(4, Parent(x=5, z=4).z)
 
+        # One argument without default and one value with default inside Parent
+        class Base:
+            def __init__(self, x, z):
+                self.x = x
+                self.z = z
+        @initBases
+        class Parent(Base):
+            def __init__(self, x, z=None):
+                self.y = 2
+        self.assertRaises(AttributeError, Parent)
+        self.assertRaises(AttributeError, Parent, y=5)
+        self.assertRaises(AttributeError, Parent, x=5, y=3, doesntExist=2)
+        self.assertRaises(TypeError, Parent, 3, y=5)
+
+        self.assertEqual(5, Parent(x=5).x)
+        self.assertEqual(2, Parent(x=5).y)
+        self.assertEqual(None, Parent(x=5).z)
+        self.assertEqual(4, Parent(x=5, z=4).z)
+
+        # Base without init
+        class Base:
+            def test(self):
+                pass
+        @initBases
+        class Parent(Base):
+            def __init__(self, x):
+                self.x = x
+                self.y = 2
+        self.assertRaises(AttributeError, Parent)
+        self.assertRaises(AttributeError, Parent, y=5)
+        self.assertRaises(AttributeError, Parent, x=5, y=3, doesntExist=2)
+        self.assertRaises(TypeError, Parent, 3, y=5)
+
+        self.assertEqual(5, Parent(x=5).x)
+        self.assertEqual(2, Parent(x=5).y)
 
 
 

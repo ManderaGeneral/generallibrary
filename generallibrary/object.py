@@ -40,6 +40,10 @@ def initBases(cls):
     Only allows class to be initiated with key word arguments. This is to prevent conflicts and to make it more intuitive.
     If a base has an argument without a default value then Parent must have that key word as argument itself
 
+    TODO: Handle what happens if a Base requires *args or **kwargs -> Probably clean up library to get info regarding this too
+    TODO: Handle Bases having same argument
+    TODO: Probably allow *args as well
+
     :param cls:
     """
     clsInit = cls.__init__
@@ -53,11 +57,12 @@ def initBases(cls):
 
         inits = [clsInit]
         for base in cls.__bases__:
-            for name in getSignatureNames(base.__init__, includeDefaulted=False):
-                if name not in kwargs:
-                    raise AttributeError(f"Class '{cls.__name__}' is missing required key word argument '{name}' for base class '{base.__name__}'.")
-
+            if base.__init__ == object.__init__:
+                continue
             inits.insert(0, base.__init__)
+
+        # for name in getSignatureNames(base.__init__, includeDefaulted=False):
+
 
 
         # Call all inits including cls' and check for excess args.
@@ -67,6 +72,11 @@ def initBases(cls):
 
             initDefaults = getSignatureDefaults(init)
             for name in getSignatureNames(init):
+
+                if name not in kwargs:
+                    # print(getSignatureNames(base.__init__, includeDefaulted=False))
+                    raise AttributeError(f"Class '{cls.__name__}' is missing required key word argument '{name}' for base class '{init.__qualname__}'.")  # HERE **
+
                 usedArgs.append(name)
 
                 # Use default value of Base if the value in kwargs is None
