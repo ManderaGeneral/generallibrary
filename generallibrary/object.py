@@ -34,6 +34,19 @@ def getsize(obj):
         objects = get_referents(*need_referents)
     return size
 
+def getClassFromMethod(method):
+    """
+    Retrieve class object from a method object.
+
+    :param function method:
+    :rtype: type
+    """
+    splitQualname = method.__qualname__.split('.')
+    if len(splitQualname) != 2:
+        raise AttributeError(f"{method} is probably not a method")
+
+    return getattr(sys.modules[method.__module__], splitQualname[0])
+
 def initBases(cls):
     """
     Automatically initalizes all inherited classes.
@@ -75,7 +88,7 @@ def initBases(cls):
 
                 if name not in kwargs:
                     # print(getSignatureNames(base.__init__, includeDefaulted=False))
-                    raise AttributeError(f"Class '{cls.__name__}' is missing required key word argument '{name}' for base class '{init.__qualname__}'.")  # HERE **
+                    raise AttributeError(f"Class '{cls.__name__}' is missing required parameter '{name}' for base class '{getClassFromMethod(init).__class__.__name__}'.")
 
                 usedArgs.append(name)
 

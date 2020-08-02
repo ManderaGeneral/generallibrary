@@ -20,10 +20,19 @@ class Base:
 
 @initBases
 class Parent(Base):
-    def __init__(self, x):
+    def __init__(self):
         self.y = 2
 
-Parent()
+    def hi(self):
+        pass
+
+def test():
+    pass
+
+# print(getClassFromMethod(test))
+# print(getClassFromMethod(Timer().seconds))
+
+# print(getMethodClass(Parent().y))
 
 
 
