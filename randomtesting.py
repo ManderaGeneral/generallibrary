@@ -12,38 +12,23 @@ from generalobjexp import ObjExp
 
 
 class Base:
-    def test(self):
-        pass
-    # def __init__(self, x, z):
-    #     self.x = x
-    #     self.z = z
+    def __init__(self, *x):
+        self.x = x
 
 @initBases
 class Parent(Base):
-    def __init__(self):
+    def __init__(self, x):
         self.y = 2
 
     def hi(self):
         pass
 
-def test():
-    pass
 
-# print(getClassFromMethod(test))
-# print(getClassFromMethod(Timer().seconds))
+# print(getSignatureArgs(Base.__init__))
 
-# print(getMethodClass(Parent().y))
+# print(Parent(x=2))
 
 
-
-# def x(self, *args, **kwargs):
-#     pass
-
-
-# def test(a, x=5, *args, **kwargs):
-#     pass
-# for key, value in inspect.signature(test).parameters.items():
-#     print(value.kind)
 
 
 

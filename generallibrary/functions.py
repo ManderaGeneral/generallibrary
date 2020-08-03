@@ -2,121 +2,102 @@
 import inspect
 import re
 
-def leadingArgsCount(funcOrClass):
-    """
-    Get number of leading args without a default value.
 
-    :param function funcOrClass: Generic callable
-    """
-    count = 0
-    for param in inspect.signature(funcOrClass).parameters.values():
-        if param.default is inspect.Parameter.empty and param.kind.name == "POSITIONAL_OR_KEYWORD" and param.name != "self":
-            count += 1
-    return count
 
-def getSignatureNames(funcOrClass, includeDefaulted=True):
-    """
-    Get a callable class' or func's signature parameter keys as a tuple.
 
-    :param any funcOrClass: Generic callable
-    :param includeDefaulted: Whether to include argument names that have a default value or not
-    :rtype: list[str]
+class SigInfo:
     """
-    if callable(funcOrClass):
-        try:
-            signatureNames = list(inspect.signature(funcOrClass).parameters.keys())
-        except ValueError:
+    Get info regarding a signature.
+    Also useful for handling decorators.
+    """
+    def __init__(self, callableObject, args=None, kwargs=None):
+        """
+        :param callableObject:
+        :param tuple args:
+        :param dict kwargs:
+        """
+        assert callable(callableObject)
+
+        self.callableObject = callableObject
+        self.args = [] if args is None else list(args)
+        self.kwargs = {} if kwargs is None else kwargs.copy()
+
+    @property
+    def parameters(self):
+        """Get list of inspect parameter objects"""
+        return inspect.signature(self.callableObject).parameters.values()
+
+    @property
+    def names(self):
+        """Get list of parameter names"""
+        return [param.name for param in self.parameters]
+
+    @property
+    def namesWithoutDefaults(self):
+        """Get list of parameter names except those ones that have a default value"""
+        return [param.name for param in self.parameters if param.name not in self.defaults]
+
+    @property
+    def defaults(self):
+        """Get dict of default values"""
+        return {param.name: param.default for param in self.parameters if param.default is not param.empty}
+
+    @property
+    def leadingArgs(self):
+        """Get names leading args that don't have default value"""
+        leadingArgs = []
+        for param in self.parameters:
+            if param.default is inspect.Parameter.empty and param.kind.name == "POSITIONAL_OR_KEYWORD" and param.name != "self":
+                leadingArgs.append(param.name)
+        return leadingArgs
+
+    @property
+    def packedArgs(self):
+        """Get names of all *args"""
+        return [param.name for param in self.parameters if param.kind == "VAR_POSITIONAL"]
+
+    @property
+    def packedKwargs(self):
+        """Get names of all *kwargs"""
+        return [param.name for param in self.parameters if param.kind == "VAR_KEYWORD"]
+
+
+    def getIndexFromName(self, name):
+        """."""
+        return self.names.index(name) if name in self.names else None
+
+    def getParameter(self, name):
+        """Get value of a parameter from args or kwargs if it exists, otherwise None"""
+        index = self.getIndexFromName(name)
+
+        if index is not None and len(self.args) > index:
+            # Args
+            return self.args[index]
+        else:
+            # Kwargs
+            if name in self.kwargs:
+                return self.kwargs[name]
+
+            # Default
+            if name in self.defaults:
+                return self.defaults[name]
+
+            # Doesn't exist at all
             return None
 
-        if includeDefaulted:
-            return signatureNames
-        else:
-            signatureDefaults = getSignatureDefaults(funcOrClass)
-            return [name for name in signatureNames if name not in signatureDefaults]
+    def setParameters(self, **parameters):
+        """Set parameters automatically in args or kwargs."""
+        for name, value in parameters.items():
+            index = self.getIndexFromName(name)
 
-def getSignatureDefaults(funcOrClass):
-    """
-    Get a dict of each key that has a default value assigned
+            if index is not None and len(self.args) > index:
+                self.args[index] = value
+            else:
+                self.kwargs[name] = value
+        return self
 
-    :param any funcOrClass: Generic callable
-    :rtype: dict[str, any]
-    """
-    if callable(funcOrClass):
-        defaults = {}
-
-        try:
-            params = inspect.signature(funcOrClass).parameters.values()
-        except ValueError:
-            return None
-
-        for param in params:
-            if param.default is not param.empty:
-                defaults[param.name] = param.default
-        return defaults
-
-def getParameter(func, args, kwargs, name):
-    """
-    Get value of a parameter if it exists, otherwise None
-
-    :param function func: Function to get signature
-    :param list or tuple args:
-    :param dict kwargs:
-    :param str name: Name of parameter
-    """
-    parameters = getSignatureNames(func)
-    if "self" in parameters:
-        parameters.remove("self")
-
-    if name in parameters:
-        index = parameters.index(name)
-    else:
-        index = None
-
-    if index is not None and len(args) > index:
-        # Args
-        return args[index]
-    else:
-        # Kwargs
-        if name in kwargs:
-            return kwargs[name]
-
-        # Default
-        defaults = getSignatureDefaults(func)
-        if name in defaults:
-            return defaults[name]
-
-        # Doesn't exist at all
-        return None
-
-def changeArgsAndKwargs(func, args, kwargs, **newParameters):
-    """
-    Return changed args and kwargs, if new parameter exists in args then it's changed there first, otherwise kwargs is changed
-
-    :param func: Function object to get signature names
-    :param args: Packed args
-    :param kwargs: Packed kwargs
-    :param newParameters: New parameters
-    :rtype: tuple[tuple, dict]
-    """
-    args = list(args)
-
-    parameters = getSignatureNames(func)
-
-    if "self" in parameters:
-        parameters.remove("self")
-
-    for name, value in newParameters.items():
-        if name in parameters:
-            index = parameters.index(name)
-        else:
-            index = None
-
-        if index is not None and len(args) > index:
-            args[index] = value
-        else:
-            kwargs[name] = value
-
-    return tuple(args), kwargs
+    def __call__(self):
+        return self.callableObject(*self.args, **self.kwargs)
 
 
 

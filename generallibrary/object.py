@@ -5,7 +5,7 @@ from types import ModuleType, FunctionType
 
 from gc import get_referents
 
-from generallibrary.functions import defaults, getSignatureDefaults, getSignatureNames
+from generallibrary.functions import defaults, SigInfo
 
 
 BLACKLIST = type, ModuleType, FunctionType
@@ -54,46 +54,36 @@ def initBases(cls):
     If a base has an argument without a default value then Parent must have that key word as argument itself
 
     TODO: Handle what happens if a Base requires *args or **kwargs -> Probably clean up library to get info regarding this too
-    TODO: Handle Bases having same argument
     TODO: Probably allow *args as well
+    TODO: Allow Parent not having defined __init__
 
-    :param cls:
     """
     clsInit = cls.__init__
 
-    # Only allow **kwargs
+    # Only allow **kwargs, got too advanced for *args
     def __init__(self, **kwargs):
-        kwargs["self"] = self
+        clsSigInfo = SigInfo(clsInit)
+        clsSigInfo.setParameters(self=self)
+        clsSigInfo.setParameters(**clsSigInfo.defaults)
+        clsSigInfo.setParameters(**kwargs)
 
-        # Add default values to kwargs unless they've been defined
-        kwargs = defaults(kwargs, **getSignatureDefaults(clsInit))
-
-        inits = [clsInit]
+        sigInfos = [clsSigInfo]
         for base in cls.__bases__:
-            if base.__init__ == object.__init__:
-                continue
-            inits.insert(0, base.__init__)
-
-        # for name in getSignatureNames(base.__init__, includeDefaulted=False):
-
-
+            if base.__init__ != object.__init__:
+                sigInfos.insert(0, SigInfo(base.__init__))
 
         # Call all inits including cls' and check for excess args.
         usedArgs = []
-        for init in inits:
+        for sigInfo in sigInfos:
             initKwargs = {}
-
-            initDefaults = getSignatureDefaults(init)
-            for name in getSignatureNames(init):
-
-                if name not in kwargs:
-                    # print(getSignatureNames(base.__init__, includeDefaulted=False))
-                    raise AttributeError(f"Class '{cls.__name__}' is missing required parameter '{name}' for base class '{getClassFromMethod(init).__class__.__name__}'.")
+            for name in sigInfo.names:
+                if name not in clsSigInfo.names:
+                    raise AttributeError(f"Class '{cls.__name__}' is missing '{name}' for base '{getClassFromMethod(sigInfo.callableObject).__name__}'.")
 
                 usedArgs.append(name)
 
-                # Use default value of Base if the value in kwargs is None
-                if kwargs[name] is None and name in initDefaults:
+                # Use default value of Base if the value in kwargs is None ** HERE ** Changing to SigInfo
+                if clsSigInfo.getParameter(name) is None and name in initDefaults:
                     initKwargs[name] = initDefaults[name]
                 else:
                     initKwargs[name] = kwargs[name]

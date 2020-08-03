@@ -83,6 +83,59 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(5, Parent(x=5).x)
         self.assertEqual(2, Parent(x=5).y)
 
+        # Two bases, seperate args
+        class Base:
+            def __init__(self, x):
+                self.x = x
+        class Base2:
+            def __init__(self, y):
+                self.y = y
+        @initBases
+        class Parent(Base, Base2):
+            def __init__(self, x, y):
+                pass
+        self.assertRaises(AttributeError, Parent)
+        self.assertRaises(AttributeError, Parent, y=5)
+        self.assertRaises(AttributeError, Parent, x=5)
+        self.assertRaises(AttributeError, Parent, x=5, y=3, doesntExist=2)
+        self.assertRaises(TypeError, Parent, 3, y=5)
+
+        self.assertEqual(5, Parent(x=5, y=2).x)
+        self.assertEqual(2, Parent(x=5, y=2).y)
+
+        # Two bases, same args
+        class Base:
+            def __init__(self, x):
+                self.x = x
+        class Base2:
+            def __init__(self, x):
+                self.y = x
+        @initBases
+        class Parent(Base, Base2):
+            def __init__(self, x):
+                pass
+        self.assertRaises(AttributeError, Parent)
+        self.assertRaises(AttributeError, Parent, x=5, doesntExist=2)
+        self.assertRaises(TypeError, Parent, 3)
+
+        self.assertEqual(5, Parent(x=5).x)
+        self.assertEqual(5, Parent(x=5).y)
+
+        # One base taking *args
+        class Base:
+            def __init__(self, *x):
+                self.x = x
+        @initBases
+        class Parent(Base):
+            def __init__(self, x):
+                pass
+        self.assertRaises(AttributeError, Parent)
+        self.assertRaises(AttributeError, Parent, x=5, doesntExist=2)
+        self.assertRaises(TypeError, Parent, 3)
+
+        self.assertEqual(5, Parent(x=5).x)
+        self.assertEqual(5, Parent(x=5).y)
+
 
 
 
