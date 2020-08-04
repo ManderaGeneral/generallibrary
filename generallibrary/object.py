@@ -47,6 +47,17 @@ def getClassFromMethod(method):
 
     return getattr(sys.modules[method.__module__], splitQualname[0])
 
+def attributes(obj):
+    """Get all attributes of an object that don't start with '__' as a dictionary"""
+    attrs = {}
+    for key in dir(obj):
+        attr = getattr(obj, key)
+        classAttr = getattr(obj.__class__, key, None)
+
+        if not key.startswith("__") and not callable(classAttr) and not isinstance(classAttr, property):
+            attrs[key] = attr
+    return attrs
+
 def initBases(cls):
     """
     Automatically initalizes all inherited classes.
@@ -56,43 +67,24 @@ def initBases(cls):
     TODO: Handle what happens if a Base requires *args or **kwargs -> Probably clean up library to get info regarding this too
     TODO: Probably allow *args as well
     TODO: Allow Parent not having defined __init__
-
     """
     clsInit = cls.__init__
 
     # Only allow **kwargs, got too advanced for *args
-    def __init__(self, **kwargs):
-        clsSigInfo = SigInfo(clsInit)
-        clsSigInfo.setParameters(self=self)
-        clsSigInfo.setParameters(**clsSigInfo.defaults)
-        clsSigInfo.setParameters(**kwargs)
+    def __init__(*args, **kwargs):
+        clsSigInfo = SigInfo(clsInit, args, kwargs)
+        clsSigInfo.validParameters()
 
-        sigInfos = [clsSigInfo]
-        for base in cls.__bases__:
-            if base.__init__ != object.__init__:
-                sigInfos.insert(0, SigInfo(base.__init__))
+        for base in list(cls.__bases__) + [cls]:
+            baseInit = clsInit if base == cls else base.__init__
+            if baseInit != object.__init__:
+                sigInfo = SigInfo(baseInit)
+                for name in sigInfo.names:
+                    if clsSigInfo[name] is None and sigInfo[name] is not None:
+                        continue
+                    sigInfo[name] = clsSigInfo[name]
 
-        # Call all inits including cls' and check for excess args.
-        usedArgs = []
-        for sigInfo in sigInfos:
-            initKwargs = {}
-            for name in sigInfo.names:
-                if name not in clsSigInfo.names:
-                    raise AttributeError(f"Class '{cls.__name__}' is missing '{name}' for base '{getClassFromMethod(sigInfo.callableObject).__name__}'.")
-
-                usedArgs.append(name)
-
-                # Use default value of Base if the value in kwargs is None ** HERE ** Changing to SigInfo
-                if clsSigInfo.getParameter(name) is None and name in initDefaults:
-                    initKwargs[name] = initDefaults[name]
-                else:
-                    initKwargs[name] = kwargs[name]
-
-            init(**initKwargs)
-
-        for name in kwargs:
-            if name not in usedArgs:
-                raise AttributeError(f"Excess argument '{name}' for initializing '{cls.__name__}'.")
+                sigInfo()
 
     cls.__init__ = __init__
     return cls

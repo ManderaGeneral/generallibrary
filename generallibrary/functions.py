@@ -3,8 +3,6 @@ import inspect
 import re
 
 
-
-
 class SigInfo:
     """
     Get info regarding a signature.
@@ -38,35 +36,68 @@ class SigInfo:
         return [param.name for param in self.parameters if param.name not in self.defaults]
 
     @property
-    def defaults(self):
-        """Get dict of default values"""
-        return {param.name: param.default for param in self.parameters if param.default is not param.empty}
+    def packedArgNames(self):
+        """Get names of all *args"""
+        return [param.name for param in self.parameters if param.kind.name == "VAR_POSITIONAL"]
 
     @property
-    def leadingArgs(self):
+    def packedKwargNames(self):
+        """Get names of all *kwargs"""
+        return [param.name for param in self.parameters if param.kind.name == "VAR_KEYWORD"]
+
+    @property
+    def leadingArgNames(self):
         """Get names leading args that don't have default value"""
-        leadingArgs = []
+        leadingArgNames = []
         for param in self.parameters:
             if param.default is inspect.Parameter.empty and param.kind.name == "POSITIONAL_OR_KEYWORD" and param.name != "self":
-                leadingArgs.append(param.name)
-        return leadingArgs
+                leadingArgNames.append(param.name)
+        return leadingArgNames
+
 
     @property
-    def packedArgs(self):
-        """Get names of all *args"""
-        return [param.name for param in self.parameters if param.kind == "VAR_POSITIONAL"]
-
-    @property
-    def packedKwargs(self):
-        """Get names of all *kwargs"""
-        return [param.name for param in self.parameters if param.kind == "VAR_KEYWORD"]
+    def defaults(self):
+        """Get dict of default values"""
+        d = {param.name: param.default for param in self.parameters if param.default is not param.empty}
+        if "self" in self.names and "self" not in d:
+            d["self"] = self.callableObject
+        return d
 
 
     def getIndexFromName(self, name):
         """."""
         return self.names.index(name) if name in self.names else None
 
-    def getParameter(self, name):
+    def setParameters(self, /, **parameters):
+        """Set parameters automatically in args or kwargs if the name exists in self.names."""
+        for name, value in parameters.items():
+            if name in self.names:
+                self[name] = value
+        return self
+
+    def applyDefaults(self):
+        """Replace all None or undefined parameters with default values"""
+        for name, value in self.defaults.items():
+            if self[name] is None:
+                self[name] = value
+
+    def copy(self):
+        """Return a copy of this SigInfo"""
+        return SigInfo(**attributes(self))
+
+    def validParameters(self):
+        """Check if a call can be made by checking all if all required parameters are defined"""
+        for name in self.names:
+            if name in self.packedKwargNames:
+                continue
+            if name in self.packedArgNames:
+                continue
+            if name in self.defaults:
+                continue
+            if self[name] is None:
+                raise AttributeError(f"{self} does not have valid parameters, it's missing {name}")
+
+    def __getitem__(self, name):
         """Get value of a parameter from args or kwargs if it exists, otherwise None"""
         index = self.getIndexFromName(name)
 
@@ -85,19 +116,27 @@ class SigInfo:
             # Doesn't exist at all
             return None
 
-    def setParameters(self, **parameters):
-        """Set parameters automatically in args or kwargs."""
-        for name, value in parameters.items():
-            index = self.getIndexFromName(name)
+    def __setitem__(self, name, value):
+        index = self.getIndexFromName(name)
 
-            if index is not None and len(self.args) > index:
-                self.args[index] = value
-            else:
-                self.kwargs[name] = value
-        return self
+        if index is not None and len(self.args) > index:
+            self.args[index] = value
+        else:
+            if name not in self.names and not self.packedKwargNames:
+                raise AttributeError(f"Cannot set '{name}' because there's no parameter with that name")
+
+            self.kwargs[name] = value
 
     def __call__(self):
-        return self.callableObject(*self.args, **self.kwargs)
+        """Makes copy to not pollute parameters, applies defaults, then calls and returns it"""
+        sigInfo = self.copy()
+        sigInfo.applyDefaults()
+        # print(sigInfo.args, sigInfo.kwargs)
+        # return sigInfo.callableObject(**{name: sigInfo[name] for name in sigInfo.names})
+        return sigInfo.callableObject(*self.filledArgs, **self.filledKwargs)  # If we do this then we wont need to copy
+
+    def __repr__(self):
+        return f"<SigInfo for '{self.callableObject.__class__.__name__}' with names '{', '.join(self.names)}'>"
 
 
 
@@ -155,7 +194,7 @@ def defaults(dictionary, overwriteNone=False, **kwargs):
 
 
 
-
+from generallibrary.object import attributes
 
 
 
