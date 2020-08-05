@@ -121,12 +121,16 @@ def debug(scope, *evals, printOut=True):
 
     Example:
         debug(locals(), "value", "value + jumpValue", printOut=True)
+        debug(locals())  # Prints all objects in scope
 
     :param dict scope: Just write locals()
     :param str evals: Variable names with or without operations
     :param printOut: Whether to print directly or not
     :return: A nicely formatted string
     """
+    if not evals:
+        evals = list(scope.keys())
+
     lines = []
     n = max([len(string) for string in evals])
     for evalStr in evals:

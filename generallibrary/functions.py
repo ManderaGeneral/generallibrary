@@ -11,7 +11,7 @@ class SigInfo:
     def __init__(self, callableObject, args=None, kwargs=None):
         """
         :param callableObject:
-        :param tuple args:
+        :param tuple or list args:
         :param dict kwargs:
         """
         assert callable(callableObject)
@@ -19,6 +19,10 @@ class SigInfo:
         self.callableObject = callableObject
         self.args = [] if args is None else list(args)
         self.kwargs = {} if kwargs is None else kwargs.copy()
+
+
+        if len(self.packedKwargNames) > 1 or len(self.packedArgNames) > 1:
+            raise NotImplementedError
 
     @property
     def parameters(self):
@@ -36,6 +40,11 @@ class SigInfo:
         return [param.name for param in self.parameters if param.name not in self.defaults]
 
     @property
+    def namesWithoutPacked(self):
+        """Get list of parameter names except *args or **kwargs"""
+        return [param.name for param in self.parameters if param.name not in (self.packedArgNames + self.packedKwargNames)]
+
+    @property
     def packedArgNames(self):
         """Get names of all *args"""
         return [param.name for param in self.parameters if param.kind.name == "VAR_POSITIONAL"]
@@ -47,13 +56,15 @@ class SigInfo:
 
     @property
     def leadingArgNames(self):
-        """Get names leading args that don't have default value"""
+        """
+        Get names leading args that don't have default value.
+        '*args' wont be included.
+        """
         leadingArgNames = []
         for param in self.parameters:
             if param.default is inspect.Parameter.empty and param.kind.name == "POSITIONAL_OR_KEYWORD" and param.name != "self":
                 leadingArgNames.append(param.name)
         return leadingArgNames
-
 
     @property
     def defaults(self):
@@ -63,10 +74,31 @@ class SigInfo:
             d["self"] = self.callableObject
         return d
 
+    @property
+    def filledArgs(self):
+        """Return a list of all args´ values"""
+        args = []
+        for name in self.leadingArgNames:
+            args.append(self[name])
+        for packedArgName in self.packedArgNames:
+            args.extend(self[packedArgName])
+        return args
+
+    @property
+    def filledKwargs(self):
+        """Return a list of all kwargs´ values"""
+        kwargs = {}
+        for name in self.namesWithoutPacked:
+            kwargs[name] = self[name]
+        for packedKwargName in self.packedKwargNames:
+            kwargs.update(self[packedKwargName])
+        return {name: value for name, value in kwargs.items() if name not in self.leadingArgNames}
+
 
     def getIndexFromName(self, name):
-        """."""
-        return self.names.index(name) if name in self.names else None
+        """Get index from name if name exists, else None"""
+        if name in self.names:
+            return self.names.index(name)
 
     def setParameters(self, /, **parameters):
         """Set parameters automatically in args or kwargs if the name exists in self.names."""
@@ -101,23 +133,41 @@ class SigInfo:
         """Get value of a parameter from args or kwargs if it exists, otherwise None"""
         index = self.getIndexFromName(name)
 
-        if index is not None and len(self.args) > index:
-            # Args
-            return self.args[index]
+        # Packed args
+        if name in self.packedArgNames:
+            return self.args[index:]
+
+        elif index is not None and len(self.args) > index:
+            for packedArgName in self.packedArgNames:
+                if self.getIndexFromName(packedArgName) < index:
+                    break
+            else:
+                # Args
+                return self.args[index]
+
+        # Packed kwargs
+        if name in self.packedKwargNames:
+            return {key: value for key, value in self.kwargs.items() if key not in self.names}
+
+        # Kwargs
+        elif name in self.kwargs:
+            return self.kwargs[name]
+
+        # Default
+        elif name in self.defaults:
+            return self.defaults[name]
+
+        # Doesn't exist at all
         else:
-            # Kwargs
-            if name in self.kwargs:
-                return self.kwargs[name]
-
-            # Default
-            if name in self.defaults:
-                return self.defaults[name]
-
-            # Doesn't exist at all
             return None
 
     def __setitem__(self, name, value):
         index = self.getIndexFromName(name)
+
+        # TODO
+        # if name in self.packedArgNames:
+        #     assert isinstance(value, (list, tuple))
+        #     self.args =
 
         if index is not None and len(self.args) > index:
             self.args[index] = value
@@ -128,12 +178,16 @@ class SigInfo:
             self.kwargs[name] = value
 
     def __call__(self):
-        """Makes copy to not pollute parameters, applies defaults, then calls and returns it"""
-        sigInfo = self.copy()
-        sigInfo.applyDefaults()
+        """
+        Calls callableObject with filled args and kwargs.
+        Unfilled required parameters will get a None value
+        """
+        # sigInfo = self.copy()
+        # sigInfo.applyDefaults()
         # print(sigInfo.args, sigInfo.kwargs)
         # return sigInfo.callableObject(**{name: sigInfo[name] for name in sigInfo.names})
-        return sigInfo.callableObject(*self.filledArgs, **self.filledKwargs)  # If we do this then we wont need to copy
+        self.validParameters()
+        return self.callableObject(*self.filledArgs, **self.filledKwargs)  # If we do this then we wont need to copy
 
     def __repr__(self):
         return f"<SigInfo for '{self.callableObject.__class__.__name__}' with names '{', '.join(self.names)}'>"

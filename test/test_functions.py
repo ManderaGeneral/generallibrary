@@ -27,6 +27,10 @@ class FunctionsTest(unittest.TestCase):
             pass
         self.assertEqual(2, len(SigInfo(hello).leadingArgNames))
 
+        self.assertEqual(["x"], SigInfo(lambda x, y=2: 5).leadingArgNames)
+        self.assertEqual(["x"], SigInfo(lambda x, *argss, y=2: 5).leadingArgNames)
+        self.assertEqual(["x", "z"], SigInfo(lambda x, z, *argss, y=2: 5).leadingArgNames)
+
     def test_getSignatureNames(self):
         self.assertRaises(AssertionError, SigInfo, 5)
 
@@ -139,6 +143,26 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(1, SigInfo(lambda x, y=2, *args, **kwargs: 5).getIndexFromName("y"))
         self.assertEqual(2, SigInfo(lambda x, y=2, *args, **kwargs: 5).getIndexFromName("args"))
         self.assertEqual(3, SigInfo(lambda x, y=2, *args, **kwargs: 5).getIndexFromName("kwargs"))
+
+    def test_sigInfo(self):
+        self.assertEqual([1, 2], SigInfo(lambda *arguments: 5, args=(1, 2))["arguments"])
+        self.assertEqual([2], SigInfo(lambda x, *arguments: 5, args=(1, 2))["arguments"])
+
+        self.assertEqual({"foo": "bar", "test": 5}, SigInfo(lambda x, *arguments, **keywordargs: 5, args=(1, 2), kwargs={"foo": "bar", "test": 5})["keywordargs"])
+
+        sigInfo = SigInfo(lambda x, y=6, *arguments, z=7, **keywordargs: 8, args=(1, 2, 3, 4), kwargs={"foo": "bar", "test": 5})
+        self.assertEqual(1, sigInfo["x"])
+        self.assertEqual(2, sigInfo["y"])
+        self.assertEqual([3, 4], sigInfo["arguments"])
+        self.assertEqual(7, sigInfo["z"])
+        self.assertEqual({"foo": "bar", "test": 5}, sigInfo["keywordargs"])
+
+        sigInfo = SigInfo(lambda x, **kwargs: 3, args=(1,), kwargs={"x": 2})
+        print(sigInfo.args, sigInfo.kwargs)
+        self.assertEqual(1, sigInfo["x"])
+
+    def test_sigInfoCall(self):
+        pass
 
     def test_defaults(self):
         self.assertEqual({"a": 5, "b": 3}, defaults({"a": 5}, b=3))
