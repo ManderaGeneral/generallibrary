@@ -8,21 +8,45 @@ class SigInfo:
     Get info regarding a signature.
     Also useful for handling decorators.
     """
-    def __init__(self, callableObject, args=None, kwargs=None):
-        """
-        :param callableObject:
-        :param tuple or list args:
-        :param dict kwargs:
-        """
+    def __init__(self, callableObject, *args, **kwargs):
         assert callable(callableObject)
-
-        self.callableObject = callableObject
-        self.args = [] if args is None else list(args)
-        self.kwargs = {} if kwargs is None else kwargs.copy()
-
-
         if len(self.packedKwargNames) > 1 or len(self.packedArgNames) > 1:
             raise NotImplementedError
+
+        self.callableObject = callableObject
+        # self.args = [] if args is None else list(args)
+        # self.kwargs = {} if kwargs is None else kwargs.copy()
+
+
+        self.allArgs = {}
+
+        # Normal arg
+        for i, name in enumerate(self.leadingArgNames):
+            if i >= len(args):
+                break
+            self.allArgs[name] = args[i]
+
+        # Extract *args
+        if len(args) > len(self.leadingArgNames):
+            if not self.packedArgNames:
+                raise AttributeError("Too many args without a packed *args parameter")
+
+            self.allArgs[self.packedArgNames[0]] = args[len(self.leadingArgNames):]
+
+        if self.packedKwargNames:
+            self.allArgs[self.packedKwargNames[0]] = {}
+
+        for name, value in kwargs.items():
+            # Normal kwarg
+            if name in self.names:
+                self.allArgs[name] = value
+
+            # Extract **kwargs
+            else:
+                if not self.packedKwargNames:
+                    raise AttributeError("Too many kwargs without a packed **kwargs parameter")
+                self.allArgs[self.packedKwargNames[0]][name] = value
+
 
     @property
     def parameters(self):
@@ -76,7 +100,7 @@ class SigInfo:
 
     @property
     def filledArgs(self):
-        """Return a list of all args´ values"""
+        """Return a list of all positional parameter values"""
         args = []
         for name in self.leadingArgNames:
             args.append(self[name])
@@ -86,7 +110,7 @@ class SigInfo:
 
     @property
     def filledKwargs(self):
-        """Return a list of all kwargs´ values"""
+        """Return a list of all parameter values excluding those in leadingArgNames"""
         kwargs = {}
         for name in self.namesWithoutPacked:
             kwargs[name] = self[name]
@@ -94,6 +118,14 @@ class SigInfo:
             kwargs.update(self[packedKwargName])
         return {name: value for name, value in kwargs.items() if name not in self.leadingArgNames}
 
+    @property
+    def unpackedAllArgs(self):
+        """Return allArgs but with packedKwargs removed and unpacked if it exists"""
+        kwargs = self.allArgs.copy()
+        if self.packedKwargNames:
+            kwargs.update(kwargs[self.packedKwargNames[0]])
+            del kwargs[self.packedKwargNames[0]]
+        return kwargs
 
     def getIndexFromName(self, name):
         """Get index from name if name exists, else None"""
@@ -130,28 +162,9 @@ class SigInfo:
                 raise AttributeError(f"{self} does not have valid parameters, it's missing {name}")
 
     def __getitem__(self, name):
-        """Get value of a parameter from args or kwargs if it exists, otherwise None"""
-        index = self.getIndexFromName(name)
-
-        # Packed args
-        if name in self.packedArgNames:
-            return self.args[index:]
-
-        elif index is not None and len(self.args) > index:
-            for packedArgName in self.packedArgNames:
-                if self.getIndexFromName(packedArgName) < index:
-                    break
-            else:
-                # Args
-                return self.args[index]
-
-        # Packed kwargs
-        if name in self.packedKwargNames:
-            return {key: value for key, value in self.kwargs.items() if key not in self.names}
-
-        # Kwargs
-        elif name in self.kwargs:
-            return self.kwargs[name]
+        """Get value of a parameter from unpackedAllArgs, otherwise None"""
+        if name in self.unpackedAllArgs:
+            return self.unpackedAllArgs[name]
 
         # Default
         elif name in self.defaults:
@@ -163,8 +176,7 @@ class SigInfo:
 
     def __setitem__(self, name, value):
         index = self.getIndexFromName(name)
-
-        # TODO
+        # HERE ** Use unpackedAllArgs
         # if name in self.packedArgNames:
         #     assert isinstance(value, (list, tuple))
         #     self.args =
