@@ -9,6 +9,19 @@ from generallibrary.values import *
 # from generalobjexp import ObjExp
 
 
+x = lambda *args, **kwargs: print(args, kwargs)
+
+
+
+# x = lambda x, a=2, *z, y=2: print(x, z)
+# x = lambda x, y=None, /, a=2, *z: print(x, y, a, z)
+# x = lambda x, y=None: print(x, y, a, z)
+
+# for param in inspect.signature(x).parameters.values():
+#     print(param.kind.name)
+
+# x(1, 2, 3)
+
 # class Base:
 #     def __init__(self, x):
 #         self.x = x

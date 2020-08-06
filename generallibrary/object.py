@@ -73,7 +73,7 @@ def initBases(cls):
     # Only allow **kwargs, got too advanced for *args
     def __init__(*args, **kwargs):
         clsSigInfo = SigInfo(clsInit, args, kwargs)
-        clsSigInfo.validParameters()
+        # clsSigInfo.validParameters()
 
         for base in list(cls.__bases__) + [cls]:
             baseInit = clsInit if base == cls else base.__init__
