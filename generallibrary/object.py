@@ -65,24 +65,25 @@ def initBases(cls):
     If a base has an argument without a default value then Parent must have that key word as argument itself
 
     TODO: Handle what happens if a Base requires *args or **kwargs -> Probably clean up library to get info regarding this too
-    TODO: Probably allow *args as well
     TODO: Allow Parent not having defined __init__
     """
     clsInit = cls.__init__
 
     # Only allow **kwargs, got too advanced for *args
     def __init__(*args, **kwargs):
-        clsSigInfo = SigInfo(clsInit, args, kwargs)
-        # clsSigInfo.validParameters()
+        clsSigInfo = SigInfo(clsInit, *args, **kwargs)
 
         for base in list(cls.__bases__) + [cls]:
             baseInit = clsInit if base == cls else base.__init__
             if baseInit != object.__init__:
                 sigInfo = SigInfo(baseInit)
+
                 for name in sigInfo.names:
-                    if clsSigInfo[name] is None and sigInfo[name] is not None:
+                    if clsSigInfo[name] is None and sigInfo[name] is not None:  # Call continue to not overwrite with a None value
                         continue
+                    assert name in clsSigInfo.definedNames
                     sigInfo[name] = clsSigInfo[name]
+                    # print(name, clsSigInfo[name])
 
                 sigInfo()
 

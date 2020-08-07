@@ -54,6 +54,18 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual("argz", SigInfo(hello).packedArgsName)
         self.assertEqual("kwargz", SigInfo(hello).packedKwargsName)
 
+    def test_namesRequired(self):
+        self.assertEqual(["x"], SigInfo(lambda x: 5).namesRequired)
+        self.assertEqual(["x", "y"], SigInfo(lambda x, y: 5).namesRequired)
+        self.assertEqual(["x"], SigInfo(lambda x, y=2: 5).namesRequired)
+        self.assertEqual(["x"], SigInfo(lambda x, *y: 5).namesRequired)
+        self.assertEqual(["x"], SigInfo(lambda x, z=2, *y: 5).namesRequired)
+        self.assertEqual(["x"], SigInfo(lambda x, **y: 5).namesRequired)
+        self.assertEqual(["x"], SigInfo(lambda x, **y: 5).namesRequired)
+        self.assertEqual(["x", "y"], SigInfo(lambda x, /, y: 5).namesRequired)
+        self.assertEqual(["x", "y"], SigInfo(lambda x, /, y, z=2: 5).namesRequired)
+        self.assertEqual(["x", "s"], SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: None).namesRequired)
+
     def test_argNames(self):
         sigInfo = SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: 5)
         self.assertEqual(["x", "y", "b", "args"], sigInfo.positionalArgNames)
@@ -67,10 +79,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual({"y": None}, SigInfo(lambda x, y=None, *z: None).defaults)
         self.assertEqual({"y": None}, SigInfo(lambda x, y=None, **z: None).defaults)
         self.assertEqual({"y": "test"}, SigInfo(lambda x, y="test", *args, **z: None).defaults)
-
-    def test_unpacked(self):
-        sigInfo = SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: 5)
-
+        self.assertEqual({"y": 2, "b": 4, "z": 3}, SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: None).defaults)
 
     def test_setParameters(self):
         def wrapper(func):
@@ -103,7 +112,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual([4, 2, 5], sigInfo.unpackedArgs)
         self.assertEqual({}, sigInfo.unpackedKwargs)
 
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(AssertionError):
             sigInfo["new"] = 6
 
         sigInfo = SigInfo(lambda x=1, **kwargs: 5, y=2)
@@ -173,6 +182,23 @@ class FunctionsTest(unittest.TestCase):
 
         sigInfo = SigInfo(lambda x, **kwargs: 3, 1, x=2)
         self.assertEqual(1, sigInfo["x"])
+
+    def test_definedNames(self):
+        self.assertEqual(["y", "a"], SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5).definedNames)
+        self.assertEqual(["x", "y", "a"], SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1).definedNames)
+        self.assertEqual(["x", "y", "a"], SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1, 2).definedNames)
+        self.assertEqual(["x", "y", "args", "a"], SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1, 2, 3).definedNames)
+        self.assertEqual(["x", "y", "args", "a", "kwargs"], SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1, 2, 3, b=4).definedNames)
+
+    def test_validParameters(self):
+        self.assertEqual(False, SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5).requiredAreDefined)
+        self.assertEqual(False, SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1).requiredAreDefined)
+        self.assertEqual(False, SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1, 2).requiredAreDefined)
+        self.assertEqual(False, SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1, 2, 3).requiredAreDefined)
+        self.assertEqual(False, SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1, 2, 3, 4).requiredAreDefined)
+        self.assertEqual(True, SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1, 2, 3, z=5).requiredAreDefined)
+        self.assertEqual(False, SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1, 2, 3, a=5).requiredAreDefined)
+        self.assertEqual(True, SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1, 2, 3, a=5, z=6).requiredAreDefined)
 
     def test_sigInfoCall(self):
         pass

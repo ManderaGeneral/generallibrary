@@ -51,12 +51,17 @@ class SigInfo:
     @property
     def namesWithoutDefaults(self):
         """Get list of parameter names except those ones that have a default value"""
-        return [param.name for param in self.parameters if param.name not in self.defaults]
+        return [name for name in self.names if name not in self.defaults]
+
+    @property
+    def namesRequired(self):
+        """Get list of parameter that have to be defined, i.e. non-packed without default value"""
+        return [name for name in self.names if name not in list(self.defaults.keys()) + [self.packedArgsName, self.packedKwargsName]]
 
     @property
     def namesWithoutPacked(self):
         """Get list of parameter names except *args or **kwargs"""
-        return [param.name for param in self.parameters if param.name not in (self.packedArgsName, self.packedKwargsName)]
+        return [name for name in self.names if name not in (self.packedArgsName, self.packedKwargsName)]
 
     @property
     def leadingArgNames(self):
@@ -127,6 +132,22 @@ class SigInfo:
     # ========= Level 2 =========
 
     @property
+    def definedNames(self):
+        """Return list of names that are defined"""  # Not sure if keys in packedKwargsName should be included
+        joinedLists = list(self.allArgs.keys()) + list(self.defaults.keys())
+        # if self.packedKwargsName:
+        #     joinedLists += list(self[self.packedKwargsName].keys())
+        return [name for name in self.names if name in joinedLists]
+
+    @property
+    def requiredAreDefined(self):
+        """Return whether required parameters are defined or not"""
+        for name in self.namesRequired:
+            if name not in self.definedNames:
+                return False
+        return True
+
+    @property
     def unpackedArgs(self):
         """Return a list of all positional parameter values"""
         args = []
@@ -169,21 +190,9 @@ class SigInfo:
 
             else:
                 kwargs[name] = None
+                # raise AttributeError(f"{name} doesn't exist in {self.allArgs} or {self.defaults}")
 
         return kwargs
-
-
-    # def validParameters(self):
-    #     """Check if a call can be made by checking all if all required parameters are defined"""
-    #     for name in self.names:
-    #         if name == self.packedKwargsName:
-    #             continue
-    #         if name == self.packedArgsName:
-    #             continue
-    #         if name in self.defaults:
-    #             continue
-    #         if self[name] is None:
-    #             raise AttributeError(f"{self} does not have valid parameters, it's missing {name}")
 
     # ========= Level 3 =========
 
@@ -195,7 +204,7 @@ class SigInfo:
     def __setitem__(self, name, value):
         """Can set single key, entire *args, entire **kwargs or key inside **kwargs."""
         if name not in self.names and self.packedKwargsName is None:
-            raise AttributeError(f"Cannot set parameter '{name}' as there is no parameter with that name nor is there a packed kwargs parameter.")
+            raise AssertionError(f"Cannot set parameter '{name}' as there is no parameter with that name nor is there a packed kwargs parameter.")
 
         if name in self.allArgs:
             if name == self.packedArgsName and not isinstance(value, (tuple, list)):
@@ -216,6 +225,7 @@ class SigInfo:
         Calls callableObject with filled args and kwargs.
         Unfilled required parameters will get a None value
         """
+        assert self.requiredAreDefined
         return self.callableObject(*self.unpackedArgs, **self.unpackedKwargs)
 
     def setParameters(self, /, **parameters):
@@ -225,11 +235,6 @@ class SigInfo:
         return self
 
     # ========= Other =========
-
-    def copy(self):
-        """Return a copy of this SigInfo"""
-        return SigInfo(**attributes(self))
-
     def __repr__(self):
         return f"<SigInfo for '{self.callableObject.__class__.__name__}' with names '{', '.join(self.names)}'>"
 
