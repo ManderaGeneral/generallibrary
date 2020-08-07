@@ -12,6 +12,8 @@ from generallibrary.values import *
 x = lambda *args, **kwargs: print(args, kwargs)
 
 
+for x, y in zip([1, 2, 3], [2, 3]):
+    print(x, y)
 
 # x = lambda x, a=2, *z, y=2: print(x, z)
 # x = lambda x, y=None, /, a=2, *z: print(x, y, a, z)

@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, getFreeIndex, exclusive, inclusive, uniqueObjInList, combine
+from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, addToDictInDict, getFreeIndex, exclusive, inclusive, uniqueObjInList, combine
 
 
 class IterablesTest(unittest.TestCase):
@@ -84,18 +84,35 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual(joinWithStr(".", [["foo", "bar"], ["foo", "bar"]]), "['foo', 'bar'].['foo', 'bar']")
 
     def test_addToListInDict(self):
+        self.assertRaises(AssertionError, addToListInDict, None, "key", 5)
+        self.assertRaises(AssertionError, addToListInDict, [], "key", 5)
+        self.assertRaises(AssertionError, addToListInDict, {"key": "notlist"}, "key", 5)
+        self.assertRaises(AssertionError, addToListInDict, {"key": {}}, "key", 5)
+
         d = {}
-        addToListInDict(d, "test", 5)
-        self.assertEqual(d, {"test": [5]})
+        self.assertEqual({"test": [5]}, addToListInDict(d, "test", 5))
+        self.assertEqual({"test": [5, 3]}, addToListInDict(d, "test", 3))
+        self.assertEqual({"test": [5, 3, 2, 0]}, addToListInDict(d, "test", 2, 0))
+        self.assertEqual({"test": [5, 3, 2, 0, None, True]}, addToListInDict(d, "test", None, True))
+        self.assertEqual({"test": [5, 3, 2, 0, None, True]}, d)
 
-        addToListInDict(d, "test", 3)
-        self.assertEqual(d, {"test": [5, 3]})
+        self.assertEqual({"random": "foobar", True: [5, None, True, 2, "hi"]}, addToListInDict({"random": "foobar"}, True, 5, None, True, 2, "hi"))
 
-        addToListInDict(d, "test", None)
-        self.assertEqual(d, {"test": [5, 3, None]})
+    def test_addToDictInDict(self):
+        self.assertRaises(AssertionError, addToDictInDict, None, "key", a=5)
+        self.assertRaises(AssertionError, addToDictInDict, [], "key", a=5)
+        self.assertRaises(AssertionError, addToDictInDict, {"key": "notdict"}, "key", a=5)
+        self.assertRaises(AssertionError, addToDictInDict, {"key": []}, "key", a=5)
 
-        addToListInDict(d, "hello", "hi")
-        self.assertEqual(d, {"test": [5, 3, None], "hello": ["hi"]})
+        d = {}
+        self.assertEqual({"test": {"a": 5}}, addToDictInDict(d, "test", a=5))
+        self.assertEqual({"test": {"a": 5, "b": 3}}, addToDictInDict(d, "test", b=3))
+        self.assertEqual({"test": {"a": 5, "b": 3, "c": 2, "d": 0}}, addToDictInDict(d, "test", c=2, d=0))
+        self.assertEqual({"test": {"a": 5, "b": 3, "c": 2, "d": 0, "e": None, "f": True}}, addToDictInDict(d, "test", e=None, f=True))
+        self.assertEqual({"test": {"a": 5, "b": 3, "c": 2, "d": 0, "e": None, "f": True}}, d)
+
+        self.assertEqual({"random": "foobar", True: {"b": 5, "c": None, "d": True, "e": 2, "f": "hi"}},
+                         addToDictInDict({"random": "foobar"}, True, b=5, c=None, d=True, e=2, f="hi"))
 
     def test_getFreeIndex(self):
         d = {}
@@ -115,7 +132,6 @@ class IterablesTest(unittest.TestCase):
 
         d["2"] = True
         self.assertEqual(2, getFreeIndex(d))
-
 
     def test_appendToDict(self):
         d = {}

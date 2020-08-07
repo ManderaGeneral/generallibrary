@@ -11,45 +11,30 @@ class SigInfo:
     def __init__(self, callableObject, *args, **kwargs):
         assert callable(callableObject)
 
-        self.callableObject = callableObject
-        # self.args = [] if args is None else list(args)
-        # self.kwargs = {} if kwargs is None else kwargs.copy()
+        self._callableObject = callableObject
 
         # Stores *args and **kwargs indirectly in their own object if they exist
-        # Can have missing parameters
         self.allArgs = {}
-
-        # Normal arg
-        for i, name in enumerate(self.positionalArgNames):
-            if i >= len(args):
-                break
-            self.allArgs[name] = args[i]
-
-        # Extract *args
-        if self.packedArgsName:
-            self.allArgs[self.packedArgsName] = []
-        if len(args) > len(self.positionalArgNames):
-            if not self.packedArgsName:
-                raise AttributeError("Too many args without a packed *args parameter")
-
-            self.allArgs[self.packedArgsName] = args[len(self.positionalArgNames):]
-
-
-        if self.packedKwargsName:
-            self.allArgs[self.packedKwargsName] = {}
-
+        kwargs.update(self._argsToKwargs(list(args)))
         for name, value in kwargs.items():
-            # Normal kwarg
-            if name in self.names:
-                self.allArgs[name] = value
+            self[name] = value
 
-            # Extract **kwargs
+    def _argsToKwargs(self, args):
+        assert self.packedArgsName or len(args) <= len(self.positionalArgNames)
+
+        kwargs = {}
+        for i, (name, arg) in enumerate(zip(self.positionalArgNames, args)):
+            if name == self.packedArgsName:
+                kwargs[name] = args[i:]
+                assert i + 1 == len(self.positionalArgNames)  # Make sure this is last iteration becuse *args should be last
             else:
-                if not self.packedKwargsName:
-                    raise AttributeError("Too many kwargs without a packed **kwargs parameter")
-                self.allArgs[self.packedKwargsName[0]][name] = value
+                kwargs[name] = arg
+        return kwargs
 
-
+    @property
+    def callableObject(self):
+        """Propertize to protect but still have public"""
+        return self._callableObject
 
     # ========= Level 1 - SIGNATURE PARAMETERS =========
 
@@ -71,7 +56,7 @@ class SigInfo:
     @property
     def namesWithoutPacked(self):
         """Get list of parameter names except *args or **kwargs"""
-        return [param.name for param in self.parameters if param.name not in (self.packedArgsName + self.packedKwargsName)]
+        return [param.name for param in self.parameters if param.name not in (self.packedArgsName, self.packedKwargsName)]
 
     @property
     def leadingArgNames(self):
@@ -82,11 +67,14 @@ class SigInfo:
         """
         leadingArgNames = []
         for param in self.parameters:
+            if param.name == "self":
+                continue
+
             noDefault = param.default is inspect.Parameter.empty
-            notSelf = param.name != "self"
             includedKind = param.kind.name in ("POSITIONAL_OR_KEYWORD", "POSITIONAL_ONLY")
-            if not (noDefault and notSelf and includedKind):
+            if not (noDefault and includedKind):
                 break
+
             leadingArgNames.append(param.name)
         return leadingArgNames
 
@@ -118,7 +106,7 @@ class SigInfo:
     def positionalArgNames(self):
         """
         Get list of parameter names that can take a positional argument.
-        `*args` included.
+        `*args` included but is always last if it exists.
         """
         return [param.name for param in self.parameters if param.kind.name in ("POSITIONAL_ONLY", "POSITIONAL_OR_KEYWORD", "VAR_POSITIONAL")]
 
@@ -127,7 +115,7 @@ class SigInfo:
         """
         Get list of parameter names that can only take a keyword argument.
         Opposite of `self.positionalArgNames`.
-        `**kwargs` included.
+        `**kwargs` included but is always last if it exists.
         """
         return [name for name in self.names if name not in self.positionalArgNames]
 
@@ -200,11 +188,12 @@ class SigInfo:
     # ========= Level 3 =========
 
     def __getitem__(self, name):
-        """Get value of a parameter from unpackedAllArgs, otherwise None"""
+        """Get value of a parameter from unpackedAllArgs, otherwise None."""
         if name in self.unpackedAllArgs:
             return self.unpackedAllArgs[name]
 
     def __setitem__(self, name, value):
+        """Can set single key, entire *args, entire **kwargs or key inside **kwargs."""
         if name not in self.names and self.packedKwargsName is None:
             raise AttributeError(f"Cannot set parameter '{name}' as there is no parameter with that name nor is there a packed kwargs parameter.")
 
@@ -220,7 +209,7 @@ class SigInfo:
             self.allArgs[name] = value
 
         elif self.packedKwargsName:
-            self.allArgs[self.packedKwargsName][name] = value
+            addToDictInDict(self.allArgs, self.packedKwargsName, **{name: value})
 
     def __call__(self):
         """
@@ -301,6 +290,7 @@ def defaults(dictionary, overwriteNone=False, **kwargs):
 
 
 from generallibrary.object import attributes
+from generallibrary.iterables import addToDictInDict
 
 
 

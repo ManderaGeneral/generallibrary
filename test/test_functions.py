@@ -75,7 +75,7 @@ class FunctionsTest(unittest.TestCase):
     def test_setParameters(self):
         def wrapper(func):
             def f(*args, **kwargs):
-                return SigInfo(func, args, kwargs).setParameters(x=2)()
+                return SigInfo(func, *args, **kwargs).setParameters(x=2)()
             return f
 
         @wrapper
@@ -88,29 +88,29 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(4, hello(x=5, y=2))
         self.assertEqual(4, hello(5, y=2))
 
-        sigInfo = SigInfo(lambda x, y, z=2: 5, (1, 2), {"z": 3})
+        sigInfo = SigInfo(lambda x, y, z=2: 5, 1, 2, z=3)
         self.assertEqual(1, sigInfo["x"])
         self.assertEqual(2, sigInfo["y"])
         self.assertEqual(3, sigInfo["z"])
         self.assertEqual(None, sigInfo["doesntexist"])
-        self.assertEqual([1, 2], sigInfo.args)
-        self.assertEqual({"z": 3}, sigInfo.kwargs)
+        self.assertEqual([1, 2, 3], sigInfo.unpackedArgs)
+        self.assertEqual({}, sigInfo.unpackedKwargs)
 
         sigInfo.setParameters(x=4, z=5)
         self.assertEqual(4, sigInfo["x"])
         self.assertEqual(2, sigInfo["y"])
         self.assertEqual(5, sigInfo["z"])
-        self.assertEqual([4, 2], sigInfo.args)
-        self.assertEqual({"z": 5}, sigInfo.kwargs)
+        self.assertEqual([4, 2, 5], sigInfo.unpackedArgs)
+        self.assertEqual({}, sigInfo.unpackedKwargs)
 
         with self.assertRaises(AttributeError):
             sigInfo["new"] = 6
 
-        sigInfo = SigInfo(lambda x=1, **kwargs: 5, kwargs={"y": 2})
+        sigInfo = SigInfo(lambda x=1, **kwargs: 5, y=2)
         self.assertEqual(1, sigInfo["x"])
         self.assertEqual(2, sigInfo["y"])
-        self.assertEqual([], sigInfo.args)
-        self.assertEqual({"y": 2}, sigInfo.kwargs)
+        self.assertEqual([1], sigInfo.unpackedArgs)
+        self.assertEqual({"y": 2}, sigInfo.unpackedKwargs)
 
         sigInfo["y"] = 3
         self.assertEqual(3, sigInfo["y"])
@@ -118,16 +118,17 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(4, sigInfo["z"])
         sigInfo["x"] = 5
         self.assertEqual(5, sigInfo["x"])
-        self.assertEqual({"x": 5, "y": 3, "z": 4}, sigInfo.kwargs)
+        self.assertEqual([5], sigInfo.unpackedArgs)
+        self.assertEqual({"y": 3, "z": 4}, sigInfo.unpackedKwargs)
 
 
 
     def test_getParameter(self):
         def wrapper(func):
             def f(*args, **kwargs):
-                self.assertEqual(2, SigInfo(func, args, kwargs)["x"])
-                self.assertEqual(5, SigInfo(func, args, kwargs)["y"])
-                self.assertEqual(None, SigInfo(func, args, kwargs)["z"])
+                self.assertEqual(2, SigInfo(func, *args, **kwargs)["x"])
+                self.assertEqual(5, SigInfo(func, *args, **kwargs)["y"])
+                self.assertEqual(None, SigInfo(func, *args, **kwargs)["z"])
                 return func(*args, **kwargs)
             return f
         @wrapper
@@ -158,20 +159,19 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(3, SigInfo(lambda x, y=2, *args, **kwargs: 5).getIndexFromName("kwargs"))
 
     def test_sigInfo(self):
-        self.assertEqual([1, 2], SigInfo(lambda *arguments: 5, args=(1, 2))["arguments"])
-        self.assertEqual([2], SigInfo(lambda x, *arguments: 5, args=(1, 2))["arguments"])
+        self.assertEqual([1, 2], SigInfo(lambda *arguments: 5, 1, 2)["arguments"])
+        self.assertEqual([2], SigInfo(lambda x, *arguments: 5, 1, 2)["arguments"])
 
-        self.assertEqual({"foo": "bar", "test": 5}, SigInfo(lambda x, *arguments, **keywordargs: 5, args=(1, 2), kwargs={"foo": "bar", "test": 5})["keywordargs"])
+        self.assertEqual({"foo": "bar", "test": 5}, SigInfo(lambda x, *arguments, **keywordargs: 5, 1, 2, foo="bar", test=5)["keywordargs"])
 
-        sigInfo = SigInfo(lambda x, y=6, *arguments, z=7, **keywordargs: 8, args=(1, 2, 3, 4), kwargs={"foo": "bar", "test": 5})
+        sigInfo = SigInfo(lambda x, y=6, *arguments, z=7, **keywordargs: 8, 1, 2, 3, 4, foo="bar", test=5)
         self.assertEqual(1, sigInfo["x"])
         self.assertEqual(2, sigInfo["y"])
         self.assertEqual([3, 4], sigInfo["arguments"])
         self.assertEqual(7, sigInfo["z"])
         self.assertEqual({"foo": "bar", "test": 5}, sigInfo["keywordargs"])
 
-        sigInfo = SigInfo(lambda x, **kwargs: 3, args=(1,), kwargs={"x": 2})
-        print(sigInfo.args, sigInfo.kwargs)
+        sigInfo = SigInfo(lambda x, **kwargs: 3, 1, x=2)
         self.assertEqual(1, sigInfo["x"])
 
     def test_sigInfoCall(self):

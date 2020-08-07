@@ -160,21 +160,41 @@ def joinWithStr(delimeter, obj):
 
     return delimeter.join([str(value) for value in iterable])
 
-def addToListInDict(dictionary, key, value):
+def addToListInDict(dictionary, key, *args):
     """
     Add a value to a list inside a dictionary, if key doesn't exist then a new list is created.
     Since list is mutable we can change dictionary directly.
 
     :param dict dictionary:
-    :param str key:
-    :param any value:
-    :return: Length of new list
+    :param key:
+    :return: Updated given dictionary
     """
-    if key not in dictionary:
-        dictionary[key] = [value]
+    assert isinstance(dictionary, dict)
+    if key in dictionary:
+        assert isinstance(dictionary[key], list)
     else:
-        dictionary[key].append(value)
-    return len(dictionary[key])
+        dictionary[key] = []
+
+    dictionary[key].extend(args)
+    return dictionary
+
+def addToDictInDict(dictionary, key, **kwargs):
+    """
+    Add a key-value argument to a dict inside a dict.
+    Dictionary is created if there is none.
+
+    :param dict dictionary:
+    :param key:
+    :return: Updated given dictionary
+    """
+    assert isinstance(dictionary, dict)
+    if key in dictionary:
+        assert isinstance(dictionary[key], dict)
+    else:
+        dictionary[key] = {}
+
+    dictionary[key].update(kwargs)
+    return dictionary
 
 def getFreeIndex(dictionary):
     """
