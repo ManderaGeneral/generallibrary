@@ -48,8 +48,17 @@ class FunctionsTest(unittest.TestCase):
             """2 arg, 1 kwarg function"""
             pass
         self.assertEqual(["x", "y", "z", "argz", "kwargz"], SigInfo(hello).names)
-
+        self.assertEqual(["x", "y"], SigInfo(hello).leadingArgNames)
         self.assertEqual(["x", "y", "argz", "kwargz"], SigInfo(hello).namesWithoutDefaults)
+        self.assertEqual(["x", "y", "z"], SigInfo(hello).namesWithoutPacked)
+        self.assertEqual("argz", SigInfo(hello).packedArgsName)
+        self.assertEqual("kwargz", SigInfo(hello).packedKwargsName)
+
+    def test_argNames(self):
+        sigInfo = SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: 5)
+        self.assertEqual(["x", "y", "b", "args"], sigInfo.positionalArgNames)
+        self.assertEqual(["z", "s", "kwargs"], sigInfo.keywordArgNames)
+        self.assertEqual({"y": 2, "b": 4, "z": 3}, sigInfo.defaults)
 
     def test_getSignatureDefaults(self):
         self.assertEqual({"y": 5}, SigInfo(lambda x, y=5: None).defaults)
@@ -58,6 +67,10 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual({"y": None}, SigInfo(lambda x, y=None, *z: None).defaults)
         self.assertEqual({"y": None}, SigInfo(lambda x, y=None, **z: None).defaults)
         self.assertEqual({"y": "test"}, SigInfo(lambda x, y="test", *args, **z: None).defaults)
+
+    def test_unpacked(self):
+        sigInfo = SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: 5)
+
 
     def test_setParameters(self):
         def wrapper(func):
@@ -133,10 +146,10 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual("args", SigInfo(lambda x, y=2, *args, **kwargs: 5).packedArgsName)
 
     def test_packedKwargNames(self):
-        self.assertEqual(["kwargs"], SigInfo(lambda **kwargs: 5).packedKwargsName)
-        self.assertEqual(["kwargs"], SigInfo(lambda x, **kwargs: 5).packedKwargsName)
-        self.assertEqual(["kwargs"], SigInfo(lambda x, y=2, **kwargs: 5).packedKwargsName)
-        self.assertEqual(["kwargs"], SigInfo(lambda x, y=2, *args, **kwargs: 5).packedKwargsName)
+        self.assertEqual("kwargs", SigInfo(lambda **kwargs: 5).packedKwargsName)
+        self.assertEqual("kwargs", SigInfo(lambda x, **kwargs: 5).packedKwargsName)
+        self.assertEqual("kwargs", SigInfo(lambda x, y=2, **kwargs: 5).packedKwargsName)
+        self.assertEqual("kwargs", SigInfo(lambda x, y=2, *args, **kwargs: 5).packedKwargsName)
 
     def test_getIndexFromName(self):
         self.assertEqual(0, SigInfo(lambda x, y=2, *args, **kwargs: 5).getIndexFromName("x"))

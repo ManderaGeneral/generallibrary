@@ -49,6 +49,8 @@ class SigInfo:
                     raise AttributeError("Too many kwargs without a packed **kwargs parameter")
                 self.allArgs[self.packedKwargsName[0]][name] = value
 
+
+
     # ========= Level 1 - SIGNATURE PARAMETERS =========
 
     @property
@@ -170,12 +172,16 @@ class SigInfo:
         for name in self.names:
             if name in self.allArgs:
                 kwargs[name] = self.allArgs[name]
+
                 if name == self.packedKwargsName:
                     kwargs.update(self.allArgs[name])
+
             elif name in self.defaults:
                 kwargs[name] = self.defaults[name]
+
             else:
                 kwargs[name] = None
+
         return kwargs
 
 
