@@ -228,7 +228,7 @@ class SigInfo:
         assert self.requiredAreDefined
         return self.callableObject(*self.unpackedArgs, **self.unpackedKwargs)
 
-    def setParameters(self, /, **parameters):
+    def setParameters(self, **parameters):
         """Set parameters automatically in args or kwargs if the name exists in self.names."""
         for name, value in parameters.items():
             self[name] = value

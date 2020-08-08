@@ -61,15 +61,10 @@ def attributes(obj):
 def initBases(cls):
     """
     Automatically initalizes all inherited classes.
-    Only allows class to be initiated with key word arguments. This is to prevent conflicts and to make it more intuitive.
     If a base has an argument without a default value then Parent must have that key word as argument itself
-
-    TODO: Handle what happens if a Base requires *args or **kwargs -> Probably clean up library to get info regarding this too
-    TODO: Allow Parent not having defined __init__
     """
     clsInit = cls.__init__
 
-    # Only allow **kwargs, got too advanced for *args
     def __init__(*args, **kwargs):
         clsSigInfo = SigInfo(clsInit, *args, **kwargs)
 
@@ -83,7 +78,6 @@ def initBases(cls):
                         continue
                     assert name in clsSigInfo.definedNames
                     sigInfo[name] = clsSigInfo[name]
-                    # print(name, clsSigInfo[name])
 
                 sigInfo()
 
