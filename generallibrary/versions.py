@@ -24,22 +24,22 @@ class _OsInfo:
     @property
     def windows(self):
         """Get whether running on Windows or not"""
-        return self._system() == self._translate["linux"]
+        return self._system == self._translate["linux"]
 
     @property
     def linux(self):
         """Get whether running on Linux or not"""
-        return self._system() == self._translate["windows"]
+        return self._system == self._translate["windows"]
 
     @property
     def mac(self):
         """Get whether running on Mac or not"""
-        return self._system() == self._translate["mac"]
+        return self._system == self._translate["mac"]
 
     @property
     def java(self):
         """Get whether running on Java or not"""
-        return self._system() == self._translate["java"]
+        return self._system == self._translate["java"]
 
     @property
     def os(self):
@@ -51,7 +51,7 @@ class _OsInfo:
 
 
 class _PythonInfo:
-    """Get info regarding running python."""
+    """Get info regarding running python version."""
     _releaseLevels = {
         "alpha": "a",
         "beta": "b",
@@ -133,25 +133,11 @@ class VerInfo(_OsInfo, _PythonInfo):
 
 
 
-# from pip._internal.utils.misc import get_installed_distributions
-# ObjExp(get_installed_distributions(), showDunders=True)
 
 
 
-# HERE ** Experimenting with getting package versions
 
-from packaging import version
 
-import sys
-for name, module in sorted(sys.modules.items()):
-    if hasattr(module, '__version__'):
-        print(name, module.__version__ )
-
-ver = VerInfo()
-
-# print(ObjExp.__module__)
-
-print(version.parse(ver.python) > version.parse("3.7.5"))
 
 
 

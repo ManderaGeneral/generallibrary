@@ -5,8 +5,6 @@ from types import ModuleType, FunctionType
 
 from gc import get_referents
 
-from generallibrary.functions import defaults, SigInfo
-
 
 BLACKLIST = type, ModuleType, FunctionType
 def getsize(obj):
@@ -85,6 +83,7 @@ def initBases(cls):
     return cls
 
 
+from generallibrary.functions import defaults, SigInfo
 
 
 
