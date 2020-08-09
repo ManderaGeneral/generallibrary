@@ -9,15 +9,16 @@ from generallibrary.versions import *
 
 # from generalobjexp import ObjExp
 
-# import sys
+import sys
 
 # print(str(sys.version_info.releaselevel))
 
-print(VerInfo().pythonString)
+# print(VerInfo().pythonString)
 
 
 
 # from packaging import version
+# print(sys.version_info)
 
 # import sys
 # for name, module in sorted(sys.modules.items()):
@@ -28,10 +29,14 @@ print(VerInfo().pythonString)
 
 # print(ObjExp.__module__)
 
-# print(version.parse(ver.python) > version.parse("3.7.5"))
 
 
 
+# print(version.parse(VerInfo().pythonString) == version.parse("3.7"))
+print(VerInfo().pythonVersion != "3.8.00")
+
+
+# print(VerInfo().pythonVersion == "3.8")
 
 
 

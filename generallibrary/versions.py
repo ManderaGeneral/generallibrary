@@ -6,6 +6,8 @@ Get package info?
 
 from generallibrary.object import initBases
 
+from packaging import version
+
 
 class _OsInfo:
     """Get info regarding running operating system."""
@@ -82,7 +84,8 @@ class _PythonInfo:
 
     @property
     def pythonReleaseLevel(self):
-        """Return third digit of python version."""
+        """Return release level of python version.
+        It's alpha, beta, candidate or final."""
         return self._versionInfo.releaselevel
 
     @property
@@ -125,14 +128,43 @@ class _PythonInfo:
         """Return python version as '3.8.5' or '3.8.5a4' if alpha release 4."""
         return f"{self.pythonMajor}.{self.pythonMinor}.{self.pythonMicro}{self.pythonReleaseKeyword}{self.pythonSerialString}"
 
+    @property
+    def pythonVersion(self):
+        """Returns a PythonVersion object that can be used to compare directly to an int, float or str."""
+        return PythonVersion(self.pythonString)
 
 @initBases
 class VerInfo(_OsInfo, _PythonInfo):
     """Inherits and groups all information classes."""
-    pass
+
+import typing
 
 
 
+
+comparisonOperators = {
+    "__eq__": lambda a, b: a == b,
+    "__gt__": lambda a, b: a > b,
+    # "__ne__": lambda a, b: a != b,
+}
+
+
+def defineComparisonOperators(leftLambda, rightLambda):
+    def wrapper(cls):
+        for name, func in comparisonOperators.items():
+            setattr(cls, name, lambda self, other, func=func: func(leftLambda(self), rightLambda(other)))
+
+        return cls
+    return wrapper
+
+
+
+
+@defineComparisonOperators(lambda self: self._version, lambda other: version.parse(str(other)))
+class PythonVersion:
+    """To easily compare python versions to float or str."""
+    def __init__(self, pythonString):
+        self._version = version.parse(pythonString)
 
 
 

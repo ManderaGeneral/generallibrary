@@ -19,7 +19,7 @@ setup(
         "Random useful code made by me, categorized into modules to be imported seperately."
     ),
     packages=find_packages(),
-    install_requires=["wheel"],
+    install_requires=["wheel", "packaging"],
     classifiers=[
         "Operating System :: Microsoft :: Windows :: Windows 7",
         "Operating System :: Microsoft :: Windows :: Windows 10",
