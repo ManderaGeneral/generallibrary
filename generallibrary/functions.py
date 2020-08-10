@@ -321,6 +321,14 @@ class Operators:
 
 
 
+import importlib
+
+def conditionallyImportInheritence(condition, module, cls):
+    if condition:
+        importlib.import_module(module)
+
+
+
 from generallibrary.iterables import addToDictInDict
 
 

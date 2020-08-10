@@ -5,6 +5,9 @@ from generallibrary.functions import SigInfo, defaults
 from generallibrary.versions import VerInfo
 
 
+
+# @conditionallyImportInheritence(VerInfo().pythonVersion >= 3.8, "test_functions_positional", "PositionalTest")
+
 class FunctionsTest(unittest.TestCase):
     def test_leadingArgNamesCount(self):
         self.assertEqual(0, len(SigInfo(lambda: 5).leadingArgNames))
@@ -64,23 +67,11 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(["x"], SigInfo(lambda x, **y: 5).namesRequired)
         self.assertEqual(["x"], SigInfo(lambda x, **y: 5).namesRequired)
 
-        verInfo = VerInfo()
-        if verInfo.pythonVersion >= 3.8:
-            print(verInfo.pythonString)
-            self.assertEqual(["x", "y"], SigInfo(lambda x, /, y: 5).namesRequired)
-            self.assertEqual(["x", "y"], SigInfo(lambda x, /, y, z=2: 5).namesRequired)
-            self.assertEqual(["x", "s"], SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: None).namesRequired)
-
     def test_argNames(self):
-        if VerInfo().pythonVersion >= 3.8:
-            sigInfo = SigInfo(lambda x, /, y=2, b=4, *args, z=3, s, **kwargs: 5)
-        else:
-            sigInfo = SigInfo(lambda x, y=2, b=4, *args, z=3, s, **kwargs: 5)
-
+        sigInfo = SigInfo(lambda x, y=2, b=4, *args, z=3, s, **kwargs: 5)
         self.assertEqual(["x", "y", "b", "args"], sigInfo.positionalArgNames)
         self.assertEqual(["z", "s", "kwargs"], sigInfo.keywordArgNames)
         self.assertEqual({"y": 2, "b": 4, "z": 3}, sigInfo.defaults)
-
 
     def test_getSignatureDefaults(self):
         self.assertEqual({"y": 5}, SigInfo(lambda x, y=5: None).defaults)
@@ -89,9 +80,6 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual({"y": None}, SigInfo(lambda x, y=None, *z: None).defaults)
         self.assertEqual({"y": None}, SigInfo(lambda x, y=None, **z: None).defaults)
         self.assertEqual({"y": "test"}, SigInfo(lambda x, y="test", *args, **z: None).defaults)
-
-        if VerInfo().pythonVersion >= 3.8:
-            self.assertEqual({"y": 2, "b": 4, "z": 3}, SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: None).defaults)
 
     def test_setParameters(self):
         def wrapper(func):
@@ -233,11 +221,10 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual({"a": None, "b": 3}, defaults({"a": None, "b": 3}, a=4, b=5))
         self.assertEqual({"a": 4, "b": 3}, defaults({"a": None, "b": 3}, a=4, b=5, overwriteNone=True))
 
-
-
-
-
-
+    def test_positional(self):
+        if VerInfo().pythonVersion >= 3.8:
+            from .test_functions_positional import positional
+            positional(self)
 
 
 
