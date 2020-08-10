@@ -223,14 +223,8 @@ class FunctionsTest(unittest.TestCase):
 
     def test_positional(self):
         if VerInfo().pythonVersion >= 3.8:
-            from .test_functions_positional import positional
+            from test.positional import positional
             positional(self)
-
-
-
-
-
-
 
 
 
