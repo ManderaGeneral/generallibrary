@@ -64,22 +64,21 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(["x"], SigInfo(lambda x, **y: 5).namesRequired)
         self.assertEqual(["x"], SigInfo(lambda x, **y: 5).namesRequired)
 
-        # try:
-        #     _ = lambda x, /: None
-        # except:
-        #     pass
-        # else:
-
         if VerInfo().pythonVersion >= 3.8:
             self.assertEqual(["x", "y"], SigInfo(lambda x, /, y: 5).namesRequired)
             self.assertEqual(["x", "y"], SigInfo(lambda x, /, y, z=2: 5).namesRequired)
             self.assertEqual(["x", "s"], SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: None).namesRequired)
 
     def test_argNames(self):
-        sigInfo = SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: 5)
+        if VerInfo().pythonVersion >= 3.8:
+            sigInfo = SigInfo(lambda x, /, y=2, b=4, *args, z=3, s, **kwargs: 5)
+        else:
+            sigInfo = SigInfo(lambda x, y=2, b=4, *args, z=3, s, **kwargs: 5)
+
         self.assertEqual(["x", "y", "b", "args"], sigInfo.positionalArgNames)
         self.assertEqual(["z", "s", "kwargs"], sigInfo.keywordArgNames)
         self.assertEqual({"y": 2, "b": 4, "z": 3}, sigInfo.defaults)
+
 
     def test_getSignatureDefaults(self):
         self.assertEqual({"y": 5}, SigInfo(lambda x, y=5: None).defaults)
@@ -121,8 +120,9 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual([4, 2, 5], sigInfo.unpackedArgs)
         self.assertEqual({}, sigInfo.unpackedKwargs)
 
-        with self.assertRaises(AssertionError):
-            sigInfo["new"] = 6
+        # with self.assertRaises(AssertionError):
+        #     sigInfo["new"] = 6
+        sigInfo["new"] = 6
 
         sigInfo = SigInfo(lambda x=1, **kwargs: 5, y=2)
         self.assertEqual(1, sigInfo["x"])

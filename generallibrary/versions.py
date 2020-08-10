@@ -133,38 +133,29 @@ class _PythonInfo:
         """Returns a PythonVersion object that can be used to compare directly to an int, float or str."""
         return PythonVersion(self.pythonString)
 
+
 @initBases
 class VerInfo(_OsInfo, _PythonInfo):
     """Inherits and groups all information classes."""
 
-import typing
+
+# HERE **
+class DuckTyping:
+    pass
 
 
+from generallibrary.functions import Operators
 
-
-comparisonOperators = {
-    "__eq__": lambda a, b: a == b,
-    "__gt__": lambda a, b: a > b,
-    # "__ne__": lambda a, b: a != b,
-}
-
-
-def defineComparisonOperators(leftLambda, rightLambda):
-    def wrapper(cls):
-        for name, func in comparisonOperators.items():
-            setattr(cls, name, lambda self, other, func=func: func(leftLambda(self), rightLambda(other)))
-
-        return cls
-    return wrapper
-
-
-
-
-@defineComparisonOperators(lambda self: self._version, lambda other: version.parse(str(other)))
-class PythonVersion:
-    """To easily compare python versions to float or str."""
+@Operators.defineComparisons(lambda left: left.version, lambda right: version.parse(str(right)))
+class PythonVersion(DuckTyping):
+    """Used by VerInfo.pythonVersion to easily compare python versions to int, float or string."""
     def __init__(self, pythonString):
         self._version = version.parse(pythonString)
+
+    @property
+    def version(self):
+        """Protect attribute"""
+        return self._version
 
 
 

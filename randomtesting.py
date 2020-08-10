@@ -33,7 +33,7 @@ import sys
 
 
 # print(version.parse(VerInfo().pythonString) == version.parse("3.7"))
-print(VerInfo().pythonVersion != "3.8.00")
+print(VerInfo().pythonVersion > "3.8.0")
 
 
 # print(VerInfo().pythonVersion == "3.8")

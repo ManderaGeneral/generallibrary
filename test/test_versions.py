@@ -23,4 +23,4 @@ class VersionsTest(unittest.TestCase):
 
         self.assertLessEqual(verInfo.pythonString.count("."), 2)
 
-
+        # HERE **

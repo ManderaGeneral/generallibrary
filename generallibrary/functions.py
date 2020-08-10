@@ -203,8 +203,8 @@ class SigInfo:
 
     def __setitem__(self, name, value):
         """Can set single key, entire *args, entire **kwargs or key inside **kwargs."""
-        if name not in self.names and self.packedKwargsName is None:
-            raise AssertionError(f"Cannot set parameter '{name}' as there is no parameter with that name nor is there a packed kwargs parameter.")
+        # if name not in self.names and self.packedKwargsName is None:
+        #     raise AssertionError(f"Cannot set parameter '{name}' as there is no parameter with that name nor is there a packed kwargs parameter.")
 
         if name in self.allArgs:
             if name == self.packedArgsName and not isinstance(value, (tuple, list)):
@@ -292,9 +292,35 @@ def defaults(dictionary, overwriteNone=False, **kwargs):
     return kwargs
 
 
+class Operators:
+    """Automatic operator definitions for classes."""
+    comparisons = {
+        "__eq__": lambda a, b: a == b,
+        "__gt__": lambda a, b: a > b,
+        "__lt__": lambda a, b: a < b,
+        "__ge__": lambda a, b: a >= b,
+        "__le__": lambda a, b: a <= b,
+    }
+
+    @classmethod
+    def defineComparisons(cls, leftLambda, rightLambda):
+        """Define all comparision operators for this class.
+        Provide two functions that return left and right values.
+        Automatically fills 'left' and 'right' parameters by name."""
+        def wrapper(baseCls):
+            """."""
+            for name, func in cls.comparisons.items():
+
+                lambdaFunc = lambda left, right, func=func: func(
+                    SigInfo(leftLambda, left=left, right=right)(),
+                    SigInfo(rightLambda, left=left, right=right)())
+                setattr(baseCls, name, lambdaFunc)
+
+            return baseCls
+        return wrapper
 
 
-from generallibrary.object import attributes
+
 from generallibrary.iterables import addToDictInDict
 
 
