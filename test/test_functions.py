@@ -64,7 +64,9 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(["x"], SigInfo(lambda x, **y: 5).namesRequired)
         self.assertEqual(["x"], SigInfo(lambda x, **y: 5).namesRequired)
 
-        if VerInfo().pythonVersion >= 3.8:
+        verInfo = VerInfo()
+        if verInfo.pythonVersion >= 3.8:
+            print(verInfo.pythonString)
             self.assertEqual(["x", "y"], SigInfo(lambda x, /, y: 5).namesRequired)
             self.assertEqual(["x", "y"], SigInfo(lambda x, /, y, z=2: 5).namesRequired)
             self.assertEqual(["x", "s"], SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: None).namesRequired)
