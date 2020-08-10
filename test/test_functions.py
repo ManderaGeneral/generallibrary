@@ -87,7 +87,9 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual({"y": None}, SigInfo(lambda x, y=None, *z: None).defaults)
         self.assertEqual({"y": None}, SigInfo(lambda x, y=None, **z: None).defaults)
         self.assertEqual({"y": "test"}, SigInfo(lambda x, y="test", *args, **z: None).defaults)
-        self.assertEqual({"y": 2, "b": 4, "z": 3}, SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: None).defaults)
+
+        if VerInfo().pythonVersion >= 3.8:
+            self.assertEqual({"y": 2, "b": 4, "z": 3}, SigInfo(lambda x, y=2, /, b=4, *args, z=3, s, **kwargs: None).defaults)
 
     def test_setParameters(self):
         def wrapper(func):
