@@ -1,5 +1,5 @@
 language: python
-install: pip3 install generallibrary
+install: pip3 install .
 script: python -m unittest discover
 
 jobs:
