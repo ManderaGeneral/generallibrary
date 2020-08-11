@@ -2,7 +2,7 @@
 import time
 
 class Timer:
-    """Callable class to easily time things and print"""
+    """Callable class to easily time things and print."""
     def __init__(self, startTime=None):
         """
         Instantiate Timer which starts it.
@@ -23,10 +23,12 @@ class Timer:
         return time.time() - self.startTime
 
     def print(self):
+        """."""
         print(f"Seconds passed: {self.seconds()}")
 
 def sleep(seconds):
     """
+    Normal sleep function from time package.
     Stubbed for easy changing and whatnot.
 
     :param float seconds: Time in seconds to sleep.

@@ -202,7 +202,22 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(True, SigInfo(lambda x, y=2, *args, z, a=3, **kwargs: 5, 1, 2, 3, a=5, z=6).requiredAreDefined)
 
     def test_sigInfoCall(self):
-        pass
+        sigInfo = SigInfo(lambda x: x, 5)
+        self.assertEqual(5, sigInfo())
+
+        sigInfo["x"] = 3
+        self.assertEqual(3, sigInfo())
+
+        sigInfo["new"] = 4
+        self.assertEqual(3, sigInfo())
+
+        sigInfo = SigInfo(lambda x: x)
+        self.assertRaises(AssertionError, sigInfo)
+
+        sigInfo["x"] = 3
+        self.assertEqual(3, sigInfo())
+
+
 
     def test_defaults(self):
         self.assertEqual({"a": 5, "b": 3}, defaults({"a": 5}, b=3))
@@ -221,10 +236,12 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual({"a": None, "b": 3}, defaults({"a": None, "b": 3}, a=4, b=5))
         self.assertEqual({"a": 4, "b": 3}, defaults({"a": None, "b": 3}, a=4, b=5, overwriteNone=True))
 
+
+    # Not happy about this technique to dynamically load code to prevent syntax error, but it's the best option so far
+    @unittest.skipUnless(VerInfo().pythonVersion >= 3.8, "Positional-only parameters were introduced in 3.8.0.")
     def test_positional(self):
-        if VerInfo().pythonVersion >= 3.8:
-            from test.positional import positional
-            positional(self)
+        from test.positional import positional
+        positional(self)
 
 
 

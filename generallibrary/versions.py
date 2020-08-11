@@ -136,12 +136,15 @@ class _PythonInfo:
 
 @initBases
 class VerInfo(_OsInfo, _PythonInfo):
-    """Inherits and groups all information classes."""
+    """Get version info regarding running Python and OS."""
 
 
-# HERE **
 class DuckTyping:
-    pass
+    """
+    I have an idea here to pair syntax tests to python versions.
+    We can then run them all and make sure they succeed / fail based on running versions.
+    Would have to deal with syntax error by some importing technique then I guess.
+    """
 
 
 from generallibrary.functions import Operators

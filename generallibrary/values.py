@@ -46,7 +46,7 @@ def inrange(value, minimum, maximum):
 
 def rectify(value, threshold):
     """
-    Return 0 if it's below threshold, otherwise difference
+    Return 0 if it's below threshold, otherwise difference.
 
     :param float value:
     :param float threshold:
@@ -100,46 +100,9 @@ def confineTo(value, minimum, maximum, margin=0):
     signValue = sign(rectifiedValue) * -1
     jumpValue = jumps * valueRange * signValue
 
-    # debug(locals(),
-    #       "value",
-    #       "minimum",
-    #       "maximum",
-    #       "valueRange",
-    #       "rectifiedValue",
-    #       "jumps",
-    #       "signValue",
-    #       "jumpValue",
-    #       "value + jumpValue",
-    #       printOut=True)
-
     return value + jumpValue
 
-def debug(scope, *evals, printOut=True):
-    """
-    Easily call eval() on an arbitrary amount of evaluation strings.
-    Useful for debugging.
 
-    Example:
-        debug(locals(), "value", "value + jumpValue", printOut=True)
-        debug(locals())  # Prints all objects in scope
-
-    :param dict scope: Just write locals()
-    :param str evals: Variable names with or without operations
-    :param printOut: Whether to print directly or not
-    :return: A nicely formatted string
-    """
-    if not evals:
-        evals = list(scope.keys())
-
-    lines = []
-    n = max([len(string) for string in evals])
-    for evalStr in evals:
-        lines.append(f"{evalStr:>{n}} = {eval(evalStr, scope)}")
-    lines.append("")
-    text = "\n".join(lines)
-    if printOut:
-        print(text)
-    return text
 
 
 

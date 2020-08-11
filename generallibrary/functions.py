@@ -4,9 +4,9 @@ import re
 
 class SigInfo:
     """
-    Get info regarding a signature.
-    Also useful for handling decorators.
+    Handles a callable along with it's parameters.
     Unforgiving as it sets missing values to None.
+    Parameters can be changed but not callableObject.
     """
     def __init__(self, callableObject, *args, **kwargs):
         assert callable(callableObject)
@@ -202,19 +202,14 @@ class SigInfo:
             return self.unpackedAllArgs[name]
 
     def __setitem__(self, name, value):
-        """Can set single key, entire *args, entire **kwargs or key inside **kwargs."""
-        # if name not in self.names and self.packedKwargsName is None:
-        #     raise AssertionError(f"Cannot set parameter '{name}' as there is no parameter with that name nor is there a packed kwargs parameter.")
-
-        if name in self.allArgs:
+        """Can set single key, entire *args, entire **kwargs or key inside **kwargs.
+        If there's no place for key then it's ignored."""
+        if name in self.names:
             if name == self.packedArgsName and not isinstance(value, (tuple, list)):
                 raise AttributeError(f"Packed args parameter value has to be list or tuple.")
             if name == self.packedKwargsName and not isinstance(value, dict):
                 raise AttributeError(f"Packed kwargs parameter value has to be a dict.")
 
-            self.allArgs[name] = value
-
-        elif name in self.names:
             self.allArgs[name] = value
 
         elif self.packedKwargsName:
@@ -244,13 +239,14 @@ ignore = ["+", "-", "*", "/", "(", ")", "sqrt"]
 def _tokenize(expression):
     """
     Tokenize an expression
-    Taken from https://stackoverflow.com/questions/61948141/python-function-from-mathematical-expression-string/61949248
+    Taken from myself at https://stackoverflow.com/questions/61948141/python-function-from-mathematical-expression-string/61949248
     """
     return re.findall(r"(\b\w*[.]?\w+\b|[()+*\-/])", expression)
 
 def calculate(expression, *args):
     """
-    Calculate function which can take any expression. Enter args in the order that they appear.
+    Automatically fills variables of a formula in a string then evaluates it.
+    Enter args in the order that they appear.
     """
     seenArgs = {}
     newTokens = []
@@ -273,7 +269,7 @@ def calculate(expression, *args):
 
 def defaults(dictionary, overwriteNone=False, **kwargs):
     """
-    Overwrite kwargs with dictionary.
+    Set default values of a given dictionary, option to overwrite None values.
     Returns given dictionary with values updated by kwargs unless they already existed.
 
     :param dict dictionary:

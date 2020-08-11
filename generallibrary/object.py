@@ -9,7 +9,7 @@ from gc import get_referents
 BLACKLIST = type, ModuleType, FunctionType
 def getsize(obj):
     """
-    Sum size of object & members.
+    Get a sum of sizes from an object and it's members in bytes.
     Custom objects know their class.
     Function objects seem to know way too much, including modules.
     Exclude modules as well.
@@ -46,7 +46,7 @@ def getClassFromMethod(method):
     return getattr(sys.modules[method.__module__], splitQualname[0])
 
 def attributes(obj):
-    """Get all attributes of an object that don't start with '__' as a dictionary"""
+    """Get all attributes of an object that don't start with `__`, as a dictionary."""
     attrs = {}
     for key in dir(obj):
         attr = getattr(obj, key)
@@ -58,7 +58,7 @@ def attributes(obj):
 
 def initBases(cls):
     """
-    Automatically initalizes all inherited classes.
+    Decorator function for class to automatically initalize all inherited classes.
     If a base has an argument without a default value then Parent must have that key word as argument itself
     """
     clsInit = cls.__init__

@@ -60,7 +60,7 @@ class SortedList:
 
 def getIterable(obj):
     """
-    Returns the iterable values of an object or False.
+    Returns the iterable values of a tuple, list or dict. Otherwise `False`.
     Can be used for typechecking or iterating generic obj.
 
     Wrong way
@@ -91,7 +91,7 @@ def getIterable(obj):
 
 def isIterable(obj):
     """
-    See if an obj is iterable or not, I kept using iterable function wrong.
+    See if an obj is a tuple, list or dict.
 
     :param obj: Generic obj
     :rtype: bool
@@ -100,7 +100,7 @@ def isIterable(obj):
 
 def depth(obj):
     """
-    Checks depths of an obj by keep going to the first value of obj.
+    Get depth of an object by recursively checking the first value.
 
     :param obj: Generic obj
     """
@@ -129,7 +129,7 @@ def dictFirstValue(dictionary):
 
 def iterFirstValue(obj):
     """
-    Get first 'random' value of an iterable.
+    Get first 'random' value of an iterable or None.
 
     :param obj: Generic iterable
     :raises TypeError: If not iterable
@@ -147,7 +147,7 @@ def iterFirstValue(obj):
 
 def joinWithStr(delimeter, obj):
     """
-    Like str.join() but it casts the values to strings first.
+    Like str.join() but it casts the values to strings first, also takes dict.
 
     :param obj: Generic iterable
     :param str delimeter: String to be put between values
@@ -162,7 +162,7 @@ def joinWithStr(delimeter, obj):
 
 def addToListInDict(dictionary, key, *args):
     """
-    Add a value to a list inside a dictionary, if key doesn't exist then a new list is created.
+    Add a value to a list inside a dictionary, automatically creates list.
     Since list is mutable we can change dictionary directly.
 
     :param dict dictionary:
@@ -180,8 +180,7 @@ def addToListInDict(dictionary, key, *args):
 
 def addToDictInDict(dictionary, key, **kwargs):
     """
-    Add a key-value argument to a dict inside a dict.
-    Dictionary is created if there is none.
+    Add a key-value argument to a dict inside a dict, automatically creates dict.
 
     :param dict dictionary:
     :param key:
@@ -198,7 +197,7 @@ def addToDictInDict(dictionary, key, **kwargs):
 
 def getFreeIndex(dictionary):
     """
-    Get the first free integer index of dictionary starting at 0
+    Get the first free integer index of dictionary starting at 0.
 
     :param dict dictionary:
     """
@@ -209,18 +208,18 @@ def getFreeIndex(dictionary):
         else:
             return index
 
-def appendToDict(dictionary, value):
+def appendToDict(dictionary, obj):
     """
-    Puts value in the lowest free integer index and returns index.
+    Puts an object in the lowest free integer index and returns index.
     Useful for returning an index that wont change, unlike a list.
     Keys can be deleted using the returned index without affecting other values.
 
     :param dict dictionary:
-    :param any value:
+    :param any obj:
     :return: Used index
     """
     index = getFreeIndex(dictionary)
-    dictionary[index] = value
+    dictionary[index] = obj
     return index
 
 def _getRows_getRow(iterableObj, key=None):
@@ -241,6 +240,7 @@ def _getRows_getRow(iterableObj, key=None):
 
 def getRows(obj):
     """
+    Get rows as lists in list from a tuple, list or dict (where it discards keys).
     All these objects result in [[1, 2, 3], [4, 5, 6]]
      | [[1, 2, 3], [4, 5, 6]]
      | [{"a": 1, "b": 2, "c": 3}, {"d": 4, "e": 5, "f": 6}]
@@ -293,6 +293,7 @@ def inclusive(dictionary, *keys):
 
 def uniqueObjInList(l, obj, active):
     """
+    Controls whether a unique object should be present in a list or not.
     Adds obj to list if active and obj isn't in list.
     Removes obj from list if not active and obj in list.
     Changes list directly because of mutable.
@@ -312,9 +313,7 @@ def uniqueObjInList(l, obj, active):
 
 def combine(**kwargs):
     """
-    Create a list of dicts containing every unique combination.
-
-    :param any kwargs: Dict with string keys and any value.
+    Create a list of dicts containing every unique combination from given object (Can be tuples).
     """
     execLines = []
     for i, (key, value) in enumerate(kwargs.items()):

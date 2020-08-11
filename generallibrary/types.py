@@ -99,8 +99,9 @@ def _typeChecker_prepareTypesList(types, literalObjects):
 
 def typeChecker(obj, *types, error=True):
     """
-    Check types of an obj. Intended for iterables with somewhat consistent structure in every layer.
+    Check type(s) of an object.
     The first type correlates to the first layer of obj and so on.
+    Each type can be a (tuple that holds) type, string or literal object such as `None`.
 
     :param obj: Generic obj, iterable or not
     :param types: lists or tuples if obj at that level can be multiple types, single type if only one
@@ -165,7 +166,7 @@ def getBaseClassNames(obj, includeSelf=False):
 
 def hasMethod(obj, method):
     """
-    Return whether an obj has a method by checking if attr exists and that it is callable.
+    Return whether an object has a specific callabale attribute.
 
     :param object obj: Any object
     :param str method: String of method to check

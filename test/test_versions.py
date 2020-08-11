@@ -23,4 +23,28 @@ class VersionsTest(unittest.TestCase):
 
         self.assertLessEqual(verInfo.pythonString.count("."), 2)
 
-        # HERE **
+        self.assertTrue(verInfo.pythonVersion > 2)
+        self.assertTrue(verInfo.pythonVersion > 2.1)
+        self.assertTrue(verInfo.pythonVersion > "2.0.1")
+        self.assertFalse(verInfo.pythonVersion > verInfo.pythonString)
+
+        self.assertFalse(verInfo.pythonVersion < 2)
+        self.assertFalse(verInfo.pythonVersion < 2.1)
+        self.assertFalse(verInfo.pythonVersion < "2.0.1")
+        self.assertFalse(verInfo.pythonVersion < verInfo.pythonString)
+
+        self.assertTrue(verInfo.pythonVersion >= 2)
+        self.assertTrue(verInfo.pythonVersion >= 2.1)
+        self.assertTrue(verInfo.pythonVersion >= "2.0.1")
+        self.assertTrue(verInfo.pythonVersion >= verInfo.pythonString)
+
+        self.assertFalse(verInfo.pythonVersion <= 2)
+        self.assertFalse(verInfo.pythonVersion <= 2.1)
+        self.assertFalse(verInfo.pythonVersion <= "2.0.1")
+        self.assertTrue(verInfo.pythonVersion <= verInfo.pythonString)
+
+        self.assertFalse(verInfo.pythonVersion == 2)
+        self.assertFalse(verInfo.pythonVersion == 2.1)
+        self.assertFalse(verInfo.pythonVersion == "2.0.1")
+        self.assertTrue(verInfo.pythonVersion == verInfo.pythonString)
+

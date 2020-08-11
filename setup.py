@@ -3,7 +3,6 @@ from setuptools import setup, find_packages
 
 from os import path
 
-
 this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
@@ -14,12 +13,13 @@ setup(
     long_description_content_type='text/markdown',
     author='Rickard "Mandera" Abraham',
     url="https://github.com/Mandera/generallibrary",
-    version="1.9.0",
+    version="2.0.0",
     description=(
         "Random useful code made by me, categorized into modules to be imported seperately."
     ),
     packages=find_packages(),
-    install_requires=["wheel", "packaging"],
+    install_requires=["wheel", "packaging", "pandas"],
+    python_requires=">= 3.7, < 3.9",
     classifiers=[
         "Operating System :: Microsoft :: Windows :: Windows 7",
         "Operating System :: Microsoft :: Windows :: Windows 10",
