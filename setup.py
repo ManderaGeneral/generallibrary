@@ -13,7 +13,7 @@ setup(
     long_description_content_type='text/markdown',
     author='Rickard "Mandera" Abraham',
     url="https://github.com/Mandera/generallibrary",
-    version="2.0.0",
+    version="2.0.1",
     description=(
         "Random useful code made by me, categorized into modules to be imported seperately."
     ),
