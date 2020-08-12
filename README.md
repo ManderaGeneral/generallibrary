@@ -76,3 +76,4 @@ print(clamp(-3.2, -1, 1))
  * Make SigInfo's callableObject changeable and store all variables when setting them
  * DuckTyping class for versions.py
  * PackageVersion class for versions.py
+ * Change getLocalFeaturesAsMD to allow cls or even obj and also *args.

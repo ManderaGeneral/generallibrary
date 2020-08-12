@@ -26,12 +26,12 @@ class _OsInfo:
     @property
     def windows(self):
         """Get whether running on Windows or not"""
-        return self._system == self._translate["linux"]
+        return self._system == self._translate["windows"]
 
     @property
     def linux(self):
         """Get whether running on Linux or not"""
-        return self._system == self._translate["windows"]
+        return self._system == self._translate["linux"]
 
     @property
     def mac(self):
