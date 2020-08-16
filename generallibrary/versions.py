@@ -134,9 +134,46 @@ class _PythonInfo:
         return PythonVersion(self.pythonString)
 
 
+class _ConditionalFunctionalities:
+    """Groups all functionality properties.
+    These """
+    @property
+    def caseSensitive(self):
+        """Get whether current OS is case sensitive.
+        :param VerInfo self:"""
+        return not self.windows
+
+    @property
+    def positionalArgument(self):
+        """Get whether current python version supports positional arguments.
+        :param VerInfo self:"""
+        return self.pythonVersion >= 3.8
+
+    @property
+    def pathDelimiter(self):
+        """Get current OS's path delimiter.
+        :param VerInfo self:"""
+        return "\\" if self.windows else "/"
+
+    @property
+    def pathRootIsDelimiter(self):
+        """Get whether current OS defines path root as a starting delimiter.
+        :param VerInfo self:"""
+        return not self.windows
+
+    @property
+    def pathRootHasColon(self):
+        """Get whether current OS defines path root with a colon in the first part.
+        :param VerInfo self:"""
+        return self.windows
+
+
 @initBases
-class VerInfo(_OsInfo, _PythonInfo):
-    """Get version info regarding running Python and OS."""
+class VerInfo(_OsInfo, _PythonInfo, _ConditionalFunctionalities):
+    """
+    Get version info regarding running Python and OS.
+    Use conditional feature properties if possible.
+    """
 
 
 class DuckTyping:
@@ -160,10 +197,11 @@ class PythonVersion(DuckTyping):
         """Protect attribute"""
         return self._version
 
-
-
-
-
+    def __eq__(self, other): ...
+    def __gt__(self, other): ...
+    def __lt__(self, other): ...
+    def __ge__(self, other): ...
+    def __le__(self, other): ...
 
 
 

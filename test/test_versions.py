@@ -48,3 +48,55 @@ class VersionsTest(unittest.TestCase):
         self.assertFalse(verInfo.pythonVersion == "2.0.1")
         self.assertTrue(verInfo.pythonVersion == verInfo.pythonString)
 
+    def test_conditionalFunctionalities(self):
+        verInfo = VerInfo()
+        self.assertEqual(1, sum((verInfo.pathRootHasColon, verInfo.pathRootIsDelimiter)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

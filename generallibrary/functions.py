@@ -302,7 +302,15 @@ class Operators:
     def defineComparisons(cls, leftLambda, rightLambda):
         """Define all comparision operators for this class.
         Provide two functions that return left and right values.
-        Automatically fills 'left' and 'right' parameters by name."""
+        Automatically fills 'left' and 'right' parameters by name.
+
+        Stubs:
+            def __eq__(self, other): ...
+            def __gt__(self, other): ...
+            def __lt__(self, other): ...
+            def __ge__(self, other): ...
+            def __le__(self, other): ...
+        """
         def wrapper(baseCls):
             """."""
             for name, func in cls.comparisons.items():

@@ -6,8 +6,6 @@ from generallibrary.versions import VerInfo
 
 
 
-# @conditionallyImportInheritence(VerInfo().pythonVersion >= 3.8, "test_functions_positional", "PositionalTest")
-
 class FunctionsTest(unittest.TestCase):
     def test_leadingArgNamesCount(self):
         self.assertEqual(0, len(SigInfo(lambda: 5).leadingArgNames))
@@ -238,7 +236,7 @@ class FunctionsTest(unittest.TestCase):
 
 
     # Not happy about this technique to dynamically load code to prevent syntax error, but it's the best option so far
-    @unittest.skipUnless(VerInfo().pythonVersion >= 3.8, "Positional-only parameters were introduced in 3.8.0.")
+    @unittest.skipUnless(VerInfo().positionalArgument, "Positional-only parameters were introduced in 3.8.0.")
     def test_positional(self):
         from test.positional import positional
         positional(self)
