@@ -300,9 +300,11 @@ class Operators:
 
     @classmethod
     def defineComparisons(cls, leftLambda, rightLambda):
-        """Define all comparision operators for this class.
+        """
+        Define all comparision operators for this class.
         Provide two functions that return left and right values.
         Automatically fills 'left' and 'right' parameters by name.
+        Will make class instances unhashable as the `__eq__` method is defined without defining `__hash__`.
 
         Stubs:
             def __eq__(self, other): ...
