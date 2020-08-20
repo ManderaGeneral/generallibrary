@@ -171,7 +171,7 @@ class _ConditionalFunctionalities:
 @initBases
 class VerInfo(_OsInfo, _PythonInfo, _ConditionalFunctionalities):
     """
-    Get version info regarding running Python and OS.
+    Get version info regarding current Python, OS and conditional functionalities.
     Use conditional feature properties if possible.
     """
 
