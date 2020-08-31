@@ -1,5 +1,6 @@
 import inspect
 import re
+import functools
 
 
 class SigInfo:
@@ -299,7 +300,7 @@ class Operators:
     }
 
     @classmethod
-    def defineComparisons(cls, leftLambda, rightLambda):
+    def deco_define_comparisons(cls, leftLambda, rightLambda):
         """
         Define all comparision operators for this class.
         Provide two functions that return left and right values.
@@ -324,6 +325,11 @@ class Operators:
 
             return baseCls
         return wrapper
+
+
+def deco_cache():
+    """ Enable caching for a method or function. """
+    return functools.lru_cache()
 
 
 from generallibrary.iterables import addToDictInDict

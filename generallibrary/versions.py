@@ -186,7 +186,7 @@ class DuckTyping:
 
 from generallibrary.functions import Operators
 
-@Operators.defineComparisons(lambda left: left.version, lambda right: version.parse(str(right)))
+@Operators.deco_define_comparisons(lambda left: left.version, lambda right: version.parse(str(right)))
 class PythonVersion(DuckTyping):
     """Used by VerInfo.pythonVersion to easily compare python versions to int, float or string."""
     def __init__(self, pythonString):

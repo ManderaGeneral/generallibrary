@@ -1,8 +1,7 @@
 
 import unittest
 
-from generallibrary.functions import SigInfo, defaults
-from generallibrary.versions import VerInfo
+from generallibrary import SigInfo, defaults, VerInfo, deco_cache
 
 
 
@@ -215,8 +214,6 @@ class FunctionsTest(unittest.TestCase):
         sigInfo["x"] = 3
         self.assertEqual(3, sigInfo())
 
-
-
     def test_defaults(self):
         self.assertEqual({"a": 5, "b": 3}, defaults({"a": 5}, b=3))
         self.assertEqual({"a": 5, "b": 3}, defaults({"a": 5, "b": 3}, b=4))
@@ -241,7 +238,19 @@ class FunctionsTest(unittest.TestCase):
         from test.positional import positional
         positional(self)
 
+    def test_deco_cache(self):
+        import time
 
+        @deco_cache()
+        def _test():
+            time.sleep(0.1)
+            return "foo"
+
+        start_time = time.time()
+        _test()
+        self.assertGreaterEqual(time.time() - start_time, 0.09)
+        _test()
+        self.assertLess(time.time() - start_time, 0.15)
 
 
 
