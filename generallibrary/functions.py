@@ -6,7 +6,7 @@ import functools
 class SigInfo:
     """
     Handles a callable along with it's parameters.
-    Unforgiving as it sets missing values to None.
+    Forgiving as it sets missing values to None.
     Parameters can be changed but not callableObject.
     """
     def __init__(self, callableObject, *args, **kwargs):
@@ -331,8 +331,33 @@ def deco_cache():
     """ Enable caching for a method or function. """
     return functools.lru_cache()
 
+def deco_cast_parameters(**pars_to_cast):
+    """ Decorator to make sure `path` parameter is a Path.
+        Example: @deco_cast_paramters(x=int, y=Vec2) """
+    def _decorator(function):
+        def _wrapper(*args, **kwargs):
+            sigInfo = SigInfo(function, *args, **kwargs)
+
+            for par_name, cls in pars_to_cast.items():
+                if par_name not in sigInfo.names:
+                    raise AttributeError(f"Function does not have a `{par_name}` parameter.")
+                if not typeChecker(sigInfo[par_name], cls, error=False):
+                    sigInfo[par_name] = cls(sigInfo[par_name])
+
+            return sigInfo()
+        return _wrapper
+    return _decorator
+
+class EmptyContext:
+    """ Class for an empty context manager. """
+    def __enter__(self):
+        pass
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
 
 from generallibrary.iterables import addToDictInDict
+from generallibrary.types import typeChecker
 
 
 

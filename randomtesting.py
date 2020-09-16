@@ -2,5 +2,5 @@
 from generallibrary import *
 
 
-print(getLocalFeaturesAsMD(locals(), "generallibrary"))
+# print(getLocalFeaturesAsMD(locals(), "generallibrary"))
 

@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary import SigInfo, defaults, VerInfo, deco_cache
+from generallibrary import SigInfo, defaults, VerInfo, deco_cache, deco_cast_parameters, EmptyContext
 
 
 
@@ -251,6 +251,70 @@ class FunctionsTest(unittest.TestCase):
         self.assertGreaterEqual(time.time() - start_time, 0.09)
         _test()
         self.assertLess(time.time() - start_time, 0.15)
+
+    def test_deco_cast_parameters(self):
+        @deco_cast_parameters(x=int)
+        def test(x):
+            return x
+        self.assertEqual(True, isinstance(test("2"), int))
+
+
+    def test_EmptyContext(self):
+        with EmptyContext():
+            pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
