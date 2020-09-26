@@ -6,4 +6,4 @@ from generallibrary.time import Timer, sleep
 from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames, hasMethod
 from generallibrary.values import clamp, sign, inrange, rectify, doubleRectify, confineTo
 from generallibrary.versions import VerInfo
-from generallibrary.code import debug, getLocalFeaturesAsMD, import_optional_package
+from generallibrary.code import debug, getLocalFeaturesAsMD
