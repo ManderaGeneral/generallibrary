@@ -18,7 +18,8 @@ setup(
         "Random useful code made by me, categorized into modules to be imported seperately."
     ),
     packages=find_packages(),
-    install_requires=["wheel", "packaging", "pandas"],
+    install_requires=["wheel", "packaging"],
+    extras_require={"md_features": ["pandas"]},
     python_requires=">= 3.7, < 3.9",
     classifiers=[
         "Operating System :: Microsoft :: Windows :: Windows 7",

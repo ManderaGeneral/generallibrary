@@ -1,4 +1,5 @@
 
+import importlib
 
 def debug(scope, *evals, printOut=True):
     """
@@ -55,3 +56,16 @@ def getLocalFeaturesAsMD(loc, package):
     df.sort_values(inplace=True, by=["Module", "Name"])
 
     return df.to_markdown(showindex=False)
+
+# def import_optional_package(package_name):
+#     """ Import a package dynamically.
+#         Recommended to use with deco_cache on a static class method. """
+#     try:
+#         return importlib.import_module(package_name)
+#     except ModuleNotFoundError:
+#         raise ModuleNotFoundError(f"Optional package '{package_name}' isn't installed.")
+
+
+
+
+
