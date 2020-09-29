@@ -1,7 +1,7 @@
 """."""
 import unittest
 
-from generallibrary.versions import VerInfo
+from generallibrary.versions import VerInfo, get_installed_packages, package_is_installed
 
 
 class VersionsTest(unittest.TestCase):
@@ -52,7 +52,10 @@ class VersionsTest(unittest.TestCase):
         verInfo = VerInfo()
         self.assertEqual(1, sum((verInfo.pathRootHasColon, verInfo.pathRootIsDelimiter)))
 
-
+    def test_packages(self):
+        self.assertEqual(True, len(get_installed_packages()) > 0)
+        self.assertEqual(True, package_is_installed("generallibrary"))
+        self.assertEqual(False, package_is_installed("random_package_not_existing"))
 
 
 

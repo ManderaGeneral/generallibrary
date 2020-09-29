@@ -8,6 +8,8 @@ from generallibrary.object import initBases
 
 from packaging import version
 
+import pkg_resources
+
 
 class _OsInfo:
     """Get info regarding running operating system."""
@@ -206,5 +208,12 @@ class PythonVersion(DuckTyping):
 
 
 
+def get_installed_packages():
+    """ Get a list of all installed packages as strings. """
+    return [pkg.key for pkg in pkg_resources.working_set]
+
+def package_is_installed(name):
+    """ Returns whether a package is installed. """
+    return name in get_installed_packages()
 
 
