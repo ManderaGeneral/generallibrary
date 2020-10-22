@@ -29,10 +29,16 @@ def debug(scope, *evals, printOut=True):
     return text
 
 def getLocalFeaturesAsMD(loc, package):
-    """
-    Convert local callable objects that don't start with `_` to a markdown table for a README.
-    Could probably improve it by only having module / package name as a parameter.
-    """
+    """ Convert local callable objects that don't start with `_` to a markdown table for a README.
+        Could probably improve it by only having module / package name as a parameter.
+
+        Examples:
+            print(getLocalFeaturesAsMD({k: getattr(Path, k, None) for k in dir(Path)}, "generalfile"))
+            print(getLocalFeaturesAsMD(locals(), "generallibrary"))
+            print(getLocalFeaturesAsMD(dict(Vec2.__dict__), "generalvector"))
+
+        Use `copy_function_metadata` in decorators if data is incorrect.
+        """
     import pandas as pd
 
     rows = []
@@ -55,7 +61,8 @@ def getLocalFeaturesAsMD(loc, package):
 
     df.sort_values(inplace=True, by=["Module", "Name"])
 
-    return df.to_markdown(showindex=False)
+    print("## Features")
+    print(df.to_markdown(index=False))
 
 # def import_optional_package(package_name):
 #     """ Import a package dynamically.

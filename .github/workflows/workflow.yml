@@ -1,0 +1,160 @@
+
+name: UnitTest and Publish
+
+on:
+  push:
+    branches: master
+
+jobs:
+
+  unittest:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+#        python-version: [3.7]
+#        os: [ubuntu-latest]
+        python-version: [3.7, 3.8]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+
+      - name: Run unittests
+        run: |
+          python -m unittest discover
+
+
+  publisher:
+    needs: unittest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Install all my packages to get versions and dependents
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+          echo 'import requests' >> packages.py
+          echo 'import re' >> packages.py
+          echo 'print(" ".join(re.findall("/project/(.*)/", requests.get("https://pypi.org/user/Mandera/").text)))' >> packages.py
+
+          ALL_PACKAGES=$(python packages.py)
+          echo ALL_PACKAGES=$ALL_PACKAGES >> $GITHUB_ENV
+          pip install $ALL_PACKAGES
+
+          X=($(echo $(pip show ${{ github.event.repository.name }} | grep Version) | tr ': ' '\n'))
+          echo "OLD_VERSION=${X[1]}" >> $GITHUB_ENV
+
+          X=($(echo $(pip show ${{ github.event.repository.name }} | grep Required-by) | tr ': ' '\n'))
+          echo "DEPENDENT_PACKAGES=${X[1]}" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get and set NEW_VERSION
+        run: |
+          echo "NEW_VERSION=$(python setup.py --version)" >> $GITHUB_ENV
+
+      - name: Print info and create metadata
+        run: |
+          echo Old version:
+          echo ${{ env.OLD_VERSION }}
+          echo OLD_VERSION=${{ env.OLD_VERSION }} >> "metadata.txt"
+
+          echo New version:
+          echo ${{ env.NEW_VERSION }}
+          echo NEW_VERSION=${{ env.NEW_VERSION }} >> "metadata.txt"
+
+          echo All of my published packages:
+          echo ${{ env.ALL_PACKAGES }}
+          echo ALL_PACKAGES=${{ env.ALL_PACKAGES }} >> "metadata.txt"
+
+          echo Packages depending on this one:
+          echo ${{ env.DEPENDENT_PACKAGES }}
+          echo DEPENDENT_PACKAGES=${{ env.DEPENDENT_PACKAGES }} >> "metadata.txt"
+
+      - name: Upload metadata as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: metadata
+          path: metadata.txt
+
+      - name: Publish
+        if: env.NEW_VERSION != env.OLD_VERSION
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          echo ${{ env.NEW_VERSION }}
+          echo ${{ env.OLD_VERSION }}
+
+          pip install twine
+          python setup.py sdist bdist_wheel
+          twine upload dist/*
+
+          echo "PUBLISHED=true" >> $GITHUB_ENV
+
+
+      - name: Push empty commits to dependents
+        if: env.PUBLISHED || contains(github.event.head_commit.message, '[CI]')
+        run: |
+          sudo apt install git-all
+          git config --global user.email "rickard.abraham@gmail.com"
+          git config --global user.name Mandera
+
+          PACKAGE_ARRAY=($(echo ${{ env.DEPENDENT_PACKAGES }} | tr ', ' '\n'))
+          for x in ${PACKAGE_ARRAY[@]}; do
+          echo $x
+          git clone https://Mandera:${{ secrets.GIT_PASSWORD }}@github.com/ManderaGeneral/$x.git
+          cd $x
+          git commit -m "[CI] Automatic test trigger for ${{ github.event.repository.name }}'s new ${{ env.NEW_VERSION }} release" --allow-empty
+          git push
+          cd ..
+          done
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
