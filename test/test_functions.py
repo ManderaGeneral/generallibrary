@@ -243,14 +243,14 @@ class FunctionsTest(unittest.TestCase):
 
         @deco_cache()
         def _test():
-            time.sleep(0.1)
+            time.sleep(0.2)
             return "foo"
 
         start_time = time.time()
         _test()
-        self.assertGreaterEqual(time.time() - start_time, 0.09)
+        self.assertGreaterEqual(time.time() - start_time, 0.19)
         _test()
-        self.assertLess(time.time() - start_time, 0.15)
+        self.assertLess(time.time() - start_time, 0.39)
 
     def test_deco_cast_parameters(self):
         @deco_cast_parameters(x=int)
