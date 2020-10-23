@@ -92,6 +92,8 @@ jobs:
           echo ${{ env.DEPENDENT_PACKAGES }}
           echo DEPENDENT_PACKAGES=${{ env.DEPENDENT_PACKAGES }} >> "metadata.txt"
 
+          echo "PUBLISHED=0" >> $GITHUB_ENV
+
       - name: Upload metadata as artifact
         uses: actions/upload-artifact@v2
         with:
@@ -111,7 +113,7 @@ jobs:
           python setup.py sdist bdist_wheel
           twine upload dist/*
 
-          echo "PUBLISHED=true" >> $GITHUB_ENV
+          echo "PUBLISHED=1" >> $GITHUB_ENV
 
 
       - name: Push empty commits to dependents
@@ -127,7 +129,7 @@ jobs:
           git clone https://Mandera:${{ secrets.GIT_PASSWORD }}@github.com/ManderaGeneral/$x.git
           cd $x
 
-          if ${{ env.PUBLISHED }}; then
+          if ((${{ env.PUBLISHED }}==1)); then
           MSG=("[CI] Automatic test trigger for ${{ github.event.repository.name }}'s new ${{ env.NEW_VERSION }} release")
           else
           MSG=(${{ github.event.head_commit.message }})
