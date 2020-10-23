@@ -50,7 +50,7 @@ jobs:
           echo 'import re' >> packages.py
           echo 'print(" ".join(re.findall("/project/(.*)/", requests.get("https://pypi.org/user/Mandera/").text)))' >> packages.py
 
-          ALL_PACKAGES=$(python packages.py)pi
+          ALL_PACKAGES=$(python packages.py)
           echo ALL_PACKAGES=$ALL_PACKAGES >> $GITHUB_ENV
           pip install $ALL_PACKAGES
 
