@@ -44,6 +44,18 @@ jobs:
 
       - name: Install all my packages to get versions and dependents
         run: |
+          pip install requests
+
+          echo 'import requests' >> packages.py
+          echo 'import re' >> packages.py
+          echo 'print(" ".join(re.findall("/project/(.*)/", requests.get("https://pypi.org/user/Mandera/").text)))' >> packages.py
+
+          ALL_PACKAGES=$(python packages.py)
+          echo ALL_PACKAGES=$ALL_PACKAGES >> $GITHUB_ENV
+          pip install $ALL_PACKAGES
+
+
+
           python -m pip install --upgrade pip
           pip install pipdeptree ${{ github.event.repository.name }}[full]
 
@@ -67,6 +79,9 @@ jobs:
 
           echo New version: ${{ env.NEW_VERSION }}
           echo NEW_VERSION=${{ env.NEW_VERSION }} >> "metadata.txt"
+
+          echo All packages: ${{ env.ALL_PACKAGES }}
+          echo ALL_PACKAGES=${{ env.ALL_PACKAGES }} >> "metadata.txt"
 
           echo Packages depending on this one: ${{ env.DEPENDENT_PACKAGES }}
           echo DEPENDENT_PACKAGES=${{ env.DEPENDENT_PACKAGES }} >> "metadata.txt"
