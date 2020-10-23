@@ -7,35 +7,33 @@ on:
 
 jobs:
 
-#  unittest:
-#    runs-on: ${{ matrix.os }}
-#    strategy:
-#      matrix:
-##        python-version: [3.7]
-##        os: [ubuntu-latest]
-#        python-version: [3.7, 3.8]
-#        os: [ubuntu-latest, windows-latest, macos-latest]
-#
-#    steps:
-#      - uses: actions/checkout@v2
-#
-#      - name: Set up Python ${{ matrix.python-version }}
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: ${{ matrix.python-version }}
-#
-#      - name: Install dependencies
-#        run: |
-#          python -m pip install --upgrade pip
-#          pip install .
-#
-#      - name: Run unittests
-#        run: |
-#          python -m unittest discover
+  unittest:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+
+      - name: Run unittests
+        run: |
+          python -m unittest discover
 
 
   publisher:
-#    needs: unittest
+    needs: unittest
     runs-on: ubuntu-latest
     steps:
       - name: Set up Python
@@ -58,6 +56,9 @@ jobs:
 
           X=($(echo $(pip show ${{ github.event.repository.name }} | grep Version) | tr -d " " | tr ":" "\n"))
           echo "OLD_VERSION=${X[1]}" >> $GITHUB_ENV
+
+          X=($(echo $(pip show ${{ github.event.repository.name }} | grep Requires) | tr -d " " | tr "," " " | tr ":" "\n"))
+          echo "REQUIRED_PACKAGES=${X[1]}" >> $GITHUB_ENV
 
           X=($(echo $(pip show ${{ github.event.repository.name }} | grep Required-by) | tr -d " " | tr "," " " | tr ":" "\n"))
           echo "DEPENDENT_PACKAGES=${X[1]}" >> $GITHUB_ENV
@@ -82,6 +83,10 @@ jobs:
           echo All of my published packages:
           echo ${{ env.ALL_PACKAGES }}
           echo ALL_PACKAGES=${{ env.ALL_PACKAGES }} >> "metadata.txt"
+
+          echo Packages this one requires:
+          echo ${{ env.REQUIRED_PACKAGES }}
+          echo REQUIRED_PACKAGES=${{ env.REQUIRED_PACKAGES }} >> "metadata.txt"
 
           echo Packages depending on this one:
           echo ${{ env.DEPENDENT_PACKAGES }}
@@ -116,7 +121,7 @@ jobs:
           git config --global user.email "rickard.abraham@gmail.com"
           git config --global user.name Mandera
 
-          PACKAGES=($(echo ${{ env.DEPENDENT_PACKAGES }} | tr "," "\n"))
+          PACKAGES=($(echo ${{ env.DEPENDENT_PACKAGES }} | tr " " "\n"))
           for x in ${PACKAGES[@]}; do
           echo $x
           git clone https://Mandera:${{ secrets.GIT_PASSWORD }}@github.com/ManderaGeneral/$x.git
