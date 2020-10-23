@@ -131,8 +131,9 @@ jobs:
           MSG=("[CI] Automatic test trigger for ${{ github.event.repository.name }}'s new ${{ env.NEW_VERSION }} release")
           else
           MSG=(${{ github.event.head_commit.message }})
+          fi
 
-          git commit -m $MSG --allow-empty
+          git commit -m "$MSG" --allow-empty
 
           git push
           cd ..
