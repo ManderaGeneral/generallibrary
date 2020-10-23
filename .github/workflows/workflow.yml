@@ -50,7 +50,7 @@ jobs:
           echo 'import re' >> packages.py
           echo 'print(" ".join(re.findall("/project/(.*)/", requests.get("https://pypi.org/user/Mandera/").text)))' >> packages.py
 
-          ALL_PACKAGES=$(python packages.py)
+          ALL_PACKAGES=$(python packages.py)pi
           echo ALL_PACKAGES=$ALL_PACKAGES >> $GITHUB_ENV
           pip install $ALL_PACKAGES
 
@@ -63,6 +63,10 @@ jobs:
           echo "OLD_VERSION=${X[1]}" >> $GITHUB_ENV
 
           X=($(pipdeptree -r -p ${{ github.event.repository.name }} | grep "-" | grep "general" | sed "s/=.*//g;s/\ *-\s//g" | tr "\n" " "))
+
+          pipdeptree -r -p ${{ github.event.repository.name }}
+          echo $X
+
           echo "DEPENDENT_PACKAGES=$X" >> $GITHUB_ENV
 
       - name: Checkout
