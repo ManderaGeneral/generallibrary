@@ -13,13 +13,16 @@ setup(
     long_description_content_type='text/markdown',
     author='Rickard "Mandera" Abraham',
     url="https://github.com/ManderaGeneral/generallibrary",
-    version="2.1.5",
+    version="2.1.6",
     description=(
         "Random useful code made by me, categorized into modules to be imported seperately."
     ),
     packages=find_packages(),
     install_requires=["wheel", "packaging"],
-    extras_require={"md_features": ["pandas"]},
+    extras_require={
+        "full": ["pandas"],
+        "md_features": ["pandas"],
+    },
     python_requires=">= 3.7, < 3.9",
     classifiers=[
         "Operating System :: Microsoft :: Windows :: Windows 7",

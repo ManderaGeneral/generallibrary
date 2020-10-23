@@ -39,7 +39,7 @@ def getLocalFeaturesAsMD(loc, package):
 
         Use `copy_function_metadata` in decorators if data is incorrect.
         """
-    import pandas as pd
+    import pandas as pd  # Should tell user to use `pip install generallibrary[md_features]`
 
     rows = []
 
