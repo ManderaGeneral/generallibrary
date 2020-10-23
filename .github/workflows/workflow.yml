@@ -8,6 +8,7 @@ on:
 jobs:
 
   unittest:
+    if: "!contains(github.event.head_commit.message, '[CI SKIP]')"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -132,7 +133,7 @@ jobs:
           if ((${{ env.PUBLISHED }}==1)); then
           MSG=("[CI] Automatic test trigger for ${{ github.event.repository.name }}'s new ${{ env.NEW_VERSION }} release")
           else
-          MSG=(${{ github.event.head_commit.message }})
+          MSG=("${{ github.event.head_commit.message }}")
           fi
 
           git commit -m "$MSG" --allow-empty
