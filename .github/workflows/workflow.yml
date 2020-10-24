@@ -62,7 +62,7 @@ jobs:
           X=($(echo $(pip show ${{ github.event.repository.name }} | grep Version) | tr -d " " | tr ":" "\n"))
           echo "OLD_VERSION=${X[1]}" >> $GITHUB_ENV
 
-          X=$(pipdeptree -r -p generallibrary | grep "-" | grep "general" | sed "s/=.*//g;s/\ *-\s//g" | uniq -u | tr "\n" " ")
+          X=$(pipdeptree -r -p ${{ github.event.repository.name }} | grep "-" | grep "general" | sed "s/=.*//g;s/\ *-\s//g" | grep -v ${{ github.event.repository.name }} | uniq -u | tr "\n" " ")
           echo "DEPENDENT_PACKAGES=$X" >> $GITHUB_ENV
 
       - name: Checkout
