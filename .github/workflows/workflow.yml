@@ -62,11 +62,7 @@ jobs:
           X=($(echo $(pip show ${{ github.event.repository.name }} | grep Version) | tr -d " " | tr ":" "\n"))
           echo "OLD_VERSION=${X[1]}" >> $GITHUB_ENV
 
-          X=($(pipdeptree -r -p ${{ github.event.repository.name }} | grep "-" | grep "general" | sed "s/=.*//g;s/\ *-\s//g" | tr "\n" " "))
-
-          pipdeptree -r -p ${{ github.event.repository.name }}
-          echo $X
-
+          X=$(pipdeptree -r -p generallibrary | grep "-" | grep "general" | sed "s/=.*//g;s/\ *-\s//g" | uniq -u | tr "\n" " ")
           echo "DEPENDENT_PACKAGES=$X" >> $GITHUB_ENV
 
       - name: Checkout
@@ -114,13 +110,10 @@ jobs:
           git config --global user.email "rickard.abraham@gmail.com"
           git config --global user.name Mandera
 
-          PACKAGES=($(echo ${{ env.DEPENDENT_PACKAGES }} | tr " " "\n"))
-          for x in ${PACKAGES[@]}; do
+          for x in ${{ env.DEPENDENT_PACKAGES }}; do
           git clone https://Mandera:${{ secrets.GIT_PASSWORD }}@github.com/ManderaGeneral/$x.git
           cd $x
-
           git commit -m "[CI] Automatic test trigger for ${{ github.event.repository.name }}'s new ${{ env.NEW_VERSION }} release" --allow-empty
-
           git push
           cd ..
           done
