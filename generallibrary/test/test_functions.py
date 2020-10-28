@@ -235,7 +235,7 @@ class FunctionsTest(unittest.TestCase):
     # Not happy about this technique to dynamically load code to prevent syntax error, but it's the best option so far
     @unittest.skipUnless(VerInfo().positionalArgument, "Positional-only parameters were introduced in 3.8.0.")
     def test_positional(self):
-        from test.positional import positional
+        from generallibrary.test.positional import positional
         positional(self)
 
     def test_deco_cache(self):
