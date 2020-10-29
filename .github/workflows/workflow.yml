@@ -1,3 +1,8 @@
+# Merge files from `shared` repo (If this repo is new or if a shared file was changed for some reason)
+# UnitTests
+# Get old package version and dependents
+# Create artifact with metadata
+# Publish to PyPI if new version
 
 name: UnitTest and Publish
 
