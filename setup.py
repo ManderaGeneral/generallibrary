@@ -1,7 +1,15 @@
 
 from setuptools import setup, find_packages
-
 from os import path
+from itertools import chain
+from generallibrary import remove_duplicates
+
+
+extras_require = {
+    "md_features": ["pandas"],
+}
+
+extras_require["full"] = remove_duplicates([package for package in chain(*list(extras_require.values()))])
 
 this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
@@ -15,15 +23,13 @@ setup(
     url="https://github.com/ManderaGeneral/generallibrary",
     version="2.2.0",
     description=(
-        "Random useful code made by me, categorized into modules to be imported seperately."
+        "Random useful code categorized into modules."
     ),
     packages=find_packages(),
     install_requires=["wheel", "packaging"],
-    extras_require={
-        "full": ["pandas"],
-        "md_features": ["pandas"],
-    },
+    extras_require=extras_require,
     python_requires=">= 3.7, < 3.9",
+    license="MIT",
     classifiers=[
         "Operating System :: Microsoft :: Windows :: Windows 7",
         "Operating System :: Microsoft :: Windows :: Windows 10",

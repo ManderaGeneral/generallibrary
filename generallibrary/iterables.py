@@ -309,7 +309,11 @@ def uniqueObjInList(l, obj, active):
         if obj in l:
             l.remove(obj)
 
-
+def remove_duplicates(l):
+    """ Remove all duplicates in a list.
+        Values must be hashable as they are passed through as dict keys. (Lists work but not Dicts) """
+    # return list(dict.fromkeys(l))
+    return list(set(l))
 
 def combine(**kwargs):
     """

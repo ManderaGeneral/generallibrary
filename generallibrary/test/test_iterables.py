@@ -1,7 +1,8 @@
 
 import unittest
 
-from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, addToDictInDict, getFreeIndex, exclusive, inclusive, uniqueObjInList, combine
+# from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, addToDictInDict, getFreeIndex, exclusive, inclusive, uniqueObjInList, combine, remove_duplicates
+from generallibrary.iterables import *
 
 
 class IterablesTest(unittest.TestCase):
@@ -234,6 +235,14 @@ class IterablesTest(unittest.TestCase):
 
         uniqueObjInList(l, 4, False)
         self.assertEqual([], l)
+
+    def test_remove_duplicates(self):
+        self.assertEqual([1, 2, 3], remove_duplicates([1, 1, 2, 3, 3]))
+        self.assertEqual(["1", "2", "3"], remove_duplicates(["1", "1", "2", "3", "3"]))
+        self.assertEqual(["hi", "there"], remove_duplicates(["hi", "there", "hi"]))
+        self.assertEqual([(1, 2)], remove_duplicates([(1, 2), (1, 2)]))
+
+        # self.assertEqual([{1: "foo", "bar": 5}], remove_duplicates([{1: "foo", "bar": 5}, {1: "foo", "bar": 5}]))
 
     def test_combine(self):
         self.assertEqual([{'a': 2, 'b': 4}, {'a': 2, 'b': 5}, {'a': 3, 'b': 4}, {'a': 3, 'b': 5}], combine(a=(2, 3), b=(4, 5)))

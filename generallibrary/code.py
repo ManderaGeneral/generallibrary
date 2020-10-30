@@ -1,5 +1,49 @@
 
-# import importlib
+
+
+
+class _Line:
+    def __init__(self, indent, code_str, space_before=0, space_after=0):
+        self.indent = indent
+        self.code_str = code_str
+        self.space_before = space_before
+        self.space_after = space_after
+
+class CodeGen:
+    """ Tool to help with printing code line by line. """
+    indent = " " * 4
+    def __init__(self):
+        self.lines = []
+
+    def add(self, indent, code_str, space_before=0, space_after=0):
+        """ Add a new line. """
+        self.lines.append(_Line(indent=indent, code_str=code_str, space_before=space_before, space_after=space_after))
+
+    def generate(self):
+        lines = ["############### GENERATED CODE ###############"]
+        for line in self.lines:
+            for _ in range(line.space_before):
+                lines.append("")
+            lines.append(f"{self.indent * line.indent}{line.code_str}")
+            for _ in range(line.space_after):
+                lines.append("")
+        lines.append("##############################################")
+        return lines
+
+    def print(self):
+        print("\n".join(self.generate()))
+
+def args_to_attrs(local_dict):
+    """ Print code for a dunder init method to store all arguments as attributes. """
+    code = CodeGen()
+    for key, value in local_dict.items():
+        if key != "self":
+            code.add(2, f"self.{key} = {key}")
+    code.print()
+
+
+
+
 
 def debug(scope, *evals, printOut=True):
     """
