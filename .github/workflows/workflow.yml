@@ -4,17 +4,51 @@
 # Create artifact with metadata
 # Publish to PyPI if new version
 
-name: UnitTest and Publish
+
+name: Shared merge, unittests and publish
 
 on:
   push:
     branches: master
 
-# HERE ** Merge from shared
 jobs:
+  sharedmerge:
+    outputs:
+      changed: ${{ steps.merge.outputs.changed }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.ACTIONS_TOKEN }}
+
+      - name: Setup git
+        run: |
+          sudo apt install git
+          git config --global user.email "rickard.abraham@gmail.com"
+          git config --global user.name Mandera
+
+      - name: Merge and push again
+        id: merge
+        run: |
+          cd ..
+          git clone https://Mandera:${{ secrets.GIT_PASSWORD }}@github.com/ManderaGeneral/shared.git
+          cp -r shared/generalasterisk/. ${{ github.event.repository.name }}
+          cd ${{ github.event.repository.name }}
+
+          if [[ $(git status) != *"clean"* ]]; then
+            echo Package was not up to date so it will be updated
+            git add .
+            git commit -m "[CI AUTO] Updating shared files for this package." -m "${{ github.event.head_commit.message }}"
+            git push
+
+            echo '::set-output name=changed::true'
+          else
+            echo '::set-output name=changed::false'
+          fi
 
   unittest:
-    if: "!contains(github.event.head_commit.message, '[CI SKIP]')"
+    needs: sharedmerge
+    if: needs.sharedmerge.outputs.changed == 'false' && !contains(github.event.head_commit.message, '[CI SKIP]')
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -121,7 +155,7 @@ jobs:
           for x in ${{ env.DEPENDENT_PACKAGES }}; do
           git clone https://Mandera:${{ secrets.GIT_PASSWORD }}@github.com/ManderaGeneral/$x.git
           cd $x
-          git commit -m "[CI] Automatic test trigger for ${{ github.event.repository.name }}'s new ${{ env.NEW_VERSION }} release" --allow-empty
+          git commit -m "[CI AUTO] Test trigger for ${{ github.event.repository.name }}'s new ${{ env.NEW_VERSION }} release." --allow-empty
           git push
           cd ..
           done
