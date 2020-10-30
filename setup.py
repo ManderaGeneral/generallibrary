@@ -4,8 +4,13 @@ from os import path
 import configparser
 import json
 from itertools import chain
-from generallibrary import remove_duplicates
 
+
+
+def remove_duplicates(l):
+    """ Remove all duplicates in a list.
+        Values must be hashable as they are passed through as dict keys. (Lists work but not Dicts) """
+    return list(set(l))
 
 class Cfg:  # I think we could actually use generalfile here instead, as we are doing that in lib already -> Add cfg as option dependency
     def __init__(self, path):
@@ -55,8 +60,8 @@ setup(
     name=cfg("setup", "name"),
     version=cfg("setup", "version"),
     description=cfg("setup", "description"),
-    install_requires=cfg("setup", "install_requires"),
 
+    install_requires=install_requires,
     extras_require=extras_require,
     long_description=long_description,
     classifiers=classifiers,
