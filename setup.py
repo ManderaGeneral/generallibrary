@@ -1,46 +1,63 @@
 
 from setuptools import setup, find_packages
 from os import path
+import configparser
+import json
 from itertools import chain
 from generallibrary import remove_duplicates
 
 
-extras_require = {
-    "md_features": ["pandas"],
-}
+class Cfg:  # I think we could actually use generalfile here instead, as we are doing that in lib already -> Add cfg as option dependency
+    def __init__(self, path):
+        self.config = configparser.RawConfigParser()
+        self.config.read(path)
 
-extras_require["full"] = remove_duplicates([package for package in chain(*list(extras_require.values()))])
+    def __call__(self, section, option):
+        result = self.config.get(section, option)
+        try:
+            return json.loads(self.config.get(section, option))
+        except json.decoder.JSONDecodeError:
+            return result
 
-this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+cfg = Cfg("package_specific.cfg")
+
+
+
+this_directory = path.abspath(path.dirname(__file__))  # Same here, could probably use generalfile itself
+with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
+extras_require = cfg("setup", "extras_require")
+extras_require["full"] = remove_duplicates([package for package in chain(*list(extras_require.values()))])
+
+classifiers=[
+    "Operating System :: Microsoft :: Windows :: Windows 7",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "License :: OSI Approved :: MIT License",
+]
+classifiers.extend(cfg("setup", "name"))
+
+install_requires = cfg("setup", "install_requires")
+install_requires.append("wheel")
 
 setup(
-    name="generallibrary",
-    long_description=long_description,
-    long_description_content_type='text/markdown',
     author='Rickard "Mandera" Abraham',
-    url="https://github.com/ManderaGeneral/generallibrary",
-    version="2.2.0",
-    description=(
-        "Random useful code categorized into modules."
-    ),
-    packages=find_packages(),
-    install_requires=["wheel", "packaging"],
-    extras_require=extras_require,
-    python_requires=">= 3.7, < 3.9",
+    long_description_content_type="text/markdown",
+    url=f"https://github.com/ManderaGeneral/{ cfg('setup', 'name') }",
     license="MIT",
-    classifiers=[
-        "Operating System :: Microsoft :: Windows :: Windows 7",
-        "Operating System :: Microsoft :: Windows :: Windows 10",
-        "Operating System :: POSIX :: Linux",
-        "Operating System :: MacOS",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Development Status :: 2 - Pre-Alpha",
-        "License :: OSI Approved :: MIT License",
+    python_requires=">= 3.7, < 3.9",
+    packages=find_packages(),
 
-        "Topic :: Software Development :: Libraries :: Python Modules",
-    ]
+    name=cfg("setup", "name"),
+    version=cfg("setup", "version"),
+    description=cfg("setup", "description"),
+    install_requires=cfg("setup", "install_requires"),
+
+    extras_require=extras_require,
+    long_description=long_description,
+    classifiers=classifiers,
 )
