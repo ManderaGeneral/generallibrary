@@ -1,7 +1,6 @@
 
 import json
 import pyperclip
-import subprocess
 
 def clipboard_copy(s):
     """ Copy a string to clipboard. """
