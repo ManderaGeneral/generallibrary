@@ -10,7 +10,7 @@ def clipboard_copy(s):
     try:
         call()
     except pyperclip.PyperclipException:
-        os.system("sudo apt-get install xsel")
+        os.system("sudo apt-get install xclip")
         call()
 
 def clipboard_get():
