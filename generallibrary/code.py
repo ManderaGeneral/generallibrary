@@ -1,14 +1,21 @@
 
 import json
-import clipboard
+import pyperclip
+import os
+
 
 def clipboard_copy(s):
     """ Copy a string to clipboard. """
-    clipboard.copy(s)
+    call = lambda: pyperclip.copy(s)
+    try:
+        call()
+    except pyperclip.PyperclipException:
+        os.system("sudo apt-get install xsel")
+        call()
 
 def clipboard_get():
     """ Get clipboard string. """
-    return clipboard.paste()
+    return pyperclip.paste()
 
 
 class _Line:
