@@ -1,14 +1,14 @@
 
 import json
-import pyperclip
+import clipboard
 
 def clipboard_copy(s):
     """ Copy a string to clipboard. """
-    pyperclip.copy(s)
+    clipboard.copy(s)
 
 def clipboard_get():
     """ Get clipboard string. """
-    return pyperclip.paste()
+    return clipboard.paste()
 
 
 class _Line:
