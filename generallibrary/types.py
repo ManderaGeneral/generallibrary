@@ -18,13 +18,13 @@ def strToDynamicType(var):
     # int() doesn't declare 'raises' in doc type so catch everything
     try:
         return int(var)
-    except:
+    except (ValueError, TypeError):
         pass
 
     # float() doesn't declare 'raises' in doc type so catch everything
     try:
         return float(var)
-    except:
+    except (ValueError, TypeError):
         pass
 
     return var
@@ -38,9 +38,11 @@ def _typeChecker_checkObject(obj, types, literalObjects):
     for i, typeTuple in enumerate(types):
         # Returned ValueError if obj was pandas.DataFrame, so there are probably more objects that can raise any error
         # So catch every exception, it's a pretty simple statement so not too big of a problem
-        try:
-            objInLiteralObjects = obj in literalObjects
-        except:
+        for literalObj in literalObjects:
+            if obj == literalObj:
+                objInLiteralObjects = True
+                break
+        else:
             objInLiteralObjects = False
 
         if objInLiteralObjects:

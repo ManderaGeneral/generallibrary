@@ -83,7 +83,7 @@ def initBases(cls):
     return cls
 
 
-from generallibrary.functions import defaults, SigInfo
+from generallibrary.functions import SigInfo
 
 
 
