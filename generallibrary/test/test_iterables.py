@@ -1,8 +1,7 @@
 
 import unittest
 
-# from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, addToDictInDict, getFreeIndex, exclusive, inclusive, uniqueObjInList, combine, remove_duplicates
-from generallibrary.iterables import *
+from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, addToDictInDict, getFreeIndex, exclusive, inclusive, uniqueObjInList, combine, remove_duplicates
 
 
 class IterablesTest(unittest.TestCase):
@@ -252,7 +251,10 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual([{"hello": 3, "there": 2}], combine(hello=3, there=2))
         self.assertEqual([{'hello': 3, 'there': 2}, {'hello': 3, 'there': "foobar"}], combine(hello=3, there=[2, "foobar"]))
 
-
+    # def test_get_changes(self):
+    #     self.assertEqual()
+    #     {"hi": 5, "there": 4}
+    #     {"hi": 7}
 
 
 

@@ -1,8 +1,7 @@
 
 import unittest
 
-from generallibrary import SigInfo, defaults, VerInfo, deco_cache, deco_cast_parameters, EmptyContext
-
+from generallibrary import SigInfo, defaults, VerInfo, deco_cache, deco_cast_parameters, EmptyContext, deco_default_self_args
 
 
 class FunctionsTest(unittest.TestCase):
@@ -79,20 +78,20 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual({"y": "test"}, SigInfo(lambda x, y="test", *args, **z: None).defaults)
 
     def test_setParameters(self):
-        def wrapper(func):
-            def f(*args, **kwargs):
+        def _wrapper(func):
+            def _f(*args, **kwargs):
                 return SigInfo(func, *args, **kwargs).setParameters(x=2)()
-            return f
+            return _f
 
-        @wrapper
-        def hello(x, y=5):
+        @_wrapper
+        def _hello(x, y=5):
             return x * y
 
-        self.assertEqual(10, hello(5))
-        self.assertEqual(10, hello(x=5))
-        self.assertEqual(4, hello(5, 2))
-        self.assertEqual(4, hello(x=5, y=2))
-        self.assertEqual(4, hello(5, y=2))
+        self.assertEqual(10, _hello(5))
+        self.assertEqual(10, _hello(x=5))
+        self.assertEqual(4, _hello(5, 2))
+        self.assertEqual(4, _hello(x=5, y=2))
+        self.assertEqual(4, _hello(5, y=2))
 
         sigInfo = SigInfo(lambda x, y, z=2: 5, 1, 2, z=3)
         self.assertEqual(1, sigInfo["x"])
@@ -131,21 +130,21 @@ class FunctionsTest(unittest.TestCase):
 
 
     def test_getParameter(self):
-        def wrapper(func):
-            def f(*args, **kwargs):
+        def _wrapper(func):
+            def _f(*args, **kwargs):
                 self.assertEqual(2, SigInfo(func, *args, **kwargs)["x"])
                 self.assertEqual(5, SigInfo(func, *args, **kwargs)["y"])
                 self.assertEqual(None, SigInfo(func, *args, **kwargs)["z"])
                 return func(*args, **kwargs)
-            return f
-        @wrapper
-        def hello(x, y=5):
+            return _f
+        @_wrapper
+        def _hello(x, y=5):
             return x * y
-        hello(2)
-        hello(x=2)
-        hello(2, 5)
-        hello(2, y=5)
-        hello(x=2, y=5)
+        _hello(2)
+        _hello(x=2)
+        _hello(2, 5)
+        _hello(2, y=5)
+        _hello(x=2, y=5)
 
     def test_packedArgs(self):
         self.assertEqual("args", SigInfo(lambda *args: 5).packedArgsName)
@@ -230,6 +229,39 @@ class FunctionsTest(unittest.TestCase):
 
         self.assertEqual({"a": None, "b": 3}, defaults({"a": None, "b": 3}, a=4, b=5))
         self.assertEqual({"a": 4, "b": 3}, defaults({"a": None, "b": 3}, a=4, b=5, overwriteNone=True))
+
+    def test_unpackedAllArgs_without_missing(self):
+        class _Foo:
+            @deco_default_self_args
+            def _bar(self, req):
+                return req
+        foo = _Foo()
+        self.assertRaises(AttributeError, _Foo()._bar)
+
+        setattr(foo, "req", None)
+        self.assertEqual(None, foo._bar())
+
+        setattr(foo, "req", "test")
+        self.assertEqual("test", foo._bar())
+
+        self.assertEqual("hello", foo._bar(req="hello"))
+
+
+        class _Foo:
+            def __init__(self):
+                self.random = 4
+                self._req = 2
+
+            @deco_default_self_args
+            def _bar(self, random, *args, _req, extra=2):
+                return random, _req
+
+        self.assertEqual((4, 2), _Foo()._bar())
+
+        self.assertEqual((5, 2), _Foo()._bar(random=5))
+        self.assertEqual((4, 3), _Foo()._bar(_req=3))
+        self.assertEqual((6, 7), _Foo()._bar(random=6, _req=7))
+        self.assertEqual((8, 2), _Foo()._bar(8, 9, 10, 11))
 
 
     # Not happy about this technique to dynamically load code to prevent syntax error, but it's the best option so far

@@ -5,7 +5,8 @@ import os
 
 
 def clipboard_copy(s):
-    """ Copy a string to clipboard. """
+    """ Copy a string to clipboard.
+        Automatically tries to installs xclip on linux if it fails. """
     call = lambda: pyperclip.copy(s)
     try:
         call()
