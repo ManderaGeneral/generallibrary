@@ -44,7 +44,7 @@ classifiers=[
     "Programming Language :: Python :: 3.8",
     "License :: OSI Approved :: MIT License",
 ]
-classifiers.extend(cfg("setup", "name"))
+classifiers.extend(cfg("setup", "classifiers"))
 
 install_requires = cfg("setup", "install_requires")
 install_requires.append("wheel")
