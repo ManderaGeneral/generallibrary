@@ -1,8 +1,7 @@
 
-
+[![PyPI version](https://badge.fury.io/py/generallibrary.svg)](https://badge.fury.io/py/generallibrary)
 [![workflow Actions Status](https://github.com/ManderaGeneral/generallibrary/workflows/workflow/badge.svg)](https://github.com/ManderaGeneral/generallibrary/actions)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/ManderaGeneral/generallibrary.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ManderaGeneral/generallibrary/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/ManderaGeneral/generallibrary.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ManderaGeneral/generallibrary/context:python)
 
 # Package: generallibrary
 Random useful code categorized into modules.
