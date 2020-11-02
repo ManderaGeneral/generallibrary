@@ -161,7 +161,12 @@ jobs:
           cd ..
           done
 
-
+      - name: Version tag
+        if: env.NEW_VERSION != env.OLD_VERSION
+        uses: mathieudutour/github-tag-action@v4.6
+        with:
+          github_token: ${{ secrets.ACTIONS_TOKEN }}
+          custom_tag: ${{ env.NEW_VERSION }}
 
 
 
