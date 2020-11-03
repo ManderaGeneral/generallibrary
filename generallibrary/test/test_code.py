@@ -12,4 +12,3 @@ class CodeTest(unittest.TestCase):
         self.assertEqual("foo", clipboard_get())
         clipboard_copy("bar")
         self.assertEqual("bar", clipboard_get())
-
