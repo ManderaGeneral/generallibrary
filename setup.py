@@ -1,5 +1,5 @@
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 from os import path
 import configparser
 import json
@@ -55,7 +55,7 @@ setup(
     url=f"https://github.com/ManderaGeneral/{ cfg('setup', 'name') }",
     license="MIT",
     python_requires=">= 3.7, < 3.9",
-    packages=find_packages(),
+    packages=find_namespace_packages(),
 
     name=cfg("setup", "name"),
     version=cfg("setup", "version"),
