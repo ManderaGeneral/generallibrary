@@ -72,12 +72,7 @@ jobs:
 
       - name: Run unittests
         run: |
-          result=$(python -m unittest discover ${{ github.event.repository.name }}/test 2>&1)
-          if [[ $(result) == *"Ran 0 tests"* ]]; then
-          echo "FAILING: Couldn't find any tests"
-          exit 1
-          fi
-          echo $result
+          python -m unittest discover ${{ github.event.repository.name }}/test
 
 
   publisher:
