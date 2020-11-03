@@ -149,7 +149,17 @@ jobs:
           python setup.py sdist bdist_wheel
           twine upload dist/*
 
+          for x in {0..10}; do
+          pypi_versions=$(pip install ${{ github.event.repository.name }}== 2>&1) || :
+          if [[ $pypi_versions == *"${{ env.NEW_VERSION }}"* ]]; then
+          found_version=1
+          break
+          fi
+          echo "Couldn't find new version on PyPI, trying again in 5 seconds"
+          sleep 5
+          done
 
+          if [[ -v found_version ]]; then
           sudo apt install git
           git config --global user.email "rickard.abraham@gmail.com"
           git config --global user.name Mandera
@@ -161,6 +171,11 @@ jobs:
           git push
           cd ..
           done
+
+          else
+          echo "FAILING: Couldn't find new version on PyPI in time"
+          exit 1
+          fi
 
       - name: Version tag
         if: env.NEW_VERSION != env.OLD_VERSION
