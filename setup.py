@@ -47,7 +47,6 @@ classifiers=[
 classifiers.extend(cfg("setup", "classifiers"))
 
 install_requires = cfg("setup", "install_requires")
-install_requires.append("wheel")
 
 setup(
     author='Rickard "Mandera" Abraham',

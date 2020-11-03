@@ -72,7 +72,7 @@ jobs:
 
       - name: Run unittests
         run: |
-          python -m unittest discover
+          python -m unittest discover ${{ github.event.repository.name }}/test
 
 
   publisher:
