@@ -39,7 +39,7 @@ def _typeChecker_checkObject(obj, types, literalObjects):
         # Returned ValueError if obj was pandas.DataFrame, so there are probably more objects that can raise any error
         # So catch every exception, it's a pretty simple statement so not too big of a problem
         for literalObj in literalObjects:
-            if obj == literalObj:
+            if obj is literalObj:
                 objInLiteralObjects = True
                 break
         else:
