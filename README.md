@@ -1,5 +1,5 @@
 
-[![PyPI version](https://badge.fury.io/py/generallibrary.svg)](https://badge.fury.io/py/generallibrary)
+[![PyPI version shields.io](https://img.shields.io/pypi/v/generallibrary.svg)](https://pypi.org/project/generallibrary/)
 [![workflow Actions Status](https://github.com/ManderaGeneral/generallibrary/workflows/workflow/badge.svg)](https://github.com/ManderaGeneral/generallibrary/actions)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/ManderaGeneral/generallibrary.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ManderaGeneral/generallibrary/alerts/)
 
