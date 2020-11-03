@@ -1,5 +1,7 @@
 
 [![PyPI version shields.io](https://img.shields.io/pypi/v/generallibrary.svg)](https://pypi.org/project/generallibrary/)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/generallibrary.svg)](https://pypi.python.org/pypi/generallibrary/)
+[![Generic badge](https://img.shields.io/badge/platforms-Windows%20|%20Ubuntu%20|%20MacOS-blue.svg)](https://shields.io/)
 [![workflow Actions Status](https://github.com/ManderaGeneral/generallibrary/workflows/workflow/badge.svg)](https://github.com/ManderaGeneral/generallibrary/actions)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/ManderaGeneral/generallibrary.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ManderaGeneral/generallibrary/alerts/)
 
