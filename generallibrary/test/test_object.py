@@ -122,9 +122,36 @@ class ObjectTest(unittest.TestCase):
                 pass
         self.assertEqual((5, ), Parent(5).x)
 
+    def test_hierarchy(self):
+        class C:
+            def __init__(self, c, d=4):
+                self.c = c
+                self.d = d
 
+        @initBases
+        class B(C):
+            def __init__(self, b, c):
+                self.b = b
 
+        @initBases
+        class A(B):
+            def __init__(self, b, c):
+                pass
 
+        a = A(b=2, c=3)
+
+        self.assertEqual(2, a.b)
+        self.assertEqual(3, a.c)
+        self.assertEqual(4, a.d)
+
+        self.assertEqual(1, A(1, 2).b)
+        self.assertEqual(1, A(1, c=2).b)
+
+        self.assertRaises(AssertionError, A)
+        self.assertRaises(AssertionError, A, b=5)
+        self.assertRaises(AssertionError, A, c=5)
+        self.assertRaises(AssertionError, A, d=5)
+        self.assertRaises(AssertionError, A, 2)
 
 
 

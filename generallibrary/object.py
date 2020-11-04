@@ -61,25 +61,39 @@ def initBases(cls):
     Decorator function for class to automatically initalize all inherited classes.
     If a base has an argument without a default value then Parent must have that key word as argument itself
     """
-    clsInit = cls.__init__
+    cls_init = cls.__init__
 
-    def __init__(*args, **kwargs):
-        clsSigInfo = SigInfo(clsInit, *args, **kwargs)
+    def _wrapper(*args, **kwargs):
+        if "self" in kwargs:
+            args = (kwargs["self"], ) + args
+            del kwargs["self"]
 
-        for base in list(cls.__bases__) + [cls]:
-            baseInit = clsInit if base == cls else base.__init__
-            if baseInit != object.__init__:
-                sigInfo = SigInfo(baseInit)
+        clsSigInfo = SigInfo(cls_init, *args, **kwargs)
 
-                for name in sigInfo.names:
+        for base in cls.__bases__ + (cls, ):
+            if base is not object:
+                base_init = cls_init if base is cls else base.__init__
+                sigInfo = SigInfo(base_init)
+
+                if getattr(base_init, "_origin", None) is not None:
+                    names = SigInfo(base_init._origin).names  # Use original function signature if it's already been decorated with initBases
+                else:
+                    names = sigInfo.names
+
+                for name in names:
                     if clsSigInfo[name] is None and sigInfo[name] is not None:  # Call continue to not overwrite with a None value
                         continue
-                    assert name in clsSigInfo.definedNames
+
+                    if not clsSigInfo.get_arg_is_defined(arg=name):
+                        raise AssertionError(f"'{base}' is missing argument '{name}' in it's __init__ signature.")
+
                     sigInfo[name] = clsSigInfo[name]
 
                 sigInfo()
 
-    cls.__init__ = __init__
+    _wrapper._origin = cls_init
+    cls.__init__ = _wrapper
+
     return cls
 
 

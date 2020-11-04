@@ -188,6 +188,17 @@ class SigInfo:
 
         return kwargs
 
+    def get_arg_is_defined(self, arg):
+        """ Get whether an arg is defined or not. """
+        if arg in self.unpackedAllArgs_without_missing:
+            return True
+        elif arg == self.packedArgsName:
+            return True
+        elif arg == self.packedKwargsName:
+            return True
+        else:
+            return False
+
     @property
     def unpackedAllArgs(self):
         """
