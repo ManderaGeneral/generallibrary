@@ -66,7 +66,7 @@ class FunctionsTest(unittest.TestCase):
     def test_argNames(self):
         sigInfo = SigInfo(lambda x, y=2, b=4, *args, z=3, s, **kwargs: 5)
         self.assertEqual(["x", "y", "b", "args"], sigInfo.positionalArgNames)
-        self.assertEqual(["z", "s", "kwargs"], sigInfo.keywordArgNames)
+        self.assertEqual(["z", "s", "kwargs"], sigInfo.positionalOppositeArgNames)
         self.assertEqual({"y": 2, "b": 4, "z": 3}, sigInfo.defaults)
 
     def test_getSignatureDefaults(self):
@@ -98,7 +98,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(2, sigInfo["y"])
         self.assertEqual(3, sigInfo["z"])
         self.assertEqual(None, sigInfo["doesntexist"])
-        self.assertEqual([1, 2, 3], sigInfo.unpackedArgs)
+        self.assertEqual([1, 2, 3], sigInfo.unpackedArgs)  # HERE ** I changed prio to kwargs
         self.assertEqual({}, sigInfo.unpackedKwargs)
 
         sigInfo.setParameters(x=4, z=5)

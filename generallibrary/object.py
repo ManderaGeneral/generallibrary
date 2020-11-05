@@ -59,37 +59,26 @@ def attributes(obj):
 def initBases(cls):
     """
     Decorator function for class to automatically initalize all inherited classes.
-    If a base has an argument without a default value then Parent must have that key word as argument itself
+
+    Wrap a class' unbound __init__ method to take any arguments.
+    When wrapper is called it iterates DIRECT bases to call their unbound __init__ methods along with it's own original __init__.
+
     """
-    cls_init = cls.__init__
+    cls_init = cls.__init__  # Unbound original __init__ method of class
 
     def _wrapper(*args, **kwargs):
-        if "self" in kwargs:
-            args = (kwargs["self"], ) + args
-            del kwargs["self"]
+        cls_SigInfo = SigInfo(cls_init, *args, **kwargs)
 
-        clsSigInfo = SigInfo(cls_init, *args, **kwargs)
+        inits = [base.__init__ for base in cls.__bases__]
 
-        for base in cls.__bases__ + (cls, ):
-            if base is not object:
-                base_init = cls_init if base is cls else base.__init__
-                sigInfo = SigInfo(base_init)
+        if cls_init not in inits:
+            inits.append(cls_init)
 
-                if getattr(base_init, "_origin", None) is not None:
-                    names = SigInfo(base_init._origin).names  # Use original function signature if it's already been decorated with initBases
-                else:
-                    names = sigInfo.names
 
-                for name in names:
-                    if clsSigInfo[name] is None and sigInfo[name] is not None:  # Call continue to not overwrite with a None value
-                        continue
-
-                    if not clsSigInfo.get_arg_is_defined(arg=name):
-                        raise AssertionError(f"'{base}' is missing argument '{name}' in it's __init__ signature.")
-
-                    sigInfo[name] = clsSigInfo[name]
-
-                sigInfo()
+        for init in inits:
+            if init is object.__init__:
+                continue
+            cls_SigInfo(child_callable=init)
 
     _wrapper._origin = cls_init
     cls.__init__ = _wrapper

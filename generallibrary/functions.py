@@ -9,19 +9,20 @@ class SigInfo:
     Forgiving as it sets missing values to None.
     Parameters can be changed but not callableObject.
     """
-    def __init__(self, callableObject, *args, **kwargs):
+    def __init__(self, /, callableObject, *args, **kwargs):  # / to end positional only characters, allows us to have "self" in kwargs for unbound methods
         assert callable(callableObject)
 
         self._callableObject = callableObject
-
-        # Stores *args and **kwargs indirectly in their own object if they exist
         self.allArgs = {}
+
+        # Store all args inside allArgs. Go through __setitem__ method.
+        # Stores *args and **kwargs indirectly in their own object if they exist
         kwargs.update(self._argsToKwargs(list(args)))
         for name, value in kwargs.items():
             self[name] = value
 
     def _argsToKwargs(self, args):
-        assert self.packedArgsName or len(args) <= len(self.positionalArgNames)
+        # assert self.packedArgsName or len(args) <= len(self.positionalArgNames)  # Let's allow redundant args
 
         kwargs = {}
         for i, (name, arg) in enumerate(zip(self.positionalArgNames, args)):
@@ -42,7 +43,7 @@ class SigInfo:
     @property
     def parameters(self):
         """Get list of inspect parameter objects"""
-        return inspect.signature(self.callableObject).parameters.values()
+        return list(inspect.signature(self.callableObject).parameters.values())
 
     @property
     def names(self):
@@ -73,7 +74,7 @@ class SigInfo:
         """
         leadingArgNames = []
         for param in self.parameters:
-            if param.name == "self":
+            if param.name == "self":  # TODO: Should not have this as it's probably messing up unbound methods
                 continue
 
             noDefault = param.default is inspect.Parameter.empty
@@ -109,6 +110,18 @@ class SigInfo:
         return d
 
     @property
+    def positionalOnlyArgNames(self):
+        """ Get list of parameter names that can only take a positional argument. """
+        return [param.name for param in self.parameters if param.kind.name in ("POSITIONAL_ONLY", "VAR_POSITIONAL")]
+
+    @property
+    def positionalOnlyOppositeArgNames(self):
+        """ Get list of parameter names that can take a keyword argument.
+            Opposite of `self.poisitionalOnlyArgNames`. """
+        return [name for name in self.names if name not in self.positionalOnlyArgNames]
+
+
+    @property
     def positionalArgNames(self):
         """
         Get list of parameter names that can take a positional argument.
@@ -117,7 +130,7 @@ class SigInfo:
         return [param.name for param in self.parameters if param.kind.name in ("POSITIONAL_ONLY", "POSITIONAL_OR_KEYWORD", "VAR_POSITIONAL")]
 
     @property
-    def keywordArgNames(self):
+    def positionalOppositeArgNames(self):
         """
         Get list of parameter names that can only take a keyword argument.
         Opposite of `self.positionalArgNames`.
@@ -152,7 +165,8 @@ class SigInfo:
     def unpackedArgs(self):
         """Return a list of all positional parameter values"""
         args = []
-        for name in self.positionalArgNames:
+        # for name in self.positionalArgNames:
+        for name in self.positionalOnlyArgNames:
             if name == self.packedArgsName:
                 args.extend(self[self.packedArgsName])
             else:
@@ -163,7 +177,8 @@ class SigInfo:
     def unpackedKwargs(self):
         """Return a dict of parameters with their values excluding those in positionalArgNames / unpackedArgs"""
         kwargs = {}
-        for name in self.keywordArgNames:
+        # for name in self.positionalOppositeArgNames:
+        for name in self.positionalOnlyOppositeArgNames:
             if name == self.packedKwargsName:
                 kwargs.update(self[self.packedKwargsName])
             else:
@@ -241,13 +256,28 @@ class SigInfo:
         elif self.packedKwargsName:
             addToDictInDict(self.allArgs, self.packedKwargsName, **{name: value})
 
-    def __call__(self):
+    def __call__(self, child_callable=None):
         """
         Calls callableObject with filled args and kwargs.
         Unfilled required parameters will get a None value
         """
-        assert self.requiredAreDefined
-        return self.callableObject(*self.unpackedArgs, **self.unpackedKwargs)
+        if child_callable is None:
+            assert self.requiredAreDefined
+            return self.callableObject(*self.unpackedArgs, **self.unpackedKwargs)
+
+        else:
+            sigInfo = SigInfo(child_callable)
+            for name in sigInfo.names:
+                # if self[name] is not None:
+                if self.get_arg_is_defined(name):
+                    sigInfo[name] = self[name]
+                else:
+                    if name == sigInfo.packedArgsName:
+                        sigInfo[name] = self.unpackedArgs
+                    elif name == sigInfo.packedKwargsName:
+                        sigInfo[name] = self.unpackedKwargs
+
+            return sigInfo()
 
     def setParameters(self, **parameters):
         """Set parameters automatically in args or kwargs if the name exists in self.names."""
