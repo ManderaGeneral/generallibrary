@@ -5,103 +5,21 @@ from generallibrary import *
 
 
 
-# class C:
-#     def __init__(self, b):
-#         self.b = b
-#
-# @initBases  # Wrap init with new signature (*args, **kwargs). Call C with all args it can take. (a)
-# class B(C):
-#     pass
-#
-# @initBases
-# class A(B):  # Wrap init with new signature (*args, **kwargs). Call B with all args it can take. (*args, **kwargs)
-#     def __init__(self, a, b):
-#         self.a = a
 
 
-class B:
-    def __init__(self, a, b):
-        self.a = a
-        self.b = b
+class _Foo:
+    def __init__(self):
+        self.random = 4
+        self._req = 2
 
-@initBases
-class A(B):
-    def __init__(self, a, b=None):
-        pass
-
-a = A(a=2)
-print(a.a, a.b)
+    @deco_default_self_args
+    def _bar(self, random, *args, _req, extra=2):
+        return random, _req
 
 
-
-
-# func is unbound!
-# def deco(func):
-#     def _wrapper(*args, **kwargs):
-#         print(func, args, kwargs)
-#         return func(*args, **kwargs)
-#     return _wrapper
-#
-#
-# class Test:
-#     @deco
-#     def a(self):
-#         pass
-
-
-
-# def deco(cls):
-#     func = cls.a
-#
-#     def _wrapper(*args, **kwargs):
-#         return func(*args, **kwargs)
-#
-#     cls.a = _wrapper
-#     return cls
-#
-# import inspect
-
-
-
-# @deco
-# class Test:
-#     def a(self):
-#         pass
-#
-# bound = Test().a
-# unbound = Test.a
-#
-# print(bound)
-# print(unbound)
-
-# for func in (bound, unbound):
-#     print(list(inspect.signature(func).parameters.values()))
-
-"""
-A bound method does not have a ´self´ parameter.
-Use slash to allow ´self´ in kwargs
-"""
-
-
-
-# class Test:
-#     def a(self, /, b, **kwargs):
-#         print(self, b, kwargs)
-#
-#
-# print(list(inspect.signature(Test.a).parameters.values()))
-# Test().a("foo", self="bar")
-
-
-
-
-
-
-
-
-
-
-
+print(_Foo._bar)
+print(_Foo()._bar)
+_Foo()._bar(8, 9, 10, 11)  # HERE ** Dont understand why its getting 2x self
 
 
 

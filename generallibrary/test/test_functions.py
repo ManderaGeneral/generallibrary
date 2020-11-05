@@ -98,8 +98,8 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(2, sigInfo["y"])
         self.assertEqual(3, sigInfo["z"])
         self.assertEqual(None, sigInfo["doesntexist"])
-        self.assertEqual([1, 2, 3], sigInfo.unpackedArgs)  # HERE ** I changed prio to kwargs
-        self.assertEqual({}, sigInfo.unpackedKwargs)
+        self.assertEqual([], sigInfo.unpackedArgs)
+        self.assertEqual({"x": 1, "y": 2, "z": 3}, sigInfo.unpackedKwargs)
 
         sigInfo.setParameters(x=4, z=5)
         self.assertEqual(4, sigInfo["x"])

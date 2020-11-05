@@ -263,6 +263,7 @@ class SigInfo:
         """
         if child_callable is None:
             assert self.requiredAreDefined
+            print(self.callableObject, self.unpackedArgs, self.unpackedKwargs)
             return self.callableObject(*self.unpackedArgs, **self.unpackedKwargs)
 
         else:
