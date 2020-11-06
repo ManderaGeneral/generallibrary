@@ -40,8 +40,8 @@ classifiers=[
     "Operating System :: Microsoft :: Windows :: Windows 10",
     "Operating System :: POSIX :: Linux",
     "Operating System :: MacOS",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "License :: OSI Approved :: MIT License",
 ]
 classifiers.extend(cfg("setup", "classifiers"))
@@ -53,7 +53,7 @@ setup(
     long_description_content_type="text/markdown",
     url=f"https://github.com/ManderaGeneral/{ cfg('setup', 'name') }",
     license="MIT",
-    python_requires=">= 3.7, < 3.9",
+    python_requires=">= 3.8, < 3.10",
     packages=find_namespace_packages(),
 
     name=cfg("setup", "name"),
