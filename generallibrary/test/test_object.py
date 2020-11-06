@@ -154,7 +154,25 @@ class ObjectTest(unittest.TestCase):
         self.assertRaises(AssertionError, A, 2)
 
 
+    def test_hierarchy_empty_middleman(self):
+        class C:
+            def __init__(self, a, b=2):
+                self.a = a
+                self.b = b
 
+        @initBases
+        class B(C):
+            pass
+
+        @initBases
+        class A(B):
+            def __init__(self, a, b=None):
+                pass
+
+        self.assertEqual(5, A(5).a)
+        self.assertEqual(5, A(a=5).a)
+
+        self.assertEqual(None, A(5).b)
 
 
 
