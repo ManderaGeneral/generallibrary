@@ -156,8 +156,8 @@ jobs:
           echo "Found new verson on PyPI!"
           break
           fi
-          echo "Couldn't find new version on PyPI, trying again in 5 seconds"
-          sleep 5
+          echo "Couldn't find new version on PyPI, trying again in 30 seconds"
+          sleep 30
           done
 
           if [[ -v found_version ]]; then
