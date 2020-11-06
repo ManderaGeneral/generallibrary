@@ -43,7 +43,7 @@ class ObjectTest(unittest.TestCase):
 
         self.assertEqual(5, Parent(x=5).x)
         self.assertEqual(2, Parent(x=5).y)
-        self.assertEqual(6, Parent(x=5).z)
+        self.assertIs(None, Parent(x=5).z)
         self.assertEqual(4, Parent(x=5, z=4).z)
 
         # One argument without default and one value with default inside Parent

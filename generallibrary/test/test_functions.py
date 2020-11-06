@@ -105,8 +105,8 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(4, sigInfo["x"])
         self.assertEqual(2, sigInfo["y"])
         self.assertEqual(5, sigInfo["z"])
-        self.assertEqual([4, 2, 5], sigInfo.unpackedArgs)
-        self.assertEqual({}, sigInfo.unpackedKwargs)
+        self.assertEqual([], sigInfo.unpackedArgs)
+        self.assertEqual({"x": 4, "y": 2, "z": 5}, sigInfo.unpackedKwargs)
 
         # with self.assertRaises(AssertionError):
         #     sigInfo["new"] = 6
@@ -115,8 +115,8 @@ class FunctionsTest(unittest.TestCase):
         sigInfo = SigInfo(lambda x=1, **kwargs: 5, y=2)
         self.assertEqual(1, sigInfo["x"])
         self.assertEqual(2, sigInfo["y"])
-        self.assertEqual([1], sigInfo.unpackedArgs)
-        self.assertEqual({"y": 2}, sigInfo.unpackedKwargs)
+        self.assertEqual([], sigInfo.unpackedArgs)
+        self.assertEqual({"x": 1, "y": 2}, sigInfo.unpackedKwargs)
 
         sigInfo["y"] = 3
         self.assertEqual(3, sigInfo["y"])
@@ -124,8 +124,8 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(4, sigInfo["z"])
         sigInfo["x"] = 5
         self.assertEqual(5, sigInfo["x"])
-        self.assertEqual([5], sigInfo.unpackedArgs)
-        self.assertEqual({"y": 3, "z": 4}, sigInfo.unpackedKwargs)
+        self.assertEqual([], sigInfo.unpackedArgs)
+        self.assertEqual({"x": 5, "y": 3, "z": 4}, sigInfo.unpackedKwargs)
 
 
 

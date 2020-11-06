@@ -111,8 +111,12 @@ class SigInfo:
 
     @property
     def positionalOnlyArgNames(self):
-        """ Get list of parameter names that can only take a positional argument. """
-        return [param.name for param in self.parameters if param.kind.name in ("POSITIONAL_ONLY", "VAR_POSITIONAL")]
+        """ Get list of parameter names that can only take a positional argument.
+            Note - Can be changed dynamically: If packedArgs isn't None then all `POSITIONAL_OR_KEYWORD` are included. """
+        if self[self.packedArgsName] is None:
+            return [param.name for param in self.parameters if param.kind.name in ("POSITIONAL_ONLY", "VAR_POSITIONAL")]
+        else:
+            return self.positionalArgNames
 
     @property
     def positionalOnlyOppositeArgNames(self):
@@ -263,14 +267,12 @@ class SigInfo:
         """
         if child_callable is None:
             assert self.requiredAreDefined
-            print(self.callableObject, self.unpackedArgs, self.unpackedKwargs)
             return self.callableObject(*self.unpackedArgs, **self.unpackedKwargs)
 
         else:
             sigInfo = SigInfo(child_callable)
             for name in sigInfo.names:
-                # if self[name] is not None:
-                if self.get_arg_is_defined(name):
+                if self.get_arg_is_defined(name):  # Even if self is using it's default None value it should fill target
                     sigInfo[name] = self[name]
                 else:
                     if name == sigInfo.packedArgsName:

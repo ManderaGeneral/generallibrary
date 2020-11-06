@@ -74,7 +74,6 @@ def initBases(cls):
         if cls_init not in inits:
             inits.append(cls_init)
 
-
         for init in inits:
             if init is object.__init__:
                 continue
