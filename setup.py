@@ -53,7 +53,7 @@ setup(
     long_description_content_type="text/markdown",
     url=f"https://github.com/ManderaGeneral/{ cfg('setup', 'name') }",
     license="MIT",
-    python_requires=">= 3.7, < 3.9",
+    python_requires=">= 3.8, < 3.10",
     packages=find_namespace_packages(),
 
     name=cfg("setup", "name"),
