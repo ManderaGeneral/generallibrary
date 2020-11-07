@@ -21,6 +21,8 @@ class SigInfo:
         for name, value in kwargs.items():
             self[name] = value
 
+
+
     def _argsToKwargs(self, args):
         # assert self.packedArgsName or len(args) <= len(self.positionalArgNames)  # Let's allow redundant args
 
@@ -153,9 +155,10 @@ class SigInfo:
     def definedNames(self):
         """Return list of names that are defined"""  # Not sure if keys in packedKwargsName should be included
         joinedLists = list(self.allArgs.keys()) + list(self.defaults.keys())
-        # if self.packedKwargsName:
-        #     joinedLists += list(self[self.packedKwargsName].keys())
-        return [name for name in self.names if name in joinedLists]
+        if self.packedKwargsName:
+            joinedLists += list(self[self.packedKwargsName].keys())
+        return list(set(joinedLists))  # Remove duplicates
+        # return [name for name in self.names if name in joinedLists]
 
     @property
     def requiredAreDefined(self):
@@ -247,8 +250,7 @@ class SigInfo:
             return self.unpackedAllArgs[name]
 
     def __setitem__(self, name, value):
-        """Can set single key, entire *args, entire **kwargs or key inside **kwargs.
-        If there's no place for key then it's ignored."""
+        """ Can set single key, entire *args, entire **kwargs or key inside **kwargs. """
         if name in self.names:
             if name == self.packedArgsName and not isinstance(value, (tuple, list)):
                 raise AttributeError(f"Packed args parameter value has to be list or tuple.")
@@ -259,6 +261,9 @@ class SigInfo:
 
         elif self.packedKwargsName:
             addToDictInDict(self.allArgs, self.packedKwargsName, **{name: value})
+
+        else:  # Add redundant
+            self.allArgs[name] = value
 
     def __call__(self, child_callable=None):
         """
@@ -272,6 +277,7 @@ class SigInfo:
         else:
             sigInfo = SigInfo(child_callable)
             for name in sigInfo.names:
+
                 if self.get_arg_is_defined(name):  # Even if self is using it's default None value it should fill target
                     sigInfo[name] = self[name]
                 else:
@@ -279,6 +285,10 @@ class SigInfo:
                         sigInfo[name] = self.unpackedArgs
                     elif name == sigInfo.packedKwargsName:
                         sigInfo[name] = self.unpackedKwargs
+
+                print(child_callable, name, self.get_arg_is_defined(name), self.names, self["a"])
+
+                    # print("HERE", name, sigInfo[name])
 
             return sigInfo()
 
