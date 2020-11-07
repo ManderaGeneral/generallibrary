@@ -21,7 +21,6 @@ class ObjectTest(unittest.TestCase):
         class Parent(Base):
             def __init__(self, x):
                 self.y = 2
-        self.assertRaises(AssertionError, Parent)
 
         self.assertEqual(5, Parent(x=5).x)
         self.assertEqual(5, Parent(5).x)
@@ -37,10 +36,6 @@ class ObjectTest(unittest.TestCase):
         class Parent(Base):
             def __init__(self, x, z=None):
                 self.y = 2
-        self.assertRaises(AssertionError, Parent)
-        self.assertRaises(AssertionError, Parent, y=5)
-        self.assertRaises(AssertionError, Parent, z=5)
-
         self.assertEqual(5, Parent(x=5).x)
         self.assertEqual(2, Parent(x=5).y)
         self.assertIs(None, Parent(x=5).z)
@@ -55,8 +50,6 @@ class ObjectTest(unittest.TestCase):
         class Parent(Base):
             def __init__(self, x, z=None):
                 self.y = 2
-        self.assertRaises(AssertionError, Parent)
-        self.assertRaises(AssertionError, Parent, y=5)
 
         self.assertEqual(5, Parent(x=5).x)
         self.assertEqual(2, Parent(x=5).y)
@@ -72,8 +65,6 @@ class ObjectTest(unittest.TestCase):
             def __init__(self, x):
                 self.x = x
                 self.y = 2
-        self.assertRaises(AssertionError, Parent)
-        self.assertRaises(AssertionError, Parent, y=5)
 
         self.assertEqual(5, Parent(x=5).x)
         self.assertEqual(2, Parent(x=5).y)
@@ -89,9 +80,6 @@ class ObjectTest(unittest.TestCase):
         class Parent(Base, Base2):
             def __init__(self, x, y):
                 pass
-        self.assertRaises(AssertionError, Parent)
-        self.assertRaises(AssertionError, Parent, y=5)
-        self.assertRaises(AssertionError, Parent, x=5)
 
         self.assertEqual(5, Parent(x=5, y=2).x)
         self.assertEqual(2, Parent(x=5, y=2).y)
@@ -107,7 +95,6 @@ class ObjectTest(unittest.TestCase):
         class Parent(Base, Base2):
             def __init__(self, x):
                 pass
-        self.assertRaises(AssertionError, Parent)
 
         self.assertEqual(5, Parent(x=5).x)
         self.assertEqual(5, Parent(x=5).y)
@@ -146,13 +133,6 @@ class ObjectTest(unittest.TestCase):
 
         self.assertEqual(1, A(1, 2).b)
         self.assertEqual(1, A(1, c=2).b)
-
-        self.assertRaises(AssertionError, A)
-        self.assertRaises(AssertionError, A, b=5)
-        self.assertRaises(AssertionError, A, c=5)
-        self.assertRaises(AssertionError, A, d=5)
-        self.assertRaises(AssertionError, A, 2)
-
 
     def test_hierarchy_empty_middleman(self):
         class C:

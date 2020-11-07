@@ -67,23 +67,13 @@ def initBases(cls):
     cls_init = cls.__init__  # Unbound original __init__ method of class
 
     def _wrapper(*args, **kwargs):
-        # cls_SigInfo = SigInfo(cls.__init__, *args, **kwargs)
         cls_SigInfo = SigInfo(cls_init, *args, **kwargs)
 
-        inits = [base.__init__ for base in cls.__bases__]
+        for init in [base.__init__ for base in cls.__bases__] + [cls_init]:
+            if init is not object.__init__:
+                cls_SigInfo(child_callable=init)
 
-        if cls_init not in inits:
-            inits.append(cls_init)
-
-        for init in inits:
-            if init is object.__init__:
-                continue
-            # print("here", SigInfo(init).names)
-            cls_SigInfo(child_callable=init)
-
-    _wrapper._origin = cls_init
     cls.__init__ = _wrapper
-
     return cls
 
 
