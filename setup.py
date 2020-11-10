@@ -12,7 +12,8 @@ def remove_duplicates(l):
         Values must be hashable as they are passed through as dict keys. (Lists work but not Dicts) """
     return list(set(l))
 
-class Cfg:  # I think we could actually use generalfile here instead, as we are doing that in lib already -> Add cfg as option dependency
+class Cfg:
+    """ Convert cfg file to json. """
     def __init__(self, path):
         self.config = configparser.RawConfigParser()
         self.config.read(path)
