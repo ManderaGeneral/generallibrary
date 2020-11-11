@@ -69,9 +69,11 @@ def initBases(cls):
     def _wrapper(*args, **kwargs):
         cls_SigInfo = SigInfo(cls_init, *args, **kwargs)
 
+        initialized_bases = []
         for init in [base.__init__ for base in cls.__bases__] + [cls_init]:
-            if init is not object.__init__:
+            if init is not object.__init__ and init not in initialized_bases:
                 cls_SigInfo(child_callable=init)
+                initialized_bases.append(init)
 
     cls.__init__ = _wrapper
     return cls
