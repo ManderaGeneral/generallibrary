@@ -1,8 +1,7 @@
 
 import unittest
 
-from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames, hasMethod
-
+from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames, hasMethod, HierarchyStorer
 
 
 class InheritStr(str):
@@ -10,9 +9,9 @@ class InheritStr(str):
 
 class TypesTest(unittest.TestCase):
     def test_strToDynamicType(self):
-        self.assertIs(strToDynamicType("true"), True)
+        self.assertIs(strToDynamicType("True"), True)
         self.assertIs(strToDynamicType("False"), False)
-        self.assertIs(strToDynamicType("nOne"), None)
+        self.assertIs(strToDynamicType("None"), None)
 
         self.assertEqual(strToDynamicType("5"), 5)
         self.assertEqual(strToDynamicType("5.2"), 5.2)
@@ -50,7 +49,6 @@ class TypesTest(unittest.TestCase):
         self.assertTrue(typeChecker(5, int))
         self.assertTrue(typeChecker(5, "int"))
         self.assertTrue(typeChecker(5, float))
-        self.assertTrue(typeChecker(5, "floAt"))
         self.assertTrue(typeChecker(5, [None, float]))
         self.assertTrue(typeChecker(5, ["None", "float"]))
         self.assertTrue(typeChecker(5, ["None", float]))
@@ -73,7 +71,6 @@ class TypesTest(unittest.TestCase):
         self.assertFalse(typeChecker(False, "None", error=False))
 
         self.assertTrue(typeChecker(tuple(["hello"]), (tuple, dict), str, error=False))
-        self.assertTrue(typeChecker(tuple(["hello"]), ("Tuple", "dIct"), "sTr", error=False))
         self.assertTrue(typeChecker(tuple(["hello"]), (tuple, dict), "str", error=False))
         self.assertTrue(typeChecker(tuple(["hello"]), (tuple, "dict"), str, error=False))
         self.assertTrue(typeChecker(tuple(["hello"]), ("tuple", dict), str, error=False))
@@ -136,9 +133,18 @@ class TypesTest(unittest.TestCase):
         self.assertEqual(True, hasMethod("hello", "__contains__"))
         self.assertEqual(False, hasMethod("hello", "__module__"))
 
+    def test_HierarchyStorer(self):
+        class Base(metaclass=HierarchyStorer, base="Base"):
+            pass
+        class A(Base):
+            pass
+        class B(A):
+            pass
 
-
-
+        self.assertIs(A, Base.A)
+        self.assertIs(B, Base.B)
+        self.assertIs(Base, A.Base)
+        self.assertIs(Base, B.Base)
 
 
 

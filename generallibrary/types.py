@@ -51,7 +51,7 @@ def _typeChecker_checkObject(obj, types, literalObjects):
         else:
             typeTupleWithoutLiteralObjects = tuple([t for t in typeTuple if t not in literalObjects])
             typeTupleWithOnlyTypes = tuple([t for t in typeTupleWithoutLiteralObjects if not isinstance(t, str)])
-            typeTupleWithOnlyStrings = tuple([t.lower() for t in typeTuple if isinstance(t, str)])
+            typeTupleWithOnlyStrings = tuple([t for t in typeTuple if isinstance(t, str)])
 
             objTypeInList = isinstance(obj, typeTupleWithOnlyTypes)
 
@@ -89,7 +89,7 @@ def _typeChecker_prepareTypesList(types, literalObjects):
                 raise TypeError(f"Argument type {argType} is not a list, tuple, set, type or literalObject")
 
 
-        newArgTypeWithOnlyStrings = tuple([t.lower() for t in newArgType if isinstance(t, str)])
+        newArgTypeWithOnlyStrings = tuple([t for t in newArgType if isinstance(t, str)])
         floatInList = float in newArgType or "float" in newArgTypeWithOnlyStrings
         intInList = int in newArgType or "int" in newArgTypeWithOnlyStrings
 
@@ -157,14 +157,14 @@ def getBaseClasses(obj, includeSelf=False, includeObject=True):
 
 def getBaseClassNames(obj, includeSelf=False):
     """
-    Get all base classes from an object's class as lowered names.
+    Get all base classes from an object's class.
 
     :param any obj: Generic obj or class
     :param includeSelf: Whether to include own class name or not
     :return: List of lowered class names
     :rtype: list[str]
     """
-    return [cls.__name__.lower() for cls in getBaseClasses(obj, includeSelf)]
+    return [cls.__name__ for cls in getBaseClasses(obj, includeSelf)]
 
 def hasMethod(obj, method):
     """
@@ -175,6 +175,31 @@ def hasMethod(obj, method):
     """
     attr = getattr(obj, method, False)
     return attr and callable(attr)
+
+
+class HierarchyStorer(type):
+    """ A metaclass that automatically stores references for all inheriters to and from a given base.
+
+        Example:
+            class Base(metaclass=HierarchyStorer, base="Base"):
+            class A(Base):
+            class B(A):
+
+            Defines Base.A, Base.B, A.Base, B.Base
+            """
+    _base_name = ...
+    def __new__(mcs, name, bases, clsdict, base=None):
+        if base is not None:
+            mcs._base_name = base
+        return type.__new__(mcs, name, bases, clsdict)
+
+    def __init__(cls, name, bases, clsdict, *_, **__):
+        if name != cls._base_name:
+            base_cls = [base for base in getBaseClasses(cls, includeSelf=True) if base.__name__ == cls._base_name][0]
+            setattr(base_cls, name, cls)
+            setattr(cls, cls._base_name, base_cls)
+
+        type.__init__(cls, name, bases, clsdict)
 
 
 from generallibrary.iterables import depth, iterFirstValue, isIterable
