@@ -143,8 +143,10 @@ class TypesTest(unittest.TestCase):
 
         self.assertIs(A, Base.A)
         self.assertIs(B, Base.B)
-        self.assertIs(Base, A.Base)
-        self.assertIs(Base, B.Base)
+        self.assertIs(A, A.A)
+        self.assertIs(B, B.B)
+        # self.assertIs(Base, A.Base)
+        # self.assertIs(Base, B.Base)
 
 
 
