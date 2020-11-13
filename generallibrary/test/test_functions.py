@@ -70,6 +70,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual({"y": 2, "b": 4, "z": 3}, sigInfo.defaults)
 
     def test_getSignatureDefaults(self):
+        self.assertEqual({}, SigInfo(lambda: None).defaults)
         self.assertEqual({"y": 5}, SigInfo(lambda x, y=5: None).defaults)
         self.assertEqual({"x": False, "y": 3.2}, SigInfo(lambda x=False, y=3.2: None).defaults)
         self.assertEqual({"x": False}, SigInfo(lambda x=False, *y: None).defaults)
@@ -129,6 +130,8 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(2, sigInfo["x"])
 
     def test_sigInfoCall(self):
+        self.assertEqual(None, SigInfo(lambda: None)())
+
         sigInfo = SigInfo(lambda x: x, 5)
         self.assertEqual(5, sigInfo())
 

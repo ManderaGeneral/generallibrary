@@ -12,6 +12,7 @@ class TreeDiagram:
     hook_create, hook_remove = None, None
     hook_new_parent, hook_lose_parent = None, None
     hook_add_child, hook_lose_child = None, None
+    hook_set_attribute = None
 
     def __init__(self, parent=None, children_dicts=None):
         self.children = []
@@ -25,6 +26,11 @@ class TreeDiagram:
             for child_dict in children_dicts:
                 self.load(child_dict, parent=self)
 
+        self.call_hook(self.hook_create)
+
+    def __init_subclass__(cls, **kwargs):
+        print(cls)
+
     def call_hook(self, hook, *args, **kwargs):
         if hook:
             SigInfo(hook, *args, **kwargs)()
@@ -34,11 +40,16 @@ class TreeDiagram:
         if old_parent:
             old_parent.children.remove(self)
 
+            old_parent.call_hook(old_parent.hook_lose_child, self)
+            self.call_hook(self.hook_lose_parent, old_parent, parent)
+
         if parent:
-            parent.call_hook(parent.hook_add_child, child=self)
             if self in parent.all_parents():
                 raise AttributeError(f"Cannot set {parent} as parent for {self} as it becomes circular. ")
             parent.children.append(self)
+
+            parent.call_hook(parent.hook_add_child, self)
+            self.call_hook(self.hook_new_parent, parent, old_parent)
 
         self._parent = parent
         return self
@@ -71,19 +82,23 @@ class TreeDiagram:
                 setattr(instance, key, d[key])
         return instance
 
-    def copy_to(self, node):
-        return self.load(d=self.save(), parent=node)
+    def copy_to(self, parent):
+        return self.load(d=self.save(), parent=parent)
 
     def remove(self):
         self.set_parent(None)
+        self.call_hook(self.hook_remove)
 
     def __repr__(self):
         return f"<{self.__class__.__name__} {getattr(self, 'children', '')}>"
 
     def __setattr__(self, key, value):
         if key in self.data_keys:
+            old_value = self.data.get(key)
             self.data[key] = value
+            self.call_hook(self.hook_set_attribute, key, value, old_value)
         object.__setattr__(self, key, value)
+
 
 
 from generallibrary.functions import SigInfo

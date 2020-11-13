@@ -75,6 +75,8 @@ def initBases(cls):
                 cls_SigInfo(child_callable=init)
                 initialized_bases.append(init)
 
+        print(getattr(cls_SigInfo["self"], "testing", None))  # HERE ** Setup post_init functions
+
     cls.__init__ = _wrapper
     return cls
 
