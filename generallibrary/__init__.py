@@ -7,3 +7,4 @@ from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, 
 from generallibrary.values import clamp, sign, inrange, rectify, doubleRectify, confineTo
 from generallibrary.versions import VerInfo, get_installed_packages, package_is_installed
 from generallibrary.code import debug, getLocalFeaturesAsMD, CodeGen, args_to_attrs, Config, clipboard_copy, clipboard_get
+from generallibrary.diagram import TreeDiagram

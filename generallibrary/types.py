@@ -178,7 +178,7 @@ def hasMethod(obj, method):
 
 
 class HierarchyStorer(type):
-    """ A metaclass that automatically stores references for all inheriters to and from a given base.
+    """ A metaclass that automatically stores references to all inheriters. (By inheritence each inheriter gets it too)
 
         Example:
             class Base(metaclass=HierarchyStorer, base="Base"):
@@ -197,7 +197,7 @@ class HierarchyStorer(type):
         if name != cls._base_name:
             base_cls = [base for base in getBaseClasses(cls, includeSelf=True) if base.__name__ == cls._base_name][0]
             setattr(base_cls, name, cls)
-            setattr(cls, cls._base_name, base_cls)
+            # setattr(cls, cls._base_name, base_cls)  # I don't think this is needed as cls inherits base_cls with it's attributes
 
         type.__init__(cls, name, bases, clsdict)
 
