@@ -8,7 +8,10 @@ class TreeDiagram:
         Saves class name and has to access it as an attribute when using `load()`.
         Use metaclass generallibrary.HierarchyStorer to easily store inheriters base class. """
     data_keys = []
-    hook_add_child = None
+
+    hook_create, hook_remove = None, None
+    hook_new_parent, hook_lose_parent = None, None
+    hook_add_child, hook_lose_child = None, None
 
     def __init__(self, parent=None, children_dicts=None):
         self.children = []

@@ -194,11 +194,8 @@ class HierarchyStorer(type):
         return type.__new__(mcs, name, bases, clsdict)
 
     def __init__(cls, name, bases, clsdict, *_, **__):
-        if name != cls._base_name:
-            base_cls = [base for base in getBaseClasses(cls, includeSelf=True) if base.__name__ == cls._base_name][0]
-            setattr(base_cls, name, cls)
-            # setattr(cls, cls._base_name, base_cls)  # I don't think this is needed as cls inherits base_cls with it's attributes
-
+        base_cls = [base for base in getBaseClasses(cls, includeSelf=True) if base.__name__ == cls._base_name][0]
+        setattr(base_cls, name, cls)
         type.__init__(cls, name, bases, clsdict)
 
 
