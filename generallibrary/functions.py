@@ -7,6 +7,14 @@ def deco_cache():
     """ Enable caching for a method or function. """
     return functools.lru_cache()
 
+class classproperty:  # Todo: TnD
+    """ https://stackoverflow.com/a/13624858/3936044 """
+    def __init__(self, fget):
+        self.fget = fget
+
+    def __get__(self, owner_self, owner_cls):
+        return self.fget(owner_cls)
+
 class SigInfo:
     """
     Handles a callable along with it's parameters.
