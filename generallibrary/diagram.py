@@ -6,7 +6,8 @@ class TreeDiagram:
         Inherit TreeDiagram and define what keys to store in `data_keys`.
 
         Saves class name and has to access it as an attribute when using `load()`.
-        Use metaclass generallibrary.HierarchyStorer to easily store inheriters base class. """
+        Use metaclass generallibrary.HierarchyStorer to easily store inheriters base class.
+        Use initBases decorator to automatically call _post_init. """
     data_keys = []
 
     hook_create, hook_remove = None, None
@@ -26,10 +27,8 @@ class TreeDiagram:
             for child_dict in children_dicts:
                 self.load(child_dict, parent=self)
 
+    def _post_init(self):
         self.call_hook(self.hook_create)
-
-    def __init_subclass__(cls, **kwargs):
-        print(cls)
 
     def call_hook(self, hook, *args, **kwargs):
         if hook:

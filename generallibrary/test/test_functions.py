@@ -3,8 +3,16 @@ import unittest
 
 from generallibrary import SigInfo, defaults, VerInfo, deco_cache, deco_cast_parameters, EmptyContext, deco_default_self_args
 
+def _orphan():
+    pass
 
 class FunctionsTest(unittest.TestCase):
+    def test_class_from_callable(self):
+        self.assertEqual(FunctionsTest, SigInfo(lambda: None).class_from_callable())
+        self.assertEqual(FunctionsTest, SigInfo(FunctionsTest.test_class_from_callable).class_from_callable())
+        self.assertEqual(None, SigInfo(_orphan).class_from_callable())
+        self.assertEqual(None, SigInfo(FunctionsTest).class_from_callable())
+
     def test_leadingArgNamesCount(self):
         self.assertEqual(0, len(SigInfo(lambda: 5).leadingArgNames))
         self.assertEqual(1, len(SigInfo(lambda x: 5).leadingArgNames))

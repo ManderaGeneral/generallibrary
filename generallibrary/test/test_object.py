@@ -154,7 +154,33 @@ class ObjectTest(unittest.TestCase):
 
         self.assertEqual(None, A(5).b)
 
+    def test_post_init(self):
+        glob = []
+        class A:
+            def __init__(self):
+                glob.append(1)
 
+            def _post_init(self):
+                glob.append(4)
+
+        @initBases
+        class B(A):
+            def __init__(self):
+                glob.append(2)
+
+            def _post_init(self):
+                glob.append(5)
+
+        @initBases
+        class C(B):
+            def __init__(self):
+                glob.append(3)
+
+            def _post_init(self):
+                glob.append(6)
+
+        C()
+        self.assertEqual([1, 2, 3, 4, 5, 6], glob)
 
 
 

@@ -63,23 +63,36 @@ def initBases(cls):
     Wrap a class' unbound __init__ method to take any arguments.
     When wrapper is called it iterates DIRECT bases to call their unbound __init__ methods along with it's own original __init__.
 
+    Also looks for defined `_post_init` methods, stores them in `instance._post_inits` and calls them all after all inits.
     """
     cls_init = cls.__init__  # Unbound original __init__ method of class
 
     def _wrapper(*args, **kwargs):
         cls_SigInfo = SigInfo(cls_init, *args, **kwargs)
-
         initialized_bases = []
-        for init in [base.__init__ for base in cls.__bases__] + [cls_init]:
+
+
+        if getattr(cls_SigInfo["self"], "_post_inits", None) is None:
+            cls_SigInfo["self"]._post_inits = []
+
+
+        for base in cls.__bases__ + (cls, ):
+            init = cls_init if base is cls else base.__init__
+
             if init is not object.__init__ and init not in initialized_bases:
                 cls_SigInfo(child_callable=init)
                 initialized_bases.append(init)
 
-        print(getattr(cls_SigInfo["self"], "testing", None))  # HERE ** Setup post_init functions
+
+                if getattr(base, "_post_init", None) and base._post_init not in cls_SigInfo["self"]._post_inits:
+                    cls_SigInfo["self"]._post_inits.append(base._post_init)
+        if cls is cls_SigInfo["self"].__class__ and getattr(cls_SigInfo["self"], "_post_inits", None) is not None:
+            for post_init in cls_SigInfo["self"]._post_inits:
+                cls_SigInfo(child_callable=post_init)
+
 
     cls.__init__ = _wrapper
     return cls
-
 
 from generallibrary.functions import SigInfo
 
