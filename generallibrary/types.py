@@ -198,5 +198,10 @@ class HierarchyStorer(type):
         setattr(base_cls, name, cls)
         type.__init__(cls, name, bases, clsdict)
 
+        # Store all inheriters (including base_cls) in a list in base_cls. Todo: TnD
+        if getattr(base_cls, "_inheriters", None) is None:
+            base_cls._inheriters = []
+        base_cls._inheriters.append(cls)
+
 
 from generallibrary.iterables import depth, iterFirstValue, isIterable

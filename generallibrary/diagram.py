@@ -24,7 +24,10 @@ class TreeDiagram:
             for child_dict in children_dicts:
                 self.load(child_dict, parent=self)
 
-    def hook_create(self): pass
+        self.hook_create_pre()
+
+    def hook_create_pre(self): pass
+    def hook_create_post(self): pass
     def hook_remove(self): pass
     def hook_new_parent(self, parent, old_parent): pass
     def hook_lose_parent(self, old_parent, parent): pass
@@ -32,8 +35,12 @@ class TreeDiagram:
     def hook_lose_child(self, child): pass
     def hook_set_attribute(self, key, value, old_value): pass
 
+    def data_keys_add(self, key, value):
+        self.data_keys.append(key)
+        return value
+
     def _post_init(self):  # @initBases calls this automatically
-        self.hook_create()
+        self.hook_create_post()
 
     def set_parent(self, parent):
         old_parent = self.get_parent()
@@ -64,6 +71,9 @@ class TreeDiagram:
             parents.append(part)
         return parents
 
+    def get_children(self):
+        return self.children
+
     # Todo: siblings
 
     def save(self):
@@ -82,7 +92,7 @@ class TreeDiagram:
                 setattr(instance, key, d[key])
         return instance
 
-    def copy_to(self, parent):
+    def copy_to(self, parent=None):
         return self.load(d=self.save(), parent=parent)
 
     def remove(self):

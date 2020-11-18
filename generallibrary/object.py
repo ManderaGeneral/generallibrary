@@ -45,16 +45,25 @@ def getClassFromMethod(method):
 
     return getattr(sys.modules[method.__module__], splitQualname[0])
 
-def attributes(obj):
-    """Get all attributes of an object that don't start with `__`, as a dictionary."""
+def attributes(obj):  # HERE ** TESTS
+    """ Get a dictionary of attributes an object has that don't start with `__`. """
     attrs = {}
     for key in dir(obj):
         attr = getattr(obj, key)
         classAttr = getattr(obj.__class__, key, None)
-
         if not key.startswith("__") and not callable(classAttr) and not isinstance(classAttr, property):
             attrs[key] = attr
     return attrs
+
+def attributes_defined_by(cls):
+    """ Get a dictionary of attributes (including protected) defined directly by this class. """
+    attrs = {}
+    for key in dir(cls):
+        attr = getattr(cls, key)
+        if getattr(attr, "__qualname__", "").split(".")[0] == cls.__name__ and getattr(attr, "__module__", None):
+            attrs[key] = attr
+    return attrs
+
 
 def initBases(cls):
     """
