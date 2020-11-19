@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.object import getsize, initBases
+from generallibrary.object import getsize, initBases, attributes, attributes_defined_by
 
 
 class ObjectTest(unittest.TestCase):
@@ -182,7 +182,17 @@ class ObjectTest(unittest.TestCase):
         C()
         self.assertEqual([1, 2, 3, 4, 5, 6], glob)
 
+    def test_attributes(self):
+        class A:
+            def foo(self):
+                pass
 
+        class B(A):
+            def bar(self):
+                pass
+
+        # self.assertEqual({"foo": A.foo}, attributes(A))
+        self.assertEqual({"foo": A.foo}, attributes(A()))
 
 
 

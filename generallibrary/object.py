@@ -32,7 +32,7 @@ def getsize(obj):
         objects = get_referents(*need_referents)
     return size
 
-def getClassFromMethod(method):
+def getClassFromMethod(method):  # Todo: Tests
     """
     Retrieve class object from a method object.
 
@@ -44,6 +44,11 @@ def getClassFromMethod(method):
         raise AttributeError(f"{method} is probably not a method")
 
     return getattr(sys.modules[method.__module__], splitQualname[0])
+
+
+# Combine to one function
+# Parameters: attributes(cls_or_instance, properties=True, methods=True, variables=True, protected=False, from_instance=True, from_class=True, from_bases=False)
+
 
 def attributes(obj):  # HERE ** TESTS
     """ Get a dictionary of attributes an object has that don't start with `__`. """
