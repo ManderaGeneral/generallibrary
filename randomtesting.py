@@ -1,6 +1,8 @@
 
 from generallibrary import *
 
-print(getLocalFeaturesAsMD(locals(), "generallibrary"))
+getLocalFeaturesAsMD(locals(), "generallibrary")
 
+
+# HERE ** Add docs to all missing
 

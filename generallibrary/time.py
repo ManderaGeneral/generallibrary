@@ -3,6 +3,7 @@ import time
 
 class Timer:
     """Callable class to easily time things and print."""
+    foo = "bar"
     def __init__(self, startTime=None):
         """
         Instantiate Timer which starts it.

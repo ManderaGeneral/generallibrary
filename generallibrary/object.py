@@ -54,7 +54,7 @@ def attributes(cls_or_instance, properties=True, methods=True, variables=True, p
         cls_attr = getattr(cls, key, ...)
         is_property = isinstance(cls_attr, property)
         is_protected = key.startswith("_")
-        attr = cls_attr if is_property else getattr(cls_or_instance, key)
+        attr = cls_attr if is_property else getattr(cls_or_instance, key, ...)
 
         # Attribute is Property, Method and Variable
         if is_property:

@@ -116,7 +116,7 @@ def debug(scope, *evals, printOut=True):
         print(text)
     return text
 
-def getLocalFeaturesAsMD(loc, package):
+def getLocalFeaturesAsMD(loc, module_or_class_name):
     """ Convert local callable objects that don't start with `_` to a markdown table for a README.
         Could probably improve it by only having module / package name as a parameter.
 
@@ -129,38 +129,63 @@ def getLocalFeaturesAsMD(loc, package):
         """
     import pandas as pd  # Should tell user to use `pip install generallibrary[md_features]`
 
+    classes = {}
     rows = []
 
-    for key, value in loc.items():
-        if key.startswith("_") or not callable(value):
+    for key, attr in loc.items():
+        if key.startswith("_"):
             continue
 
-        docLines = str(value.__doc__).split("\n")
-        if not docLines[0] and len(docLines) > 1:
-            doc = docLines[1]
+        if is_property := isinstance(attr, property):
+            attr = attr.fget
+
+        module = getattr(attr, "__module__", None)
+        if module is None:
+            continue
+
+        # print(module)
+        # if not module.startswith(module_or_class_name):
+        #     continue
+
+        doc_lines = str(attr.__doc__).split("\n")
+        doc = doc_lines[1 if not doc_lines[0] and len(doc_lines) > 1 else 0]
+        is_cls = isinstance(attr, type)
+        type_name = "property" if is_property else "class" if is_cls else attr.__class__.__name__
+        name = key
+        attrs_count = 0
+
+        if is_cls:
+            cls = attr
+            attrs = attributes(cls)
+            if attrs:
+                classes[cls.__name__] = attrs
+                name = f"[{key}](#Attributes of {key})"
+                attrs_count = len(attrs)
+
+        rows.append({
+            "Module": module.split(".")[-1],
+            "Name":  name,
+            "Type": type_name,
+            "Attrs": attrs_count,
+            "Explanation": doc,
+        })
+
+
+    if rows:
+        df = pd.DataFrame(rows)
+        df.sort_values(inplace=True, by=["Module", "Name"])
+
+        if df["Attrs"].sum():
+            df["Attrs"].replace(0, "", inplace=True)
         else:
-            doc = docLines[0]
+            df.drop(inplace=True, columns="Attrs")
 
-        module = getattr(value, "__module__", "")
-        if module.startswith(package):
-            rows.append({"Module": module.split(".")[1], "Name": key, "Explanation": doc})
+        print(f"\n\n## Attributes of {module_or_class_name}")
+        print(df.to_markdown(index=False))
 
-    df = pd.DataFrame(rows)
+        for cls_name, attrs in classes.items():
+            getLocalFeaturesAsMD(attrs, cls_name)
 
-    df.sort_values(inplace=True, by=["Module", "Name"])
-
-    print("## Features")
-    print(df.to_markdown(index=False))
-
-# def import_optional_package(package_name):
-#     """ Import a package dynamically.
-#         Recommended to use with deco_cache on a static class method. """
-#     try:
-#         return importlib.import_module(package_name)
-#     except ModuleNotFoundError:
-#         raise ModuleNotFoundError(f"Optional package '{package_name}' isn't installed.")
-
-
-
+from generallibrary.object import attributes
 
 
