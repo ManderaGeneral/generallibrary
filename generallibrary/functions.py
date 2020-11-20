@@ -7,8 +7,12 @@ def deco_cache():
     """ Enable caching for a method or function. """
     return functools.lru_cache()
 
-class classproperty:  # Todo: TnD
-    """ https://stackoverflow.com/a/13624858/3936044 """
+class classproperty:
+    """ Just like @property but for a class method.
+        @classproperty
+        def foo(cls):
+            return cls.bar
+        https://stackoverflow.com/a/13624858/3936044 """
     def __init__(self, fget):
         self.fget = fget
 
@@ -337,7 +341,7 @@ def deco_cast_parameters(**pars_to_cast):
     return _decorator
 
 def deco_default_self_args(func):
-    """ As an alternative to setting each and every parameter's default value to `None` for a class method.
+    """ As an alternative to setting each and every parameter's default value to `None` for a method.
         Automatically sets each undefined parameter to self's attribute, which allows us to set a parameter `None`.
         Note: Parameters names must match attributes in self. """
     def _wrapper(*args, **kwargs):

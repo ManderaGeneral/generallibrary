@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.object import getsize, initBases, attributes, attributes_defined_by
+from generallibrary.object import getsize, initBases, attributes
 
 
 class ObjectTest(unittest.TestCase):
@@ -191,17 +191,51 @@ class ObjectTest(unittest.TestCase):
             def bar(self):
                 pass
 
-        # self.assertEqual({"foo": A.foo}, attributes(A))
-        self.assertEqual({"foo": A.foo}, attributes(A()))
+        self.assertEqual(["foo"], list(attributes(A())))
+        self.assertEqual(["foo"], list(attributes(A)))
+        self.assertEqual([], list(attributes(A(), from_class=False)))
+        self.assertEqual(["foo"], list(attributes(A, from_instance=False)))
+        self.assertEqual(["foo"], list(attributes(A(), from_instance=False)))
+        self.assertEqual(["foo"], list(attributes(A, from_bases=False)))
+
+        self.assertEqual(["bar", "foo"], list(attributes(B())))
+        self.assertEqual(["bar", "foo"], list(attributes(B)))
+        self.assertEqual(["foo"], list(attributes(B(), from_class=False)))
+        self.assertEqual(["bar", "foo"], list(attributes(B, from_instance=False)))
+        self.assertEqual(["bar", "foo"], list(attributes(B(), from_instance=False)))
+        self.assertEqual(["bar"], list(attributes(B, from_bases=False)))
 
 
+        class Foo:
+            a = 1
 
+            def __init__(self):
+                self.b = 2
 
+            @property
+            def c(self):
+                return 3
 
+            @classmethod
+            def d(cls):
+                return 4
 
+            def e(self):
+                return 5
 
+        self.assertEqual(["a", "b", "c", "d", "e"], list(attributes(Foo())))
+        self.assertEqual(["a", "c", "d", "e"], list(attributes(Foo)))
 
+        self.assertTrue(len(attributes(Foo(), protected=True)) > 10)
+        self.assertEqual(["a", "b", "c"], list(attributes(Foo(), methods=False)))
+        self.assertEqual(["c", "d", "e"], list(attributes(Foo(), variables=False)))
+        self.assertEqual(["a", "b", "d", "e"], list(attributes(Foo(), properties=False)))
 
+        self.assertEqual(["a", "c", "d", "e"], list(attributes(Foo(), from_instance=False)))
+        self.assertEqual(["a", "c", "d", "e"], list(attributes(Foo, from_instance=False)))
+
+        self.assertEqual(["b"], list(attributes(Foo(), from_class=False)))
+        self.assertEqual(["a", "b", "c", "d", "e"], list(attributes(Foo(), from_bases=False)))
 
 
 

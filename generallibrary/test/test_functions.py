@@ -1,12 +1,42 @@
 
 import unittest
 
-from generallibrary import SigInfo, defaults, VerInfo, deco_cache, deco_cast_parameters, EmptyContext, deco_default_self_args
+from generallibrary import SigInfo, defaults, VerInfo, deco_cache, deco_cast_parameters, EmptyContext, deco_default_self_args, classproperty
 
 def _orphan():
     pass
 
 class FunctionsTest(unittest.TestCase):
+    def test_classproperty(self):
+        class Foo:
+            x = 5
+
+            def __init__(self):
+                self.x = 3
+
+            @classproperty
+            def bar(cls):
+                return cls.x
+
+        self.assertEqual(5, Foo.bar)
+        self.assertEqual(5, Foo().bar)
+
+        self.assertEqual(5, Foo.x)
+        self.assertEqual(3, Foo().x)
+
+    def test_deco_default_self_args(self):
+        class A:
+            x = 1
+
+            def __init__(self):
+                self.y = 2
+
+            @deco_default_self_args
+            def foo(self, x, y, z=3):
+                return x, y, z
+
+        self.assertEqual((1, 2, 3), A().foo())
+
     def test_class_from_callable(self):
         self.assertEqual(FunctionsTest, SigInfo(lambda: None).class_from_callable())
         self.assertEqual(FunctionsTest, SigInfo(FunctionsTest.test_class_from_callable).class_from_callable())

@@ -38,7 +38,6 @@ pip install generallibrary
 | iterables | joinWithStr          | Like str.join() but it casts the values to strings first, also takes dict.                    |
 | iterables | uniqueObjInList      | Controls whether a unique object should be present in a list or not.                          |
 | object    | attributes           | Get all attributes of an object that don't start with `__`, as a dictionary.                  |
-| object    | getClassFromMethod   | Retrieve class object from a method object.                                                   |
 | object    | getsize              | Get a sum of sizes from an object and it's members in bytes.                                  |
 | object    | initBases            | Decorator function for class to automatically initalize all inherited classes.                |
 | time      | Timer                | Callable class to easily time things and print.                                               |
@@ -92,3 +91,5 @@ print(clamp(-3.2, -1, 1))
  * DuckTyping class for versions.py
  * PackageVersion class for versions.py
  * Change getLocalFeaturesAsMD to allow cls or even obj and also *args.
+
+[Go to installation](#Installation)

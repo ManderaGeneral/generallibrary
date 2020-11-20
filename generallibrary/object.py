@@ -32,43 +32,65 @@ def getsize(obj):
         objects = get_referents(*need_referents)
     return size
 
-def getClassFromMethod(method):  # Todo: Tests
-    """
-    Retrieve class object from a method object.
 
-    :param function method:
-    :rtype: type
-    """
-    splitQualname = method.__qualname__.split('.')
-    if len(splitQualname) != 2:
-        raise AttributeError(f"{method} is probably not a method")
+def attributes(cls_or_instance, properties=True, methods=True, variables=True, protected=False, from_instance=True, from_class=True, from_bases=True):
+    """ :param cls_or_instance:
+        :param bool properties:
+        :param bool methods:
+        :param bool variables:
+        :param bool or None protected: Whether to return protected, non-protected or all if None.
+        :param bool from_instance: Whether to return attributes only defined in instance.
+        :param bool from_class: Whether to return attributes defined in direct class.
+        :param bool from_bases: Whether to return attributes defined by an inheritence. """
+    if isinstance(cls_or_instance, type):
+        cls = cls_or_instance
+        instance = None
+    else:
+        cls = cls_or_instance.__class__
+        instance = cls_or_instance
 
-    return getattr(sys.modules[method.__module__], splitQualname[0])
-
-
-# Combine to one function
-# Parameters: attributes(cls_or_instance, properties=True, methods=True, variables=True, protected=False, from_instance=True, from_class=True, from_bases=False)
-
-
-def attributes(obj):  # HERE ** TESTS
-    """ Get a dictionary of attributes an object has that don't start with `__`. """
     attrs = {}
-    for key in dir(obj):
-        attr = getattr(obj, key)
-        classAttr = getattr(obj.__class__, key, None)
-        if not key.startswith("__") and not callable(classAttr) and not isinstance(classAttr, property):
-            attrs[key] = attr
-    return attrs
+    for key in dir(cls_or_instance):
+        cls_attr = getattr(cls, key, ...)
+        is_property = isinstance(cls_attr, property)
+        is_protected = key.startswith("_")
+        attr = cls_attr if is_property else getattr(cls_or_instance, key)
 
-def attributes_defined_by(cls):
-    """ Get a dictionary of attributes (including protected) defined directly by this class. """
-    attrs = {}
-    for key in dir(cls):
-        attr = getattr(cls, key)
-        if getattr(attr, "__qualname__", "").split(".")[0] == cls.__name__ and getattr(attr, "__module__", None):
-            attrs[key] = attr
-    return attrs
+        # Attribute is Property, Method and Variable
+        if is_property:
+            if properties is False:
+                continue
+        elif callable(attr):
+            if methods is False:
+                continue
+        else:
+            if variables is False:
+                continue
 
+        # Key is Protected
+        if protected is False and is_protected:
+            continue
+        elif protected is True and not is_protected:
+            continue
+
+        # Origin from Instance, Class or Base
+        if from_instance is False and instance and attr != cls_attr and cls_attr is ...:
+            continue
+        elif not (from_class and from_bases) and cls_attr is not ...:
+            for base in cls.__bases__:
+                if getattr(base, key, ...) is not ...:
+                    defined_in_base = True
+                    break
+            else:
+                defined_in_base = False
+
+            if from_bases is False and defined_in_base:
+                continue
+            elif from_class is False and not defined_in_base:
+                continue
+
+        attrs[key] = attr
+    return attrs
 
 def initBases(cls):
     """
