@@ -1,8 +1,11 @@
 
-from generallibrary import *
+import generallibrary
+import generalvector
+import generalfile
+import generalgui
 
-getLocalFeaturesAsMD(locals(), "generallibrary")
-
-
-# HERE ** Add docs to all missing
+# generallibrary.attributes_to_readme(generallibrary)
+# generallibrary.attributes_to_readme(generalvector)
+generallibrary.attributes_to_readme(generalfile)
+# generallibrary.attributes_to_readme(generalgui)
 

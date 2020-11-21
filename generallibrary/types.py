@@ -178,7 +178,8 @@ def hasMethod(obj, method):
 
 
 class HierarchyStorer(type):
-    """ A metaclass that automatically stores references to all inheriters. (By inheritence each inheriter gets it too)
+    """ A metaclass that automatically stores references to all inheriters.
+        By inheritence each inheriter gets it too.
 
         Example:
             class Base(metaclass=HierarchyStorer, base="Base"):

@@ -33,28 +33,31 @@ def getsize(obj):
     return size
 
 
-def attributes(cls_or_instance, properties=True, methods=True, variables=True, protected=False, from_instance=True, from_class=True, from_bases=True):
-    """ :param cls_or_instance:
+def attributes(obj, properties=True, methods=True, variables=True, modules=False, protected=False, from_instance=True, from_class=True, from_bases=True):
+    """ Get attributes from a Module or Class with a lot of optional flags for filtering.
+
+        :param obj:
         :param bool properties:
         :param bool methods:
         :param bool variables:
+        :param bool modules:
         :param bool or None protected: Whether to return protected, non-protected or all if None.
         :param bool from_instance: Whether to return attributes only defined in instance.
         :param bool from_class: Whether to return attributes defined in direct class.
         :param bool from_bases: Whether to return attributes defined by an inheritence. """
-    if isinstance(cls_or_instance, type):
-        cls = cls_or_instance
+    if isinstance(obj, type):
+        cls = obj
         instance = None
     else:
-        cls = cls_or_instance.__class__
-        instance = cls_or_instance
+        cls = obj.__class__
+        instance = obj
 
     attrs = {}
-    for key in dir(cls_or_instance):
+    for key in dir(obj):
         cls_attr = getattr(cls, key, ...)
         is_property = isinstance(cls_attr, property)
         is_protected = key.startswith("_")
-        attr = cls_attr if is_property else getattr(cls_or_instance, key, ...)
+        attr = cls_attr if is_property else getattr(obj, key, ...)
 
         # Attribute is Property, Method and Variable
         if is_property:
@@ -62,6 +65,9 @@ def attributes(cls_or_instance, properties=True, methods=True, variables=True, p
                 continue
         elif callable(attr):
             if methods is False:
+                continue
+        elif cls.__name__ == "module":
+            if modules is False:
                 continue
         else:
             if variables is False:
@@ -73,7 +79,7 @@ def attributes(cls_or_instance, properties=True, methods=True, variables=True, p
         elif protected is True and not is_protected:
             continue
 
-        # Origin from Instance, Class or Base
+        # Origin from Instance, Class, Base or Builtin
         if from_instance is False and instance and attr != cls_attr and cls_attr is ...:
             continue
         elif not (from_class and from_bases) and cls_attr is not ...:

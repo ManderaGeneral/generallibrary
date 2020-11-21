@@ -1,40 +1,36 @@
 
 import time
 
-class Timer:
-    """Callable class to easily time things and print."""
-    foo = "bar"
-    def __init__(self, startTime=None):
-        """
-        Instantiate Timer which starts it.
 
-        :param float startTime: Defaults to time in seconds since epoch (time.time())
-        """
-        if startTime is None:
-            self.startTime = time.time()
-        else:
-            typeChecker(startTime, float)
-            self.startTime = startTime
+class Timer:
+    """ Callable class to easily time things and print. """
+    def __init__(self, start_time=None):
+        """ Returns a started Timer instance.
+
+            :param float start_time: Defaults to time in seconds since epoch (time.time()) """
+        self.start_time = self.reset(start_time=start_time)
+
+    def reset(self, start_time=None):
+        """ Reset and start timer. """
+        if start_time is None:
+            start_time = time.time()
+        self.start_time = start_time
+        return start_time
 
     def seconds(self):
-        """
-        :return: Seconds passed since timer started
-        :rtype: float
-        """
-        return time.time() - self.startTime
+        """ Get seconds passed since timer started or was reset. """
+        return time.time() - self.start_time
 
-    def print(self):
-        """."""
+    def print(self, reset=False):
+        """ Print seconds passed. """
         print(f"Seconds passed: {self.seconds()}")
+        if reset:
+            self.reset()
 
 def sleep(seconds):
-    """
-    Normal sleep function from time package.
-    Stubbed for easy changing and whatnot.
+    """ Normal sleep function from time package.
 
-    :param float seconds: Time in seconds to sleep.
-    """
+        :param float seconds: Time in seconds to sleep. """
     time.sleep(seconds)
 
 
-from generallibrary.types import typeChecker

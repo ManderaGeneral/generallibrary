@@ -293,7 +293,7 @@ def inclusive(dictionary, *keys):
 
 def uniqueObjInList(l, obj, active):
     """
-    Controls whether a unique object should be present in a list or not.
+    Controls whether a unique object should be present in a list.
     Adds obj to list if active and obj isn't in list.
     Removes obj from list if not active and obj in list.
     Changes list directly because of mutable.

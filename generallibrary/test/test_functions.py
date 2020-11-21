@@ -77,6 +77,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(["x", "y"], SigInfo(lambda x, y: 5).names)
         self.assertEqual(["x", "y"], SigInfo(lambda x, y=2: 5).names)
         self.assertEqual(["x", "y"], SigInfo(lambda x=3, y=2: 5).names)
+        self.assertEqual(["x", "y"], SigInfo(lambda x=3, y=2: 5).positional_extra)
 
         self.assertEqual([], SigInfo(lambda x=3, y=2: 5).namesWithoutDefaults)
         self.assertEqual(["x"], SigInfo(lambda x, y=3: 5).namesWithoutDefaults)
@@ -85,12 +86,22 @@ class FunctionsTest(unittest.TestCase):
         def hello(x, y, z=None, *argz, **kwargz):
             """2 arg, 1 kwarg function"""
             pass
+        self.assertEqual(["x", "y", "z"], SigInfo(hello).positional_extra)
         self.assertEqual(["x", "y", "z", "argz", "kwargz"], SigInfo(hello).names)
         self.assertEqual(["x", "y"], SigInfo(hello).leadingArgNames)
         self.assertEqual(["x", "y", "argz", "kwargz"], SigInfo(hello).namesWithoutDefaults)
         self.assertEqual(["x", "y", "z"], SigInfo(hello).namesWithoutPacked)
         self.assertEqual("argz", SigInfo(hello).packedArgsName)
         self.assertEqual("kwargz", SigInfo(hello).packedKwargsName)
+
+        class _Foo:
+            @classmethod
+            def _bar(cls):
+                pass
+
+        self.assertEqual([], SigInfo(_Foo._bar).names)
+        self.assertEqual(["cls"], SigInfo(_Foo._bar).positional_extra)
+
 
     def test_namesRequired(self):
         self.assertEqual(["x"], SigInfo(lambda x: 5).namesRequired)

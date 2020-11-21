@@ -4,7 +4,7 @@ from generallibrary import SigInfo
 
 class TreeDiagram:
     """ Saveable tree diagram with optional storage.
-        Inherit TreeDiagram and define what keys to store in `data_keys`.
+        Usage: Inherit TreeDiagram and define what keys to store with `data_keys_add()` method.
 
         Saves class name and has to access it as an attribute when using `load()`.
         Use metaclass generallibrary.HierarchyStorer to easily store inheriters base class.
@@ -26,23 +26,27 @@ class TreeDiagram:
 
         self.hook_create_pre()
 
-    def hook_create_pre(self): pass
-    def hook_create_post(self): pass
-    def hook_remove(self): pass
-    def hook_new_parent(self, parent, old_parent): pass
-    def hook_lose_parent(self, old_parent, parent): pass
-    def hook_add_child(self, child): pass
-    def hook_lose_child(self, child): pass
-    def hook_set_attribute(self, key, value, old_value): pass
+    def hook_create_pre(self): """ Pre-creation hook. """
+    def hook_create_post(self): """ Post-creation hook. """
+    def hook_remove(self): """ Remove hook. """
+    def hook_new_parent(self, parent, old_parent): """ New parent hook. """
+    def hook_lose_parent(self, old_parent, parent): """ Lost parent hook. """
+    def hook_add_child(self, child): """ New child hook. """
+    def hook_lose_child(self, child): """ Lost child hook. """
+    def hook_set_attribute(self, key, value, old_value): """ Attribute set hook. """
 
     def data_keys_add(self, key, value):
+        """ Define what attributes to keep track of automatically in __setattr__.
+            Returns value to enable oneliner in __init__."""
         self.data_keys.append(key)
         return value
 
-    def _post_init(self):  # @initBases calls this automatically
+    def _post_init(self):
+        """ @initBases calls this automatically. """
         self.hook_create_post()
 
     def set_parent(self, parent):
+        """ Set a new parent for this Node. """
         old_parent = self.get_parent()
         if old_parent:
             old_parent.children.remove(self)
@@ -62,9 +66,11 @@ class TreeDiagram:
         return self
 
     def get_parent(self, index=0):
+        """ Get this Node's parent. """
         return self._parent if index == 0 else self.all_parents()[index]
 
     def all_parents(self):
+        """ Get a list of all parents recursively. """
         part = self
         parents = []
         while part := part.get_parent():
@@ -72,6 +78,7 @@ class TreeDiagram:
         return parents
 
     def get_children(self):
+        """ Get a list of all children this Node has. """
         return self.children
 
     # Todo: siblings
@@ -85,6 +92,7 @@ class TreeDiagram:
 
     @classmethod
     def load(cls, d, parent=None):
+        """ Create a new Tree from a dictionary save. """
         instance = getattr(cls, d["class_name"])(parent=parent, **d)
         # If a key is not already defined by argument in an __init__ (through **d above) then we need to set it here
         for key in instance.data_keys:
@@ -93,9 +101,11 @@ class TreeDiagram:
         return instance
 
     def copy_to(self, parent=None):
+        """ Copy this Node along with it's children by using save and load."""
         return self.load(d=self.save(), parent=parent)
 
     def remove(self):
+        """ Remove this Node. """
         self.set_parent(None)
         self.hook_remove()
 
@@ -111,4 +121,3 @@ class TreeDiagram:
 
 
 
-from generallibrary.functions import SigInfo

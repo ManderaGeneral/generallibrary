@@ -46,11 +46,12 @@ class SigInfo:
 
     @property
     def callableObject(self):
-        """Propertize to protect but still have public"""
+        """ Propertize to protect but still have public. """
         return self._callableObject
 
     def class_from_callable(self, meth=None):
-        """ https://stackoverflow.com/questions/3589311/get-defining-class-of-unbound-method-object-in-python-3/25959545#25959545 """
+        """ Return class that owns given method, or given callable from initiating SigInfo.
+            https://stackoverflow.com/questions/3589311/get-defining-class-of-unbound-method-object-in-python-3/25959545#25959545 """
         meth = meth if meth else self.callableObject
         if isinstance(meth, functools.partial):
             return self.class_from_callable(getattr(meth, "func"))
@@ -70,37 +71,44 @@ class SigInfo:
     # ========= Level 1 - SIGNATURE PARAMETERS =========
 
     @property
+    def positional_extra(self):
+        """ Get a list of the positional parameter names, including self or cls.
+            A bit sketchy. """
+        try:
+            return inspect.getfullargspec(self.callableObject).args  # Cannot handle @deco_cached
+        except TypeError:
+            return self.positionalArgNames
+
+    @property
     def parameters(self):
-        """Get list of inspect parameter objects"""
+        """ Get list of inspect parameter objects. """
         return list(inspect.signature(self.callableObject).parameters.values())
 
     @property
     def names(self):
-        """Get list of parameter names"""
+        """ Get list of parameter names. """
         return [param.name for param in self.parameters]
 
     @property
     def namesWithoutDefaults(self):
-        """Get list of parameter names except those ones that have a default value"""
+        """ Get list of parameter names except those ones that have a default value. """
         return [name for name in self.names if name not in self.defaults]
 
     @property
     def namesRequired(self):
-        """Get list of parameter that have to be defined, i.e. non-packed without default value"""
+        """ Get list of parameter that have to be defined, i.e. non-packed without default value. """
         return [name for name in self.names if name not in list(self.defaults.keys()) + [self.packedArgsName, self.packedKwargsName]]
 
     @property
     def namesWithoutPacked(self):
-        """Get list of parameter names except *args or **kwargs"""
+        """ Get list of parameter names except *args or **kwargs. """
         return [name for name in self.names if name not in (self.packedArgsName, self.packedKwargsName)]
 
     @property
     def leadingArgNames(self):
-        """
-        Get names leading args that don't have default value.
-        '*args' wont be included.
-        'self' wont be included.
-        """
+        """ Get names leading args that don't have default value.
+            '*args' wont be included.
+            'self' wont be included. """
         leadingArgNames = []
         for param in self.parameters:
             if param.name == "self":
@@ -116,21 +124,21 @@ class SigInfo:
 
     @property
     def packedArgsName(self):
-        """Get name of packed *args or None"""
+        """ Get name of packed *args or None. """
         for param in self.parameters:
             if param.kind.name == "VAR_POSITIONAL":
                 return param.name
 
     @property
     def packedKwargsName(self):
-        """Get name of packed *kwargs or None"""
+        """ Get name of packed *kwargs or None. """
         for param in self.parameters:
             if param.kind.name == "VAR_KEYWORD":
                 return param.name
 
     @property
     def defaults(self):
-        """Get dict of default values"""
+        """ Get dict of default values. """
         d = {param.name: param.default for param in self.parameters if param.default is not param.empty}
 
         if "self" in self.names and "self" not in d:
@@ -172,7 +180,7 @@ class SigInfo:
         return [name for name in self.names if name not in self.positionalArgNames]
 
     def getIndexFromName(self, name):
-        """Get index from name if name exists, else None"""
+        """ Get index from name if name exists, else None. """
         if name in self.names:
             return self.names.index(name)
 
@@ -271,7 +279,7 @@ def defaults(dictionary, overwriteNone=False, **kwargs):
     Returns given dictionary with values updated by kwargs unless they already existed.
 
     :param dict dictionary:
-    :param overwriteNone: Whether to overwrite None values or not.
+    :param overwriteNone: Whether to overwrite None values.
     :param kwargs:
     """
     for key, value in dictionary.items():
