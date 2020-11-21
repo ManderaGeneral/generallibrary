@@ -119,7 +119,7 @@ def debug(scope, *evals, printOut=True):
     return text
 
 
-def _get_header_from_obj(obj, hashes=True):
+def _get_header_from_obj(obj, link=False):
     """ Helper for attributes_to_readme. """
     if isinstance(obj, type):
         obj_type = "class"
@@ -128,10 +128,12 @@ def _get_header_from_obj(obj, hashes=True):
         obj_type = "module"
         hashtags = "## "
 
-    if not hashes:
-        hashtags = ""
-
-    return f"{hashtags}Attributes of {obj_type} {obj.__name__}"
+    if link:
+        hashtags = "#"
+    header = f"{hashtags}Attributes of {obj_type} {obj.__name__}"
+    if link:
+        header = header.replace(" ", "-")
+    return header
 
 def _get_attributes(obj):
     """ Helper for attributes_to_readme. """
@@ -185,7 +187,7 @@ def attributes_to_readme(obj, allow_bad_docs=False, printed_objs=None):
             attrs = _get_attributes(cls)
             if attrs and cls not in classes and cls is not obj:
                 classes.append(cls)
-                name = f"[{key}](#{_get_header_from_obj(cls, hashes=False)})"
+                name = f"[{key}]({_get_header_from_obj(cls, link=True)})"
                 attrs_count = len(attrs)
 
         if not allow_bad_docs and (len(explanation) < 5 or not explanation.endswith(".") or explanation.startswith(":") or explanation.startswith("http")):

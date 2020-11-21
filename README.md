@@ -16,7 +16,7 @@ pip install generallibrary
 ## Attributes of module generallibrary
 | Module    | Name                                                    | Type     | Attributes   | Explanation                                                                                   |
 |:----------|:--------------------------------------------------------|:---------|:-------------|:----------------------------------------------------------------------------------------------|
-| code      | [CodeGen](#Attributes of class CodeGen)                 | class    | 4            | Tool to help with printing code line by line.                                                 |
+| code      | [CodeGen](#Attributes-of-class-CodeGen)                 | class    | 4            | Tool to help with printing code line by line.                                                 |
 | code      | args_to_attrs                                           | function |              | Print code for a dunder init method to store all arguments as attributes.                     |
 | code      | attributes_to_readme                                    | function |              | Convert attributes of a given obj to a readme string recursively.                             |
 | code      | clipboard_copy                                          | function |              | Copy a string to clipboard.                                                                   |
@@ -24,17 +24,17 @@ pip install generallibrary
 | code      | debug                                                   | function |              | Easily call eval() on an arbitrary amount of evaluation strings.                              |
 | code      | print_link                                              | function |              | Print a link in PyCharm to a line in file.                                                    |
 | code      | print_link_to_obj                                       | function |              | Print a link in PyCharm to a module, function, class, method or property.                     |
-| diagram   | [TreeDiagram](#Attributes of class TreeDiagram)         | class    | 18           | Saveable tree diagram with optional storage.                                                  |
+| diagram   | [TreeDiagram](#Attributes-of-class-TreeDiagram)         | class    | 18           | Saveable tree diagram with optional storage.                                                  |
 | functions | EmptyContext                                            | class    |              | Class for an empty context manager.                                                           |
-| functions | [Operators](#Attributes of class Operators)             | class    | 2            | Automatic operator definitions for classes.                                                   |
-| functions | [SigInfo](#Attributes of class SigInfo)                 | class    | 21           | Handles a callable along with it's parameters.                                                |
+| functions | [Operators](#Attributes-of-class-Operators)             | class    | 2            | Automatic operator definitions for classes.                                                   |
+| functions | [SigInfo](#Attributes-of-class-SigInfo)                 | class    | 21           | Handles a callable along with it's parameters.                                                |
 | functions | calculate                                               | function |              | Automatically fills variables of a formula in a string then evaluates it.                     |
 | functions | classproperty                                           | class    |              | Just like @property but for a class method.                                                   |
 | functions | deco_cache                                              | function |              | Enable caching for a method or function.                                                      |
 | functions | deco_cast_parameters                                    | function |              | Decorator to make sure `path` parameter is a Path.                                            |
 | functions | deco_default_self_args                                  | function |              | As an alternative to setting each and every parameter's default value to `None` for a method. |
 | functions | defaults                                                | function |              | Set default values of a given dictionary, option to overwrite None values.                    |
-| iterables | [SortedList](#Attributes of class SortedList)           | class    | 2            | Controls a sorted list in ascending order.                                                    |
+| iterables | [SortedList](#Attributes-of-class-SortedList)           | class    | 2            | Controls a sorted list in ascending order.                                                    |
 | iterables | addToDictInDict                                         | function |              | Add a key-value argument to a dict inside a dict, automatically creates dict.                 |
 | iterables | addToListInDict                                         | function |              | Add a value to a list inside a dictionary, automatically creates list.                        |
 | iterables | combine                                                 | function |              | Create a list of dicts containing every unique combination from given object (Can be tuples). |
@@ -53,9 +53,9 @@ pip install generallibrary
 | object    | attributes                                              | function |              | Get attributes from a Module or Class with a lot of optional flags for filtering.             |
 | object    | getsize                                                 | function |              | Get a sum of sizes from an object and it's members in bytes.                                  |
 | object    | initBases                                               | function |              | Decorator function for class to automatically initalize all inherited classes.                |
-| time      | [Timer](#Attributes of class Timer)                     | class    | 3            | Callable class to easily time things and print.                                               |
+| time      | [Timer](#Attributes-of-class-Timer)                     | class    | 3            | Callable class to easily time things and print.                                               |
 | time      | sleep                                                   | function |              | Normal sleep function from time package.                                                      |
-| types     | [HierarchyStorer](#Attributes of class HierarchyStorer) | class    | 1            | A metaclass that automatically stores references to all inheriters.                           |
+| types     | [HierarchyStorer](#Attributes-of-class-HierarchyStorer) | class    | 1            | A metaclass that automatically stores references to all inheriters.                           |
 | types     | getBaseClassNames                                       | function |              | Get all base classes from an object's class.                                                  |
 | types     | getBaseClasses                                          | function |              | Get all base classes from an object's class.                                                  |
 | types     | hasMethod                                               | function |              | Return whether an object has a specific callabale attribute.                                  |
@@ -67,7 +67,7 @@ pip install generallibrary
 | values    | inrange                                                 | function |              | Return whether value is between minimum and maximum.                                          |
 | values    | rectify                                                 | function |              | Return 0 if it's below threshold, otherwise difference.                                       |
 | values    | sign                                                    | function |              | Get sign value based on threshold that defaults to 0.                                         |
-| versions  | [VerInfo](#Attributes of class VerInfo)                 | class    | 23           | Get version info regarding current Python, OS and conditional functionalities.                |
+| versions  | [VerInfo](#Attributes-of-class-VerInfo)                 | class    | 23           | Get version info regarding current Python, OS and conditional functionalities.                |
 | versions  | get_installed_packages                                  | function |              | Get a list of all installed packages as strings.                                              |
 | versions  | package_is_installed                                    | function |              | Returns whether a package is installed.                                                       |
 
