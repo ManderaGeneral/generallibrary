@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.versions import VerInfo
+from generallibrary.versions import VerInfo, package_is_installed
 from generallibrary.code import clipboard_copy, clipboard_get, CodeGen, args_to_attrs, debug, attributes_to_readme, print_link, print_link_to_obj
 
 
@@ -33,6 +33,7 @@ class CodeTest(unittest.TestCase):
         x, y, z = 1, 2, 3
         self.assertIn("y * z + 3 = 9", debug(locals(), "x + y", "y * z + 3", "x", "self"))
 
+    @unittest.skipUnless(package_is_installed("pandas"), "Skip unless pandas is installed.")
     def test_attributes_to_readme(self):
         attributes_to_readme(VerInfo, allow_bad_docs=True)
         attributes_to_readme(unittest, allow_bad_docs=True)
@@ -46,8 +47,8 @@ class CodeTest(unittest.TestCase):
         print_link()
 
     def test_print_link_to_obj(self):
-        self.assertIn("generallibrary/test/test_code.py\", line 8", print_link_to_obj(CodeTest))
-        self.assertIn("generallibrary/test/test_code.py\", line 9", print_link_to_obj(CodeTest.test_clipboard))
+        self.assertIn("line 8", print_link_to_obj(CodeTest))
+        self.assertIn("line 9", print_link_to_obj(CodeTest.test_clipboard))
         self.assertIn("unittest/__init__.py\", line 1", print_link_to_obj(unittest))
 
 
