@@ -52,15 +52,19 @@ class CodeGen:
 
     def print(self):
         """ Generate and print copyable code. """
-        print("\n".join(self.generate()))
+        code = "\n".join(self.generate())
+        print(code)
+        return code
 
 def args_to_attrs(local_dict):
-    """ Print code for a dunder init method to store all arguments as attributes. """
-    code = CodeGen()
+    """ Print code for a dunder init method to store all arguments as attributes.
+        A bit silly, could save time for huge signatures.
+        Could be expanded with setting default values if None. """
+    codeGen = CodeGen()
     for key, value in local_dict.items():
-        if key != "self":
-            code.add(2, f"self.{key} = {key}")
-    code.print()
+        if key != "self" and key != "cls":
+            codeGen.add(2, f"self.{key} = {key}")
+    return codeGen.print()
 
 
 
@@ -235,8 +239,9 @@ def print_link(file=None, line=None):
         file = inspect.stack()[1].filename
     if line is None:
         line = inspect.stack()[1].lineno
-    file = file.replace("\\", "/")
-    print(f'File "{file}", line {max(line, 1)}')
+    string = f'File "{file}", line {max(line, 1)}'.replace("\\", "/")
+    print(string)
+    return string
 
 def print_link_to_obj(obj):
     """ Print a link in PyCharm to a module, function, class, method or property. """
@@ -244,9 +249,9 @@ def print_link_to_obj(obj):
         obj = obj.fget
     file = inspect.getfile(obj)
     line = inspect.getsourcelines(obj)[1]
-    print_link(file=file, line=line)
+    return print_link(file=file, line=line)
 
 
-from generallibrary.object import attributes, SigInfo
+from generallibrary.object import attributes
 
 
