@@ -137,14 +137,15 @@ def _get_attributes(obj):
     """ Helper for attributes_to_readme. """
     return attributes(obj, from_bases=True)
 
-def attributes_to_readme(obj):
+def attributes_to_readme(obj, allow_bad_docs=False, printed_objs=None):
     """ Convert attributes of a given obj to a readme string recursively.
 
         Examples:
             attributes_to_readme(generallibrary)
+
             attributes_to_readme(generallibrary.SigInfo)
 
-
+        Removed method type as it's very tricky with decorated methods.
         Todo: Tests
         """
     import pandas as pd  # Should tell user to use `pip install generallibrary[md_features]`
@@ -153,6 +154,11 @@ def attributes_to_readme(obj):
     rows = []
     errors = False
     obj_is_class = isinstance(obj, type)
+
+    if printed_objs is None:
+        printed_objs = [obj]
+    else:
+        printed_objs.append(obj)
 
     for key, attr in _get_attributes(obj).items():
         if is_property := isinstance(attr, property):
@@ -168,16 +174,11 @@ def attributes_to_readme(obj):
 
         # If attr is a variable
         if not module:
-            type_name, explanation = "class variable", f"Variable of type '{type_name}'."
+            type_name, explanation = "variable", f"Variable of type '{type_name}'."
 
         # If attr is a method
-        if obj_is_class and type_name == "function" or type_name == "method":
-            names = SigInfo(attr).positional_extra
-            first_arg_name = names[0] if names else None
-            type_name = f"{'instance' if first_arg_name == 'self' else 'class' if first_arg_name == 'cls' else 'static'} method"
-
-            # if key == "load":
-            #     print("HERE", SigInfo(attr).positionalArgNames, inspect.getfullargspec(attr).args[0])
+        if obj_is_class and type_name == "function":
+            type_name = "method"
 
         if attr_is_cls:
             cls = attr
@@ -187,7 +188,7 @@ def attributes_to_readme(obj):
                 name = f"[{key}](#{_get_header_from_obj(cls, hashes=False)})"
                 attrs_count = len(attrs)
 
-        if len(explanation) < 5 or not explanation.endswith(".") or explanation.startswith(":") or explanation.startswith("http"):
+        if not allow_bad_docs and (len(explanation) < 5 or not explanation.endswith(".") or explanation.startswith(":") or explanation.startswith("http")):
             print_link_to_obj(attr)
             print(f"    {explanation}")
             errors = True
@@ -211,7 +212,6 @@ def attributes_to_readme(obj):
         else:
             df.drop(inplace=True, columns="Attributes")
 
-
         # if obj_is_class:
             # df.drop(inplace=True, columns="Module")
             # df.sort_values(inplace=True, by=["Name", "Type"])
@@ -222,7 +222,8 @@ def attributes_to_readme(obj):
         print(df.to_markdown(index=False))
 
         for cls in classes:
-            attributes_to_readme(cls)
+            if cls not in printed_objs:
+                attributes_to_readme(cls, allow_bad_docs=allow_bad_docs, printed_objs=printed_objs)
 
 # https://stackoverflow.com/questions/26300594/print-code-link-into-pycharms-console
 def print_link(file=None, line=None):
