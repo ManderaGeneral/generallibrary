@@ -1,5 +1,4 @@
 
-import json
 import pyperclip
 import os
 import inspect
@@ -124,7 +123,7 @@ def debug(scope, *evals, printOut=True):
 
 
 def _get_header_from_obj(obj, link=False):
-    """ Helper for attributes_to_readme. """
+    """ Helper for attributes_to_markdown. """
     if isinstance(obj, type):
         obj_type = "class"
         hashtags = "#### "
@@ -140,16 +139,17 @@ def _get_header_from_obj(obj, link=False):
     return header
 
 def _get_attributes(obj):
-    """ Helper for attributes_to_readme. """
+    """ Helper for attributes_to_markdown. """
     return attributes(obj, from_bases=True)
 
-def attributes_to_readme(obj, allow_bad_docs=False, printed_objs=None):
+def attributes_to_markdown(obj, allow_bad_docs=False, printed_objs=None, print_out=True, return_lines=True):
     """ Convert attributes of a given obj to a readme string recursively.
+        Returns a string if `print_out` is True, otherwise a list of lines.
 
         Examples:
-            attributes_to_readme(generallibrary)
+            attributes_to_markdown(generallibrary)
 
-            attributes_to_readme(generallibrary.SigInfo)
+            attributes_to_markdown(generallibrary.SigInfo)
 
         Removed method type as it's very tricky with decorated methods.
         Todo: Tests
@@ -224,12 +224,21 @@ def attributes_to_readme(obj, allow_bad_docs=False, printed_objs=None):
 
         df.sort_values(inplace=True, by=["Module", "Name"])
 
-        print(f"\n\n{_get_header_from_obj(obj)}")
-        print(df.to_markdown(index=False))
+        lines = [_get_header_from_obj(obj), df.to_markdown(index=False)]
 
         for cls in classes:
             if cls not in printed_objs:
-                attributes_to_readme(cls, allow_bad_docs=allow_bad_docs, printed_objs=printed_objs)
+                lines.extend(attributes_to_markdown(cls, allow_bad_docs=allow_bad_docs, printed_objs=printed_objs, print_out=False, return_lines=True))
+
+        text = "\n\n".join(lines)
+        if print_out:
+            print(text)
+
+        if return_lines:
+            return lines
+        else:
+            return text
+
 
 # https://stackoverflow.com/questions/26300594/print-code-link-into-pycharms-console
 def print_link(file=None, line=None):

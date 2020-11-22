@@ -1,6 +1,4 @@
 
-from generallibrary import SigInfo
-
 
 class TreeDiagram:
     """ Saveable tree diagram with optional storage.

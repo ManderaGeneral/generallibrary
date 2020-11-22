@@ -3,8 +3,8 @@
 # import generalvector
 # import generalfile
 # import generalgui
-# generallibrary.attributes_to_readme(generallibrary)
-# generallibrary.attributes_to_readme(generalvector)
-# generallibrary.attributes_to_readme(generalfile)
-# generallibrary.attributes_to_readme(generalgui)
+# generallibrary.attributes_to_markdown(generallibrary)
+# generallibrary.attributes_to_markdown(generalvector)
+# generallibrary.attributes_to_markdown(generalfile)
+# generallibrary.attributes_to_markdown(generalgui)
 

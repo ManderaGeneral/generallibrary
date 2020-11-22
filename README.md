@@ -18,7 +18,7 @@ pip install generallibrary
 |:----------|:--------------------------------------------------------|:---------|:-------------|:----------------------------------------------------------------------------------------------|
 | code      | [CodeGen](#Attributes-of-class-CodeGen)                 | class    | 4            | Tool to help with printing code line by line.                                                 |
 | code      | args_to_attrs                                           | function |              | Print code for a dunder init method to store all arguments as attributes.                     |
-| code      | attributes_to_readme                                    | function |              | Convert attributes of a given obj to a readme string recursively.                             |
+| code      | attributes_to_markdown                                    | function |              | Convert attributes of a given obj to a readme string recursively.                             |
 | code      | clipboard_copy                                          | function |              | Copy a string to clipboard.                                                                   |
 | code      | clipboard_get                                           | function |              | Get clipboard string.                                                                         |
 | code      | debug                                                   | function |              | Easily call eval() on an arbitrary amount of evaluation strings.                              |
