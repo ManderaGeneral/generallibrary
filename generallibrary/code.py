@@ -152,8 +152,8 @@ def attributes_to_markdown(obj, allow_bad_docs=False, printed_objs=None, print_o
             attributes_to_markdown(generallibrary.SigInfo)
 
         Removed method type as it's very tricky with decorated methods.
-        Todo: Tests
-        """
+        Todo: Automatically create markdown links if a class, function or attribute is written like `this`.
+        Todo: Tests for `attributes_to_markdown`. """
     import pandas as pd  # Should tell user to use `pip install generallibrary[md_features]`
 
     classes = []

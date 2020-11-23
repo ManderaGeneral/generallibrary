@@ -7,7 +7,7 @@ class TreeDiagram:
         Saves class name and has to access it as an attribute when using `load()`.
         Use metaclass generallibrary.HierarchyStorer to easily store inheriters base class.
         Use initBases decorator to automatically call _post_init.
-        Todo: TnD """
+        Todo: Tests for TreeDiagram. """
     data_keys = []
 
     def __init__(self, parent=None, children_dicts=None):

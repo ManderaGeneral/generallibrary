@@ -1,0 +1,15 @@
+{
+    "name": "generallibrary",
+    "version": "2.4.3",
+    "description": "Random useful code categorized into modules..",
+    "install_requires": [
+        "packaging",
+        "pyperclip"
+    ],
+    "extras_require": {
+    },
+    "classifiers": [
+        "Development Status :: 2 - Pre-Alpha",
+        "Topic :: Software Development :: Libraries :: Python Modules"
+    ]
+}
