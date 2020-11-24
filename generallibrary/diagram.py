@@ -1,5 +1,7 @@
 
+from generallibrary import initBases
 
+@initBases
 class TreeDiagram:
     """ Saveable tree diagram with optional storage.
         Usage: Inherit TreeDiagram and define what keys to store with `data_keys_add()` method.
@@ -7,11 +9,11 @@ class TreeDiagram:
         Saves class name and has to access it as an attribute when using `load()`.
         Use metaclass generallibrary.HierarchyStorer to easily store inheriters base class.
         Use initBases decorator to automatically call _post_init.
-        Todo: Tests for TreeDiagram. """
+        Todo: Idea: Make TreeDiagram loadable with a generic list of lists for example. """
     data_keys = []
 
     def __init__(self, parent=None, children_dicts=None):
-        self.children = []
+        self._children = []
         self.data = {}
         self.data_keys = []
 
@@ -44,10 +46,12 @@ class TreeDiagram:
         self.hook_create_post()
 
     def set_parent(self, parent):
-        """ Set a new parent for this Node. """
+        """ Set a new parent for this Node.
+
+            :param TreeDiagram or None parent: """
         old_parent = self.get_parent()
         if old_parent:
-            old_parent.children.remove(self)
+            old_parent._children.remove(self)
 
             old_parent.hook_lose_child(child=self)
             self.hook_lose_parent(old_parent=old_parent, parent=parent)
@@ -55,7 +59,7 @@ class TreeDiagram:
         if parent:
             if self in parent.all_parents():
                 raise AttributeError(f"Cannot set {parent} as parent for {self} as it becomes circular. ")
-            parent.children.append(self)
+            parent._children.append(self)
 
             parent.hook_add_child(self)
             self.hook_new_parent(parent=parent, old_parent=old_parent)
@@ -64,11 +68,15 @@ class TreeDiagram:
         return self
 
     def get_parent(self, index=0):
-        """ Get this Node's parent. """
+        """ Get this Node's parent.
+
+            :rtype: TreeDiagram """
         return self._parent if index == 0 else self.all_parents()[index]
 
     def all_parents(self):
-        """ Get a list of all parents recursively. """
+        """ Get a list of all parents recursively.
+
+            :rtype: list[TreeDiagram] """
         part = self
         parents = []
         while part := part.get_parent():
@@ -76,22 +84,67 @@ class TreeDiagram:
         return parents
 
     def get_children(self):
-        """ Get a list of all children this Node has. """
-        return self.children
+        """ Get a list of all children this Node has, empty list if None.
 
-    # Todo: siblings
+            :rtype: list[TreeDiagram] """
+        return self._children.copy()
+
+    def get_all(self):
+        """ Return a flat one-dimensional list of all nodes in this Tree. """
+        l = []
+        temp = [self]
+        while temp:
+            treeDiagram = temp[0]
+            del temp[0]
+
+            l.append(treeDiagram)
+
+            children = treeDiagram.get_children()
+            for child in reversed(children):
+                temp.insert(0, child)
+        return l
+
+    def get_siblings(self):
+        """ Get a list of all siblings. """
+        if self.get_parent() is None:
+            return []
+        l = self.get_parent().get_children()
+        l.remove(self)
+        return l
+
+    def _sibling_helper(self, direction):
+        if self.get_parent() is None:
+            return None
+        parent = self.get_parent()
+        children = parent.get_children()
+        index = children.index(self) + direction
+        return children[index] if 0 <= index < len(children) else None
+
+    def get_next_sibling(self):
+        """ Return the next sibling or None if this is the last child. """
+        return self._sibling_helper(1)
+
+    def get_previous_sibling(self):
+        """ Return the previous sibling or None if this is the last child. """
+        return self._sibling_helper(-1)
 
     def save(self):
         """ Recursively save by returning a new dictionary. """
         data = self.data.copy()
-        data["children_dicts"] = [child.save() for child in self.children]
+        data["children_dicts"] = [child.save() for child in self.get_children()]
         data["class_name"] = self.__class__.__name__  # Maybe put this in init instead
         return data
 
     @classmethod
     def load(cls, d, parent=None):
-        """ Create a new Tree from a dictionary save. """
-        instance = getattr(cls, d["class_name"])(parent=parent, **d)
+        """ Create a new Tree from a dictionary save.
+
+            :rtype: TreeDiagram """
+        class_ = cls if cls.__name__ == d["class_name"] else getattr(cls, d["class_name"], globals().get(d["class_name"]))
+        if class_ is None:
+            raise AttributeError(f"Couldn't find class '{d['class_name']}' inside itself, given dictionary or global scope, try HierarchyStorer.")
+
+        instance = class_(parent=parent, **d)
         # If a key is not already defined by argument in an __init__ (through **d above) then we need to set it here
         for key in instance.data_keys:
             if getattr(instance, key, None) != d[key]:
@@ -108,7 +161,7 @@ class TreeDiagram:
         self.hook_remove()
 
     def __repr__(self):
-        return f"<{self.__class__.__name__} {getattr(self, 'children', '')}>"
+        return f"<{self.__class__.__name__} {repr(getattr(self, '_children', ''))}>"
 
     def __setattr__(self, key, value):
         if key in self.data_keys:
