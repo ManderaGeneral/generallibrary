@@ -9,15 +9,23 @@ class TreeDiagramTest(unittest.TestCase):
     def test_children(self):
         a = TreeDiagram()
         self.assertEqual([], a.get_children())
+        self.assertEqual(None, a.get_child())
 
         b = TreeDiagram(parent=a)
         self.assertEqual([b], a.get_children())
+        self.assertEqual(b, a.get_child())
 
         c = TreeDiagram(parent=a)
         self.assertEqual([b, c], a.get_children())
+        self.assertEqual(b, a.get_child())
+        self.assertEqual(None, b.get_child())
 
         d = TreeDiagram(parent=b)
         self.assertEqual([b, c], a.get_children())
+        self.assertEqual(d, b.get_child())
+        self.assertEqual(c, a.get_child(1))
+        self.assertEqual(None, a.get_child(2))
+        self.assertEqual(c, a.get_child(-1))
 
         b.remove()
         self.assertEqual([c], a.get_children())
@@ -32,6 +40,7 @@ class TreeDiagramTest(unittest.TestCase):
 
         b = TreeDiagram(parent=a)
         self.assertEqual(a, b.get_parent())
+        self.assertEqual(None, b.get_parent(1))
         self.assertEqual([a], b.all_parents())
 
         c = TreeDiagram(parent=a)
@@ -41,6 +50,8 @@ class TreeDiagramTest(unittest.TestCase):
         d = TreeDiagram(parent=b)
         self.assertEqual(b, d.get_parent())
         self.assertEqual(a, d.get_parent(1))
+        self.assertEqual(a, d.get_parent(-1))
+        self.assertEqual(b, d.get_parent(-2))
         self.assertEqual([b, a], d.all_parents())
 
         b.remove()

@@ -71,7 +71,10 @@ class TreeDiagram:
         """ Get this Node's parent.
 
             :rtype: TreeDiagram """
-        return self._parent if index == 0 else self.all_parents()[index]
+        try:
+            return self._parent if index == 0 else self.all_parents()[index]
+        except IndexError:
+            return None
 
     def all_parents(self):
         """ Get a list of all parents recursively.
@@ -88,6 +91,13 @@ class TreeDiagram:
 
             :rtype: list[TreeDiagram] """
         return self._children.copy()
+
+    def get_child(self, index=0):
+        """ Get a child by index, None if doesn't exist. """
+        try:
+            return self.get_children()[index]
+        except IndexError:
+            return None
 
     def get_all(self):
         """ Return a flat one-dimensional list of all nodes in this Tree. """
@@ -141,7 +151,7 @@ class TreeDiagram:
 
             :rtype: TreeDiagram """
         class_ = cls if cls.__name__ == d["class_name"] else getattr(cls, d["class_name"], globals().get(d["class_name"]))
-        if class_ is None:
+        if class_ is None:  # Maybe we could search bases as well, giving us a fourt option... Very messy
             raise AttributeError(f"Couldn't find class '{d['class_name']}' inside itself, given dictionary or global scope, try HierarchyStorer.")
 
         instance = class_(parent=parent, **d)
