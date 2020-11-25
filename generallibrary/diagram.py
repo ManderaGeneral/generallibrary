@@ -181,4 +181,42 @@ class TreeDiagram:
         object.__setattr__(self, key, value)
 
 
+@initBases
+class Markdown(TreeDiagram):
+    """ A section for a markdown file, built on TreeDiagram.
+
+        Todo: Create Markdown tree from markdown text.
+        Todo: Tests for Markdown. """
+    def __init__(self, header=None, *lines, hashtags=None, parent=None):
+        if hashtags is None:
+            hashtags = 2
+
+        self.header = header
+        self.lines = lines
+        self.hashtags = hashtags
+
+    def section_lines(self):
+        """ Get a list of all lines in this section. """
+        lines = list(self.lines)
+        if self.header:
+            lines.insert(0, f"{'#' * self.hashtags} {self.header}")
+        return lines
+
+    def all_lines(self):
+        """ Get a list of all lines in this entire Markdown by iterating all children.
+
+            :rtype: list[str] """
+        lines = []
+        for markdown in self.get_all():
+            if lines:
+                lines.append("")
+            lines.extend(markdown.section_lines())
+        return lines
+
+    def add_code(self, header, *lines, hashtags=None):
+        """ Add a code part. """
+        Markdown(header, "```", *lines, "```", hashtags=hashtags, parent=self)
+
+    def __str__(self):
+        return '\n'.join(self.all_lines())
 

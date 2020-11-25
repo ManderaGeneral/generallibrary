@@ -54,10 +54,10 @@ def attributes(obj, properties=True, methods=True, variables=True, modules=False
 
     attrs = {}
     for key in dir(obj):
-        cls_attr = getattr(cls, key, ...)
+        cls_attr = getattr(cls, key, NotImplemented)
         is_property = isinstance(cls_attr, property)
         is_protected = key.startswith("_")
-        attr = cls_attr if is_property else getattr(obj, key, ...)
+        attr = cls_attr if is_property else getattr(obj, key, NotImplemented)
 
         # Attribute is Property, Method and Variable
         if is_property:
@@ -80,11 +80,11 @@ def attributes(obj, properties=True, methods=True, variables=True, modules=False
             continue
 
         # Origin from Instance, Class, Base or Builtin
-        if from_instance is False and instance and attr != cls_attr and cls_attr is ...:
+        if from_instance is False and instance and attr != cls_attr and cls_attr is NotImplemented:
             continue
-        elif not (from_class and from_bases) and cls_attr is not ...:
+        elif not (from_class and from_bases) and cls_attr is not NotImplemented:
             for base in cls.__bases__:
-                if getattr(base, key, ...) is not ...:
+                if getattr(base, key, NotImplemented) is not NotImplemented:
                     defined_in_base = True
                     break
             else:
