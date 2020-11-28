@@ -1,12 +1,11 @@
 
 import sys
-
 from types import ModuleType, FunctionType
-
 from gc import get_referents
+import inspect
 
 
-BLACKLIST = type, ModuleType, FunctionType
+_BLACKLIST = type, ModuleType, FunctionType
 def getsize(obj):
     """
     Get a sum of sizes from an object and it's members in bytes.
@@ -16,7 +15,7 @@ def getsize(obj):
 
     Author: Aaron Hall @ https://stackoverflow.com/questions/449560/how-do-i-determine-the-size-of-an-object-in-python
     """
-    if isinstance(obj, BLACKLIST):
+    if isinstance(obj, _BLACKLIST):
         # raise TypeError('getsize() does not take argument of type: '+ str(type(obj)))
         return sys.getsizeof(obj)
     seen_ids = set()
@@ -25,7 +24,7 @@ def getsize(obj):
     while objects:
         need_referents = []
         for obj in objects:
-            if not isinstance(obj, BLACKLIST) and id(obj) not in seen_ids:
+            if not isinstance(obj, _BLACKLIST) and id(obj) not in seen_ids:
                 seen_ids.add(id(obj))
                 size += sys.getsizeof(obj)
                 need_referents.append(obj)
@@ -33,11 +32,12 @@ def getsize(obj):
     return size
 
 
-def attributes(obj, properties=True, methods=True, variables=True, modules=False, protected=False, from_instance=True, from_class=True, from_bases=True):
+def attributes(obj, properties=True, class_=True, methods=True, variables=True, modules=False, protected=False, from_instance=True, from_class=True, from_bases=True):
     """ Get attributes from a Module or Class with a lot of optional flags for filtering.
 
         :param obj:
         :param bool properties:
+        :param bool class_:
         :param bool methods:
         :param bool variables:
         :param bool modules:
@@ -62,6 +62,9 @@ def attributes(obj, properties=True, methods=True, variables=True, modules=False
         # Attribute is Property, Method and Variable
         if is_property:
             if properties is False:
+                continue
+        elif inspect.isclass(attr):
+            if class_ is False:
                 continue
         elif callable(attr):
             if methods is False:

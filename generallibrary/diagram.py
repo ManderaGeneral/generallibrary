@@ -1,6 +1,9 @@
 
 from generallibrary import initBases
 
+import pandas
+
+
 @initBases
 class TreeDiagram:
     """ Saveable tree diagram with optional storage.
@@ -187,17 +190,17 @@ class Markdown(TreeDiagram):
 
         Todo: Create Markdown tree from markdown text.
         Todo: Tests for Markdown. """
-    def __init__(self, header=None, *lines, hashtags=None, parent=None):
+    def __init__(self, *lines, header=None, hashtags=None, parent=None):
         if hashtags is None:
             hashtags = 2
 
         self.header = header
-        self.lines = lines
+        self.lines = list(lines)
         self.hashtags = hashtags
 
     def section_lines(self):
         """ Get a list of all lines in this section. """
-        lines = list(self.lines)
+        lines = self.lines.copy()
         if self.header:
             lines.insert(0, f"{'#' * self.hashtags} {self.header}")
         return lines
@@ -213,9 +216,20 @@ class Markdown(TreeDiagram):
             lines.extend(markdown.section_lines())
         return lines
 
-    def add_code(self, header, *lines, hashtags=None):
-        """ Add a code part. """
-        Markdown(header, "```", *lines, "```", hashtags=hashtags, parent=self)
+    def add_code_lines(self, *lines):
+        """ Add code lines, wrapped by quotes. """
+        self.lines.extend(["```", *lines, "```"])
+        return self
+    
+    def add_table_lines(self, list_of_dicts):
+        """ Add a table to the lines using pandas `to_markdown`. """
+        self.lines.append(pandas.DataFrame(list_of_dicts).to_markdown(index=False))
+        return self
+    
+    def add_list_lines(self, *items, indent=0):
+        """ Add list lines. """
+        for item in items:
+            self.lines.append(f"{'  ' * indent} - {item}")
 
     def __str__(self):
         return '\n'.join(self.all_lines())

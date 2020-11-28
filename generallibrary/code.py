@@ -3,6 +3,7 @@ import pyperclip
 import os
 import inspect
 import re
+import pandas as pd
 
 
 def clipboard_copy(s):
@@ -152,10 +153,7 @@ def attributes_to_markdown(obj, allow_bad_docs=False, printed_objs=None, print_o
             attributes_to_markdown(generallibrary.SigInfo)
 
         Removed method type as it's very tricky with decorated methods.
-        Todo: Automatically create markdown links if a class, function or attribute is written like `this`.
-        Todo: Tests for `attributes_to_markdown`. """
-    import pandas as pd  # Should tell user to use `pip install generallibrary[md_features]`
-
+        Todo: Automatically create markdown links if a class, function or attribute is written like `this`. """
     classes = []
     rows = []
     errors = False
@@ -239,7 +237,6 @@ def attributes_to_markdown(obj, allow_bad_docs=False, printed_objs=None, print_o
         else:
             return text
 
-
 # https://stackoverflow.com/questions/26300594/print-code-link-into-pycharms-console
 def print_link(file=None, line=None):
     """ Print a link in PyCharm to a line in file.
@@ -261,6 +258,60 @@ def print_link_to_obj(obj):
     return print_link(file=file, line=line)
 
 
+
+def _get_lines_extend(lines, _list):
+    lines.extend([line for line in _list if not re.match("^( *)?\\n$", line)])
+
+def get_lines(obj, lines=None):
+    """ Return a list of source lines from an obj.
+        Experimental. Works on modules, classes and functions available to `inspect`. """
+    if lines is None:
+        lines = []
+    print(obj)
+    _get_lines_extend(lines, inspect.getsourcelines(obj)[0])
+    for key, value in attributes(obj, methods=False, variables=False, properties=False).items():
+        get_lines(value, lines=lines)
+    return lines
+
+
 from generallibrary.object import attributes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
