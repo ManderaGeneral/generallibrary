@@ -122,7 +122,6 @@ def debug(scope, *evals, printOut=True):
         print(text)
     return text
 
-
 def _get_header_from_obj(obj, link=False):
     """ Helper for attributes_to_markdown. """
     if isinstance(obj, type):

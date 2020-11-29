@@ -5,6 +5,7 @@ from gc import get_referents
 import inspect
 
 
+
 _BLACKLIST = type, ModuleType, FunctionType
 def getsize(obj):
     """
@@ -139,11 +140,32 @@ def initBases(cls):
             for post_init in cls_SigInfo["self"]._post_inits:
                 cls_SigInfo(child_callable=post_init)
 
-
     cls.__init__ = _wrapper
     return cls
 
+
+from generallibrary.diagram import TreeDiagram
+
+
+class ObjInfo(TreeDiagram):
+    """ Get whether obj is a module, function, class, method, property or variable. """
+    def __init__(self, obj):
+        self.obj = obj
+        self._class_name = self.obj.__class__.__name__
+
+    def is_module(self):
+        """ Get whether obj is a module. """
+        return self._class_name == "module"
+
+    def is_function(self):
+        """ Get whether obj is a function. """
+        return self._class_name == "function"
+
+
+
+
 from generallibrary.functions import SigInfo
+
 
 
 

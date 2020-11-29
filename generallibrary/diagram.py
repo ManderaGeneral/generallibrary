@@ -1,5 +1,5 @@
 
-from generallibrary import initBases
+from generallibrary.object import initBases
 
 import pandas
 

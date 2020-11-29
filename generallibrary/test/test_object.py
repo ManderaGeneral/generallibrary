@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.object import getsize, initBases, attributes
+from generallibrary.object import getsize, initBases, attributes, ObjInfo
 
 
 class ObjectTest(unittest.TestCase):
@@ -237,9 +237,16 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(["b"], list(attributes(Foo(), from_class=False)))
         self.assertEqual(["a", "b", "c", "d", "e"], list(attributes(Foo(), from_bases=False)))
 
+    def test_ObjInfo(self):
+        type_methods = [key for key in dir(ObjInfo) if key.startswith("is_")]
 
+        def _check(bound_method):
+            objInfo = getattr(bound_method, "__self__")
+            self.assertEqual([1], [1 for key in type_methods if getattr(objInfo, key)()])
+            self.assertTrue(bound_method())
 
-
+        _check(ObjInfo(unittest).is_module)
+        # HERE ** Create and test all types
 
 
 

@@ -51,6 +51,7 @@ class SigInfo:
 
     def class_from_callable(self, meth=None):
         """ Return class that owns given method, or given callable from initiating SigInfo.
+
             https://stackoverflow.com/questions/3589311/get-defining-class-of-unbound-method-object-in-python-3/25959545#25959545 """
         meth = meth if meth else self.callableObject
         if isinstance(meth, functools.partial):
