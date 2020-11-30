@@ -1,6 +1,6 @@
 
 import sys
-from types import ModuleType, FunctionType
+from types import ModuleType, FunctionType, MethodWrapperType
 from gc import get_referents
 import inspect
 
@@ -148,19 +148,61 @@ from generallibrary.diagram import TreeDiagram
 
 
 class ObjInfo(TreeDiagram):
-    """ Get whether obj is a module, function, class, method, property or variable. """
+    """ Get whether obj is a module, function, class, method, property or variable.
+        Note: Static- and unbound self methods are incorrect for nested class definitions. """
     def __init__(self, obj):
         self.obj = obj
-        self._class_name = self.obj.__class__.__name__
+
+        self._class = self.obj.__class__
+        self._class_name = self._class.__name__
+        self._owner = self._get_owner()
+
+
+    def _get_owner(self):
+        """ Get owner of obj or None. """
+        # Check if second last qualname is class
+        split_qual_name = getattr(self.obj, "__qualname__", "").split(".")
+        if len(split_qual_name) > 1:
+            return getattr(self.obj, "__globals__", {}).get(split_qual_name[-2])
 
     def is_module(self):
         """ Get whether obj is a module. """
-        return self._class_name == "module"
+        return inspect.ismodule(self.obj)
 
     def is_function(self):
         """ Get whether obj is a function. """
-        return self._class_name == "function"
+        return inspect.isfunction(self.obj) and not self.is_method()
 
+    def is_class(self):
+        """ Get whether obj is a class. """
+        return inspect.isclass(self.obj)
+
+    def is_property(self):
+        """ Get whether obj is a property of a class. """
+        return hasattr(self.obj, "fget")
+
+    def is_instance(self):
+        """ Get whether obj is an instance of it's class. """
+        return not hasattr(self.obj, "__name__") and not self.is_property()
+
+    def is_method(self):
+        """ Get whether obj is a method. """
+        if not callable(self.obj):
+            return False
+
+        if inspect.ismethod(self.obj) or inspect.ismethoddescriptor(self.obj):
+            return True
+
+        if isinstance(self.obj, MethodWrapperType):
+            return True
+
+        if self._owner:
+            if ObjInfo(self._owner).is_class():
+                return True
+            elif hasattr(self._owner, self.obj.__name__):
+                return True
+
+        return False
 
 
 

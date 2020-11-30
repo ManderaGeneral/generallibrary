@@ -240,16 +240,54 @@ class ObjectTest(unittest.TestCase):
     def test_ObjInfo(self):
         type_methods = [key for key in dir(ObjInfo) if key.startswith("is_")]
 
-        def _check(bound_method):
+        def check(bound_method):
+            """ Check that the correct method is True and all other are False. """
             objInfo = getattr(bound_method, "__self__")
             self.assertEqual([1], [1 for key in type_methods if getattr(objInfo, key)()])
             self.assertTrue(bound_method())
 
-        _check(ObjInfo(unittest).is_module)
-        # HERE ** Create and test all types
+        check(ObjInfo(unittest).is_module)
+        check(ObjInfo(a).is_function)
+        check(ObjInfo(a()).is_function)
+        check(ObjInfo(_Foo).is_class)
+        check(ObjInfo(_Foo()).is_instance)
+
+        check(ObjInfo(_Foo._self).is_method)
+        check(ObjInfo(_Foo()._self).is_method)
 
 
+        check(ObjInfo(_Foo.__init__).is_method)
+        check(ObjInfo(_Foo().__init__).is_method)
 
+        check(ObjInfo(_Foo._cls).is_method)
+        check(ObjInfo(_Foo()._cls).is_method)
+
+        check(ObjInfo(_Foo._static).is_method)
+        check(ObjInfo(_Foo()._static).is_method)
+
+        check(ObjInfo(_Foo._property).is_property)
+
+
+class _Foo:
+    def _self(self):
+        pass
+
+    @classmethod
+    def _cls(cls):
+        pass
+
+    @staticmethod
+    def _static():
+        pass
+
+    @property
+    def _property(self):
+        return
+
+def a():
+    def b():
+        pass
+    return b
 
 
 
