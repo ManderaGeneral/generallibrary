@@ -183,15 +183,15 @@ class ObjInfo(TreeDiagram):
 
     def is_instance(self):
         """ Get whether obj is an instance of it's class. """
-        return not hasattr(self.obj, "__name__") and not self.is_property()
+        return not hasattr(self.obj, "__name__") and not self.is_property() and not self.is_method()
 
     def is_method(self):
         """ Get whether obj is a method. """
-        if not callable(self.obj):
-            return False
-
         if inspect.ismethod(self.obj) or inspect.ismethoddescriptor(self.obj):
             return True
+
+        if not callable(self.obj):  # Unbound cls and static methods aren't "callable"
+            return False
 
         if isinstance(self.obj, MethodWrapperType):
             return True
@@ -203,6 +203,11 @@ class ObjInfo(TreeDiagram):
                 return True
 
         return False
+
+    def is_method_bound(self):
+        """ Get whether a method is bound, subset of is_method. """
+        assert self.is_method()
+        return not inspect.ismethoddescriptor(self.obj)  # HERE ** could skip subsets
 
 
 
