@@ -1,6 +1,7 @@
 import inspect
 import re
 import functools
+import pandas as pd
 
 
 def deco_cache():
@@ -52,7 +53,7 @@ class SigInfo:
     def class_from_callable(self, meth=None):
         """ Return class that owns given method, or given callable from initiating SigInfo.
 
-            https://stackoverflow.com/questions/3589311/get-defining-class-of-unbound-method-object-in-python-3/25959545#25959545 """
+            https://stackoverflow.com/questions/3589311/get-defining-class-of-unbound-method-ect-in-python-3/25959545#25959545 """
         meth = meth if meth else self.callableObject
         if isinstance(meth, functools.partial):
             return self.class_from_callable(getattr(meth, "func"))
@@ -374,6 +375,66 @@ class EmptyContext:
         pass
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
+
+
+class CallTable:
+    """ Create a markdown table of functions and arguments. """
+    def __init__(self, name=None):
+        self.name = name
+
+        self.funcs = {}
+        self.args = {}
+
+    def set_funcs(self, **funcs):
+        """ Set all funcs. """
+        self.funcs = funcs
+        return self
+
+    def set_args(self, **args):
+        """ Set all args. """
+        self.args = args
+        return self
+
+    def _generate(self, funcs=None, args=None, print_out=True):
+        if funcs is None:
+            funcs = self.funcs
+        if args is None:
+            args = self.args
+
+        columns = {}
+        for func_name, func in funcs.items():
+            columns[func_name] = {}
+            for arg_name, arg in args.items():
+                # print(arg, getattr(arg, "__self__", None))
+                try:
+                    result = "True" if func(arg) else ""
+                except Exception:
+                    result = "-"
+                columns[func_name][arg_name] = result
+
+        df = pd.DataFrame(columns)
+        df = df.rename_axis(self.name)
+
+        md = df.to_markdown()
+        if print_out:
+            print(md, "\n")
+        return md
+
+    def generate(self):
+        """ Generate table with stored funcs and args. """
+        return self._generate()
+
+    def generate_with_args(self, **args):
+        """ Generate table with stored funcs and new args. """
+        return self._generate(args=args)
+
+    def generate_with_funcs(self, **funcs):
+        """ Generate table with stored args and new funcs. """
+        return self._generate(funcs=funcs)
+
+
+
+
 
 
 from generallibrary.types import typeChecker

@@ -255,7 +255,6 @@ class ObjectTest(unittest.TestCase):
         check(ObjInfo(_Foo._self).is_method)
         check(ObjInfo(_Foo()._self).is_method)
 
-
         check(ObjInfo(_Foo.__init__).is_method)
         check(ObjInfo(_Foo().__init__).is_method)
 

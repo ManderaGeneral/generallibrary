@@ -32,7 +32,7 @@ def getsize(obj):
         objects = get_referents(*need_referents)
     return size
 
-
+# HERE ** Put this in ObjInfo
 def attributes(obj, properties=True, class_=True, methods=True, variables=True, modules=False, protected=False, from_instance=True, from_class=True, from_bases=True):
     """ Get attributes from a Module or Class with a lot of optional flags for filtering.
 
@@ -113,6 +113,9 @@ def initBases(cls):
     """
     cls_init = cls.__init__  # Unbound original __init__ method of class
 
+    print("here", cls)
+    cls._is_wrapped_by_initBases = cls
+
     def _wrapper(*args, **kwargs):
         cls_SigInfo = SigInfo(cls_init, *args, **kwargs)
 
@@ -120,7 +123,6 @@ def initBases(cls):
             raise AttributeError(f"{cls} hasn't defined it's `__init__`")
 
         initialized_bases = []
-
 
         if getattr(cls_SigInfo["self"], "_post_inits", None) is None:
             cls_SigInfo["self"]._post_inits = []
@@ -147,16 +149,31 @@ def initBases(cls):
 from generallibrary.diagram import TreeDiagram
 
 
-class ObjInfo(TreeDiagram):
+class _ObjInfo_Children:
+    def get_attr_names(self):
+        """ Get a list of obj's attributes' names.
+
+            :param ObjInfo self: """
+        return dir(self.obj)
+
+    def generate_children(self):
+        """ Create ObjInfo children under this one.
+
+            :param ObjInfo self: """
+        for attr_name in self.get_attr_names():
+            ObjInfo(obj=getattr(self.obj, attr_name), parent=self)
+
+
+@initBases
+class ObjInfo(TreeDiagram, _ObjInfo_Children):
     """ Get whether obj is a module, function, class, method, property or variable.
         Note: Static- and unbound self methods are incorrect for nested class definitions. """
-    def __init__(self, obj):
+    def __init__(self, obj, parent=None):
         self.obj = obj
 
         self._class = self.obj.__class__
         self._class_name = self._class.__name__
         self._owner = self._get_owner()
-
 
     def _get_owner(self):
         """ Get owner of obj or None. """
@@ -179,7 +196,8 @@ class ObjInfo(TreeDiagram):
 
     def is_property(self):
         """ Get whether obj is a property of a class. """
-        return hasattr(self.obj, "fget")
+        # return hasattr(self.obj, "fget")
+        return inspect.isdatadescriptor(self.obj)
 
     def is_instance(self):
         """ Get whether obj is an instance of it's class. """
@@ -204,10 +222,22 @@ class ObjInfo(TreeDiagram):
 
         return False
 
-    def is_method_bound(self):
-        """ Get whether a method is bound, subset of is_method. """
+    def subset_is_method_bound(self):
+        """ Subset of `is_method`: Get whether a method is bound. """
         assert self.is_method()
-        return not inspect.ismethoddescriptor(self.obj)  # HERE ** could skip subsets
+
+        has_self = hasattr(self.obj, "__self__")
+        if has_self:
+            return True
+
+        if self._owner and self._owner.__dict__.get(self.obj.__name__) == self.obj:
+            return False
+
+        if self._owner and not has_self:
+            return True
+
+        return False
+
 
 
 
