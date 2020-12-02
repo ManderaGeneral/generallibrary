@@ -55,7 +55,8 @@ class VersionsTest(unittest.TestCase):
     def test_packages(self):
         self.assertEqual(True, len(get_installed_packages()) > 0)
         self.assertEqual(True, package_is_installed("generallibrary"))
-        self.assertEqual(False, package_is_installed("random_package_not_existing"))
+        self.assertEqual(True, package_is_installed("generallibrary", "pyperclip"))
+        self.assertEqual(False, package_is_installed("generallibrary", "random_package_not_existing"))
 
 
 

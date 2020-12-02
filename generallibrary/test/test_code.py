@@ -33,7 +33,7 @@ class CodeTest(unittest.TestCase):
         x, y, z = 1, 2, 3
         self.assertIn("y * z + 3 = 9", debug(locals(), "x + y", "y * z + 3", "x", "self"))
 
-    @unittest.skipUnless(package_is_installed("pandas"), "Skip unless pandas is installed.")
+    @unittest.skipUnless(package_is_installed("pandas", "tabulate"), "Skip unless pandas is installed.")
     def test_attributes_to_markdown(self):
         attributes_to_markdown(VerInfo, allow_bad_docs=True)
         attributes_to_markdown(unittest, allow_bad_docs=True)

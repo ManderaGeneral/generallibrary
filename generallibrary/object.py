@@ -113,7 +113,7 @@ def initBases(cls):
     """
     cls_init = cls.__init__  # Unbound original __init__ method of class
 
-    print("here", cls)
+    # print("here", cls)
     cls._is_wrapped_by_initBases = cls
 
     def _wrapper(*args, **kwargs):

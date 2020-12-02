@@ -210,8 +210,8 @@ def get_installed_packages():
     """ Get a list of all installed packages as strings. """
     return [pkg.key for pkg in pkg_resources.working_set]
 
-def package_is_installed(name):
+def package_is_installed(*names):
     """ Returns whether a package is installed. """
-    return name in get_installed_packages()
+    return all([name in get_installed_packages() for name in names])
 
 
