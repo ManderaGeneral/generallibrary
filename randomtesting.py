@@ -10,11 +10,10 @@
 
 from generallibrary import ObjInfo
 
-class Foo:
-    def bar(self):
-        pass
-objInfo = ObjInfo(Foo).generate_attributes(is_method=True)
-print(objInfo.get_children())
-
+# class Foo:
+#     def bar(self):
+#         pass
+# objInfo = ObjInfo(Foo).generate_attributes(is_method=True)
+# print(objInfo.get_children())
 
 

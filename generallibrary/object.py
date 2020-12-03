@@ -260,35 +260,24 @@ class ObjInfo(TreeDiagram, _ObjInfo_children, _ObjInfo_type):
     """ Get whether obj is a module, function, class, method, property or variable.
         A class obj has keys for all it's attribute children. A function with a nested function child will have key set to None.
         Note: Static- and unbound self methods are incorrect for nested class definitions. """
-    def __init__(self, obj, parent=None):
+    def __init__(self, obj, parent=None, key=None):
         self.obj = obj
+        self.key = key
 
-        self._class = self.obj.__class__
-        self._class_name = self._class.__name__
-        self._split_qual_name = qualname.split(".") if (qualname := getattr(self.obj, "__qualname__", None)) else []
-        self._owner = self._get_owner()
+    def get_parent(self, index=0):
+        """ Tries to generate parent with dunder- qualname and globals.
 
-    def _get_owner(self):
-        """ Get owner of obj or None. """
-        # Check if second last qualname is class
-        if len(self._split_qual_name) > 1:
-            return getattr(self.obj, "__globals__", {}).get(self._split_qual_name[-2])
-
-    def get_key(self):
-        """ Return key to this obj from it's parent. """
-        if parent := self.get_parent():
-            return dict_index(parent.obj.__dict__, self.obj, None)
-
-    def generate_parent(self):
-        """ Generate parent with self._owner """
-        if parent := self.get_parent():
+            :param ObjInfo self:
+            :param index: """
+        if parent := super().get_parent(index=index):
             return parent
-        elif self._owner:
-            self.set_parent(objInfo := ObjInfo(self._owner))
-            return objInfo
-
-
-
+        elif hasattr(self, "obj") and index == 0:
+            split_qualname = qualname.split(".") if (qualname := getattr(self.obj, "__qualname__", None)) else []
+            if len(split_qualname) > 1:
+                parent_obj = getattr(self.obj, "__globals__", {}).get(self._split_qual_name[-2])
+                if parent_obj:
+                    self.set_parent(ObjInfo(parent_obj))
+                    return self.get_parent()  # HERE ** Create parent automatically if needed, change _owner to get_parent
 
 
     def subset_is_method_bound(self):
@@ -311,7 +300,6 @@ class ObjInfo(TreeDiagram, _ObjInfo_children, _ObjInfo_type):
 
 
 from generallibrary.functions import SigInfo
-from generallibrary.iterables import dict_index
 
 
 
