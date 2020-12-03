@@ -15,9 +15,6 @@ class TreeDiagram:
         Todo: Idea: Make TreeDiagram loadable with a generic list of lists for example. """
     data_keys = []
 
-    # def __init_subclass__(cls, **kwargs):
-    #     print("there", cls)  # HERE ** Trying to assert that bases uses initBases
-
     def __init__(self, parent=None, children_dicts=None):
         self._children = []
         self.data = {}

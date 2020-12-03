@@ -266,8 +266,27 @@ class ObjectTest(unittest.TestCase):
 
         check(ObjInfo(_Foo._property).is_property)
 
+    def test_ObjInfo_protected(self):
+        objInfo = ObjInfo(_Foo)
+
+        self.assertEqual(True, objInfo.get_attribute_child("_self").protected())
+        self.assertEqual(False, objInfo.get_attribute_child("self").protected())
+
+        self.assertEqual(True, objInfo.get_attribute_child("_attr").protected())
+        self.assertEqual(False, objInfo.get_attribute_child("attr").protected())
+
+        self.assertEqual(False, ObjInfo(a).protected())
+        self.assertEqual(False, ObjInfo(a()).protected())
 
 class _Foo:
+
+    _attr = 5
+    attr = 3
+
+    def self(self):
+        """ Not protected. """
+        pass
+
     def _self(self):
         pass
 

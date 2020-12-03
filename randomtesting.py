@@ -8,13 +8,13 @@
 # generallibrary.attributes_to_markdown(generalfile)
 # generallibrary.attributes_to_markdown(generalgui)
 
-# from generallibrary import ObjInfo
-#
-# class Foo:
-#     def bar(self):
-#         pass
-#
-# objInfo = ObjInfo(Foo)
-# objInfo.generate_children()
-# print(objInfo.get_children())
+from generallibrary import ObjInfo
+
+class Foo:
+    def bar(self):
+        pass
+objInfo = ObjInfo(Foo).generate_attributes(is_method=True)
+print(objInfo.get_children())
+
+
 

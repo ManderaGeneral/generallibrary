@@ -208,6 +208,7 @@ def getFreeIndex(dictionary):
         else:
             return index
 
+
 def appendToDict(dictionary, obj):
     """
     Puts an object in the lowest free integer index and returns index.
@@ -221,6 +222,17 @@ def appendToDict(dictionary, obj):
     index = getFreeIndex(dictionary)
     dictionary[index] = obj
     return index
+
+
+def dict_index(dict_, match, default=(sentinel := object())):
+    """ Get the first match' index. """
+    try:
+        return next(key for key, value in dict_.items() if value == match)
+    except StopIteration as e:
+        if default is sentinel:
+            raise e
+        else:
+            return default
 
 def _getRows_getRow(iterableObj, key=None):
     """

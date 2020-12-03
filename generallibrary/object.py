@@ -113,7 +113,6 @@ def initBases(cls):
     """
     cls_init = cls.__init__  # Unbound original __init__ method of class
 
-    # print("here", cls)
     cls._is_wrapped_by_initBases = cls
 
     def _wrapper(*args, **kwargs):
@@ -149,62 +148,90 @@ def initBases(cls):
 from generallibrary.diagram import TreeDiagram
 
 
-class _ObjInfo_Children:
-    def get_attr_names(self):
-        """ Get a list of obj's attributes' names.
+class _children_properties:
+    def protected(self):
+        """ Get whether possible key is protected, False if key is None.
+            Primarily checks __qualname__, falls back on `self.get_key()`.
 
             :param ObjInfo self: """
-        return dir(self.obj)
+        if self._split_qual_name:
+            return self._split_qual_name[-1].startswith("_")
+        else:
+            return str(self.get_key()).startswith("_")
 
-    def generate_children(self):
-        """ Create ObjInfo children under this one.
+
+class _children_origins:
+    def from_instance(self):
+        """ Get whether this attribute came from the instance.
 
             :param ObjInfo self: """
-        for attr_name in self.get_attr_names():
-            ObjInfo(obj=getattr(self.obj, attr_name), parent=self)
+        if parent := self.generate_parent():
+            return getattr(parent.obj, str(self.get_key()), object()) != self.obj
+        else:
+            return False
 
 
-@initBases
-class ObjInfo(TreeDiagram, _ObjInfo_Children):
-    """ Get whether obj is a module, function, class, method, property or variable.
-        Note: Static- and unbound self methods are incorrect for nested class definitions. """
-    def __init__(self, obj, parent=None):
-        self.obj = obj
 
-        self._class = self.obj.__class__
-        self._class_name = self._class.__name__
-        self._owner = self._get_owner()
+class _ObjInfo_children(_children_properties, _children_origins):
+    def get_attribute_child(self, key):
+        """ Create a single ObjInfo from this instance's attribute key and put as child.
 
-    def _get_owner(self):
-        """ Get owner of obj or None. """
-        # Check if second last qualname is class
-        split_qual_name = getattr(self.obj, "__qualname__", "").split(".")
-        if len(split_qual_name) > 1:
-            return getattr(self.obj, "__globals__", {}).get(split_qual_name[-2])
+            :param ObjInfo self:
+            :param key: Attribute key. """
+        return ObjInfo(obj=getattr(self.obj, key), parent=self)
 
+    def generate_attributes(self, protected=False, **methods):
+        """ Generate ObjInfo attribute children with filters correlating to ObjInfo's methods.
+
+            :param ObjInfo self:
+            :param protected: """
+        methods.update({key: value for key, value in locals().items() if key not in ("self", "methods")})
+
+        for key in dir(self.obj):
+            objInfo = self.get_attribute_child(key)
+            for method_name, boolean in methods.items():
+                if getattr(objInfo, method_name)() != boolean:
+                    objInfo.remove()
+                    break
+        return self
+
+
+class _ObjInfo_type:
     def is_module(self):
-        """ Get whether obj is a module. """
+        """ Get whether obj is a module.
+
+            :param ObjInfo self: """
         return inspect.ismodule(self.obj)
 
     def is_function(self):
-        """ Get whether obj is a function. """
+        """ Get whether obj is a function.
+
+            :param ObjInfo self: """
         return inspect.isfunction(self.obj) and not self.is_method()
 
     def is_class(self):
-        """ Get whether obj is a class. """
+        """ Get whether obj is a class.
+
+            :param ObjInfo self: """
         return inspect.isclass(self.obj)
 
     def is_property(self):
-        """ Get whether obj is a property of a class. """
+        """ Get whether obj is a property of a class.
+
+                :param ObjInfo self: """
         # return hasattr(self.obj, "fget")
         return inspect.isdatadescriptor(self.obj)
 
     def is_instance(self):
-        """ Get whether obj is an instance of it's class. """
+        """ Get whether obj is an instance of it's class.
+
+            :param ObjInfo self: """
         return not hasattr(self.obj, "__name__") and not self.is_property() and not self.is_method()
 
     def is_method(self):
-        """ Get whether obj is a method. """
+        """ Get whether obj is a method.
+
+            :param ObjInfo self: """
         if inspect.ismethod(self.obj) or inspect.ismethoddescriptor(self.obj):
             return True
 
@@ -221,6 +248,48 @@ class ObjInfo(TreeDiagram, _ObjInfo_Children):
                 return True
 
         return False
+
+
+# HERE **
+# Add methods to retrieve origin and add new feature to get attributes defined by a certain class
+# Then we can change test to get all _ObjInfo_type's methods instead of is_*
+# Then we can change protected to is_protected etc
+
+@initBases
+class ObjInfo(TreeDiagram, _ObjInfo_children, _ObjInfo_type):
+    """ Get whether obj is a module, function, class, method, property or variable.
+        A class obj has keys for all it's attribute children. A function with a nested function child will have key set to None.
+        Note: Static- and unbound self methods are incorrect for nested class definitions. """
+    def __init__(self, obj, parent=None):
+        self.obj = obj
+
+        self._class = self.obj.__class__
+        self._class_name = self._class.__name__
+        self._split_qual_name = qualname.split(".") if (qualname := getattr(self.obj, "__qualname__", None)) else []
+        self._owner = self._get_owner()
+
+    def _get_owner(self):
+        """ Get owner of obj or None. """
+        # Check if second last qualname is class
+        if len(self._split_qual_name) > 1:
+            return getattr(self.obj, "__globals__", {}).get(self._split_qual_name[-2])
+
+    def get_key(self):
+        """ Return key to this obj from it's parent. """
+        if parent := self.get_parent():
+            return dict_index(parent.obj.__dict__, self.obj, None)
+
+    def generate_parent(self):
+        """ Generate parent with self._owner """
+        if parent := self.get_parent():
+            return parent
+        elif self._owner:
+            self.set_parent(objInfo := ObjInfo(self._owner))
+            return objInfo
+
+
+
+
 
     def subset_is_method_bound(self):
         """ Subset of `is_method`: Get whether a method is bound. """
@@ -242,7 +311,7 @@ class ObjInfo(TreeDiagram, _ObjInfo_Children):
 
 
 from generallibrary.functions import SigInfo
-
+from generallibrary.iterables import dict_index
 
 
 
