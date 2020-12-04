@@ -11,7 +11,7 @@ class TreeDiagram:
 
         Saves class name and has to access it as an attribute when using `load()`.
         Use metaclass generallibrary.HierarchyStorer to easily store inheriters base class.
-        Use initBases decorator to automatically call _post_init.
+        Use initBases decorator to automatically call __init_post__.
         Todo: Idea: Make TreeDiagram loadable with a generic list of lists for example. """
     data_keys = []
 
@@ -19,15 +19,21 @@ class TreeDiagram:
         self._children = []
         self.data = {}
         self.data_keys = []
-
         self._parent = None
-        self.set_parent(parent=parent)
+
+        self.hook_create_pre()
+
+    def __init_post__(self, parent=None, children_dicts=None):
+        """ Do this stuff post to match TreeDiagram().set_parent() behaviour.
+            Otherwise new parent hook is called before inheriters' inits.
+            @initBases calls this automatically. """
+        self.set_parent(parent=parent, old_parent=None)
 
         if children_dicts:
             for child_dict in children_dicts:
                 self.load(child_dict, parent=self)
 
-        self.hook_create_pre()
+        self.hook_create_post()
 
     def hook_create_pre(self): """ Pre-creation hook. """
     def hook_create_post(self): """ Post-creation hook. """
@@ -44,15 +50,14 @@ class TreeDiagram:
         self.data_keys.append(key)
         return value
 
-    def _post_init(self):
-        """ @initBases calls this automatically. """
-        self.hook_create_post()
-
-    def set_parent(self, parent):
+    def set_parent(self, parent, old_parent=...):
         """ Set a new parent for this Node.
 
-            :param TreeDiagram or None parent: """
-        old_parent = self.get_parent()
+            :param TreeDiagram or None parent:
+            :param TreeDiagram or None old_parent: """
+        if old_parent is ...:
+            old_parent = self.get_parent()
+
         if old_parent:
             old_parent._children.remove(self)
 
@@ -60,15 +65,16 @@ class TreeDiagram:
             self.hook_lose_parent(old_parent=old_parent, parent=parent)
 
         if parent:
-            if self in parent.all_parents():
-                raise AttributeError(f"Cannot set {parent} as parent for {self} as it becomes circular. ")
+            # if self in parent.all_parents():
+            #     raise AttributeError(f"Cannot set {parent} as parent for {self} as it becomes circular. ")
             parent._children.append(self)
 
             parent.hook_add_child(self)
             self.hook_new_parent(parent=parent, old_parent=old_parent)
 
         self._parent = parent
-        return self
+        return parent
+        # return self
 
     def get_parent(self, index=0):
         """ Get this Node's parent.

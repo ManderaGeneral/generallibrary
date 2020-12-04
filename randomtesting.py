@@ -10,10 +10,27 @@
 
 from generallibrary import ObjInfo
 
-# class Foo:
-#     def bar(self):
-#         pass
-# objInfo = ObjInfo(Foo).generate_attributes(is_method=True)
-# print(objInfo.get_children())
+import inspect
+import sys
+
+class Test(ObjInfo):
+    def tests(self):
+        pass
+
+    class Foo:
+        def bar(self):
+            pass
+
+
+print(Test.get_parent.__module__)
+print(Test.tests.__module__)
+
+print(Test.get_parent.__qualname__)
+print(Test.tests.__qualname__)
+
+# print(sys.modules.get("generallibrary.object"))
+
+# objInfo = ObjInfo(Test)
+
 
 

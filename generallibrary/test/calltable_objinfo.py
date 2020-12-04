@@ -26,7 +26,7 @@ def a():
         pass
     return b
 
-callTable = CallTable("ObjInfo").set_args(
+callTable = CallTable().set_args(
     module=inspect,
     function=a,
     nested_function=a(),
@@ -36,8 +36,8 @@ callTable = CallTable("ObjInfo").set_args(
     bound_self_method=_Foo()._self,
     unbound_self_method=_Foo._self,
 
-    bound_init_method=_Foo().__init__,
-    unbound_init_method=_Foo.__init__,
+    bound_inherited_init_method=_Foo().__init__,
+    unbound_inherited_init_method=_Foo.__init__,
 
     bound_cls_method=_Foo()._cls,
     unbound_cls_method=_Foo.__dict__["_cls"],
@@ -45,30 +45,37 @@ callTable = CallTable("ObjInfo").set_args(
     bound_static_method=_Foo()._static,
     unbound_static_method=_Foo.__dict__["_static"],
 
-    property=_Foo._property,
+    property=_Foo._property.fget,
 )
 
+callTable.name = "Testing"
 callTable.generate_with_funcs(
-    is_module=lambda obj: ObjInfo(obj).is_module(),
-    is_function=lambda obj: ObjInfo(obj).is_function(),
-    is_class=lambda obj: ObjInfo(obj).is_class(),
-    is_instance=lambda obj: ObjInfo(obj).is_instance(),
-    is_method=lambda obj: ObjInfo(obj).is_method(),
-    is_property=lambda obj: ObjInfo(obj).is_property(),
-    is_method_bound=lambda obj: ObjInfo(obj).is_method_bound(),
+    has_module=lambda obj: obj.__module__,
+    has_qualname=lambda obj: obj.__qualname__,
 )
 
+# callTable.name = "ObjInfo"
+# callTable.generate_with_funcs(
+#     is_module=lambda obj: ObjInfo(obj).is_module(),
+#     is_function=lambda obj: ObjInfo(obj).is_function(),
+#     is_class=lambda obj: ObjInfo(obj).is_class(),
+#     is_instance=lambda obj: ObjInfo(obj).is_instance(),
+#     is_method=lambda obj: ObjInfo(obj).is_method(),
+#     is_property=lambda obj: ObjInfo(obj).is_property(),
+#     is_method_bound=lambda obj: ObjInfo(obj).is_method_bound(),
+# )
 
-callTable.name = "Inspect"
-callTable.generate_with_funcs(
-    ismodule=lambda obj: inspect.ismodule(obj),
-    isfunction=lambda obj: inspect.isfunction(obj),
-    isclass=lambda obj: inspect.isclass(obj),
-    ismethod=lambda obj: inspect.ismethod(obj),
-    ismethoddescriptor=lambda obj: inspect.ismethoddescriptor(obj),
-    callable=lambda obj: callable(obj),
-    isdatadescriptor=lambda obj: inspect.isdatadescriptor(obj),
-)
+
+# callTable.name = "Inspect"
+# callTable.generate_with_funcs(
+#     ismodule=lambda obj: inspect.ismodule(obj),
+#     isfunction=lambda obj: inspect.isfunction(obj),
+#     isclass=lambda obj: inspect.isclass(obj),
+#     ismethod=lambda obj: inspect.ismethod(obj),
+#     ismethoddescriptor=lambda obj: inspect.ismethoddescriptor(obj),
+#     callable=lambda obj: callable(obj),
+#     isdatadescriptor=lambda obj: inspect.isdatadescriptor(obj),
+# )
 
 # callTable.generate_with_funcs(
 #     isfunction=lambda obj: inspect.isfunction(obj),

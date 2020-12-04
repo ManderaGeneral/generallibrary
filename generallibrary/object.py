@@ -109,7 +109,7 @@ def initBases(cls):
     Wrap a class' unbound __init__ method to take any arguments.
     When wrapper is called it iterates DIRECT bases to call their unbound __init__ methods along with it's own original __init__.
 
-    Also looks for defined `_post_init` methods, stores them in `instance._post_inits` and calls them all after all inits.
+    Also looks for defined `__init_post__` methods, stores them in `instance.__init_post__s` and calls them all after all inits.
     """
     cls_init = cls.__init__  # Unbound original __init__ method of class
 
@@ -123,8 +123,8 @@ def initBases(cls):
 
         initialized_bases = []
 
-        if getattr(cls_SigInfo["self"], "_post_inits", None) is None:
-            cls_SigInfo["self"]._post_inits = []
+        if getattr(cls_SigInfo["self"], "__init_post__s", None) is None:
+            cls_SigInfo["self"].__init_post__s = []
 
 
         for base in cls.__bases__ + (cls, ):
@@ -135,10 +135,10 @@ def initBases(cls):
                 initialized_bases.append(init)
 
 
-                if getattr(base, "_post_init", None) and base._post_init not in cls_SigInfo["self"]._post_inits:
-                    cls_SigInfo["self"]._post_inits.append(base._post_init)
-        if cls is cls_SigInfo["self"].__class__ and getattr(cls_SigInfo["self"], "_post_inits", None) is not None:
-            for post_init in cls_SigInfo["self"]._post_inits:
+                if getattr(base, "__init_post__", None) and base.__init_post__ not in cls_SigInfo["self"].__init_post__s:
+                    cls_SigInfo["self"].__init_post__s.append(base.__init_post__)
+        if cls is cls_SigInfo["self"].__class__ and getattr(cls_SigInfo["self"], "__init_post__s", None) is not None:
+            for post_init in cls_SigInfo["self"].__init_post__s:
                 cls_SigInfo(child_callable=post_init)
 
     cls.__init__ = _wrapper
@@ -255,29 +255,53 @@ class _ObjInfo_type:
 # Then we can change test to get all _ObjInfo_type's methods instead of is_*
 # Then we can change protected to is_protected etc
 
+
 @initBases
 class ObjInfo(TreeDiagram, _ObjInfo_children, _ObjInfo_type):
     """ Get whether obj is a module, function, class, method, property or variable.
-        A class obj has keys for all it's attribute children. A function with a nested function child will have key set to None.
-        Note: Static- and unbound self methods are incorrect for nested class definitions. """
+        Automatically generates parents with `get_parent` when needed.
+        Children are generated with `generate_attributes`.
+        Nested definitions are not att"""
     def __init__(self, obj, parent=None, key=None):
         self.obj = obj
-        self.key = key
+        self.key = getattr(self.obj, "__name__", key)
+
+        if self.key is None:
+            raise AttributeError(f"Could not set key for {self.obj}, must be set manually.")
 
     def get_parent(self, index=0):
-        """ Tries to generate parent with dunder- qualname and globals.
+        """ Tries to generate parent with dunder- qualname and globals if index is 0.
 
             :param ObjInfo self:
-            :param index: """
+            :param index:
+
+            Todo: Handle <locals> in qualname. """
         if parent := super().get_parent(index=index):
             return parent
-        elif hasattr(self, "obj") and index == 0:
+
+        elif index == 0:
+            module_name = getattr(self.obj, "__module__", None)
+            module = sys.modules.get(module_name)
+
             split_qualname = qualname.split(".") if (qualname := getattr(self.obj, "__qualname__", None)) else []
+
             if len(split_qualname) > 1:
-                parent_obj = getattr(self.obj, "__globals__", {}).get(self._split_qual_name[-2])
-                if parent_obj:
-                    self.set_parent(ObjInfo(parent_obj))
-                    return self.get_parent()  # HERE ** Create parent automatically if needed, change _owner to get_parent
+
+                if obj_globals := getattr(self.obj, "__globals__", None):
+
+                for i, name in enumerate(split_qualname[-2::-1]):
+                    if parent_obj := obj_globals.get(name):
+                        for i2 in range(i):
+                            parent_obj = getattr(parent_obj, split_qualname[-2 - i + i2 + 1])
+                        return self.set_parent(parent=ObjInfo(parent_obj), old_parent=None)
+
+            elif module:
+                return self.set_parent(parent=ObjInfo(module), old_parent=None)
+
+    def hook_new_parent(self, parent, old_parent):
+        """ Assert that child's key is in parent's dir.
+            If key is None then we search for child in dir. """
+        assert self.key in dir(parent.obj)
 
 
     def subset_is_method_bound(self):

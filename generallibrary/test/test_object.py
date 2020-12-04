@@ -154,13 +154,13 @@ class ObjectTest(unittest.TestCase):
 
         self.assertEqual(None, A(5).b)
 
-    def test_post_init(self):
+    def test__init_post__(self):
         glob = []
         class A:
             def __init__(self):
                 glob.append(1)
 
-            def _post_init(self):
+            def __init_post__(self):
                 glob.append(4)
 
         @initBases
@@ -168,7 +168,7 @@ class ObjectTest(unittest.TestCase):
             def __init__(self):
                 glob.append(2)
 
-            def _post_init(self):
+            def __init_post__(self):
                 glob.append(5)
 
         @initBases
@@ -176,7 +176,7 @@ class ObjectTest(unittest.TestCase):
             def __init__(self):
                 glob.append(3)
 
-            def _post_init(self):
+            def __init_post__(self):
                 glob.append(6)
 
         C()
