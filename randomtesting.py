@@ -13,7 +13,7 @@ from generallibrary import ObjInfo
 import inspect
 import sys
 
-class Test(ObjInfo):
+class Test:
     def tests(self):
         pass
 
@@ -21,16 +21,13 @@ class Test(ObjInfo):
         def bar(self):
             pass
 
-
-print(Test.get_parent.__module__)
-print(Test.tests.__module__)
-
-print(Test.get_parent.__qualname__)
-print(Test.tests.__qualname__)
-
-# print(sys.modules.get("generallibrary.object"))
-
-# objInfo = ObjInfo(Test)
+def a():
+    def b():
+        pass
+    return b
 
 
+# print(ObjInfo(Test.tests).get_parent().obj)
+# print(ObjInfo(Test().tests).get_parent().obj)
 
+print(ObjInfo(a).is_method())

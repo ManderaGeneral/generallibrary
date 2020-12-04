@@ -48,22 +48,22 @@ callTable = CallTable().set_args(
     property=_Foo._property.fget,
 )
 
-callTable.name = "Testing"
-callTable.generate_with_funcs(
-    has_module=lambda obj: obj.__module__,
-    has_qualname=lambda obj: obj.__qualname__,
-)
-
-# callTable.name = "ObjInfo"
+# callTable.name = "Testing"
 # callTable.generate_with_funcs(
-#     is_module=lambda obj: ObjInfo(obj).is_module(),
-#     is_function=lambda obj: ObjInfo(obj).is_function(),
-#     is_class=lambda obj: ObjInfo(obj).is_class(),
-#     is_instance=lambda obj: ObjInfo(obj).is_instance(),
-#     is_method=lambda obj: ObjInfo(obj).is_method(),
-#     is_property=lambda obj: ObjInfo(obj).is_property(),
-#     is_method_bound=lambda obj: ObjInfo(obj).is_method_bound(),
+#     has_module=lambda obj: obj.__module__,
+#     has_qualname=lambda obj: obj.__qualname__,
 # )
+
+callTable.name = "ObjInfo"
+callTable.generate_with_funcs(
+    is_module=lambda obj: ObjInfo(obj).is_module(),
+    is_function=lambda obj: ObjInfo(obj).is_function(),
+    is_class=lambda obj: ObjInfo(obj).is_class(),
+    is_instance=lambda obj: ObjInfo(obj).is_instance(),
+    is_method=lambda obj: ObjInfo(obj).is_method(),
+    is_property=lambda obj: ObjInfo(obj).is_property(),
+    is_method_bound=lambda obj: ObjInfo(obj).is_method_bound(),
+)
 
 
 # callTable.name = "Inspect"

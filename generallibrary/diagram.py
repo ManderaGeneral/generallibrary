@@ -19,6 +19,7 @@ class TreeDiagram:
         self._children = []
         self.data = {}
         self.data_keys = []
+        self._repr_data_keys = []
         self._parent = None
 
         self.hook_create_pre()
@@ -44,10 +45,13 @@ class TreeDiagram:
     def hook_lose_child(self, child): """ Lost child hook. """
     def hook_set_attribute(self, key, value, old_value): """ Attribute set hook. """
 
-    def data_keys_add(self, key, value):
+    def data_keys_add(self, key, value, use_in_repr=False):
         """ Define what attributes to keep track of automatically in __setattr__.
-            Returns value to enable oneliner in __init__."""
+            Returns value to enable oneliner in __init__.
+            Todo: Removable keys. """
         self.data_keys.append(key)
+        if use_in_repr:
+            self._repr_data_keys.append(key)
         return value
 
     def set_parent(self, parent, old_parent=...):
@@ -180,7 +184,10 @@ class TreeDiagram:
         self.hook_remove()
 
     def __repr__(self):
-        return f"<{self.__class__.__name__} {repr(getattr(self, '_children', ''))}>"
+        _repr_dict = {key: self.data[key] for key in self._repr_data_keys}
+        return f"<{self.__class__.__name__} {_repr_dict}>"
+
+        # return f"<{self.__class__.__name__} {repr(getattr(self, '_children', ''))}>"
 
     def __setattr__(self, key, value):
         if key in self.data_keys:

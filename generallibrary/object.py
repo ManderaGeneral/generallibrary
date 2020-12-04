@@ -151,13 +151,9 @@ from generallibrary.diagram import TreeDiagram
 class _children_properties:
     def protected(self):
         """ Get whether possible key is protected, False if key is None.
-            Primarily checks __qualname__, falls back on `self.get_key()`.
 
             :param ObjInfo self: """
-        if self._split_qual_name:
-            return self._split_qual_name[-1].startswith("_")
-        else:
-            return str(self.get_key()).startswith("_")
+        return str(self.key).startswith("_")
 
 
 class _children_origins:
@@ -165,8 +161,8 @@ class _children_origins:
         """ Get whether this attribute came from the instance.
 
             :param ObjInfo self: """
-        if parent := self.generate_parent():
-            return getattr(parent.obj, str(self.get_key()), object()) != self.obj
+        if parent := self.get_parent():
+            return getattr(parent.obj, self.key) != self.obj
         else:
             return False
 
@@ -178,7 +174,7 @@ class _ObjInfo_children(_children_properties, _children_origins):
 
             :param ObjInfo self:
             :param key: Attribute key. """
-        return ObjInfo(obj=getattr(self.obj, key), parent=self)
+        return ObjInfo(obj=getattr(self.obj, key), parent=self, key=key)
 
     def generate_attributes(self, protected=False, **methods):
         """ Generate ObjInfo attribute children with filters correlating to ObjInfo's methods.
@@ -241,17 +237,14 @@ class _ObjInfo_type:
         if isinstance(self.obj, MethodWrapperType):
             return True
 
-        if self._owner:
-            if ObjInfo(self._owner).is_class():
-                return True
-            elif hasattr(self._owner, self.obj.__name__):
+        if parent := self.get_parent():
+            if parent.is_class():
                 return True
 
         return False
 
 
 # HERE **
-# Add methods to retrieve origin and add new feature to get attributes defined by a certain class
 # Then we can change test to get all _ObjInfo_type's methods instead of is_*
 # Then we can change protected to is_protected etc
 
@@ -259,44 +252,33 @@ class _ObjInfo_type:
 @initBases
 class ObjInfo(TreeDiagram, _ObjInfo_children, _ObjInfo_type):
     """ Get whether obj is a module, function, class, method, property or variable.
-        Automatically generates parents with `get_parent` when needed.
-        Children are generated with `generate_attributes`.
-        Nested definitions are not att"""
+        Automatically generates parents post creation for attributes.
+        Children are generated with `generate_attributes`. """
     def __init__(self, obj, parent=None, key=None):
         self.obj = obj
-        self.key = getattr(self.obj, "__name__", key)
+        self.key = self.data_keys_add("key", getattr(self.obj, "__name__", key), use_in_repr=True)
 
-        if self.key is None:
-            raise AttributeError(f"Could not set key for {self.obj}, must be set manually.")
+        # if self.key is None:
+        #     raise AttributeError(f"Could not set key for {self.obj}, must be set manually.")
 
-    def get_parent(self, index=0):
-        """ Tries to generate parent with dunder- qualname and globals if index is 0.
+    def hook_create_post(self):
+        """ Attempt to generate parents after creation if missing. """
+        if self.get_parent() is None:
+            self._generate_parents()
 
-            :param ObjInfo self:
-            :param index:
-
+    def _generate_parents(self):
+        """ Generates all parents to this ObjInfo all the way up to and including module.
             Todo: Handle <locals> in qualname. """
-        if parent := super().get_parent(index=index):
-            return parent
+        module_name = getattr(self.obj, "__module__", None)
+        module = sys.modules.get(module_name)
+        split_qualname = qualname.split(".") if (qualname := getattr(self.obj, "__qualname__", None)) else None
 
-        elif index == 0:
-            module_name = getattr(self.obj, "__module__", None)
-            module = sys.modules.get(module_name)
+        if module and split_qualname and "<locals>" not in split_qualname:
+            objInfo = ObjInfo(obj=module)
+            for name in split_qualname[:-1:]:
+                objInfo = objInfo.get_attribute_child(name)
 
-            split_qualname = qualname.split(".") if (qualname := getattr(self.obj, "__qualname__", None)) else []
-
-            if len(split_qualname) > 1:
-
-                if obj_globals := getattr(self.obj, "__globals__", None):
-
-                for i, name in enumerate(split_qualname[-2::-1]):
-                    if parent_obj := obj_globals.get(name):
-                        for i2 in range(i):
-                            parent_obj = getattr(parent_obj, split_qualname[-2 - i + i2 + 1])
-                        return self.set_parent(parent=ObjInfo(parent_obj), old_parent=None)
-
-            elif module:
-                return self.set_parent(parent=ObjInfo(module), old_parent=None)
+            self.set_parent(objInfo)
 
     def hook_new_parent(self, parent, old_parent):
         """ Assert that child's key is in parent's dir.
@@ -304,21 +286,24 @@ class ObjInfo(TreeDiagram, _ObjInfo_children, _ObjInfo_type):
         assert self.key in dir(parent.obj)
 
 
-    def subset_is_method_bound(self):
-        """ Subset of `is_method`: Get whether a method is bound. """
-        assert self.is_method()
-
-        has_self = hasattr(self.obj, "__self__")
-        if has_self:
-            return True
-
-        if self._owner and self._owner.__dict__.get(self.obj.__name__) == self.obj:
-            return False
-
-        if self._owner and not has_self:
-            return True
-
-        return False
+    # def subset_is_method_bound(self):
+    #     """ Subset of `is_method`: Get whether a method is bound. """
+    #     assert self.is_method()
+    #
+    #     has_self = hasattr(self.obj, "__self__")
+    #     if has_self:
+    #         return True
+    #
+    #     parent = self.get_parent()
+    #     if parent:
+    #         # if parent.obj.__dict__.get(self.obj.__name__) == self.obj:
+    #         if getattr(parent.obj, self.obj.__name__, None) == self.obj:
+    #             return False
+    #
+    #         if not has_self:
+    #             return True
+    #
+    #     return False
 
 
 
