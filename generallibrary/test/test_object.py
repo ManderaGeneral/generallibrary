@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.object import getsize, initBases, attributes, ObjInfo
+from generallibrary.object import getsize, initBases, attributes, ObjInfo, _ObjInfo_type
 
 
 class ObjectTest(unittest.TestCase):
@@ -238,12 +238,13 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(["a", "b", "c", "d", "e"], list(attributes(Foo(), from_bases=False)))
 
     def test_ObjInfo(self):
-        type_methods = [key for key in dir(ObjInfo) if key.startswith("is_")]
+        unbound_type_methods = [objInfo.obj for objInfo in ObjInfo(_ObjInfo_type).generate_attributes() if objInfo.is_method()]
+        # Todo: HERE ** Read randomtesting's notes
 
         def check(bound_method):
             """ Check that the correct method is True and all other are False. """
             objInfo = getattr(bound_method, "__self__")
-            self.assertEqual([1], [1 for key in type_methods if getattr(objInfo, key)()])
+            self.assertEqual([1], [1 for method in type_methods if getattr(objInfo, key)()])
             self.assertTrue(bound_method())
 
         check(ObjInfo(unittest).is_module)
@@ -279,7 +280,6 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(False, ObjInfo(a()).protected())
 
 class _Foo:
-
     _attr = 5
     attr = 3
 

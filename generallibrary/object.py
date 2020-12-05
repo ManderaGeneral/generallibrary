@@ -176,21 +176,16 @@ class _ObjInfo_children(_children_properties, _children_origins):
             :param key: Attribute key. """
         return ObjInfo(obj=getattr(self.obj, key), parent=self, key=key)
 
-    def generate_attributes(self, protected=False, **methods):
+
+    # def generate_attributes(self, protected=False, is_module=None, is_function=None, is_class=None, is_property=None, is_instance=None, is_method=None):
+    def generate_attributes(self):
         """ Generate ObjInfo attribute children with filters correlating to ObjInfo's methods.
+            Todo: Somehow prevent duplicate children  here. """
+        assert isinstance(self, ObjInfo)
+        return [self.get_attribute_child(key) for key in dir(self.obj)]
 
-            :param ObjInfo self:
-            :param protected: """
-        methods.update({key: value for key, value in locals().items() if key not in ("self", "methods")})
-
-        for key in dir(self.obj):
-            objInfo = self.get_attribute_child(key)
-            for method_name, boolean in methods.items():
-                if getattr(objInfo, method_name)() != boolean:
-                    objInfo.remove()
-                    break
-        return self
-
+    def __iter__(self):
+        return self.generate_attributes()
 
 class _ObjInfo_type:
     def is_module(self):

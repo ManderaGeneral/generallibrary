@@ -30,4 +30,13 @@ def a():
 # print(ObjInfo(Test.tests).get_parent().obj)
 # print(ObjInfo(Test().tests).get_parent().obj)
 
-print(ObjInfo(a).is_method())
+# print(ObjInfo(a).is_method())
+
+
+# Todo: An instance should probably not have a parent as nothing will have it as an attribute.
+# Todo: Then we could make an intance's method attributes be bound
+
+print(getattr(Test(), "tests"))
+print(Test().__qualname__)
+
+
