@@ -10,8 +10,6 @@
 
 from generallibrary import ObjInfo
 
-import inspect
-import sys
 
 class Test:
     def tests(self):
@@ -26,17 +24,9 @@ def a():
         pass
     return b
 
-
-# print(ObjInfo(Test.tests).get_parent().obj)
-# print(ObjInfo(Test().tests).get_parent().obj)
-
-# print(ObjInfo(a).is_method())
+objInfo = ObjInfo(Test())
+objInfo.generate_attributes()  # HERE ** Store all attributes safely
 
 
-# Todo: An instance should probably not have a parent as nothing will have it as an attribute.
-# Todo: Then we could make an intance's method attributes be bound
-
-print(getattr(Test(), "tests"))
-print(Test().__qualname__)
-
-
+# print(objInfo.get_parent())
+# print(objInfo.get_children())
