@@ -1,6 +1,6 @@
 
 
-class _ObjInfo_children:
+class _ObjInfoChildren:
     def get_attribute_child(self, key):
         """ Create a single ObjInfo from this instance's attribute key and put as child.
 

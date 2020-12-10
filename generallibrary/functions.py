@@ -8,6 +8,7 @@ def deco_cache():
     """ Enable caching for a method or function. """
     return functools.lru_cache()
 
+
 class classproperty:
     """ Just like @property but for a class method.
         @classproperty
@@ -19,6 +20,7 @@ class classproperty:
 
     def __get__(self, owner_self, owner_cls):
         return self.fget(owner_cls)
+
 
 class SigInfo:
     """
@@ -226,13 +228,11 @@ class SigInfo:
         """ Can set single keyword argument or entire *args."""
         self.allArgs[name] = value
 
-    def __call__(self, child_callable=None):
-        """ Calls callableObject with filled args and kwargs.
-            Unfilled required parameters will get a None value.
-            Duplicate keys will prioritize unpackedArgs. """
+    def call(self, child_callable=None):
+        """ Calls own callableObject or given child callable with filled args and kwargs.
+            Unfilled required parameters will get a None value. """
         if child_callable:
-            sigInfo = SigInfo(child_callable, **self.allArgs)
-            return sigInfo()
+            return SigInfo(child_callable, **self.allArgs).call()
         else:
             return self.callableObject(*self.unpackedArgs, **self.unpackedKwargs)
 
@@ -242,14 +242,16 @@ class SigInfo:
         return f"<SigInfo for '{self.callableObject.__class__.__name__}' with names '{', '.join(self.names)}'>"
 
 
-
 ignore = ["+", "-", "*", "/", "(", ")", "sqrt"]
+
+
 def _tokenize(expression):
     """
     Tokenize an expression
     Taken from myself at https://stackoverflow.com/questions/61948141/python-function-from-mathematical-expression-string/61949248
     """
     return re.findall(r"(\b\w*[.]?\w+\b|[()+*\-/])", expression)
+
 
 def calculate(expression, *args):
     """
@@ -274,6 +276,7 @@ def calculate(expression, *args):
                 seenArgs[token] = str(args[len(seenArgs)])
             newTokens.append(seenArgs[token])
     return eval("".join(newTokens))
+
 
 def defaults(dictionary, overwriteNone=False, **kwargs):
     """
@@ -326,12 +329,13 @@ class Operators:
             for name, func in cls.comparisons.items():
 
                 lambdaFunc = lambda left, right, func=func: func(
-                    SigInfo(leftLambda, left=left, right=right)(),
-                    SigInfo(rightLambda, left=left, right=right)())
+                    SigInfo(leftLambda, left=left, right=right).call(),
+                    SigInfo(rightLambda, left=left, right=right).call())
                 setattr(baseCls, name, lambdaFunc)
 
             return baseCls
         return wrapper
+
 
 def deco_cast_parameters(**pars_to_cast):
     """ Decorator to make sure `path` parameter is a Path.
@@ -346,9 +350,10 @@ def deco_cast_parameters(**pars_to_cast):
                 if not typeChecker(sigInfo[par_name], cls, error=False):
                     sigInfo[par_name] = cls(sigInfo[par_name])
 
-            return sigInfo()
+            return sigInfo.call()
         return _wrapper
     return _decorator
+
 
 def deco_default_self_args(func):
     """ As an alternative to setting each and every parameter's default value to `None` for a method.
@@ -365,14 +370,27 @@ def deco_default_self_args(func):
                     raise AttributeError(f"Missing attribute '{required_parameter}' for instance '{sigInfo['self']}'.")
                 sigInfo[required_parameter] = attr_value
 
-        return sigInfo()
+        return sigInfo.call()
     return _wrapper
+
+
+def deco_extend(outer_cls):
+    """ Allows additional arguments when inheriting and extending a built-in.
+        Overrides __new__ to call cls' first base's __new__ with the single first given argument.
+        Todo: Test deco_extend with int and str. """
+    def __new__(cls, *args, **kwargs):
+        arg = args[0] if args else next(iter(kwargs.values()))
+        return cls.__bases__[0].__new__(cls, arg)
+
+    outer_cls.__new__ = __new__
+    return outer_cls
 
 
 class EmptyContext:
     """ Class for an empty context manager. """
     def __enter__(self):
         pass
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
@@ -433,11 +451,8 @@ class CallTable:
         return self._generate(funcs=funcs)
 
 
+from generallibrary.types_ import typeChecker
 
-
-
-
-from generallibrary.types import typeChecker
 
 
 

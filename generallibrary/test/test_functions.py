@@ -179,19 +179,19 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(2, sigInfo["x"])
 
     def test_sigInfoCall(self):
-        self.assertEqual(None, SigInfo(lambda: None)())
+        self.assertEqual(None, SigInfo(lambda: None).call())
 
         sigInfo = SigInfo(lambda x: x, 5)
-        self.assertEqual(5, sigInfo())
+        self.assertEqual(5, sigInfo.call())
 
         sigInfo["x"] = 3
-        self.assertEqual(3, sigInfo())
+        self.assertEqual(3, sigInfo.call())
 
         sigInfo["new"] = 4
-        self.assertEqual(3, sigInfo())
+        self.assertEqual(3, sigInfo.call())
 
         sigInfo["x"] = 3
-        self.assertEqual(3, sigInfo())
+        self.assertEqual(3, sigInfo.call())
 
     def test_defaults(self):
         self.assertEqual({"a": 5, "b": 3}, defaults({"a": 5}, b=3))

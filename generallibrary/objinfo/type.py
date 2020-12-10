@@ -3,7 +3,7 @@ import inspect
 from types import MethodWrapperType
 
 
-class _ObjInfo_type:
+class _ObjInfoType:
     """ Only one of these methods will return True. """
     def is_module(self):
         """ Get whether obj is a module.

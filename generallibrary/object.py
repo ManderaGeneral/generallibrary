@@ -30,7 +30,7 @@ def getsize(obj):
         objects = get_referents(*need_referents)
     return size
 
-# HERE ** Put this in ObjInfo
+# 1: HERE ** Put this in ObjInfo
 def attributes(obj, properties=True, class_=True, methods=True, variables=True, modules=False, protected=False, from_instance=True, from_class=True, from_bases=True):
     """ Get attributes from a Module or Class with a lot of optional flags for filtering.
 
@@ -129,7 +129,7 @@ def initBases(cls):
             init = cls_init if base is cls else base.__init__
 
             if init is not object.__init__ and init not in initialized_bases:
-                cls_SigInfo(child_callable=init)
+                cls_SigInfo.call(child_callable=init)
                 initialized_bases.append(init)
 
 
@@ -137,7 +137,7 @@ def initBases(cls):
                     cls_SigInfo["self"].__init_post__s.append(base.__init_post__)
         if cls is cls_SigInfo["self"].__class__ and getattr(cls_SigInfo["self"], "__init_post__s", None) is not None:
             for post_init in cls_SigInfo["self"].__init_post__s:
-                cls_SigInfo(child_callable=post_init)
+                cls_SigInfo.call(child_callable=post_init)
 
     cls.__init__ = _wrapper
     return cls

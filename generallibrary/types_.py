@@ -126,6 +126,7 @@ def typeChecker(obj, *types, error=True):
     else:
         return True
 
+
 def getBaseClasses(obj, includeSelf=False, includeObject=True):
     """
     Get all base classes from an object's class.

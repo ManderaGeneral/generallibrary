@@ -3,7 +3,7 @@ import unittest
 
 from generallibrary.object import getsize, initBases, attributes
 from generallibrary import ObjInfo
-from generallibrary.objinfo.type import _ObjInfo_type
+from generallibrary.objinfo.type import _ObjInfoType
 
 
 class ObjectTest(unittest.TestCase):
@@ -240,8 +240,7 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(["a", "b", "c", "d", "e"], list(attributes(Foo(), from_bases=False)))
 
     def test_ObjInfo(self):
-        unbound_type_methods = [objInfo.obj for objInfo in ObjInfo(_ObjInfo_type).generate_attributes() if objInfo.is_method()]
-        # Todo: HERE ** Read randomtesting's notes
+        unbound_type_methods = [objInfo.obj for objInfo in ObjInfo(_ObjInfoType).generate_attributes() if objInfo.is_method()]
 
         def check(bound_method):
             """ Check that the correct method is True and all other are False. """

@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames, hasMethod, HierarchyStorer
+from generallibrary.types_ import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames, hasMethod, HierarchyStorer
 
 
 class InheritStr(str):

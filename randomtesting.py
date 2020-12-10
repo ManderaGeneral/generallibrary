@@ -12,6 +12,7 @@ from generallibrary import ObjInfo
 
 
 class Test:
+    x = []
     def tests(self):
         pass
 
@@ -19,13 +20,16 @@ class Test:
         def bar(self):
             pass
 
+
 def a():
     def b():
         pass
     return b
 
-objInfo = ObjInfo(Test())
-objInfo.generate_attributes()  # HERE ** Store all attributes safely
+
+
+# objInfo = ObjInfo(Test())
+# objInfo.generate_attributes()  # 1.1: HERE ** Store all attributes safely
 
 
 # print(objInfo.get_parent())

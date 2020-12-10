@@ -1,6 +1,6 @@
 
 
-class _ObjInfo_origin:
+class _ObjInfoOrigin:
     def from_instance(self):
         """ Get whether this attribute came from the instance.
 

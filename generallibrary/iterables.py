@@ -341,7 +341,7 @@ def combine(**kwargs):
     exec("\n".join(execLines))
     return [] if combinations == [{}] else combinations
 
-from generallibrary.types import typeChecker
+from generallibrary.types_ import typeChecker
 
 
 

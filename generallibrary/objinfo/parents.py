@@ -2,7 +2,7 @@
 import sys
 
 
-class _ObjInfo_parents:
+class _ObjInfoParents:
     def hook_create_post(self):
         """ Attempt to generate parents after creation if missing.
 
@@ -33,7 +33,6 @@ class _ObjInfo_parents:
             :param generallibrary.ObjInfo self:
             :param parent:
             :param old_parent: """
-        print(self.obj, parent.obj, self.key)
         assert self.key
         assert getattr(parent.obj, self.key, None) is self.obj
 

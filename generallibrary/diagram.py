@@ -1,7 +1,17 @@
 
 from generallibrary.object import initBases
-
+from generallibrary.functions import deco_extend
 import pandas
+
+
+@deco_extend
+class _KeyInfo(str):
+    def __init__(self, key, use_in_repr, unique):
+        self.key = key
+        self.use_in_repr = use_in_repr
+        self.unique = unique
+
+
 
 
 @initBases
@@ -45,13 +55,15 @@ class TreeDiagram:
     def hook_lose_child(self, child): """ Lost child hook. """
     def hook_set_attribute(self, key, value, old_value): """ Attribute set hook. """
 
-    def data_keys_add(self, key, value, use_in_repr=False):
+    @classmethod
+    def data_keys_add(cls, key, value, use_in_repr=False, unique=False):
         """ Define what attributes to keep track of automatically in __setattr__.
             Returns value to enable oneliner in __init__.
             Todo: Removable keys. """
-        self.data_keys.append(key)
+        keyInfo = _KeyInfo(key=key, use_in_repr=use_in_repr, unique=unique)  # 1.2: HERE ** implement _KeyInfo
+        cls.data_keys.append(key)
         if use_in_repr:
-            self._repr_data_keys.append(key)
+            cls._repr_data_keys.append(key)
         return value
 
     def set_parent(self, parent, old_parent=...):
@@ -165,7 +177,7 @@ class TreeDiagram:
             :rtype: TreeDiagram """
         class_ = cls if cls.__name__ == d["class_name"] else getattr(cls, d["class_name"], globals().get(d["class_name"]))
         if class_ is None:  # Maybe we could search bases as well, giving us a fourt option... Very messy
-            raise AttributeError(f"Couldn't find class '{d['class_name']}' inside itself, given dictionary or global scope, try HierarchyStorer.")
+            raise AttributeError(f"Couldn't find class '{d['class_name']}' inside itself, try HierarchyStorer.")
 
         instance = class_(parent=parent, **d)
         # If a key is not already defined by argument in an __init__ (through **d above) then we need to set it here
