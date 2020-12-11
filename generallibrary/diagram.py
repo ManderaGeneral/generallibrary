@@ -5,13 +5,11 @@ import pandas
 
 
 @deco_extend
-class _KeyInfo(str):
+class KeyInfo(str):
     def __init__(self, key, use_in_repr, unique):
         self.key = key
         self.use_in_repr = use_in_repr
         self.unique = unique
-
-
 
 
 @initBases
@@ -28,8 +26,6 @@ class TreeDiagram:
     def __init__(self, parent=None, children_dicts=None):
         self._children = []
         self.data = {}
-        self.data_keys = []
-        self._repr_data_keys = []
         self._parent = None
 
         self.hook_create_pre()
@@ -60,11 +56,17 @@ class TreeDiagram:
         """ Define what attributes to keep track of automatically in __setattr__.
             Returns value to enable oneliner in __init__.
             Todo: Removable keys. """
-        keyInfo = _KeyInfo(key=key, use_in_repr=use_in_repr, unique=unique)  # 1.2: HERE ** implement _KeyInfo
-        cls.data_keys.append(key)
-        if use_in_repr:
-            cls._repr_data_keys.append(key)
+        if cls.data_keys is TreeDiagram.data_keys:
+            cls.data_keys = []
+        keyInfo = KeyInfo(key=key, use_in_repr=use_in_repr, unique=unique)
+        cls.data_keys.append(keyInfo)
         return value
+
+    def _singular_alternatives(self, list_, index):
+        try:
+            return list_[index]
+        except IndexError:
+            return None
 
     def set_parent(self, parent, old_parent=...):
         """ Set a new parent for this Node.
@@ -81,6 +83,12 @@ class TreeDiagram:
             self.hook_lose_parent(old_parent=old_parent, parent=parent)
 
         if parent:
+            for keyInfo in self.data_keys:
+                if keyInfo.unique:
+                    sibling = parent.get_child_by_key_values(keyInfo=getattr(self, keyInfo))
+                    if sibling:
+                        sibling.remove()
+
             # if self in parent.all_parents():
             #     raise AttributeError(f"Cannot set {parent} as parent for {self} as it becomes circular. ")
             parent._children.append(self)
@@ -90,16 +98,6 @@ class TreeDiagram:
 
         self._parent = parent
         return parent
-        # return self
-
-    def get_parent(self, index=0):
-        """ Get this Node's parent.
-
-            :rtype: TreeDiagram """
-        try:
-            return self._parent if index == 0 else self.all_parents()[index]
-        except IndexError:
-            return None
 
     def all_parents(self):
         """ Get a list of all parents recursively.
@@ -111,6 +109,15 @@ class TreeDiagram:
             parents.append(part)
         return parents
 
+    def get_parent(self, index=0):
+        """ Get this Node's parent.
+
+            :rtype: TreeDiagram """
+        if index == 0:
+            return self._parent
+        else:
+            return self._singular_alternatives(self.all_parents(), index)
+
     def get_children(self):
         """ Get a list of all children this Node has, empty list if None.
 
@@ -118,26 +125,35 @@ class TreeDiagram:
         return self._children.copy()
 
     def get_child(self, index=0):
-        """ Get a child by index, None if doesn't exist. """
-        try:
-            return self.get_children()[index]
-        except IndexError:
-            return None
+        """ Get a child by index, None if doesn't exist.
+
+            :rtype: TreeDiagram """
+        return self._singular_alternatives(self.get_children(), index)
+
+    def get_children_by_key_values(self, **key_values):
+        """ Get a list of children that matches all given key values. """
+        return [child for child in self.get_children() if all([getattr(child, key) == value for key, value in key_values.items()])]
+
+    def get_child_by_key_values(self, index=0, **key_values):
+        """ Get a child that matches all given key values.
+
+            :rtype: TreeDiagram """
+        return self._singular_alternatives(self.get_children_by_key_values(**key_values), index)
 
     def get_all(self):
         """ Return a flat one-dimensional list of all nodes in this Tree. """
-        l = []
+        nodes = []
         temp = [self]
         while temp:
             treeDiagram = temp[0]
             del temp[0]
 
-            l.append(treeDiagram)
+            nodes.append(treeDiagram)
 
             children = treeDiagram.get_children()
             for child in reversed(children):
                 temp.insert(0, child)
-        return l
+        return nodes
 
     def get_siblings(self):
         """ Get a list of all siblings. """
@@ -181,9 +197,9 @@ class TreeDiagram:
 
         instance = class_(parent=parent, **d)
         # If a key is not already defined by argument in an __init__ (through **d above) then we need to set it here
-        for key in instance.data_keys:
-            if getattr(instance, key, None) != d[key]:
-                setattr(instance, key, d[key])
+        for keyInfo in instance.data_keys:
+            if getattr(instance, keyInfo, None) != d[keyInfo]:
+                setattr(instance, keyInfo, d[keyInfo])
         return instance
 
     def copy_to(self, parent=None):
@@ -196,7 +212,7 @@ class TreeDiagram:
         self.hook_remove()
 
     def __repr__(self):
-        _repr_dict = {key: self.data[key] for key in self._repr_data_keys}
+        _repr_dict = {keyInfo: self.data[keyInfo] for keyInfo in self.data_keys if keyInfo.use_in_repr}
         return f"<{self.__class__.__name__} {_repr_dict}>"
 
         # return f"<{self.__class__.__name__} {repr(getattr(self, '_children', ''))}>"

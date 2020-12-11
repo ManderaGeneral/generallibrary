@@ -6,7 +6,7 @@ class _ObjInfoOrigin:
 
             :param generallibrary.ObjInfo self: """
         if parent := self.get_parent():
-            return getattr(parent.obj, self.key) != self.obj
+            return getattr(parent.obj, self.name) != self.obj
         else:
             return False
 

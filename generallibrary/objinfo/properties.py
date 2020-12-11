@@ -2,10 +2,10 @@
 
 class _ObjInfoProperties:
     def protected(self):
-        """ Get whether possible key is protected, False if key is None.
+        """ Get whether possible name is protected, False if name is None.
 
             :param generallibrary.ObjInfo self: """
-        return str(self.key).startswith("_")
+        return str(self.name).startswith("_")
 
 
 
