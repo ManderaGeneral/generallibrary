@@ -56,7 +56,8 @@ class _ObjInfoParents:
             :param parent:
             :param old_parent: """
         assert self.name
-        assert getattr(parent.obj, self.name, None) is self.obj
+        if getattr(parent.obj, self.name, None) is not self.obj:
+            raise AssertionError(f"Parent obj {parent.obj}'s '{self.name}' attribute name is \n{getattr(parent.obj, self.name, None)} and not \n{self.obj}")
 
 
 

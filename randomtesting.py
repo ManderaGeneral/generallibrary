@@ -18,6 +18,9 @@ import gc
 class Test:
     x = []
 
+    def __init__(self):
+        self.hello = "there"
+
     def tests(self):
         for x in range(3):
             yield x
@@ -35,8 +38,6 @@ def a():
 
 
 test = Test
-objInfo = ObjInfo(test)
 
 
-objInfo.generate_attributes()  # 1.1: HERE ** Store all attributes safely
-
+print([objInfo for objInfo in ObjInfo(test).generate_attributes() if objInfo.is_instance()])

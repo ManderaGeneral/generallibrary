@@ -9,13 +9,12 @@ class _ObjInfoChildren:
         return self.ObjInfo(obj=getattr(self.obj, name), parent=self, name=name)
 
     def generate_attributes(self):
-        """ Generate ObjInfo attribute children with filters correlating to ObjInfo's methods.
-            Todo: Somehow prevent duplicate children here.
+        """ Generate all ObjInfo attribute children.
 
             :param generallibrary.ObjInfo self: """
-        return [self.get_attribute_child(name) for name in dir(self.obj)]  # 1.1.1: HERE ** dir includes names that don't belong to obj
+        return [self.get_attribute_child(name) for name in self.obj.__dict__.keys() if name not in ("__dict__", )]
 
-    def __iter__(self):
+    def __iter__(self):  # Not sure why I added this. X in ObjInfo? Should we have this in TreeDiagram?
         return self.generate_attributes()
 
 

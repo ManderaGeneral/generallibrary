@@ -30,7 +30,7 @@ def getsize(obj):
         objects = get_referents(*need_referents)
     return size
 
-# 1: HERE ** Put this in ObjInfo
+# 1: HERE ** Start replacing this with ObjInfo
 def attributes(obj, properties=True, class_=True, methods=True, variables=True, modules=False, protected=False, from_instance=True, from_class=True, from_bases=True):
     """ Get attributes from a Module or Class with a lot of optional flags for filtering.
 

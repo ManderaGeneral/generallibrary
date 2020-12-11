@@ -4,7 +4,13 @@ from types import MethodWrapperType
 
 
 class _ObjInfoType:
-    """ Only one of these methods will return True. """
+    """ Only one of these methods starting with 'is_' will return True. """
+    def type(self):
+        """ Get a string of what type obj is. """
+        for method_name in _ObjInfoType.__dict__.keys():
+            if method_name != "type" and not method_name.startswith("_") and getattr(self, method_name)():
+                return method_name.split("_")[1]
+
     def is_module(self):
         """ Get whether obj is a module.
 
@@ -31,6 +37,7 @@ class _ObjInfoType:
 
     def is_instance(self):
         """ Get whether obj is an instance of it's class.
+            I think every obj is technically an instance of something though.
 
             :param generallibrary.ObjInfo self: """
         return not hasattr(self.obj, "__name__") and not self.is_property() and not self.is_method()
@@ -42,7 +49,7 @@ class _ObjInfoType:
         if inspect.ismethod(self.obj) or inspect.ismethoddescriptor(self.obj):
             return True
 
-        if not callable(self.obj):  # Unbound cls and static methods aren't "callable"
+        if self.is_class() or not callable(self.obj):  # Unbound cls and static methods aren't "callable"
             return False
 
         if isinstance(self.obj, MethodWrapperType):
