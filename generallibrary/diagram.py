@@ -83,9 +83,10 @@ class TreeDiagram:
             self.hook_lose_parent(old_parent=old_parent, parent=parent)
 
         if parent:
+            # Possibly remove previous child with matching unique key values
             for keyInfo in self.data_keys:
                 if keyInfo.unique:
-                    sibling = parent.get_child_by_key_values(keyInfo=getattr(self, keyInfo))
+                    sibling = parent.get_child_by_key_values(**{keyInfo: getattr(self, keyInfo)})
                     if sibling:
                         sibling.remove()
 

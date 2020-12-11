@@ -34,12 +34,9 @@ def a():
 
 
 
-test = ObjInfo()
+test = Test
 objInfo = ObjInfo(test)
 
 
-
-
-print(objInfo.get_parent(0))
-# objInfo.generate_attributes()  # 1.1: HERE ** Store all attributes safely
+objInfo.generate_attributes()  # 1.1: HERE ** Store all attributes safely
 

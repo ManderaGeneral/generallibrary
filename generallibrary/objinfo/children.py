@@ -13,7 +13,7 @@ class _ObjInfoChildren:
             Todo: Somehow prevent duplicate children here.
 
             :param generallibrary.ObjInfo self: """
-        return [self.get_attribute_child(name) for name in dir(self.obj)]
+        return [self.get_attribute_child(name) for name in dir(self.obj)]  # 1.1.1: HERE ** dir includes names that don't belong to obj
 
     def __iter__(self):
         return self.generate_attributes()
