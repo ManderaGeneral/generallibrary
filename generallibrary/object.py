@@ -4,6 +4,7 @@ from types import ModuleType, FunctionType
 from gc import get_referents
 import inspect
 
+
 _BLACKLIST = type, ModuleType, FunctionType
 def getsize(obj):
     """
@@ -144,7 +145,7 @@ def initBases(cls):
 
 
 from generallibrary.functions import SigInfo
-
+from generallibrary.objinfo.objinfo import ObjInfo
 
 
 

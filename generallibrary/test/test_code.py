@@ -22,13 +22,6 @@ class CodeTest(unittest.TestCase):
         self.assertEqual(8, len(codeGen.generate()))
         codeGen.print()
 
-    def test_args_to_attrs(self):
-        class _Foo:
-            @classmethod
-            def testing(cls, a, lot, of, random, values="here"):
-                self.assertIn("self.lot = lot", args_to_attrs(locals()))
-        _Foo.testing(1, 2, 3, 4)
-
     def test_debug(self):
         x, y, z = 1, 2, 3
         self.assertIn("y * z + 3 = 9", debug(locals(), "x + y", "y * z + 3", "x", "self"))
