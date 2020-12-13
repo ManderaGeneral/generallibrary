@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.object import getsize, initBases, attributes
+from generallibrary.object import getsize, initBases
 from generallibrary import ObjInfo
 from generallibrary.objinfo.type import _ObjInfoType
 
@@ -19,6 +19,7 @@ class ObjectTest(unittest.TestCase):
         class Base:
             def __init__(self, x):
                 self.x = x
+
         @initBases
         class Parent(Base):
             def __init__(self, x):
@@ -34,6 +35,7 @@ class ObjectTest(unittest.TestCase):
             def __init__(self, x, z=6):
                 self.x = x
                 self.z = z
+
         @initBases
         class Parent(Base):
             def __init__(self, x, z=None):
@@ -48,6 +50,7 @@ class ObjectTest(unittest.TestCase):
             def __init__(self, x, z):
                 self.x = x
                 self.z = z
+
         @initBases
         class Parent(Base):
             def __init__(self, x, z=None):
@@ -62,6 +65,7 @@ class ObjectTest(unittest.TestCase):
         class Base:
             def test(self):
                 pass
+
         @initBases
         class Parent(Base):
             def __init__(self, x):
@@ -75,9 +79,11 @@ class ObjectTest(unittest.TestCase):
         class Base:
             def __init__(self, x):
                 self.x = x
+
         class Base2:
             def __init__(self, y):
                 self.y = y
+
         @initBases
         class Parent(Base, Base2):
             def __init__(self, x, y):
@@ -93,6 +99,7 @@ class ObjectTest(unittest.TestCase):
         class Base2:
             def __init__(self, x):
                 self.y = x
+
         @initBases
         class Parent(Base, Base2):
             def __init__(self, x):
@@ -105,6 +112,7 @@ class ObjectTest(unittest.TestCase):
         class Base:
             def __init__(self, *x):
                 self.x = x
+
         @initBases
         class Parent(Base):
             def __init__(self, *x):
@@ -158,6 +166,7 @@ class ObjectTest(unittest.TestCase):
 
     def test__init_post__(self):
         glob = []
+
         class A:
             def __init__(self):
                 glob.append(1)
@@ -184,69 +193,16 @@ class ObjectTest(unittest.TestCase):
         C()
         self.assertEqual([1, 2, 3, 4, 5, 6], glob)
 
-    def test_attributes(self):
-        class A:
-            def foo(self):
-                pass
-
-        class B(A):
-            def bar(self):
-                pass
-
-        self.assertEqual(["foo"], list(attributes(A())))
-        self.assertEqual(["foo"], list(attributes(A)))
-        self.assertEqual([], list(attributes(A(), from_class=False)))
-        self.assertEqual(["foo"], list(attributes(A, from_instance=False)))
-        self.assertEqual(["foo"], list(attributes(A(), from_instance=False)))
-        self.assertEqual(["foo"], list(attributes(A, from_bases=False)))
-
-        self.assertEqual(["bar", "foo"], list(attributes(B())))
-        self.assertEqual(["bar", "foo"], list(attributes(B)))
-        self.assertEqual(["foo"], list(attributes(B(), from_class=False)))
-        self.assertEqual(["bar", "foo"], list(attributes(B, from_instance=False)))
-        self.assertEqual(["bar", "foo"], list(attributes(B(), from_instance=False)))
-        self.assertEqual(["bar"], list(attributes(B, from_bases=False)))
-
-
-        class Foo:
-            a = 1
-
-            def __init__(self):
-                self.b = 2
-
-            @property
-            def c(self):
-                return 3
-
-            @classmethod
-            def d(cls):
-                return 4
-
-            def e(self):
-                return 5
-
-        self.assertEqual(["a", "b", "c", "d", "e"], list(attributes(Foo())))
-        self.assertEqual(["a", "c", "d", "e"], list(attributes(Foo)))
-
-        self.assertTrue(len(attributes(Foo(), protected=True)) > 10)
-        self.assertEqual(["a", "b", "c"], list(attributes(Foo(), methods=False)))
-        self.assertEqual(["c", "d", "e"], list(attributes(Foo(), variables=False)))
-        self.assertEqual(["a", "b", "d", "e"], list(attributes(Foo(), properties=False)))
-
-        self.assertEqual(["a", "c", "d", "e"], list(attributes(Foo(), from_instance=False)))
-        self.assertEqual(["a", "c", "d", "e"], list(attributes(Foo, from_instance=False)))
-
-        self.assertEqual(["b"], list(attributes(Foo(), from_class=False)))
-        self.assertEqual(["a", "b", "c", "d", "e"], list(attributes(Foo(), from_bases=False)))
-
     def test_ObjInfo(self):
-        unbound_type_methods = [objInfo.obj for objInfo in ObjInfo(_ObjInfoType).generate_attributes() if objInfo.is_method()]
-
         def check(bound_method):
             """ Check that the correct method is True and all other are False. """
             objInfo = getattr(bound_method, "__self__")
-            self.assertEqual([1], [1 for method in type_methods if getattr(objInfo, key)()])
-            self.assertTrue(bound_method())
+            for name, method in objInfo.type_methods.items():
+                method_is_bound_method = bound_method == getattr(objInfo, name)
+                result = method(self=objInfo)
+                if result is not method_is_bound_method:
+                    raise AssertionError(f"{objInfo} returns {result} for {name}.")
+
 
         check(ObjInfo(unittest).is_module)
         check(ObjInfo(a).is_function)
@@ -280,6 +236,7 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(False, ObjInfo(a).protected())
         self.assertEqual(False, ObjInfo(a()).protected())
 
+
 class _Foo:
     _attr = 5
     attr = 3
@@ -302,6 +259,7 @@ class _Foo:
     @property
     def _property(self):
         return
+
 
 def a():
     def b():

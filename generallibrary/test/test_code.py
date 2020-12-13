@@ -2,7 +2,7 @@
 import unittest
 
 from generallibrary.versions import VerInfo, package_is_installed
-from generallibrary.code import clipboard_copy, clipboard_get, CodeGen, args_to_attrs, debug, attributes_to_markdown, print_link, print_link_to_obj, get_lines
+from generallibrary.code import clipboard_copy, clipboard_get, CodeGen, debug, print_link, print_link_to_obj, get_lines
 
 
 class CodeTest(unittest.TestCase):
@@ -25,11 +25,6 @@ class CodeTest(unittest.TestCase):
     def test_debug(self):
         x, y, z = 1, 2, 3
         self.assertIn("y * z + 3 = 9", debug(locals(), "x + y", "y * z + 3", "x", "self"))
-
-    @unittest.skipUnless(package_is_installed("pandas", "tabulate"), "Skip unless pandas is installed.")
-    def test_attributes_to_markdown(self):
-        attributes_to_markdown(VerInfo, allow_bad_docs=True)
-        attributes_to_markdown(unittest, allow_bad_docs=True)
 
     def test_print_link(self):
         """ Hard to assert these methods truly work without manual check. """

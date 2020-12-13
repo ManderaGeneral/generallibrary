@@ -5,7 +5,6 @@ from gc import get_referents
 import inspect
 
 
-_BLACKLIST = type, ModuleType, FunctionType
 def getsize(obj):
     """
     Get a sum of sizes from an object and it's members in bytes.
@@ -15,6 +14,7 @@ def getsize(obj):
 
     Author: Aaron Hall @ https://stackoverflow.com/questions/449560/how-do-i-determine-the-size-of-an-object-in-python
     """
+    _BLACKLIST = type, ModuleType, FunctionType
     if isinstance(obj, _BLACKLIST):
         # raise TypeError('getsize() does not take argument of type: '+ str(type(obj)))
         return sys.getsizeof(obj)
@@ -31,75 +31,6 @@ def getsize(obj):
         objects = get_referents(*need_referents)
     return size
 
-# 1: HERE ** Start replacing this with ObjInfo
-def attributes(obj, properties=True, class_=True, methods=True, variables=True, modules=False, protected=False, from_instance=True, from_class=True, from_bases=True):
-    """ Get attributes from a Module or Class with a lot of optional flags for filtering.
-
-        :param obj:
-        :param bool properties:
-        :param bool class_:
-        :param bool methods:
-        :param bool variables:
-        :param bool modules:
-        :param bool or None protected: Whether to return protected, non-protected or all if None.
-        :param bool from_instance: Whether to return attributes only defined in instance.
-        :param bool from_class: Whether to return attributes defined in direct class.
-        :param bool from_bases: Whether to return attributes defined by an inheritence. """
-    if isinstance(obj, type):
-        cls = obj
-        instance = None
-    else:
-        cls = obj.__class__
-        instance = obj
-
-    attrs = {}
-    for key in dir(obj):
-        cls_attr = getattr(cls, key, NotImplemented)
-        is_property = isinstance(cls_attr, property)
-        is_protected = key.startswith("_")
-        attr = cls_attr if is_property else getattr(obj, key, NotImplemented)
-
-        # Attribute is Property, Method and Variable
-        if is_property:
-            if properties is False:
-                continue
-        elif inspect.isclass(attr):
-            if class_ is False:
-                continue
-        elif callable(attr):
-            if methods is False:
-                continue
-        elif cls.__name__ == "module":
-            if modules is False:
-                continue
-        else:
-            if variables is False:
-                continue
-
-        # Key is Protected
-        if protected is False and is_protected:
-            continue
-        elif protected is True and not is_protected:
-            continue
-
-        # Origin from Instance, Class, Base or Builtin
-        if from_instance is False and instance and attr != cls_attr and cls_attr is NotImplemented:
-            continue
-        elif not (from_class and from_bases) and cls_attr is not NotImplemented:
-            for base in cls.__bases__:
-                if getattr(base, key, NotImplemented) is not NotImplemented:
-                    defined_in_base = True
-                    break
-            else:
-                defined_in_base = False
-
-            if from_bases is False and defined_in_base:
-                continue
-            elif from_class is False and not defined_in_base:
-                continue
-
-        attrs[key] = attr
-    return attrs
 
 def initBases(cls):
     """

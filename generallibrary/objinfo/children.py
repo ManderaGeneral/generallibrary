@@ -14,7 +14,7 @@ class _ObjInfoChildren:
             :param generallibrary.ObjInfo self: """
         return [self.get_attribute_child(name) for name in self.obj.__dict__.keys() if name not in ("__dict__", )]
 
-    def __iter__(self):  # Not sure why I added this. X in ObjInfo? Should we have this in TreeDiagram?
+    def __iter__(self):  # For `for x in ObjInfo:`? Should we have this in TreeDiagram?
         return self.generate_attributes()
 
 

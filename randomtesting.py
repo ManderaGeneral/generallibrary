@@ -1,21 +1,30 @@
 
-import generallibrary
-# import generalvector
-# import generalfile
-# import generalgui
-# generallibrary.attributes_to_markdown(generallibrary)
-# generallibrary.attributes_to_markdown(generalvector)
-# generallibrary.attributes_to_markdown(generalfile)
-# generallibrary.attributes_to_markdown(generalgui)
-
-from pprint import pprint
-from generallibrary import get_lines
+from generallibrary import *
 
 
-class Foo:
-    def test(self):
-        print(2)
+class _Foo:
+    _attr = 5
+    attr = 3
 
+    def self(self):
+        """ Not protected. """
+        pass
 
+    def _self(self):
+        pass
 
-pprint(get_lines(generallibrary))
+    @classmethod
+    def _cls(cls):
+        pass
+
+    @staticmethod
+    def _static():
+        pass
+
+    @property
+    def _property(self):
+        return
+
+objInfo = ObjInfo(_Foo().self)
+print(objInfo.get_parent())  # 1: HERE **
+

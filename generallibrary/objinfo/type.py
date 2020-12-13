@@ -7,9 +7,9 @@ class _ObjInfoType:
     """ Only one of these methods starting with 'is_' will return True. """
     def type(self):
         """ Get a string of what type obj is. """
-        for method_name in _ObjInfoType.__dict__.keys():
-            if method_name != "type" and not method_name.startswith("_") and getattr(self, method_name)():
-                return method_name.split("_")[1]
+        for name, method in self.type_methods.items():
+            if method(self):
+                return True
 
     def is_module(self):
         """ Get whether obj is a module.
@@ -60,5 +60,9 @@ class _ObjInfoType:
                 return True
 
         return False
+
+    type_methods = {key: value for key, value in locals().items() if key != "type" and not key.startswith("_")}
+
+
 
 
