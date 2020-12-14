@@ -157,6 +157,7 @@ jobs:
           break
           fi
           echo "Couldn't find new version on PyPI, trying again in 30 seconds"
+          echo "${{ env.NEW_VERSION }} != $pypi_versions"
           sleep 30
           done
 
