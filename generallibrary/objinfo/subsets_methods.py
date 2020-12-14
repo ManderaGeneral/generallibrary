@@ -1,3 +1,5 @@
+""" Todo: Subset methods for ObjInfo.is_method(). """
+
 
 # def subset_is_method_bound(self):
 #     """ Subset of `is_method`: Get whether a method is bound. """
