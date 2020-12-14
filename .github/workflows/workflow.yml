@@ -96,9 +96,8 @@ jobs:
           echo ALL_PACKAGES=$ALL_PACKAGES >> $GITHUB_ENV
           pip install $ALL_PACKAGES
 
-
-
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip==20.2.*
+          
           pip install pipdeptree ${{ github.event.repository.name }}[full]
 
           X=($(echo $(pip show ${{ github.event.repository.name }} | grep Version) | tr -d " " | tr ":" "\n"))
@@ -157,7 +156,7 @@ jobs:
           break
           fi
           echo "Couldn't find new version on PyPI, trying again in 30 seconds"
-          echo "${{ env.NEW_VERSION }} != $pypi_versions"
+          echo "${{ env.NEW_VERSION }} not in $pypi_versions"
           sleep 30
           done
 
