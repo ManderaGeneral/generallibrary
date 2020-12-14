@@ -17,7 +17,7 @@ class _ObjInfoParents:
         for module in sys.modules.values():
             try:
                 module_has_obj = self.obj in module.__dict__.values()
-            except (ValueError, TypeError):
+            except:
                 module_has_obj = False
 
             if module_has_obj:
