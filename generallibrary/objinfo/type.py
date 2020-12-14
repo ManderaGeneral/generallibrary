@@ -7,9 +7,11 @@ class _ObjInfoType:
     """ Only one of these methods starting with 'is_' will return True. """
     def type(self):
         """ Get a string of what type obj is. """
-        for name, method in self.type_methods.items():
-            if method(self):
-                return True
+        types = [name for name, method in self.type_methods.items() if method(self)]
+
+        if len(types) != 1:
+            raise AssertionError(f"{self} does not have one type: {types}")
+        return types[0]
 
     def is_module(self):
         """ Get whether obj is a module.
@@ -33,7 +35,7 @@ class _ObjInfoType:
         """ Get whether obj is a property of a class.
 
                 :param generallibrary.ObjInfo self: """
-        return inspect.isdatadescriptor(self.obj)
+        return hasattr(self.obj, "fget")
 
     def is_instance(self):
         """ Get whether obj is an instance of it's class.

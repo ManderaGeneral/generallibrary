@@ -426,7 +426,8 @@ class CallTable:
                 # print(arg, getattr(arg, "__self__", None))
                 try:
                     result = "True" if func(arg) else ""
-                except Exception:
+                except Exception as e:
+                    print(e)
                     result = "-"
                 columns[func_name][arg_name] = result
 

@@ -9,13 +9,20 @@ class _ObjInfoChildren:
         return self.ObjInfo(obj=getattr(self.obj, name), parent=self, name=name)
 
     def generate_attributes(self):
+        """ Get generated attributes as a list.
+
+            :param generallibrary.ObjInfo self: """
+        return list(iter(self))
+
+    def __iter__(self):  # Todo: Define TreeDiagram.__iter__ as well, but without generation.
         """ Generate all ObjInfo attribute children.
 
             :param generallibrary.ObjInfo self: """
-        return [self.get_attribute_child(name) for name in self.obj.__dict__.keys() if name not in ("__dict__", )]
+        for name in self.obj.__dict__.keys():
+            if name not in ("__dict__", ):
+                yield self.get_attribute_child(name=name)
 
-    def __iter__(self):  # For `for x in ObjInfo:`? Should we have this in TreeDiagram?
-        return self.generate_attributes()
+        # return iter(self.generate_attributes())
 
 
 

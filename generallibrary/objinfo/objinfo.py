@@ -21,7 +21,11 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         self.obj = obj
 
         if name is None:
-            name = getattr(self.obj, "__name__", None)
+            if self.is_property():
+                name = self.obj.fget.__name__
+            else:
+                name = getattr(self.obj, "__name__", None)
+
         self.name = self.data_keys_add(key="name", value=name, use_in_repr=True, unique=True)
 
     ObjInfo = ...

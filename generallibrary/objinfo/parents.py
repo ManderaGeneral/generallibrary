@@ -29,35 +29,58 @@ class _ObjInfoParents:
         """ Generates all parents to this ObjInfo all the way up to and including module.
 
             :param generallibrary.ObjInfo self: """
-        module_name = getattr(self.obj, "__module__", None)
+        obj = self.obj.fget if self.is_property() else self.obj
+
+        module_name = getattr(obj, "__module__", None)
         module = sys.modules.get(module_name)
 
-        qualname = getattr(self.obj, "__qualname__", "")
+        qualname = getattr(obj, "__qualname__", "")
         split_qualname = qualname.split(".")
 
         if not self.is_module():
+            objInfo = None
+
+            # To make the parent of a bound method an instance instead of class
+            if dunder_self := getattr(self.obj, "__self__", None):
+                objInfo = self.ObjInfo(obj=dunder_self)
+
             # Start with module and iterate downwards excluding last name in qualname, which we connect manually to self
-            if module and qualname and "<locals>" not in split_qualname:
+            elif module and qualname and "<locals>" not in split_qualname:
                 objInfo = self.ObjInfo(obj=module)
                 for name in split_qualname[:-1:]:
                     objInfo = objInfo.get_attribute_child(name)
-                self.set_parent(objInfo)
 
+            # Find module which contains self.obj
             else:
                 first_module, name = next(self._find_modules(), (None, None))
                 if first_module:
                     self.name = name
-                    self.set_parent(self.ObjInfo(obj=first_module))
+                    objInfo = self.ObjInfo(obj=first_module)
+
+            if objInfo:
+                self.set_parent(objInfo)
 
     def hook_new_parent(self, parent, old_parent):
-        """ Assert child is in parent's dir by it's name.
+        """ Assert child is an attribute of it's parent.
 
             :param generallibrary.ObjInfo self:
             :param parent:
             :param old_parent: """
         assert self.name
-        if getattr(parent.obj, self.name, None) is not self.obj:
-            raise AssertionError(f"Parent obj {parent.obj}'s '{self.name}' attribute name is \n{getattr(parent.obj, self.name, None)} and not \n{self.obj}")
+
+        self_obj = self.obj
+        parent_attr_obj = getattr(parent.obj, self.name, None)
+
+        if self.is_property():
+            self_obj = self_obj.fget
+            parent_attr_obj = parent_attr_obj.fget
+        else:
+            self_obj = getattr(self_obj, "__func__", self_obj)
+            parent_attr_obj = getattr(parent_attr_obj, "__func__", parent_attr_obj)
+
+        if parent_attr_obj is not self_obj:
+            # print(f"Parent obj {parent.obj}'s '{self.name}' attribute is \n{parent_attr_obj} and not \n{self_obj}")
+            raise AssertionError(f"{parent.obj} doesn't seem to have an attribute '{self.name}'.")
 
 
 
