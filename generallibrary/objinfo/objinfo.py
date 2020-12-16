@@ -16,7 +16,8 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         Automatically generates parents post creation for attributes that are not modules.
         Children are generated manually with `generate_attributes`.
         Todo: Module tree for ObjInfo.
-        Todo: Another type of diagram for ObjInfo as an object can be an attribute of multiple objects. """
+        Todo: Another type of diagram for ObjInfo as an object can be an attribute of multiple objects.
+        Todo: Tests for ObjInfo. """
     def __init__(self, obj, parent=None, name=None):
         self.obj = obj
 
@@ -26,7 +27,8 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
             else:
                 name = getattr(self.obj, "__name__", None)
 
-        self.name = self.data_keys_add(key="name", value=name, use_in_repr=True, unique=True)
+        self.name = self.data_keys_add(key="name", value=name, use_in_repr=True, unique=True)  # type: str
+
 
     ObjInfo = ...
 

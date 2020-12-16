@@ -3,19 +3,16 @@
 
 from generallibrary import ObjInfo, CallTable
 
+import sys
 
-# Parent must have child in it's dir()
-# Key comes from __qualname__ or manually set
 
 class Foo:
-    _attr = 5
     attr = 3
 
-    def self(self):
-        """ Not protected. """
-        pass
+    def __init__(self):
+        self.inst = 5
 
-    def _self(self):
+    def self_(self):
         pass
 
     @classmethod
@@ -30,6 +27,7 @@ class Foo:
     def _property(self):
         return
 
+
 def a():
     def b():
         pass
@@ -37,19 +35,35 @@ def a():
 
 
 
-callTable = CallTable("ObjInfo").set_args(**{
-    "Foo": Foo,
-    "Foo.a": Foo.self,
-    "Foo().a": Foo().self,
-})
+args = {objInfo.name: objInfo.obj for objInfo in ObjInfo(sys.modules["__main__"]).generate_attributes(depth=2) if not objInfo.protected()}
+
+callTable = CallTable("ObjInfo").set_args(**args)
+
+# callTable = CallTable("ObjInfo").set_args(**{
+#     "Foo": Foo,
+#     "Foo()": Foo(),
+#     "Foo.self": Foo.self,
+#     "Foo().self": Foo().self,
+#     "Foo.attr": Foo.attr,
+#     "Foo().attr": Foo().attr,
+#     "Foo._cls": Foo._cls,
+#     "Foo()._cls": Foo()._cls,
+#     "Foo._static": Foo._static,
+#     "Foo()._static": Foo()._static,
+#     "Foo._property": Foo._property,
+#     "Foo()._property": Foo()._property,
+#     "Foo().inst": Foo().inst,
+# })
 
 
-# callTable.generate_with_funcs(
-#     from_instance=lambda obj: ObjInfo(obj).from_instance(),
-#     from_class=lambda obj: ObjInfo(obj).from_class(),
-#     from_base=lambda obj: ObjInfo(obj).from_base(),
-#     from_builtin=lambda obj: ObjInfo(obj).from_builtin(),
-#     from_module=lambda obj: ObjInfo(obj).from_module(),
-# )
+callTable.generate_with_funcs(
+    from_instance=lambda obj: ObjInfo(obj).from_instance(),
+    from_class=lambda obj: ObjInfo(obj).from_class(),
+    from_base=lambda obj: ObjInfo(obj).from_base(),
+    from_builtin=lambda obj: ObjInfo(obj).from_builtin(),
+    from_module=lambda obj: ObjInfo(obj).from_module(),
+)
+
+
 
 # print(ObjInfo(Foo().a).from_instance())
