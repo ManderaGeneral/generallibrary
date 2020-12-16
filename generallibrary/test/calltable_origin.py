@@ -9,6 +9,9 @@ import sys
 class Foo:
     attr = 3
 
+    class Test:
+        bar = 4
+
     def __init__(self):
         self.inst = 5
 
@@ -35,9 +38,12 @@ def a():
 
 
 
-args = {objInfo.name: objInfo.obj for objInfo in ObjInfo(sys.modules["__main__"]).generate_attributes(depth=2) if not objInfo.protected()}
+print(ObjInfo(Foo).get_attrs(lambda objInfo: not objInfo.private()))
 
-callTable = CallTable("ObjInfo").set_args(**args)
+
+# args = {objInfo.name: objInfo.obj for objInfo in ObjInfo(sys.modules["__main__"]).get_attrs(depth=2) if not objInfo.protected()}
+
+# callTable = CallTable("ObjInfo").set_args(**args)
 
 # callTable = CallTable("ObjInfo").set_args(**{
 #     "Foo": Foo,
@@ -56,13 +62,13 @@ callTable = CallTable("ObjInfo").set_args(**args)
 # })
 
 
-callTable.generate_with_funcs(
-    from_instance=lambda obj: ObjInfo(obj).from_instance(),
-    from_class=lambda obj: ObjInfo(obj).from_class(),
-    from_base=lambda obj: ObjInfo(obj).from_base(),
-    from_builtin=lambda obj: ObjInfo(obj).from_builtin(),
-    from_module=lambda obj: ObjInfo(obj).from_module(),
-)
+# callTable.generate_with_funcs(
+#     from_instance=lambda obj: ObjInfo(obj).from_instance(),
+#     from_class=lambda obj: ObjInfo(obj).from_class(),
+#     from_base=lambda obj: ObjInfo(obj).from_base(),
+#     from_builtin=lambda obj: ObjInfo(obj).from_builtin(),
+#     from_module=lambda obj: ObjInfo(obj).from_module(),
+# )
 
 
 

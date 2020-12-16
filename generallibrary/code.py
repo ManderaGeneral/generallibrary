@@ -116,7 +116,7 @@ def get_lines(obj):
         Experimental. Works on modules, classes and functions available to `inspect`. """
 
     parent_objInfo = ObjInfo(obj)
-    parent_objInfo.generate_attributes()
+    parent_objInfo.get_attrs()
     lines = []
     for objInfo in parent_objInfo.get_all():  # type: ObjInfo
         if objInfo.is_class() or objInfo.is_function():
