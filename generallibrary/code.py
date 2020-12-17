@@ -5,6 +5,9 @@ import inspect
 import re
 import pandas as pd
 
+from generallibrary.diagram import TreeDiagram
+from generallibrary.object import initBases
+
 
 def clipboard_copy(s):
     """ Copy a string to clipboard.
@@ -24,34 +27,24 @@ def clipboard_get():
     return pyperclip.paste()
 
 
-class _Line:
-    def __init__(self, indent, code_str, space_before=0, space_after=0):
-        self.indent = indent
+@initBases
+class CodeLine(TreeDiagram):
+    """ Tool to help with printing code line by line.
+        Todo: Search for CodeGen and replace. """
+    indent_str = " " * 4
+
+    def __init__(self, code_str, space_before=0, space_after=0, parent=None):
         self.code_str = code_str
         self.space_before = space_before
         self.space_after = space_after
 
-
-class CodeGen:
-    """ Tool to help with printing code line by line. """
-    indent = " " * 4
-
-    def __init__(self):
-        self.lines = []
-
-    def add(self, indent, code_str, space_before=0, space_after=0):
-        """ Add a new line. """
-        self.lines.append(_Line(indent=indent, code_str=code_str, space_before=space_before, space_after=space_after))
-
     def generate(self):
         """ Generate a list of formatted code lines by iterating stored _Line instances. """
         lines = ["# -------------------- GENERATED CODE --------------------"]
-        for line in self.lines:
-            for _ in range(line.space_before):
-                lines.append("")
-            lines.append(f"{self.indent * line.indent}{line.code_str}")
-            for _ in range(line.space_after):
-                lines.append("")
+        for codeLine in self.get_all():
+            lines.extend([""] * codeLine.space_before)
+            lines.append(f"{self.indent_str * len(codeLine.all_parents())}{codeLine.code_str}")
+            lines.extend([""] * codeLine.space_after)
         lines.append("# --------------------------------------------------------")
         return lines
 
@@ -62,7 +55,7 @@ class CodeGen:
         return code
 
     def print_arrowed(self):
-        """ """
+        """ . """
 
 
 def debug(scope, *evals, printOut=True):

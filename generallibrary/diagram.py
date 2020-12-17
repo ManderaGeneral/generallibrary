@@ -1,9 +1,10 @@
 
 from generallibrary.object import initBases
 from generallibrary.functions import deco_extend
-from generallibrary.code import CodeGen
 import pandas
 from pprint import pprint
+
+# from generallibrary.code import CodeLine
 
 
 @deco_extend
@@ -146,7 +147,9 @@ class TreeDiagram:
         return self._singular_alternatives(self.get_children_by_key_values(**key_values), index)
 
     def get_all(self):
-        """ Return a flat one-dimensional list of all nodes in this Tree. """
+        """ Return a flat one-dimensional list of all nodes in this Tree.
+
+            :rtype: list """
         nodes = []
         temp = [self]
         while temp:
