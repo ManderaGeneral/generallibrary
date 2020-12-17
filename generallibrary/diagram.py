@@ -2,9 +2,6 @@
 from generallibrary.object import initBases
 from generallibrary.functions import deco_extend
 import pandas
-from pprint import pprint
-
-# from generallibrary.code import CodeLine
 
 
 @deco_extend
@@ -105,7 +102,7 @@ class TreeDiagram:
         self._parent = parent
         return parent
 
-    def all_parents(self):
+    def get_all_parents(self):
         """ Get a list of all parents recursively.
 
             :rtype: list[TreeDiagram] """
@@ -122,7 +119,7 @@ class TreeDiagram:
         if index == 0:
             return self._parent
         else:
-            return self._singular_alternatives(self.all_parents(), index)
+            return self._singular_alternatives(self.get_all_parents(), index)
 
     def get_children(self):
         """ Get a list of all children this Node has, empty list if None.
@@ -146,17 +143,18 @@ class TreeDiagram:
             :rtype: TreeDiagram """
         return self._singular_alternatives(self.get_children_by_key_values(**key_values), index)
 
-    def get_all(self):
+    def get_all(self, include_self=True):
         """ Return a flat one-dimensional list of all nodes in this Tree.
 
-            :rtype: list """
+            :rtype: list[TreeDiagram or any] """
         nodes = []
         temp = [self]
         while temp:
             treeDiagram = temp[0]
             del temp[0]
 
-            nodes.append(treeDiagram)
+            if not (treeDiagram is self and not include_self):
+                nodes.append(treeDiagram)
 
             children = treeDiagram.get_children()
             for child in reversed(children):
@@ -219,27 +217,26 @@ class TreeDiagram:
         self.set_parent(None)
         self.hook_remove()
 
-    def pprint(self, dict_, _depth=0, _codeGen=None):
-        """ Pretty print a nested dictionary. """
-        if _codeGen is None:
-            _codeGen = CodeGen()
+    def view(self):
+        """ Get a printable string showing a clear view of this TreeDiagram structure. """
+        lines = []
+        for node in self.get_all():
+            lanes = []
+            for i, parent in enumerate(node.get_all_parents()):
 
-        for i, (key, value) in enumerate(dict_.items()):
-            _codeGen.add(_depth, key)
-            self.pprint(dict_=value, _depth=_depth + 1, _codeGen=_codeGen)
+                if i == 0:
+                    if node.get_next_sibling():
+                        lane = "├─ "
+                    else:
+                        lane = "└─ "
+                else:
+                    lane = "   "
 
-        if not _depth:
-            _codeGen.print_arrowed()
+                lanes.insert(0, lane)
 
+            lines.append(f"{''.join(lanes)}{node}")
 
-    def recursive_repr(self, print_out=True):
-        """ Print a clear view of TreeDiagram structure. """
-        dict_ = {objInfo: objInfo.recursive_repr(print_out=False) for objInfo in self.get_children()}
-
-        if print_out:
-            self.pprint({self: dict_})
-
-        return dict_
+        return "\n".join(lines)
 
     def repr_list(self):
         """ A list of strings used by dunder repr.

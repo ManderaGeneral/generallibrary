@@ -46,6 +46,11 @@ objInfo.get_attrs(filter_func=filter_func, depth=-1)
 
 objInfo.recursive_repr()  # HERE ** I want to be able to print a clear represantion of a TreeDiagram
 
+# def print_arrowed(self):
+#     """ Print TreeDiagram structure """
+
+
+
 
 # args = {objInfo.name: objInfo.obj for objInfo in ObjInfo(sys.modules["__main__"]).get_attrs(depth=2) if not objInfo.protected()}
 

@@ -2,7 +2,7 @@
 import unittest
 
 from generallibrary.versions import VerInfo, package_is_installed
-from generallibrary.code import clipboard_copy, clipboard_get, CodeGen, debug, print_link, print_link_to_obj, get_lines
+from generallibrary.code import clipboard_copy, clipboard_get, CodeLine, debug, print_link, print_link_to_obj, get_lines
 
 
 class CodeTest(unittest.TestCase):
@@ -13,14 +13,14 @@ class CodeTest(unittest.TestCase):
         clipboard_copy("bar")
         self.assertEqual("bar", clipboard_get())
 
-    def test_CodeGen(self):
-        codeGen = CodeGen()
-        codeGen.add(0, "print(5)")
-        codeGen.add(0, "print(5)", space_before=1)
-        codeGen.add(1, "print(5)", space_after=2)
+    def test_CodeLine(self):
+        codeLine = CodeLine()
+        CodeLine("print(5)", parent=codeLine)
+        codeLine2 = CodeLine("print(5)", space_before=1, parent=codeLine)
+        CodeLine("print(5)", space_after=2, parent=codeLine2)
 
-        self.assertEqual(8, len(codeGen.generate()))
-        codeGen.print()
+        self.assertEqual(8, len(codeLine.generate()))
+        codeLine.print()
 
     def test_debug(self):
         x, y, z = 1, 2, 3

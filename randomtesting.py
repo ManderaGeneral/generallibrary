@@ -2,11 +2,17 @@
 from generallibrary import *
 
 
-codeLine = CodeLine("hello")
+a = TreeDiagram()
+b = TreeDiagram(parent=a)
+c = TreeDiagram(parent=a)
+d = TreeDiagram(parent=c)
+e = TreeDiagram(parent=a)
 
-codeLine2 = CodeLine("there", parent=codeLine)
+print(a.view())
 
-codeLine.print()
+# HERE ** finish lanes
 
-# Working lovely, work towards print_arrowed
-
+# ├
+# ─
+# │
+# └

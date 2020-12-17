@@ -30,10 +30,12 @@ def clipboard_get():
 @initBases
 class CodeLine(TreeDiagram):
     """ Tool to help with printing code line by line.
-        Todo: Search for CodeGen and replace. """
+        Top parent is ignored when printing.
+        Todo: Search for old CodeGen and replace.
+        Todo: Maybe put (parts of?) this directly in TreeDiagram. """
     indent_str = " " * 4
 
-    def __init__(self, code_str, space_before=0, space_after=0, parent=None):
+    def __init__(self, code_str=None, space_before=0, space_after=0, parent=None):
         self.code_str = code_str
         self.space_before = space_before
         self.space_after = space_after
@@ -41,9 +43,9 @@ class CodeLine(TreeDiagram):
     def generate(self):
         """ Generate a list of formatted code lines by iterating stored _Line instances. """
         lines = ["# -------------------- GENERATED CODE --------------------"]
-        for codeLine in self.get_all():
+        for codeLine in self.get_all(include_self=False):
             lines.extend([""] * codeLine.space_before)
-            lines.append(f"{self.indent_str * len(codeLine.all_parents())}{codeLine.code_str}")
+            lines.append(f"{self.indent_str * (len(codeLine.get_all_parents()) - 1)}{codeLine.code_str}")
             lines.extend([""] * codeLine.space_after)
         lines.append("# --------------------------------------------------------")
         return lines
@@ -53,9 +55,6 @@ class CodeLine(TreeDiagram):
         code = "\n".join(self.generate())
         print(code)
         return code
-
-    def print_arrowed(self):
-        """ . """
 
 
 def debug(scope, *evals, printOut=True):
