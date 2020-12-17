@@ -8,13 +8,15 @@ import pandas as pd
 
 def clipboard_copy(s):
     """ Copy a string to clipboard.
-        Automatically tries to installs xclip on linux if it fails. """
-    call = lambda: pyperclip.copy(s)
+        Rudely tries to installs xclip on linux if it fails. """
+    def _call():
+        return pyperclip.copy(s)
+
     try:
-        call()
+        _call()
     except pyperclip.PyperclipException:
         os.system("sudo apt-get install xclip")
-        call()
+        _call()
 
 
 def clipboard_get():
@@ -58,6 +60,9 @@ class CodeGen:
         code = "\n".join(self.generate())
         print(code)
         return code
+
+    def print_arrowed(self):
+        """ """
 
 
 def debug(scope, *evals, printOut=True):

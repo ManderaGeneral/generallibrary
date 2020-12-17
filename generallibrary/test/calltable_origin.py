@@ -38,7 +38,13 @@ def a():
 
 
 
-print(ObjInfo(Foo).get_attrs(lambda objInfo: not objInfo.private()))
+def filter_func(objInfo):
+    return objInfo.public() or objInfo.protected()
+
+objInfo = ObjInfo(Foo)
+objInfo.get_attrs(filter_func=filter_func, depth=-1)
+
+objInfo.recursive_repr()  # HERE ** I want to be able to print a clear represantion of a TreeDiagram
 
 
 # args = {objInfo.name: objInfo.obj for objInfo in ObjInfo(sys.modules["__main__"]).get_attrs(depth=2) if not objInfo.protected()}

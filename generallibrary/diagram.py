@@ -1,7 +1,9 @@
 
 from generallibrary.object import initBases
 from generallibrary.functions import deco_extend
+from generallibrary.code import CodeGen
 import pandas
+from pprint import pprint
 
 
 @deco_extend
@@ -58,8 +60,10 @@ class TreeDiagram:
             Todo: Removable keys. """
         if cls.data_keys is TreeDiagram.data_keys:
             cls.data_keys = []
+
         keyInfo = KeyInfo(key=key, use_in_repr=use_in_repr, unique=unique)
-        cls.data_keys.append(keyInfo)
+        if keyInfo not in cls.data_keys:
+            cls.data_keys.append(keyInfo)
         return value
 
     def _singular_alternatives(self, list_, index):
@@ -212,9 +216,35 @@ class TreeDiagram:
         self.set_parent(None)
         self.hook_remove()
 
+    def pprint(self, dict_, _depth=0, _codeGen=None):
+        """ Pretty print a nested dictionary. """
+        if _codeGen is None:
+            _codeGen = CodeGen()
+
+        for i, (key, value) in enumerate(dict_.items()):
+            _codeGen.add(_depth, key)
+            self.pprint(dict_=value, _depth=_depth + 1, _codeGen=_codeGen)
+
+        if not _depth:
+            _codeGen.print_arrowed()
+
+
+    def recursive_repr(self, print_out=True):
+        """ Print a clear view of TreeDiagram structure. """
+        dict_ = {objInfo: objInfo.recursive_repr(print_out=False) for objInfo in self.get_children()}
+
+        if print_out:
+            self.pprint({self: dict_})
+
+        return dict_
+
+    def repr_list(self):
+        """ A list of strings used by dunder repr.
+            Easily overriden. """
+        return [self.data[keyInfo] for keyInfo in self.data_keys if keyInfo.use_in_repr]
+
     def __repr__(self):
-        _repr_dict = {keyInfo: self.data[keyInfo] for keyInfo in self.data_keys if keyInfo.use_in_repr}
-        return f"<{self.__class__.__name__} {_repr_dict}>"
+        return f"<{self.__class__.__name__} {', '.join(self.repr_list())}>"
 
         # return f"<{self.__class__.__name__} {repr(getattr(self, '_children', ''))}>"
 

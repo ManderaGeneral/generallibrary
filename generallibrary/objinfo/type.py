@@ -6,11 +6,13 @@ from types import MethodWrapperType
 class _ObjInfoType:
     """ Only one of these methods starting with 'is_' will return True. """
     def type(self):
-        """ Get a string of what type obj is. """
+        """ Get a string of what type obj is.
+
+            :param generallibrary.ObjInfo self: """
         types = [name for name, method in self.type_methods.items() if method(self)]
 
         if len(types) != 1:
-            raise AssertionError(f"{self} does not have one type: {types}")
+            raise AssertionError(f"{self.obj} does not have one type: {types}")
         return types[0]
 
     def is_module(self):

@@ -29,6 +29,9 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
 
         self.name = self.data_keys_add(key="name", value=name, use_in_repr=True, unique=True)  # type: str
 
+    def repr_list(self):
+        """ Overried TreeDiagram's repr content to show type. """
+        return super().repr_list() + [self.type()]
 
     ObjInfo = ...
 
