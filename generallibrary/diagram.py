@@ -217,26 +217,43 @@ class TreeDiagram:
         self.set_parent(None)
         self.hook_remove()
 
-    def view(self):
+    def view(self, indent=1, relative=False, custom_repr=None, print_out=True):
         """ Get a printable string showing a clear view of this TreeDiagram structure. """
-        lines = []
-        for node in self.get_all():
-            lanes = []
-            for i, parent in enumerate(node.get_all_parents()):
+        top = self.copy_to(None) if relative else self
 
+        lines = []
+        for node in top.get_all():
+            lanes = []
+            all_parents = node.get_all_parents()
+
+            if all_parents:
+                del all_parents[-1]
+                all_parents.insert(0, node)
+
+            for i, parent in enumerate(all_parents):
                 if i == 0:
-                    if node.get_next_sibling():
-                        lane = "├─ "
+                    if parent.get_next_sibling():
+                        lane = f"├{'─' * indent} "
                     else:
-                        lane = "└─ "
+                        lane = f"└{'─' * indent} "
                 else:
-                    lane = "   "
+                    if parent.get_next_sibling():
+                        lane = f"│{' ' * indent} "
+                    else:
+                        lane = f" {' ' * indent} "
 
                 lanes.insert(0, lane)
 
-            lines.append(f"{''.join(lanes)}{node}")
+            lines.append(f"{''.join(lanes)}{custom_repr(node) if custom_repr else node}")
 
-        return "\n".join(lines)
+        if relative:
+            top.remove()
+
+        view = "\n".join(lines)
+        if print_out:
+            print(view)
+
+        return view
 
     def repr_list(self):
         """ A list of strings used by dunder repr.
@@ -244,7 +261,7 @@ class TreeDiagram:
         return [self.data[keyInfo] for keyInfo in self.data_keys if keyInfo.use_in_repr]
 
     def __repr__(self):
-        return f"<{self.__class__.__name__} {', '.join(self.repr_list())}>"
+        return f"<{self.__class__.__name__} {', '.join(map(str, self.repr_list()))}>"
 
         # return f"<{self.__class__.__name__} {repr(getattr(self, '_children', ''))}>"
 

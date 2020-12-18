@@ -25,7 +25,7 @@ class _ObjInfoType:
         """ Get whether obj is a function.
 
             :param generallibrary.ObjInfo self: """
-        return inspect.isfunction(self.obj) and not self.is_method()
+        return (inspect.isfunction(self.obj) or inspect.isbuiltin(self.obj)) and not self.is_method()
 
     def is_class(self):
         """ Get whether obj is a class.

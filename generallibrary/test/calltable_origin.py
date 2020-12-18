@@ -3,11 +3,12 @@
 
 from generallibrary import ObjInfo, CallTable
 
-import sys
+
 
 
 class Foo:
     attr = 3
+    same = ...
 
     class Test:
         bar = 4
@@ -30,31 +31,15 @@ class Foo:
     def _property(self):
         return
 
+Foo.same = Foo
 
-def a():
-    def b():
-        pass
-    return b
+top_objInfo = ObjInfo(Foo())
+top_objInfo.get_attrs(depth=-1)
 
+# top_objInfo.view()
+# exit()
 
-
-def filter_func(objInfo):
-    return objInfo.public() or objInfo.protected()
-
-objInfo = ObjInfo(Foo)
-objInfo.get_attrs(filter_func=filter_func, depth=-1)
-
-objInfo.recursive_repr()  # HERE ** I want to be able to print a clear represantion of a TreeDiagram
-
-# def print_arrowed(self):
-#     """ Print TreeDiagram structure """
-
-
-
-
-# args = {objInfo.name: objInfo.obj for objInfo in ObjInfo(sys.modules["__main__"]).get_attrs(depth=2) if not objInfo.protected()}
-
-# callTable = CallTable("ObjInfo").set_args(**args)
+callTable = CallTable("ObjInfo").set_args(**{objInfo.name: objInfo for objInfo in top_objInfo.get_all() if objInfo.name})
 
 # callTable = CallTable("ObjInfo").set_args(**{
 #     "Foo": Foo,
@@ -73,13 +58,13 @@ objInfo.recursive_repr()  # HERE ** I want to be able to print a clear represant
 # })
 
 
-# callTable.generate_with_funcs(
-#     from_instance=lambda obj: ObjInfo(obj).from_instance(),
-#     from_class=lambda obj: ObjInfo(obj).from_class(),
-#     from_base=lambda obj: ObjInfo(obj).from_base(),
-#     from_builtin=lambda obj: ObjInfo(obj).from_builtin(),
-#     from_module=lambda obj: ObjInfo(obj).from_module(),
-# )
+callTable.generate_with_funcs(
+    from_instance=lambda objInfo: objInfo.from_instance(),
+    from_class=lambda objInfo: objInfo.from_class(),
+    from_base=lambda objInfo: objInfo.from_base(),
+    from_builtin=lambda objInfo: objInfo.from_builtin(),
+    from_module=lambda objInfo: objInfo.from_module(),
+)
 
 
 

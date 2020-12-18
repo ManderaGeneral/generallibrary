@@ -6,9 +6,9 @@ class _ObjInfoOrigin:
         """ Get whether this attribute came from the instance.
 
             :param generallibrary.ObjInfo self: """
-        parent = self.obj
+        parent = self.get_parent()
         if parent and parent.is_instance():
-            return getattr(parent.obj, self.name) != self.obj
+            return getattr(type(parent.obj), self.name, object()) != self.obj
         else:
             return False
 

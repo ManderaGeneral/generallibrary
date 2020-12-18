@@ -33,6 +33,12 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         """ Overried TreeDiagram's repr content to show type. """
         return super().repr_list() + [self.type()]
 
+    def identifier(self):
+        """ Returns a tuple of parent's obj's id and it's own's obj's id.
+            Made for ObjInfo.get_attrs(), I want to have identical attributes listed, but not it's attributes. """
+        return id(self.obj)
+        # return id(getattr(self.get_parent(), "obj", None)), id(self.obj)
+
     ObjInfo = ...
 
 

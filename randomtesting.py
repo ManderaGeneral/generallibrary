@@ -1,18 +1,10 @@
 
 from generallibrary import *
 
+import sys, inspect
 
-a = TreeDiagram()
-b = TreeDiagram(parent=a)
-c = TreeDiagram(parent=a)
-d = TreeDiagram(parent=c)
-e = TreeDiagram(parent=a)
 
-print(a.view())
+print(ObjInfo(sys.addaudithook))
 
-# HERE ** finish lanes
 
-# ├
-# ─
-# │
-# └
+
