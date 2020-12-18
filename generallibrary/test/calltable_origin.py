@@ -4,9 +4,11 @@
 from generallibrary import ObjInfo, CallTable
 
 
+class Base:
+    base_attr = "hi"
 
 
-class Foo:
+class Foo(Base):
     attr = 3
     same = ...
 
@@ -16,28 +18,16 @@ class Foo:
     def __init__(self):
         self.inst = 5
 
-    def self_(self):
-        pass
-
-    @classmethod
-    def _cls(cls):
-        pass
-
-    @staticmethod
-    def _static():
-        pass
-
     @property
     def _property(self):
         return
 
-Foo.same = Foo
+Foo.same = Foo()
 
-top_objInfo = ObjInfo(Foo())
+top_objInfo = ObjInfo(Foo)
 top_objInfo.get_attrs(depth=-1)
 
 # top_objInfo.view()
-# exit()
 
 callTable = CallTable("ObjInfo").set_args(**{objInfo.name: objInfo for objInfo in top_objInfo.get_all() if objInfo.name})
 

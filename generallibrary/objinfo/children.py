@@ -9,8 +9,6 @@ class _ObjInfoChildren:
             :rtype: generallibrary.ObjInfo"""
         return self.ObjInfo(obj=getattr(self.obj, name), parent=self, name=name)
 
-
-
     def get_attrs(self, filter_func=None, depth=1, _all_objInfo=None):
         """ Generate attributes for this ObjInfo's obj.
             Can generate recursively based on depth.
@@ -35,11 +33,12 @@ class _ObjInfoChildren:
             _all_objInfo = []
         _all_objInfo.append(self.identifier())
 
-        for name in getattr(self.obj, "__dict__", {}).keys():
+        for name in getattr(self.obj, "__dict__", {}).keys():  # HERE ** I must make dir() work to get base attrs and such. The assertion in hook_new_parent() is not working
             if name in ("__dict__", ):
                 continue
 
             objInfo = self.get_attr(name=name)
+
             if filter_func is None or filter_func(objInfo):
                 if objInfo.identifier() not in _all_objInfo:
                     objInfo.get_attrs(filter_func=filter_func, depth=depth - 1, _all_objInfo=_all_objInfo)
