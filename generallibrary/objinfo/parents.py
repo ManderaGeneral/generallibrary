@@ -60,6 +60,26 @@ class _ObjInfoParents:
             if objInfo:
                 self.set_parent(objInfo)
 
+    @classmethod
+    def check_if_parent_eligible(cls, parent_obj, child_obj, name):
+        """ Check relationship eligibility of parent to child.
+            :param generallibrary.ObjInfo cls:
+            :param parent_obj:
+            :param child_obj:
+            :param name: """
+        parent_attr_obj = getattr(parent_obj, name, None)
+
+        if cls._is_property(child_obj):
+            child_obj = child_obj.fget
+            parent_attr_obj = parent_attr_obj.fget
+        else:
+            child_obj = getattr(child_obj, "__func__", child_obj)
+            parent_attr_obj = getattr(parent_attr_obj, "__func__", parent_attr_obj)
+
+        if parent_attr_obj is child_obj:
+            return True
+        return False
+
     def hook_new_parent(self, parent, old_parent):
         """ Assert child is an attribute of it's parent.
 
@@ -67,20 +87,7 @@ class _ObjInfoParents:
             :param parent:
             :param old_parent: """
         assert self.name
-
-        self_obj = self.obj
-        parent_attr_obj = getattr(parent.obj, self.name, None)
-
-        if self.is_property():
-            self_obj = self_obj.fget
-            parent_attr_obj = parent_attr_obj.fget
-        else:
-            self_obj = getattr(self_obj, "__func__", self_obj)
-            parent_attr_obj = getattr(parent_attr_obj, "__func__", parent_attr_obj)
-
-        if parent_attr_obj is not self_obj:
-            # print(f"Parent obj {parent.obj}'s '{self.name}' attribute is \n{parent_attr_obj} and not \n{self_obj}")
-            raise AssertionError(f"{parent.obj} doesn't seem to have an attribute '{self.name}'.")
+        assert self.check_if_parent_eligible(parent.obj, self.obj, self.name)
 
 
 

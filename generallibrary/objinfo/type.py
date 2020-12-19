@@ -33,11 +33,15 @@ class _ObjInfoType:
             :param generallibrary.ObjInfo self: """
         return inspect.isclass(self.obj)
 
+    @staticmethod
+    def _is_property(obj):
+        hasattr(obj, "fget")
+
     def is_property(self):
         """ Get whether obj is a property of a class.
 
                 :param generallibrary.ObjInfo self: """
-        return hasattr(self.obj, "fget")
+        return self._is_property(self.obj)
 
     def is_instance(self):
         """ Get whether obj is an instance of it's class.
