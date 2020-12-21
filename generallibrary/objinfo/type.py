@@ -11,9 +11,9 @@ class _ObjInfoType:
             :param generallibrary.ObjInfo self: """
         types = [name for name, method in self.type_methods.items() if method(self)]
 
-        if len(types) != 1:
-            raise AssertionError(f"{self.obj} does not have one type: {types}")
-        return types[0]
+        # if len(types) != 1:
+        #     raise AssertionError(f"{self.obj} does not have one type: {types}")
+        return types[0] if types else None
 
     def is_module(self):
         """ Get whether obj is a module.
@@ -48,6 +48,8 @@ class _ObjInfoType:
             I think every obj is technically an instance of something though.
 
             :param generallibrary.ObjInfo self: """
+        if getattr(self.obj, "__name__", None) == "__weakref__":  # Edge case
+            return True
         return not hasattr(self.obj, "__name__") and not self.is_property() and not self.is_method()
 
     def is_method(self):

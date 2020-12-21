@@ -20,6 +20,7 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         Todo: Tests for ObjInfo. """
     def __init__(self, obj, parent=None, name=None):
         self.obj = obj
+        self.cls = self.obj if self.is_class() else type(self.obj)
 
         if name is None:
             if self.is_property():

@@ -18,7 +18,7 @@ class _ObjInfoChildren:
         if filter_func is None:
             def filter_func(objInfo):
                 """ Default filter. """
-                return not objInfo.private()
+                return not objInfo.internal() and not objInfo.from_builtin()
 
         if _all_objInfo is None:
             _all_objInfo = []
@@ -36,7 +36,7 @@ class _ObjInfoChildren:
 
             objInfo = self.ObjInfo(obj=attr, parent=self, name=name)
 
-            if filter_func is None or filter_func(objInfo):
+            if not filter_func or filter_func(objInfo):
                 if objInfo.identifier() not in _all_objInfo:
                     objInfo.get_attrs(filter_func=filter_func, depth=depth - 1, _all_objInfo=_all_objInfo)
             else:
