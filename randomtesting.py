@@ -18,24 +18,18 @@ class Foo(Base):
     bar = 5
 
 
-print(Foo.mro())
-print(Foo.__bases__)
-# HERE **
-# Method to return the last class that had a specific attribute when iterating MRO
-# class, base, buitlin should all look at this cls
-
-
 
 # print(TreeDiagram.__weakref__.__name__)
 # exit()
 
-objInfo = ObjInfo(generallibrary.TreeDiagram)
+objInfo = ObjInfo(generallibrary)
 
-objInfo.get_attrs(filter_func=False)
-objInfo.view(custom_repr=lambda x: f"{str(x):<50}{x.get_parent().cls.__module__}")
+# objInfo.get_attrs(filter_func=False)
+# objInfo.view(custom_repr=lambda x: f"{str(x):<50}{x.get_parent().cls.__module__}")
 
-# objInfo.get_attrs(depth=-1)
-# objInfo.view()
+objInfo.filters.append(lambda x: not x.is_module())
+objInfo.get_attrs(depth=-1)
+objInfo.view()
 
 
 

@@ -48,7 +48,7 @@ class _ObjInfoParents:
             elif module and qualname and "<locals>" not in split_qualname:
                 objInfo = self.ObjInfo(obj=module)
                 for name in split_qualname[:-1:]:
-                    objInfo = objInfo.get_attribute_child(name)
+                    objInfo = self.ObjInfo(obj=getattr(objInfo.obj, name), parent=objInfo, name=name)
 
             # Find module which contains self.obj
             else:

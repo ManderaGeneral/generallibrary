@@ -425,7 +425,9 @@ class CallTable:
             for arg_name, arg in args.items():
                 # print(arg, getattr(arg, "__self__", None))
                 try:
-                    result = "True" if func(arg) else ""
+                    result = func(arg)
+                    if not result:
+                        result = ""
                 except Exception as e:
                     # raise e
                     result = "-"

@@ -21,7 +21,7 @@ class _ObjInfoProperties:
             Subset of ObjInfo.internal().
 
             :param generallibrary.ObjInfo self: """
-        return str(self.name).startswith("__")
+        return "__" in str(self.name)
 
     def protected(self):
         """ Get whether possible name is protected, False if name is None.

@@ -223,12 +223,21 @@ class ObjectTest(unittest.TestCase):
 
     def test_ObjInfo_protected(self):
         objInfo = ObjInfo(_Foo)
+        objInfo.filters = []
+        objInfo.get_attrs()
 
-        self.assertEqual(True, objInfo.get_attr("_self").protected())
-        self.assertEqual(False, objInfo.get_attr("self").protected())
+        objInfo.view()
 
-        self.assertEqual(True, objInfo.get_attr("_attr").protected())
-        self.assertEqual(False, objInfo.get_attr("attr").protected())
+        self.assertEqual(True, objInfo.get_child_by_key_values(name="_self").protected())
+        self.assertEqual(False, objInfo.get_child_by_key_values(name="self").protected())
+
+        self.assertEqual(True, objInfo.get_child_by_key_values(name="_attr").protected())
+        self.assertEqual(False, objInfo.get_child_by_key_values(name="attr").protected())
+
+        self.assertEqual(False, objInfo.get_child_by_key_values(name="_Foo__private").protected())
+        self.assertEqual(True, objInfo.get_child_by_key_values(name="_Foo__private").private())
+        self.assertEqual(True, objInfo.get_child_by_key_values(name="_Foo__private").internal())
+        self.assertEqual(False, objInfo.get_child_by_key_values(name="_Foo__private").public())
 
         self.assertEqual(False, ObjInfo(a).protected())
         self.assertEqual(False, ObjInfo(a()).protected())
@@ -256,6 +265,9 @@ class _Foo:
     @property
     def _property(self):
         return
+
+    def __private(self):
+        pass
 
 
 def a():

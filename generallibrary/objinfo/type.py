@@ -35,7 +35,7 @@ class _ObjInfoType:
 
     @staticmethod
     def _is_property(obj):
-        hasattr(obj, "fget")
+        return hasattr(obj, "fget")
 
     def is_property(self):
         """ Get whether obj is a property of a class.

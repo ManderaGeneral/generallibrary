@@ -156,6 +156,7 @@ def getBaseClasses(obj, includeSelf=False, includeObject=True):
 
     return classes
 
+
 def getBaseClassNames(obj, includeSelf=False):
     """
     Get all base classes from an object's class.
@@ -166,6 +167,7 @@ def getBaseClassNames(obj, includeSelf=False):
     :rtype: list[str]
     """
     return [cls.__name__ for cls in getBaseClasses(obj, includeSelf)]
+
 
 def hasMethod(obj, method):
     """
@@ -190,6 +192,7 @@ class HierarchyStorer(type):
             Defines Base.A, Base.B, A.Base, B.Base
             """
     _base_name = ...
+
     def __new__(mcs, name, bases, clsdict, base=None):
         if base is not None:
             mcs._base_name = base
