@@ -226,8 +226,6 @@ class ObjectTest(unittest.TestCase):
         objInfo.filters = []
         objInfo.get_attrs()
 
-        objInfo.view()
-
         self.assertEqual(True, objInfo.get_child_by_key_values(name="_self").protected())
         self.assertEqual(False, objInfo.get_child_by_key_values(name="self").protected())
 

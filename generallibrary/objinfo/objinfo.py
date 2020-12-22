@@ -17,7 +17,8 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         Children are generated manually with `generate_attributes`.
         Todo: Module tree for ObjInfo.
         Todo: Another type of diagram for ObjInfo as an object can be an attribute of multiple objects.
-        Todo: Tests for ObjInfo. """
+        Todo: Tests for ObjInfo.
+        Todo: Disable save, load and copy. """
     def __init__(self, obj, parent=None, name=None):
         self.obj = obj
         self.cls = self.obj if self.is_class() else type(self.obj)

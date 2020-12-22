@@ -52,7 +52,7 @@ class TreeDiagram:
     def hook_set_attribute(self, key, value, old_value): """ Attribute set hook. """
 
     @classmethod
-    def data_keys_add(cls, key, value, use_in_repr=False, unique=False):
+    def data_keys_add(cls, key, value, use_in_repr=False, unique=False, store_now=None):
         """ Define what attributes to keep track of automatically in __setattr__.
             Returns value to enable oneliner in __init__.
             Todo: Removable keys. """
@@ -62,6 +62,10 @@ class TreeDiagram:
         keyInfo = KeyInfo(key=key, use_in_repr=use_in_repr, unique=unique)
         if keyInfo not in cls.data_keys:
             cls.data_keys.append(keyInfo)
+
+        if store_now is not None:
+            store_now.data[key] = value
+
         return value
 
     def _singular_alternatives(self, list_, index):
