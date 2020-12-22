@@ -80,7 +80,7 @@ class TreeDiagram:
             :param TreeDiagram or None parent:
             :param TreeDiagram or None old_parent: """
         if old_parent is ...:
-            old_parent = self.get_parent()
+            old_parent = self._parent
 
         if old_parent:
             old_parent._children.remove(self)
