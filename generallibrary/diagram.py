@@ -1,6 +1,7 @@
 
 from generallibrary.object import initBases
 from generallibrary.functions import deco_extend
+from generallibrary.values import clamp
 import pandas
 
 
@@ -74,11 +75,12 @@ class TreeDiagram:
         except IndexError:
             return None
 
-    def set_parent(self, parent, old_parent=...):
+    def set_parent(self, parent, old_parent=..., index=None):
         """ Set a new parent for this Node.
 
             :param TreeDiagram or None parent:
-            :param TreeDiagram or None old_parent: """
+            :param TreeDiagram or None old_parent:
+            :param index: """
         if old_parent is ...:
             old_parent = self._parent
 
@@ -89,7 +91,7 @@ class TreeDiagram:
             self.hook_lose_parent(old_parent=old_parent, parent=parent)
 
         if parent:
-            # Remove possible previous child with matching unique key values
+            # Remove possible existing child with matching unique key values
             for keyInfo in self.data_keys:
                 if keyInfo.unique:
                     sibling = parent.get_child_by_key_values(**{keyInfo: getattr(self, keyInfo)})
@@ -98,7 +100,10 @@ class TreeDiagram:
 
             # if self in parent.all_parents():
             #     raise AttributeError(f"Cannot set {parent} as parent for {self} as it becomes circular. ")
-            parent._children.append(self)
+            if index is None:
+                parent._children.append(self)
+            else:
+                parent._children.insert(index, self)
 
             parent.hook_add_child(self)
             self.hook_new_parent(parent=parent, old_parent=old_parent)
@@ -106,8 +111,14 @@ class TreeDiagram:
         self._parent = parent
         return parent
 
+    def remove(self):
+        """ Remove this Node. """
+        self.set_parent(None)
+        self.hook_remove()
+
     def get_all_parents(self):
         """ Get a list of all parents recursively.
+            Empty list of no parents.
 
             :rtype: list[TreeDiagram] """
         part = self
@@ -189,6 +200,19 @@ class TreeDiagram:
         """ Return the previous sibling or None if this is the last child. """
         return self._sibling_helper(-1)
 
+    def get_index(self):
+        """ Return index of this node among it's siblings. """
+        assert self.get_parent()
+        return self.get_parent().get_children().index(self)
+
+    def set_index(self, index):
+        """ Move this node among it's siblings. """
+        parent = self.get_parent()
+        assert parent
+        if parent.get_children()[index] is not self:
+            self.remove()
+            self.set_parent(parent=parent, index=index)
+
     def save(self):
         """ Recursively save by returning a new dictionary. """
         data = self.data.copy()
@@ -215,11 +239,6 @@ class TreeDiagram:
     def copy_to(self, parent=None):
         """ Copy this Node along with it's children by using save and load."""
         return self.load(d=self.save(), parent=parent)
-
-    def remove(self):
-        """ Remove this Node. """
-        self.set_parent(None)
-        self.hook_remove()
 
     def view(self, indent=1, relative=False, custom_repr=None, print_out=True):
         """ Get a printable string showing a clear view of this TreeDiagram structure. """
@@ -282,20 +301,17 @@ class Markdown(TreeDiagram):
     """ A section for a markdown file, built on TreeDiagram.
 
         Todo: Create Markdown tree from markdown text.
-        Todo: Tests for Markdown. """
-    def __init__(self, *lines, header=None, hashtags=None, parent=None):
-        if hashtags is None:
-            hashtags = 2
-
+        Todo: Tests for Markdown.
+        Todo: Split line in lines with \n. """
+    def __init__(self, *lines, header=None, parent=None):
         self.header = header
         self.lines = list(lines)
-        self.hashtags = hashtags
 
     def section_lines(self):
         """ Get a list of all lines in this section. """
         lines = self.lines.copy()
         if self.header:
-            lines.insert(0, f"{'#' * self.hashtags} {self.header}")
+            lines.insert(0, f"{'#' * clamp(1 + len(self.get_all_parents()), 1, 6)} {self.header}")
         return lines
 
     def all_lines(self):
