@@ -38,11 +38,30 @@ class _ObjInfoProperties:
             :param generallibrary.ObjInfo self: """
         return inspect.getmodule(self.obj)
 
-    def doc(self):
+    def doc(self, only_first_line=False, require_sentence=False):
         """ Return documentation string of this ObjInfo's obj.
 
-            :param generallibrary.ObjInfo self: """
-        return inspect.getdoc(self.obj)
+            :param generallibrary.ObjInfo self:
+            :param only_first_line: Whether to only return first line.
+            :param require_sentence: Whether to require properly formatted lines. """
+        from generallibrary.code import print_link_to_obj
+
+        doc = inspect.getdoc(self.obj)
+
+        if doc is None:
+            doc = ""
+
+        if doc and only_first_line:
+            doc = doc.splitlines()[0]
+
+        doc = doc.removesuffix(" ")
+
+        if require_sentence:
+            if not doc or not doc.endswith(".") or not doc[0].isupper():
+                raise AttributeError(f"'{doc}' is not a proper a sentence from '{print_link_to_obj(self.obj, print_out=False)}'.")
+
+        return doc
+
 
 
 

@@ -86,7 +86,7 @@ def debug(scope, *evals, printOut=True):
 
 
 # https://stackoverflow.com/questions/26300594/print-code-link-into-pycharms-console
-def print_link(file=None, line=None):
+def print_link(file=None, line=None, print_out=True):
     """ Print a link in PyCharm to a line in file.
         Defaults to line where this function was called. """
     if file is None:
@@ -94,17 +94,19 @@ def print_link(file=None, line=None):
     if line is None:
         line = inspect.stack()[1].lineno
     string = f'File "{file}", line {max(line, 1)}'.replace("\\", "/")
-    print(string)
+
+    if print_out:
+        print(string)
     return string
 
 
-def print_link_to_obj(obj):
+def print_link_to_obj(obj, print_out=True):
     """ Print a link in PyCharm to a module, function, class, method or property. """
     if isinstance(obj, property):
         obj = obj.fget
     file = inspect.getfile(obj)
     line = inspect.getsourcelines(obj)[1]
-    return print_link(file=file, line=line)
+    return print_link(file=file, line=line, print_out=print_out)
 
 
 def get_lines(obj):

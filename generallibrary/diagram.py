@@ -241,7 +241,8 @@ class TreeDiagram:
         return self.load(d=self.save(), parent=parent)
 
     def view(self, indent=1, relative=False, custom_repr=None, print_out=True):
-        """ Get a printable string showing a clear view of this TreeDiagram structure. """
+        """ Get a printable string showing a clear view of this TreeDiagram structure.
+            Hides additional lines of a node's repr. """
         top = self.copy_to(None) if relative else self
 
         lines = []
@@ -267,7 +268,10 @@ class TreeDiagram:
 
                 lanes.insert(0, lane)
 
-            lines.append(f"{''.join(lanes)}{custom_repr(node) if custom_repr else node}")
+            node_str = custom_repr(node) if custom_repr else str(node)
+            if "\n" in node_str:
+                node_str = f"{node_str.splitlines()[0]} ..."
+            lines.append(f"{''.join(lanes)}{node_str}")
 
         if relative:
             top.remove()
