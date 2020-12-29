@@ -41,12 +41,14 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         return id(self.obj)
         # return id(getattr(self.get_parent(), "obj", None)), id(self.obj)
 
+    def nice_repr(self):
+        """ Return a nice represantion string with capitalized type and name. """
+        return f"{self.type(nice_output=True)}: {self.name}"
+
     ObjInfo = ...
 
 
 setattr(ObjInfo, "ObjInfo", ObjInfo)
-
-
 
 
 

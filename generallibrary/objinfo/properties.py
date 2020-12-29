@@ -38,6 +38,29 @@ class _ObjInfoProperties:
             :param generallibrary.ObjInfo self: """
         return inspect.getmodule(self.obj)
 
+    def module_path(self, repo_name):
+        """ Return str path to this module relative to repo path. """
+        full_path = self.module().__file__.replace("\\", "/")
+        return full_path[full_path.find(repo_name) + len(repo_name) + 1:]
+
+    def print_link_to_obj(self, print_out=True):
+        """ Relaying to function. """
+        from generallibrary.code import print_link_to_obj
+
+        return print_link_to_obj(self.obj, print_out=print_out)
+
+    def get_definition_line(self):
+        """ Relaying to function. """
+        from generallibrary.code import get_definition_line
+
+        return get_definition_line(self.obj)
+
+    def get_lines(self):
+        """ Relaying to function. """
+        from generallibrary.code import get_lines
+
+        return get_lines(self.obj)
+
     def doc(self, only_first_line=False, require_sentence=False):
         """ Return documentation string of this ObjInfo's obj.
 
@@ -61,6 +84,7 @@ class _ObjInfoProperties:
                 raise AttributeError(f"'{doc}' is not a proper a sentence from '{print_link_to_obj(self.obj, print_out=False)}'.")
 
         return doc
+
 
 
 

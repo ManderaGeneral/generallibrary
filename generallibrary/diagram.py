@@ -109,7 +109,8 @@ class TreeDiagram:
             self.hook_new_parent(parent=parent, old_parent=old_parent)
 
         self._parent = parent
-        return parent
+        # return parent
+        return self
 
     def remove(self):
         """ Remove this Node. """
@@ -120,7 +121,7 @@ class TreeDiagram:
         """ Get a list of all parents recursively.
             Empty list of no parents.
 
-            :rtype: list[TreeDiagram] """
+            :rtype: list[TreeDiagram or Any] """
         part = self
         parents = []
         while part := part.get_parent():
@@ -130,7 +131,7 @@ class TreeDiagram:
     def get_parent(self, index=0):
         """ Get this Node's parent.
 
-            :rtype: TreeDiagram """
+            :rtype: TreeDiagram or Any """
         if index == 0:
             return self._parent
         else:
@@ -139,13 +140,13 @@ class TreeDiagram:
     def get_children(self):
         """ Get a list of all children this Node has, empty list if None.
 
-            :rtype: list[TreeDiagram] """
+            :rtype: list[TreeDiagram or Any] """
         return self._children.copy()
 
     def get_child(self, index=0):
         """ Get a child by index, None if doesn't exist.
 
-            :rtype: TreeDiagram """
+            :rtype: TreeDiagram or Any """
         return self._singular_alternatives(self.get_children(), index)
 
     def get_children_by_key_values(self, **key_values):
@@ -155,7 +156,7 @@ class TreeDiagram:
     def get_child_by_key_values(self, index=0, **key_values):
         """ Get a child that matches all given key values.
 
-            :rtype: TreeDiagram """
+            :rtype: TreeDiagram or Any """
         return self._singular_alternatives(self.get_children_by_key_values(**key_values), index)
 
     def get_all(self, include_self=True):
@@ -224,7 +225,7 @@ class TreeDiagram:
     def load(cls, d, parent=None):
         """ Create a new Tree from a dictionary save.
 
-            :rtype: TreeDiagram """
+            :rtype: TreeDiagram or Any """
         class_ = cls if cls.__name__ == d["class_name"] else getattr(cls, d["class_name"], globals().get(d["class_name"]))
         if class_ is None:  # Maybe we could search bases as well, giving us a fourt option... Very messy
             raise AttributeError(f"Couldn't find class '{d['class_name']}' inside itself, try HierarchyStorer.")
@@ -240,7 +241,7 @@ class TreeDiagram:
         """ Copy this Node along with it's children by using save and load."""
         return self.load(d=self.save(), parent=parent)
 
-    def view(self, indent=1, relative=False, custom_repr=None, print_out=True):
+    def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", print_out=True):
         """ Get a printable string showing a clear view of this TreeDiagram structure.
             Hides additional lines of a node's repr. """
         top = self.copy_to(None) if relative else self
@@ -257,18 +258,18 @@ class TreeDiagram:
             for i, parent in enumerate(all_parents):
                 if i == 0:
                     if parent.get_next_sibling():
-                        lane = f"├{'─' * indent} "
+                        lane = f"├{'─' * indent}{spacer}"
                     else:
-                        lane = f"└{'─' * indent} "
+                        lane = f"└{'─' * indent}{spacer}"
                 else:
                     if parent.get_next_sibling():
-                        lane = f"│{' ' * indent} "
+                        lane = f"│{spacer * indent}{spacer}"
                     else:
-                        lane = f" {' ' * indent} "
+                        lane = f"{spacer}{spacer * indent}{spacer}"
 
                 lanes.insert(0, lane)
 
-            node_str = custom_repr(node) if custom_repr else str(node)
+            node_str = str(custom_repr(node) if custom_repr else node)
             if "\n" in node_str:
                 node_str = f"{node_str.splitlines()[0]} ..."
             lines.append(f"{''.join(lanes)}{node_str}")
@@ -309,7 +310,31 @@ class Markdown(TreeDiagram):
         Todo: Split line in lines with \n. """
     def __init__(self, *lines, header=None, parent=None):
         self.header = header
-        self.lines = list(lines)
+        self.lines = []
+        self.add_lines(*lines)
+
+    @staticmethod
+    def link(text, header=None, url=None, href=False, enabled=True):
+        """ Return a link to a header or url.
+            Enable `href` if inside a non-formatting tag such as <pre>. """
+        if not enabled:
+            return text
+
+        if url is not None:
+            link = url
+        else:
+            if header is None:
+                header = text
+            link = f"#{str(header).replace(' ', '-').replace(':', '')}"
+
+        if href:
+            return f"<a href='{link}'>{text}</a>"
+        return f"[{text}]({link})"
+
+    @staticmethod
+    def link_github_code(text, owner, repo_name, file_path, line, commit_sha="master"):
+        """ Get a markdown link to get the code definition of an object. """
+        return Markdown.link(text, url=f"https://github.com/{owner}/{repo_name}/blob/{commit_sha}/{file_path}#L{line}", href=True)
 
     def section_lines(self):
         """ Get a list of all lines in this section. """
@@ -317,6 +342,11 @@ class Markdown(TreeDiagram):
         if self.header:
             lines.insert(0, f"{'#' * clamp(1 + len(self.get_all_parents()), 1, 6)} {self.header}")
         return lines
+
+    def add_lines(self, *lines):
+        for line in lines:  # type: str
+            self.lines.extend(line.splitlines())
+        return self
 
     def all_lines(self):
         """ Get a list of all lines in this entire Markdown by iterating all children.
@@ -334,15 +364,27 @@ class Markdown(TreeDiagram):
         self.lines.extend(["```", *lines, "```"])
         return self
     
-    def add_table_lines(self, list_of_dicts):
+    def add_table_lines(self, *dicts):
         """ Add a table to the lines using pandas `to_markdown`. """
-        self.lines.append(pandas.DataFrame(list_of_dicts).to_markdown(index=False))
+        self.lines.extend(pandas.DataFrame(dicts).to_markdown(index=False).splitlines())
         return self
     
     def add_list_lines(self, *items, indent=0):
         """ Add list lines. """
         for item in items:
             self.lines.append(f"{'  ' * indent} - {item}")
+        return self
+
+    def add_pre_lines(self, *lines):
+        self.add_lines(*lines)
+        self.wrap_with_tags("pre")
+        return self
+
+    def wrap_with_tags(self, *tags):
+        for tag in tags:
+            self.lines.insert(0, f"<{tag}>")
+            self.lines.append(f"</{tag}>")
+        return self
 
     def __str__(self):
         return '\n'.join(self.all_lines())

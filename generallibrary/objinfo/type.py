@@ -5,7 +5,7 @@ from types import MethodWrapperType
 
 class _ObjInfoType:
     """ Only one of these methods starting with 'is_' will return True. """
-    def type(self):
+    def type(self, nice_output=False):
         """ Get a string of what type obj is.
 
             :param generallibrary.ObjInfo self: """
@@ -13,7 +13,10 @@ class _ObjInfoType:
 
         # if len(types) != 1:
         #     raise AssertionError(f"{self.obj} does not have one type: {types}")
-        return types[0] if types else None
+        return_type = types[0] if types else None
+        if nice_output and return_type is not None:
+            return return_type.split("_")[1].capitalize()
+        return return_type
 
     def is_module(self):
         """ Get whether obj is a module.
