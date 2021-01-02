@@ -338,11 +338,6 @@ class Markdown(TreeDiagram):
             return f"<a href='{link}'>{text}</a>"
         return f"[{text}]({link})"
 
-    @staticmethod
-    def link_github_code(text, owner, repo_name, file_path, line, commit_sha="master"):
-        """ Get a markdown link to get the code definition of an object. """
-        return Markdown.link(text, url=f"https://github.com/{owner}/{repo_name}/blob/{commit_sha}/{file_path}#L{line}", href=True)
-
     def section_lines(self):
         """ Get a list of all lines in this section. """
         lines = self.lines.copy()

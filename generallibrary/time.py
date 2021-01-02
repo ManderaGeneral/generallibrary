@@ -1,5 +1,7 @@
 
 import time
+from datetime import datetime
+import pytz
 
 
 class Timer:
@@ -27,6 +29,7 @@ class Timer:
         if reset:
             self.reset()
 
+
 def sleep(seconds):
     """ Normal sleep function from time package.
 
@@ -34,3 +37,6 @@ def sleep(seconds):
     time.sleep(seconds)
 
 
+def current_date_and_time(timezone="Europe/Paris", format_str="%Y-%m-%d %H:%M %Z"):
+    """ Get a nicely formatted date and time string. """
+    return datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(pytz.timezone(timezone)).strftime(format_str)
