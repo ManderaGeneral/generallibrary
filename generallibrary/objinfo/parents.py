@@ -1,5 +1,6 @@
 
 import sys
+import importlib
 
 
 class _ObjInfoParents:
@@ -37,9 +38,14 @@ class _ObjInfoParents:
         qualname = getattr(obj, "__qualname__", "")
         split_qualname = qualname.split(".")
 
-        if not self.is_module():
-            objInfo = None
+        objInfo = None
+        if self.is_module():
+            split_name = self.obj.__name__.split(".")
+            for i in range(len(split_name) - 1):
+                parent_module = importlib.import_module(name=".".join(split_name[0:i + 1]))
+                objInfo = self.ObjInfo(obj=parent_module, parent=objInfo)
 
+        else:
             # To make the parent of a bound method an instance instead of class
             if dunder_self := getattr(self.obj, "__self__", None):
                 objInfo = self.ObjInfo(obj=dunder_self)
@@ -57,8 +63,8 @@ class _ObjInfoParents:
                     self.name = name
                     objInfo = self.ObjInfo(obj=first_module)
 
-            if objInfo:
-                self.set_parent(objInfo)
+        if objInfo:
+            self.set_parent(objInfo)
 
     @classmethod
     def check_if_parent_eligible(cls, parent_obj, child_obj, name):

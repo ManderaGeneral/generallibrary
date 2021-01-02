@@ -33,30 +33,32 @@ class _ObjInfoProperties:
         return not self.private() and str(self.name).startswith("_")
 
     def module(self):
-        """ Return module of this ObjInfo's obj.
+        """ Return module of this ObjInfo's obj as returned by inspect or None.
 
             :param generallibrary.ObjInfo self: """
         return inspect.getmodule(self.obj)
 
-    def module_path(self, repo_name):
-        """ Return str path to this module relative to repo path. """
-        full_path = self.module().__file__.replace("\\", "/")
-        return full_path[full_path.find(repo_name) + len(repo_name) + 1:]
-
     def print_link_to_obj(self, print_out=True):
-        """ Relaying to function. """
+        """ Relaying to function.
+
+            :param generallibrary.ObjInfo self:
+            :param print_out: """
         from generallibrary.code import print_link_to_obj
 
         return print_link_to_obj(self.obj, print_out=print_out)
 
     def get_definition_line(self):
-        """ Relaying to function. """
+        """ Relaying to function.
+
+            :param generallibrary.ObjInfo self: """
         from generallibrary.code import get_definition_line
 
         return get_definition_line(self.obj)
 
     def get_lines(self):
-        """ Relaying to function. """
+        """ Relaying to function.
+
+            :param generallibrary.ObjInfo self: """
         from generallibrary.code import get_lines
 
         return get_lines(self.obj)

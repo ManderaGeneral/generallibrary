@@ -40,20 +40,23 @@ class CodeLine(TreeDiagram):
         self.space_before = space_before
         self.space_after = space_after
 
-    def generate(self):
+    def get_lines(self, watermark=True):
         """ Generate a list of formatted code lines by iterating stored _Line instances. """
-        lines = ["# -------------------- GENERATED CODE --------------------"]
+        lines = []
         for codeLine in self.get_all(include_self=False):
             lines.extend([""] * codeLine.space_before)
             lines.append(f"{self.indent_str * (len(codeLine.get_all_parents()) - 1)}{codeLine.code_str}")
             lines.extend([""] * codeLine.space_after)
-        lines.append("# --------------------------------------------------------")
+
+        if watermark:
+            lines.insert(0, "# -------------------- GENERATED CODE --------------------")
+            lines.append("# --------------------------------------------------------")
+
         return lines
 
-    def print(self):
+    def text(self, watermark=True):
         """ Generate and print copyable code. """
-        code = "\n".join(self.generate())
-        print(code)
+        code = "\n".join(self.get_lines(watermark=watermark))
         return code
 
 

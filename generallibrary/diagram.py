@@ -75,6 +75,13 @@ class TreeDiagram:
         except IndexError:
             return None
 
+    def add(self, child):
+        """ Add a node as child.
+
+            :param TreeDiagram or None child: """
+        child.set_parent(parent=self)
+        return child
+
     def set_parent(self, parent, old_parent=..., index=None):
         """ Set a new parent for this Node.
 
@@ -344,6 +351,10 @@ class Markdown(TreeDiagram):
         return lines
 
     def add_lines(self, *lines):
+        """ Add lines to list, using splitlines. """
+        if self.lines:
+            self.lines.append("")
+
         for line in lines:  # type: str
             self.lines.extend(line.splitlines())
         return self
@@ -361,18 +372,18 @@ class Markdown(TreeDiagram):
 
     def add_code_lines(self, *lines):
         """ Add code lines, wrapped by quotes. """
-        self.lines.extend(["```", *lines, "```"])
+        self.add_lines("```", *lines, "```")
         return self
     
     def add_table_lines(self, *dicts):
         """ Add a table to the lines using pandas `to_markdown`. """
-        self.lines.extend(pandas.DataFrame(dicts).to_markdown(index=False).splitlines())
+        self.add_lines(pandas.DataFrame(dicts).to_markdown(index=False))
         return self
     
     def add_list_lines(self, *items, indent=0):
         """ Add list lines. """
         for item in items:
-            self.lines.append(f"{'  ' * indent} - {item}")
+            self.add_lines(f"{'  ' * indent} - {item}")
         return self
 
     def add_pre_lines(self, *lines):

@@ -221,6 +221,10 @@ class ObjectTest(unittest.TestCase):
 
         check(ObjInfo(_Foo._property).is_property)
 
+    def test_ObjInfo_parents(self):
+        objInfo = ObjInfo(ObjInfo)
+        self.assertEqual("generallibrary", objInfo.get_parent(-1).obj.__name__)
+
     def test_ObjInfo_protected(self):
         objInfo = ObjInfo(_Foo)
         objInfo.filters = []

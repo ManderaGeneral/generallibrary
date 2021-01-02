@@ -15,9 +15,9 @@ class _ObjInfoChildren:
             :param objInfo: """
         return all([func(objInfo) for func in self.filters])
 
-    def get_attrs(self, depth=1, _all_objInfo=None):
+    def get_attrs(self, depth=1, _all_objInfo=None, _top_objInfo=None):
         """ Generate attributes for this ObjInfo's obj.
-            Uses self.filters.
+            Uses filters of top objInfo (First given).
             Can generate recursively based on depth.
             Existing attribute ObjInfos will be replaced as the name key is unique.
             Returns a list of all generated ObjInfos' identifiers.
@@ -25,6 +25,7 @@ class _ObjInfoChildren:
             :param generallibrary.ObjInfo self:
             :param depth: Depth to iterate, -1 is infinite.
             :param _all_objInfo:
+            :param _filters:
             :rtype: list[generallibrary.ObjInfo] """
         if not depth:
             return
@@ -32,6 +33,9 @@ class _ObjInfoChildren:
         if _all_objInfo is None:
             _all_objInfo = []
         _all_objInfo.append(self.identifier())
+
+        if _top_objInfo is None:
+            _top_objInfo = self
 
         # for name in getattr(self.obj, "__dict__", {}).keys():
         for name in dir(self.obj):
@@ -45,9 +49,9 @@ class _ObjInfoChildren:
 
             objInfo = self.ObjInfo(obj=attr, parent=self, name=name)
 
-            if self.filters_check(objInfo):
+            if _top_objInfo.filters_check(objInfo):
                 if objInfo.identifier() not in _all_objInfo:
-                    objInfo.get_attrs(depth=depth - 1, _all_objInfo=_all_objInfo)
+                    objInfo.get_attrs(depth=depth - 1, _all_objInfo=_all_objInfo, _top_objInfo=_top_objInfo)
             else:
                 objInfo.remove()
 

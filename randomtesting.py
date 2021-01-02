@@ -1,28 +1,13 @@
 
-import generallibrary
 from generallibrary import *
+import generallibrary
 
-import sys
-import inspect
+import importlib
 
+objInfo = ObjInfo(ObjInfo)
 
-class Base:
-    def hello(self):
-        pass
+print(objInfo.module())
 
-
-class Foo(Base):
-    bar = 5
-
-
-
-
-objInfo = ObjInfo(Foo)
-objInfo.get_attrs()
-
-objInfo.view()
-objInfo.get_child().set_index(1)
-objInfo.view()
 
 
 
