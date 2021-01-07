@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.time import Timer, sleep, current_date_and_time
+from generallibrary.time import Timer, sleep, current_datetime_formatted
 
 
 class TimeTest(unittest.TestCase):
@@ -13,4 +13,4 @@ class TimeTest(unittest.TestCase):
         self.assertGreater(Timer(0).seconds(), 1588527842)
 
     def test_current_date_and_time(self):
-        current_date_and_time()
+        current_datetime_formatted()

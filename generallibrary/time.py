@@ -37,6 +37,11 @@ def sleep(seconds):
     time.sleep(seconds)
 
 
-def current_date_and_time(timezone="Europe/Paris", format_str="%Y-%m-%d %H:%M %Z"):
+def current_datetime(timezone="Europe/Paris"):
+    """ Get current aware datetime. """
+    return datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(pytz.timezone(timezone))
+
+
+def current_datetime_formatted(timezone="Europe/Paris", format_str="%Y-%m-%d %H:%M %Z"):
     """ Get a nicely formatted date and time string. """
-    return datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(pytz.timezone(timezone)).strftime(format_str)
+    return current_datetime(timezone=timezone).strftime(format_str)

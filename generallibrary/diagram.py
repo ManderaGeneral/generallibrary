@@ -75,10 +75,13 @@ class TreeDiagram:
         except IndexError:
             return None
 
-    def add(self, child):
-        """ Add a node as child.
+    def add(self, *args):
+        """ Add a node as child. """
+        if type(args[0]) == type(self):
+            child = args[0]
+        else:
+            child = type(self)(*args)
 
-            :param TreeDiagram or None child: """
         child.set_parent(parent=self)
         return child
 

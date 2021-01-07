@@ -54,7 +54,7 @@ class CodeLine(TreeDiagram):
 
         return lines
 
-    def text(self, watermark=True):
+    def text(self, watermark=False):
         """ Generate and print copyable code. """
         code = "\n".join(self.get_lines(watermark=watermark))
         return code
