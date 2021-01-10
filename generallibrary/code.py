@@ -59,6 +59,9 @@ class CodeLine(TreeDiagram):
         code = "\n".join(self.get_lines(watermark=watermark))
         return code
 
+    def __str__(self):
+        return self.text()
+
 
 def debug(scope, *evals, printOut=True):
     """

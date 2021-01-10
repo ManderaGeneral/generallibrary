@@ -1,5 +1,7 @@
 
 from math import ceil
+import os
+import sys
 
 
 def clamp(value, minimum, maximum):
@@ -103,10 +105,54 @@ def confineTo(value, minimum, maximum, margin=0):
     return value + jumpValue
 
 
+class EnvVar:
+    """ Handles environment variables.
+        actions_name has to be defined if the env var is used for unittesting in the workflow. """
+    def __init__(self, name, actions_name=None):
+
+        if actions_name is not None:
+            actions_name = "${{ " + actions_name + " }}"
+
+        self.name = name
+        self.actions_name = actions_name
+
+    @property
+    def value(self):
+        """ Get value of env var. """
+        if self.name not in os.environ:
+            raise KeyError(f"Env var '{self.name}' is not set.")
+
+        return os.environ[self.name]
+
+    @value.setter
+    def value(self, value):
+        """ Set value of an env var, both in instance and os.environ. """
+        os.environ[self.name] = value
+
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return f"<{type(self).__name__}: {self.name}>"
 
 
+def get_launch_options():
+    """ Return a dict of given args from launch options.
+        Uses sys.argv, attempts to split on '=', if missing then getFreeIndex is used as key.
+        WARNING: Removes all extra values in sys.argv (As unittest couldn't handle it) """
+    args = {}
+    while len(sys.argv) > 1:
+        arg = sys.argv[1]
+        if "=" in arg:
+            split = arg.split("=")
+            args[split[0]] = split[1]
+        else:
+            args[getFreeIndex(args)] = arg
+        del sys.argv[1]
+    return args
 
 
+from generallibrary.iterables import getFreeIndex
 
 
 
