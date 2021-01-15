@@ -1,0 +1,16 @@
+{
+    "name": "generallibrary",
+    "version": "2.5.9",
+    "description": "Random useful code categorized into modules.",
+    "install_requires": [
+        "packaging",
+        "pyperclip",
+        "pandas",
+        "tabulate",
+        "pytz"
+    ],
+    "extras_require": {},
+    "topics": [
+        "library"
+    ]
+}
