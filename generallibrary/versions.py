@@ -7,8 +7,22 @@ Get package info?
 from generallibrary.object import initBases
 
 from packaging import version
-
 import pkg_resources
+from distutils.version import StrictVersion
+import re
+
+
+# Todo: Replace this temporary Ver class with revamped VerInfo split into isolated parts.
+class Ver(StrictVersion):
+    def __init__(self, ver):
+        super().__init__(str(ver))
+
+    def bump(self):
+        """ Return a new Ver with bumped last value. """
+        bulk, micro = re.findall("(.*)(\\d)", str(self))[0]
+        return Ver(f"{bulk}{int(micro) + 1}")
+
+
 
 
 class _OsInfo:
