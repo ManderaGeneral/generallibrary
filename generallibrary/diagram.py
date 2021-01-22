@@ -7,6 +7,7 @@ import pandas
 
 @deco_extend
 class KeyInfo(str):
+    """ Store extra info on a string for Diagram key value. """
     def __init__(self, key, use_in_repr, unique):
         self.key = key
         self.use_in_repr = use_in_repr
