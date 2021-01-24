@@ -2,7 +2,119 @@
 from generallibrary.object import initBases
 from generallibrary.functions import deco_extend
 from generallibrary.values import clamp
+
+
 import pandas
+
+
+class Route(list):
+    """ List of Nodes.
+        A route ends when it goes into a dead-end or itself. """
+    def get_links(self):
+        """ Get a set of all links connected to nodes. """
+        return set().union(*[node.links for node in self])
+
+    def copy(self):
+        """ Simple override to return a new copied Route instance. """
+        return Route(self)
+
+    def is_circular(self):
+        """ Return whether this Route is circular by seeing if the last node exists more than once. """
+        return len(self) > 2 and self[-1] in self[:-3:]
+
+    def is_uturn(self):
+        """ Return whether this route is a u-turn by seeing if the last node is the third last node. """
+        return len(self) > 2 and self[-1] is self[-3]
+
+    def __repr__(self):
+        # return f"{type(self).__name__}: {len(self)}x{' ⟲' * self.is_circular()}{' ⮌' * self.is_uturn()}"
+        return f"{type(self).__name__}: {super().__repr__()}{' ⟲' * self.is_circular()}{' ⮌' * self.is_uturn()}"
+
+class RouteGrp(list):
+    """ List of Routes. """
+    def __init__(self, *routes, origin, depth, incoming, outgoing):
+        super().__init__(routes)
+
+        self.origin = origin
+        self.depth = depth
+        self.incoming = incoming
+        self.outgoing = outgoing
+
+    def get_nodes(self):
+        """ Get a set of all nodes. """
+        return set().union(*self)
+
+    def get_links(self):
+        """ Get a set of all links. """  # HERE ** Only include links where both Nodes are in Route
+        return set().union(*[route.get_links() for route in self])
+
+    def get_active_links(self, node):
+        """ Get a list of direct active links to a node using incoming and outgoing. """
+        return [link for link in node.links if (self.incoming and link.target is node) or (self.outgoing and link.base is node)]
+
+    def get_connected_nodes(self, node):
+        """ Get a list of connected nodes from active links. """
+        return [link.other_node(node) for link in self.get_active_links(node=node)]
+
+
+class Link:
+    """ A link between two Nodes. """
+    def __init__(self, base, target):
+        self.base = base  # type: NetworkDiagram
+        self.target = target  # type: NetworkDiagram
+
+    def other_node(self, node):
+        return self.base if self.target is node else self.target
+
+    def __str__(self):
+        return f"{self.base} -> {self.target}"
+    __repr__ = __str__
+
+
+class NetworkDiagram:
+    """ A network diagram node.
+        Todo: Tests for NetworkDiagram.
+        Todo: Storable NetworkDiagram.
+        Todo: Moveable NetworkDiagram. """
+    def __init__(self):
+        self.links = []  # type: list[Link]
+
+    def get_link(self, node):
+        """ Return a Link this Node has to another Node or None. """
+        for link in set(self.links).intersection(node.links):
+            if link.base is self:
+                return link
+        return None
+
+    def link(self, target):
+        """ Link this Node to another unless the link exists, returns Link regardless. """
+        link = self.get_link(node=target)
+        if link is None:
+            link = Link(base=self, target=target)
+            self.links.append(link)
+            target.links.append(link)
+        return link
+
+    def get_routes(self, depth=-1, incoming=True, outgoing=True, _route=None, _routes=None):
+        """ Get Routes, a list of Route instances. """
+        if _route is None:
+            _route = Route()
+            _routes = RouteGrp(_route, origin=self, depth=depth, incoming=incoming, outgoing=outgoing)
+
+        _route.append(self)
+        if depth == 0 or _route.count(self) > 1:
+            return _routes
+
+        _original_route = _route.copy()
+        for i, node in enumerate(_routes.get_connected_nodes(node=self)):
+            if i == 0:
+                new_route = _route
+            else:
+                new_route = _original_route.copy()
+                _routes.append(new_route)
+            node.get_routes(depth=depth - 1, incoming=incoming, outgoing=outgoing, _route=new_route, _routes=_routes)
+        return _routes
+
 
 
 @deco_extend
