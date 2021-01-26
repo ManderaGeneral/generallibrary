@@ -8,11 +8,14 @@ import pandas
 
 
 class Route(list):
-    """ List of Nodes.
-        A route ends when it goes into a dead-end or itself. """
+    """ List of Nodes (NetworkDiagram) in connected order.
+        A route ends when it goes into a dead-end or itself.
+        A route can go any direction through links depending on given `incoming` and `outgoing` arguments. """
     def get_links(self):
-        """ Get a set of all links connected to nodes. """
-        return set().union(*[node.links for node in self])
+        """ Get a set of all links connected to nodes.
+
+            :rtype: set[Link] """
+        return {link for link in set().union(*[node.links for node in self]) if link.base in self and link.target in self}
 
     def copy(self):
         """ Simple override to return a new copied Route instance. """
@@ -30,6 +33,7 @@ class Route(list):
         # return f"{type(self).__name__}: {len(self)}x{' ⟲' * self.is_circular()}{' ⮌' * self.is_uturn()}"
         return f"{type(self).__name__}: {super().__repr__()}{' ⟲' * self.is_circular()}{' ⮌' * self.is_uturn()}"
 
+
 class RouteGrp(list):
     """ List of Routes. """
     def __init__(self, *routes, origin, depth, incoming, outgoing):
@@ -41,20 +45,27 @@ class RouteGrp(list):
         self.outgoing = outgoing
 
     def get_nodes(self):
-        """ Get a set of all nodes. """
+        """ Get a set of all nodes.
+
+            :rtype: set[NetworkDiagram] """
         return set().union(*self)
 
     def get_links(self):
-        """ Get a set of all links. """  # HERE ** Only include links where both Nodes are in Route
+        """ Get a set of all links.
+
+            :rtype: set[Link] """
         return set().union(*[route.get_links() for route in self])
 
     def get_active_links(self, node):
-        """ Get a list of direct active links to a node using incoming and outgoing. """
-        return [link for link in node.links if (self.incoming and link.target is node) or (self.outgoing and link.base is node)]
+        """ Get a list of direct active links to a node using incoming and outgoing.
+
+            :rtype: list[Link] """
+        return [link for link in node.links if link.check_direction(node=node, incoming=self.incoming, outgoing=self.outgoing)]
 
     def get_connected_nodes(self, node):
         """ Get a list of connected nodes from active links. """
         return [link.other_node(node) for link in self.get_active_links(node=node)]
+
 
 
 class Link:
@@ -64,18 +75,50 @@ class Link:
         self.target = target  # type: NetworkDiagram
 
     def other_node(self, node):
+        """ Return the opposite node of given one. """
         return self.base if self.target is node else self.target
+
+    def check_direction(self, node, incoming, outgoing):
+        return (incoming and self.target is node) or (outgoing and self.base is node)
 
     def __str__(self):
         return f"{self.base} -> {self.target}"
     __repr__ = __str__
 
 
-class NetworkDiagram:
+class _NetworkDiagram_Global:
+    """ Methods for NetworkDiagram that disregards origin. """
+    def get_ordered_dict(self):
+        """ Return an indexed dict containing lists of nodes.
+            Starts at node(s) without incoming connections.
+
+            :param NetworkDiagram self: """
+        routeGrp = self.get_routes()
+        for route in routeGrp:
+            if route.is_circular():
+                raise AttributeError(f"Cannot get order when atleast one route is circular: {route}")
+
+        nodes = routeGrp.get_nodes()
+        order = {}
+        while nodes:
+            layer = set()
+            for node in nodes.copy():
+                incoming_nodes = node.get_nodes(outgoing=False)
+                if not incoming_nodes.intersection(nodes):
+                    layer.add(node)
+            order[len(order)] = layer
+            nodes -= layer
+        return order
+
+
+
+
+class NetworkDiagram(_NetworkDiagram_Global):
     """ A network diagram node.
         Todo: Tests for NetworkDiagram.
         Todo: Storable NetworkDiagram.
-        Todo: Moveable NetworkDiagram. """
+        Todo: Moveable NetworkDiagram.
+        Todo: Transform Network to and from Tree if possible. """
     def __init__(self):
         self.links = []  # type: list[Link]
 
@@ -95,8 +138,20 @@ class NetworkDiagram:
             target.links.append(link)
         return link
 
+    def get_links(self, incoming=True, outgoing=True):
+        """ Get a set of links by optional direction connected to this Node.
+
+            :rtype: set[Link] """
+        return {link for link in self.links if link.check_direction(node=self, incoming=incoming, outgoing=outgoing)}
+
+    def get_nodes(self, incoming=True, outgoing=True):
+        """ Get a set of nodes by optional direction connected to this Node.
+
+            :rtype: set[NetworkDiagram] """
+        return {link.other_node(node=self) for link in self.get_links(incoming=incoming, outgoing=outgoing)}
+
     def get_routes(self, depth=-1, incoming=True, outgoing=True, _route=None, _routes=None):
-        """ Get Routes, a list of Route instances. """
+        """ Get a RouteGrp, a list of Route instances, originating from this Node. """
         if _route is None:
             _route = Route()
             _routes = RouteGrp(_route, origin=self, depth=depth, incoming=incoming, outgoing=outgoing)

@@ -9,24 +9,30 @@ class Node(NetworkDiagram):
     def __repr__(self):
         return str(self.x)
 
+
+
 a = Node(1)
 b = Node(2)
 c = Node(3)
 d = Node(4)
 e = Node(5)
+f = Node(6)
 
-a.link(b)
+# a.link(b)
+# b.link(c)
+# c.link(d)
+# d.link(b)
+# c.link(e)
+
+
+a.link(c)
 b.link(c)
 c.link(d)
-d.link(b)
 c.link(e)
-
-print(b.get_routes(depth=1, outgoing=False).get_links())
-
-# print(b.get_link(a))
-# print(a.get_link(b))
+e.link(f)
 
 
+print(a.get_ordered_dict())
 
 
 
