@@ -12,7 +12,7 @@ class Route(list):
         A route ends when it goes into a dead-end or itself.
         A route can go any direction through links depending on given `incoming` and `outgoing` arguments. """
     def get_links(self):
-        """ Get a set of all links connected to nodes.
+        """ Get a set of all links connecting nodes in Route.
 
             :rtype: set[Link] """
         return {link for link in set().union(*[node.links for node in self]) if link.base in self and link.target in self}
@@ -67,7 +67,6 @@ class RouteGrp(list):
         return [link.other_node(node) for link in self.get_active_links(node=node)]
 
 
-
 class Link:
     """ A link between two Nodes. """
     def __init__(self, base, target):
@@ -88,28 +87,34 @@ class Link:
 
 class _NetworkDiagram_Global:
     """ Methods for NetworkDiagram that disregards origin. """
-    def get_ordered_dict(self):
-        """ Return an indexed dict containing lists of nodes.
-            Starts at node(s) without incoming connections.
+    def get_ordered(self):
+        """ Return an ordered list containing sets of nodes.
+            Starts at node(s) without incoming connections and goes along directions of links.
 
-            :param NetworkDiagram self: """
-        routeGrp = self.get_routes()
-        for route in routeGrp:
-            if route.is_circular():
-                raise AttributeError(f"Cannot get order when atleast one route is circular: {route}")
-
-        nodes = routeGrp.get_nodes()
-        order = {}
+            :param NetworkDiagram self:
+            :rtype: list[set[NetworkDiagram]] """
+        nodes = self.get_routes().get_nodes()
+        order = []
         while nodes:
-            layer = set()
+            order.append(set())
             for node in nodes.copy():
                 incoming_nodes = node.get_nodes(outgoing=False)
                 if not incoming_nodes.intersection(nodes):
-                    layer.add(node)
-            order[len(order)] = layer
-            nodes -= layer
+                    order[-1].add(node)
+
+            if not order[-1]:
+                raise AttributeError(f"Encountered circular links.")
+
+            nodes -= order[-1]
         return order
 
+    def get_ordered_flat(self):
+        return [node for nodes in self.get_ordered() for node in nodes]
+
+    def view(self):
+        """ :param NetworkDiagram self: """
+        for node in self.get_routes().get_nodes():
+            print(f"{node} linked to: {list(node.get_nodes(incoming=False))}")
 
 
 
@@ -123,9 +128,9 @@ class NetworkDiagram(_NetworkDiagram_Global):
         self.links = []  # type: list[Link]
 
     def get_link(self, node):
-        """ Return a Link this Node has to another Node or None. """
+        """ Return a Link this Node has outgoing to another given Node or None. """
         for link in set(self.links).intersection(node.links):
-            if link.base is self:
+            if link.base is self and link.target is node:
                 return link
         return None
 

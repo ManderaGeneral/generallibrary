@@ -31,8 +31,14 @@ c.link(d)
 c.link(e)
 e.link(f)
 
+c.link(f)
 
-print(a.get_ordered_dict())
+print(c.get_link(f))
+
+# print(f.get_ordered())
+# print(f.get_ordered_flat())
+# print(a.view())
+
 
 
 
