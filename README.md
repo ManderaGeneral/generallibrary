@@ -30,7 +30,7 @@ Random useful code categorized into modules.
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/functions.py#L452'>Method: generate_with_funcs</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/functions.py#L411'>Method: set_args</a>
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/functions.py#L406'>Method: set_funcs</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/code.py#L30'>Class: CodeLine</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/code.py#L31'>Class: CodeLine</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L251'>Method: add</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L423'>Method: copy_to</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L228'>Method: data_keys_add</a>
@@ -65,7 +65,7 @@ Random useful code categorized into modules.
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/functions.py#L389'>Class: EmptyContext</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/values.py#L108'>Class: EnvVar</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/types_.py#L183'>Class: HierarchyStorer</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L487'>Class: Markdown</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L488'>Class: Markdown</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L251'>Method: add</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L544'>Method: add_code_lines</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L524'>Method: add_lines</a>
@@ -113,8 +113,8 @@ Random useful code categorized into modules.
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L158'>Method: get_routes</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L137'>Method: link</a>
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L114'>Method: view</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/objinfo/objinfo.py#L13'>Class: ObjInfo</a>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/objinfo/objinfo.py#L13'>Class: ObjInfo</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/objinfo/objinfo.py#L14'>Class: ObjInfo</a>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/objinfo/objinfo.py#L14'>Class: ObjInfo</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L251'>Method: add</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/objinfo/parents.py#L69'>Method: check_if_parent_eligible</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L423'>Method: copy_to</a>
@@ -171,7 +171,7 @@ Random useful code categorized into modules.
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L427'>Method: view</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/functions.py#L302'>Class: Operators</a>
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/functions.py#L312'>Method: deco_define_comparisons</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/versions.py#L205'>Class: PythonVersion</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/versions.py#L206'>Class: PythonVersion</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/functions.py#L25'>Class: SigInfo</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/functions.py#L231'>Method: call</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/functions.py#L55'>Method: class_from_callable</a>
@@ -183,7 +183,7 @@ Random useful code categorized into modules.
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/time.py#L26'>Method: print</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/time.py#L15'>Method: reset</a>
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/time.py#L22'>Method: seconds</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L189'>Class: TreeDiagram</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L190'>Class: TreeDiagram</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L251'>Method: add</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L423'>Method: copy_to</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L228'>Method: data_keys_add</a>
@@ -215,16 +215,16 @@ Random useful code categorized into modules.
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/diagram.py#L427'>Method: view</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/versions.py#L16'>Class: Ver</a>
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/versions.py#L20'>Method: bump</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/versions.py#L191'>Class: VerInfo</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/versions.py#L192'>Class: VerInfo</a>
 └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/6c7dd3ca1e5eb1e618167b802c89216d93798623/generallibrary/functions.py#L12'>Class: classproperty</a>
 </pre>
 
 ## Todos
 | Module             | Message                                                                                   |
 |:-------------------|:------------------------------------------------------------------------------------------|
-| functions.py       | Add caching for SigInfo's signature methods                                               |
-| functions.py       | Test deco\_extend with int and str.                                                        |
-| versions.py        | Replace this temporary Ver class with revamped VerInfo split into isolated parts.         |
+| code.py            | Search for old CodeGen and replace.                                                       |
+| code.py            | Maybe put (parts of?) this directly in TreeDiagram.                                       |
+| code.py            | Refactor link methods to ObjInfo.                                                         |
 | diagram.py         | Tests for NetworkDiagram.                                                                 |
 | diagram.py         | Storable NetworkDiagram.                                                                  |
 | diagram.py         | Moveable NetworkDiagram.                                                                  |
@@ -234,17 +234,17 @@ Random useful code categorized into modules.
 | diagram.py         | Create Markdown tree from markdown text.                                                  |
 | diagram.py         | Tests for Markdown.                                                                       |
 | diagram.py         | Split line in lines with \n.                                                              |
+| functions.py       | Add caching for SigInfo's signature methods                                               |
+| functions.py       | Test deco\_extend with int and str.                                                        |
 | types\_.py          | TnD                                                                                       |
-| code.py            | Search for old CodeGen and replace.                                                       |
-| code.py            | Maybe put (parts of?) this directly in TreeDiagram.                                       |
-| code.py            | Refactor link methods to ObjInfo.                                                         |
-| subsets\_methods.py | Subset methods for ObjInfo.is\_method().                                                   |
+| versions.py        | Replace this temporary Ver class with revamped VerInfo split into isolated parts.         |
 | children.py        | Define TreeDiagram.\_\_iter\_\_ as well, but without generation.                              |
 | objinfo.py         | Module tree for ObjInfo.                                                                  |
 | objinfo.py         | Another type of diagram for ObjInfo as an object can be an attribute of multiple objects. |
 | objinfo.py         | Tests for ObjInfo.                                                                        |
 | objinfo.py         | Disable save, load and copy.                                                              |
+| subsets\_methods.py | Subset methods for ObjInfo.is\_method().                                                   |
 
 <sup>
-Generated 2021-01-29 11:42 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/6c7dd3ca1e5eb1e618167b802c89216d93798623'>6c7dd3ca1e5eb1e618167b802c89216d93798623</a>.
+Generated 2021-01-29 11:44 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/6c7dd3ca1e5eb1e618167b802c89216d93798623'>6c7dd3ca1e5eb1e618167b802c89216d93798623</a>.
 </sup>
