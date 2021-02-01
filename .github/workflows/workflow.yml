@@ -1,216 +1,33 @@
-# Merge files from `shared` repo (If this repo is new or if a shared file was changed for some reason)
-# UnitTests
-# Get old package version and dependents
-# Create artifact with metadata
-# Publish to PyPI if new version
-
-
 name: workflow
-
 on:
   push:
-    branches: master
-
+    branches:
+      - master
 jobs:
-  sharedmerge:
-    outputs:
-      changed: ${{ steps.merge.outputs.changed }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.ACTIONS_TOKEN }}
-
-      - name: Setup git
-        run: |
-          sudo apt install git
-          git config --global user.email "rickard.abraham@gmail.com"
-          git config --global user.name Mandera
-
-      - name: Shared merge and possible repush
-        id: merge
-        run: |
-          cd ..
-          git clone https://Mandera:${{ secrets.GIT_PASSWORD }}@github.com/ManderaGeneral/shared.git
-          cp -r shared/generalasterisk/. ${{ github.event.repository.name }}
-          cd ${{ github.event.repository.name }}
-
-          if [[ $(git status) != *"clean"* ]]; then
-            echo Package was not up to date so it will be updated
-            git add .
-            git commit -m "[CI AUTO] Updating shared files for this package." -m "${{ github.event.head_commit.message }}"
-            git push
-
-            echo '::set-output name=changed::true'
-          else
-            echo Package is up to date
-            echo '::set-output name=changed::false'
-          fi
-
   unittest:
-    needs: sharedmerge
-    if: needs.sharedmerge.outputs.changed == 'false' && !contains(github.event.head_commit.message, '[CI SKIP]')
+    if: contains(github.event.head_commit.message, '[CI SKIP]') == false
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         python-version: [3.8, 3.9]
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
+        os: [windows-latest, ubuntu-latest]
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up python version ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
+      - name: Install necessities pip, setuptools, wheel, twine
         run: |
           python -m pip install --upgrade pip
-          pip install wheel
-          pip install .[full]
-
-      - name: Run unittests
+          pip install setuptools wheel twine
+      - name: Install git repos ManderaGeneral/generallibrary
+        run: pip install git+https://github.com/ManderaGeneral/generallibrary.git
+      - name: Install git repos ManderaGeneral/generalfile
+        run: pip install git+https://github.com/ManderaGeneral/generalfile.git
+      - name: Install git repos ManderaGeneral/generalvector
+        run: pip install git+https://github.com/ManderaGeneral/generalvector.git
+      - name: Install git repos ManderaGeneral/generalpackager
+        run: pip install git+https://github.com/ManderaGeneral/generalpackager.git
+      - name: Clone, sync, install, unittest
         run: |
-          python -m unittest discover ${{ github.event.repository.name }}/test
-
-
-  publisher:
-    needs: unittest
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-
-      - name: Install all my packages to get versions and dependents
-        run: |
-          pip install requests
-
-          echo 'import requests' >> packages.py
-          echo 'import re' >> packages.py
-          echo 'print(" ".join(re.findall("/project/(.*)/", requests.get("https://pypi.org/user/Mandera/").text)))' >> packages.py
-
-          ALL_PACKAGES=$(python packages.py)
-          echo ALL_PACKAGES=$ALL_PACKAGES >> $GITHUB_ENV
-          pip install $ALL_PACKAGES
-
-          python -m pip install --upgrade pip==20.2.*
-          
-          pip install pipdeptree ${{ github.event.repository.name }}[full]
-
-          X=($(echo $(pip show ${{ github.event.repository.name }} | grep Version) | tr -d " " | tr ":" "\n"))
-          echo "OLD_VERSION=${X[1]}" >> $GITHUB_ENV
-
-          X=$(pipdeptree -r -p ${{ github.event.repository.name }} | grep "-" | grep "general" | sed "s/=.*//g;s/\ *-\s//g" | grep -v ${{ github.event.repository.name }} | uniq -u | tr "\n" " ")
-          echo "DEPENDENT_PACKAGES=$X" >> $GITHUB_ENV
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Get and set NEW_VERSION
-        run: |
-          echo "NEW_VERSION=$(python setup.py --version)" >> $GITHUB_ENV
-
-      - name: Print info and create metadata
-        run: |
-          echo Package: ${{ github.event.repository.name }}
-          echo PACKAGE=${{ github.event.repository.name }} >> "metadata.txt"
-
-          echo Old version: ${{ env.OLD_VERSION }}
-          echo OLD_VERSION=${{ env.OLD_VERSION }} >> "metadata.txt"
-
-          echo New version: ${{ env.NEW_VERSION }}
-          echo NEW_VERSION=${{ env.NEW_VERSION }} >> "metadata.txt"
-
-          echo All packages: ${{ env.ALL_PACKAGES }}
-          echo ALL_PACKAGES=${{ env.ALL_PACKAGES }} >> "metadata.txt"
-
-          echo Packages depending on this one: ${{ env.DEPENDENT_PACKAGES }}
-          echo DEPENDENT_PACKAGES=${{ env.DEPENDENT_PACKAGES }} >> "metadata.txt"
-
-      - name: Upload metadata as artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: metadata
-          path: metadata.txt
-
-      - name: Publish and push empty commits to dependents
-        if: env.NEW_VERSION != env.OLD_VERSION
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          echo ${{ env.OLD_VERSION }} -> ${{ env.NEW_VERSION }}
-
-          pip install twine
-          python setup.py sdist bdist_wheel
-          twine upload dist/*
-
-          for x in {0..10}; do
-          pypi_versions=$(pip install ${{ github.event.repository.name }}== 2>&1) || :
-          if [[ $pypi_versions == *"${{ env.NEW_VERSION }}"* ]]; then
-          found_version=1
-          echo "Found new verson on PyPI!"
-          break
-          fi
-          echo "Couldn't find new version on PyPI, trying again in 30 seconds"
-          echo "${{ env.NEW_VERSION }} not in $pypi_versions"
-          sleep 30
-          done
-
-          if [[ -v found_version ]]; then
-          sudo apt install git
-          git config --global user.email "rickard.abraham@gmail.com"
-          git config --global user.name Mandera
-
-          for x in ${{ env.DEPENDENT_PACKAGES }}; do
-          git clone https://Mandera:${{ secrets.GIT_PASSWORD }}@github.com/ManderaGeneral/$x.git
-          cd $x
-          git commit -m "[CI AUTO] ${{ github.event.repository.name }} ${{ env.NEW_VERSION }} published." -m "${{ github.event.head_commit.message }}" --allow-empty
-          git push
-          cd ..
-          done
-
-          else
-          echo "FAILING: Couldn't find new version on PyPI in time"
-          exit 1
-          fi
-
-      - name: Version tag
-        if: env.NEW_VERSION != env.OLD_VERSION
-        uses: mathieudutour/github-tag-action@v4.6
-        with:
-          github_token: ${{ secrets.ACTIONS_TOKEN }}
-          custom_tag: ${{ env.NEW_VERSION }}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+          python -c "from generalpackager import Packager; Packager('generalpackager', '', '${{ github.sha }}').workflow_stuff()"
