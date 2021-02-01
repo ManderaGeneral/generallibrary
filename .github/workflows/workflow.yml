@@ -5,7 +5,7 @@ on:
       - master
 jobs:
   unittest:
-    if: contains(github.event.head_commit.message, '[CI SKIP]') == false
+    if: contains(github.event.head_commit.message, '[CI SKIP]') == false && contains(github.event.head_commit.message, '[CI AUTO]') == false
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -20,14 +20,43 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel twine
-      - name: Install git repos ManderaGeneral/generallibrary
-        run: pip install git+https://github.com/ManderaGeneral/generallibrary.git
-      - name: Install git repos ManderaGeneral/generalfile
-        run: pip install git+https://github.com/ManderaGeneral/generalfile.git
-      - name: Install git repos ManderaGeneral/generalvector
-        run: pip install git+https://github.com/ManderaGeneral/generalvector.git
-      - name: Install git repos ManderaGeneral/generalpackager
-        run: pip install git+https://github.com/ManderaGeneral/generalpackager.git
-      - name: Clone, sync, install, unittest
+      - name: Install 4 git repos
         run: |
-          python -c "from generalpackager import Packager; Packager('generalpackager', '', '${{ github.sha }}').workflow_stuff()"
+          pip install git+https://github.com/ManderaGeneral/generallibrary.git
+          pip install git+https://github.com/ManderaGeneral/generalfile.git
+          pip install git+https://github.com/ManderaGeneral/generalvector.git
+          pip install git+https://github.com/ManderaGeneral/generalpackager.git
+      - name: Run Packager method 'workflow_unittest'
+        run: |
+          python -c "from generalpackager import Packager; Packager('generalpackager', '', '${{ github.sha }}').workflow_unittest()"
+        env:
+          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+          PACKAGER_GITHUB_API: ${{ secrets.PACKAGER_GITHUB_API }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+  sync:
+    needs: unittest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up python version 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install necessities pip, setuptools, wheel, twine
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools wheel twine
+      - name: Install 4 git repos
+        run: |
+          pip install git+https://github.com/ManderaGeneral/generallibrary.git
+          pip install git+https://github.com/ManderaGeneral/generalfile.git
+          pip install git+https://github.com/ManderaGeneral/generalvector.git
+          pip install git+https://github.com/ManderaGeneral/generalpackager.git
+      - name: Run Packager method 'workflow_sync'
+        run: |
+          python -c "from generalpackager import Packager; Packager('generalpackager', '', '${{ github.sha }}').workflow_sync()"
+        env:
+          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+          PACKAGER_GITHUB_API: ${{ secrets.PACKAGER_GITHUB_API }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
