@@ -87,13 +87,20 @@ class Link:
 
 class _NetworkDiagram_Global:
     """ Methods for NetworkDiagram that disregards origin. """
+    def get_nodes_all(self):
+        """ Return a set of all connected Nodes.
+
+            :param NetworkDiagram self:
+            :rtype: set[NetworkDiagram] or None """
+        return self.get_routes().get_nodes()
+
     def get_ordered(self):
         """ Return an ordered list containing sets of nodes.
             Starts at node(s) without incoming connections and goes along directions of links.
 
             :param NetworkDiagram self:
-            :rtype: list[set[NetworkDiagram]] """
-        nodes = self.get_routes().get_nodes()
+            :rtype: list[set[NetworkDiagram]] or None """
+        nodes = self.get_nodes_all()
         order = []
         while nodes:
             order.append(set())
@@ -123,7 +130,8 @@ class NetworkDiagram(_NetworkDiagram_Global):
         Todo: Tests for NetworkDiagram.
         Todo: Storable NetworkDiagram.
         Todo: Moveable NetworkDiagram.
-        Todo: Transform Network to and from Tree if possible. """
+        Todo: Transform Network to and from Tree if possible.
+        Todo: Remove or hide Network route methods. """
     def __init__(self):
         self.links = []  # type: list[Link]
 
