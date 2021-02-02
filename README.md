@@ -248,5 +248,5 @@ Random useful code categorized into modules.
 | objinfo.py         | Disable save, load and copy.                                                              |
 
 <sup>
-Generated 2021-02-02 12:51 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2021-02-02 13:07 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
