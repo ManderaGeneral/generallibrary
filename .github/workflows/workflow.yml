@@ -28,7 +28,7 @@ jobs:
           pip install git+https://github.com/ManderaGeneral/generalpackager.git
       - name: Run Packager method 'workflow_unittest'
         run: |
-          python -c "from generalpackager import Packager; Packager('generalpackager', '', '${{ github.sha }}').workflow_unittest()"
+          python -c "from generalpackager import Packager; Packager('generalpackager', '').workflow_unittest()"
         env:
           GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
           PACKAGER_GITHUB_API: ${{ secrets.PACKAGER_GITHUB_API }}
@@ -54,7 +54,7 @@ jobs:
           pip install git+https://github.com/ManderaGeneral/generalpackager.git
       - name: Run Packager method 'workflow_sync'
         run: |
-          python -c "from generalpackager import Packager; Packager('generalpackager', '', '${{ github.sha }}').workflow_sync()"
+          python -c "from generalpackager import Packager; Packager('generalpackager', '').workflow_sync()"
         env:
           GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
           PACKAGER_GITHUB_API: ${{ secrets.PACKAGER_GITHUB_API }}
