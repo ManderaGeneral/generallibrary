@@ -1,4 +1,4 @@
-# generallibrary 2.5.9
+# generallibrary 2.5.10
 Random useful code categorized into modules.
 
 [![workflow Actions Status](https://github.com/ManderaGeneral/generallibrary/workflows/workflow/badge.svg)](https://github.com/ManderaGeneral/generallibrary/actions)
@@ -9,7 +9,7 @@ Random useful code categorized into modules.
 
 ## Contents
 <pre>
-<a href='#generallibrary-2.5.9'>generallibrary 2.5.9</a>
+<a href='#generallibrary-2.5.10'>generallibrary 2.5.10</a>
 ├─ <a href='#Contents'>Contents</a>
 ├─ <a href='#Installation'>Installation</a>
 ├─ <a href='#Attributes'>Attributes</a>
@@ -248,5 +248,5 @@ Random useful code categorized into modules.
 | objinfo.py         | Disable save, load and copy.                                                              |
 
 <sup>
-Generated 2021-02-04 11:14 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2021-02-04 11:28 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
