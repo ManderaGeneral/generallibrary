@@ -1,21 +1,21 @@
-# generallibrary 2.5.14
+# generallibrary
 Random useful code categorized into modules.
 
 This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 
 ## Information
-| Package                                                            | Version                                            | Latest Release       | Python                                                                                                                   | Platform        |
-|:-------------------------------------------------------------------|:---------------------------------------------------|:---------------------|:-------------------------------------------------------------------------------------------------------------------------|:----------------|
-| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.5.14](https://pypi.org/project/generallibrary/) | 2021-02-05 12:08 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu |
+| Package                                                            | Version                                            | Latest Release       | Python                                                                                                                   | Platform        | Todos                                                       |
+|:-------------------------------------------------------------------|:---------------------------------------------------|:---------------------|:-------------------------------------------------------------------------------------------------------------------------|:----------------|:------------------------------------------------------------|
+| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.5.14](https://pypi.org/project/generallibrary/) | 2021-02-05 12:08 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu | [23](https://github.com/ManderaGeneral/generallibrary#Todo) |
 
 ## Contents
 <pre>
-<a href='#generallibrary-2.5.14'>generallibrary 2.5.14</a>
+<a href='#generallibrary'>generallibrary</a>
 ├─ <a href='#Information'>Information</a>
 ├─ <a href='#Contents'>Contents</a>
 ├─ <a href='#Installation'>Installation</a>
 ├─ <a href='#Attributes'>Attributes</a>
-└─ <a href='#Todo-(23x)'>Todo (23x)</a>
+└─ <a href='#Todo'>Todo</a>
 </pre>
 
 ## Installation
@@ -222,7 +222,7 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L13'>Class: classproperty</a>
 </pre>
 
-## Todo (23x)
+## Todo
 | Module             | Message                                                                                   |
 |:-------------------|:------------------------------------------------------------------------------------------|
 | functions.py       | Add caching for SigInfo's signature methods                                               |
@@ -250,5 +250,5 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 | objinfo.py         | Disable save, load and copy.                                                              |
 
 <sup>
-Generated 2021-02-05 12:25 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2021-02-05 12:36 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
