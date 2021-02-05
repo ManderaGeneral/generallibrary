@@ -5,7 +5,8 @@ import pandas as pd
 
 
 def deco_cache():
-    """ Enable caching for a method or function. """
+    """ Enable caching for a method or function.
+        Put after possible static/class method deco. """
     return functools.lru_cache()
 
 

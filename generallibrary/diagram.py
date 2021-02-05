@@ -554,9 +554,13 @@ class Markdown(TreeDiagram):
         self.add_lines("```", *lines, "```")
         return self
     
-    def add_table_lines(self, *dicts):
+    def add_table_lines(self, *dicts, sort_by=None):
         """ Add a table to the lines using pandas `to_markdown`. """
-        self.add_lines(pandas.DataFrame(dicts).to_markdown(index=False).replace("_", "\\_"))
+        df = pandas.DataFrame(dicts)
+        if sort_by is not None:
+            df = df.sort_values(by=sort_by)
+
+        self.add_lines(df.to_markdown(index=False).replace("_", "\\_"))
         return self
     
     def add_list_lines(self, *items, indent=0):
