@@ -1,19 +1,21 @@
-# generallibrary 2.5.13
+# generallibrary 2.5.14
 Random useful code categorized into modules.
+
+This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 
 ## Information
 | Package                                                            | Version                                            | Latest Release       | Python                                                                                                                   | Platform        |
 |:-------------------------------------------------------------------|:---------------------------------------------------|:---------------------|:-------------------------------------------------------------------------------------------------------------------------|:----------------|
-| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.5.13](https://pypi.org/project/generallibrary/) | 2021-02-04 17:13 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu |
+| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.5.14](https://pypi.org/project/generallibrary/) | 2021-02-04 17:13 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu |
 
 ## Contents
 <pre>
-<a href='#generallibrary-2.5.13'>generallibrary 2.5.13</a>
+<a href='#generallibrary-2.5.14'>generallibrary 2.5.14</a>
 ├─ <a href='#Information'>Information</a>
 ├─ <a href='#Contents'>Contents</a>
 ├─ <a href='#Installation'>Installation</a>
 ├─ <a href='#Attributes'>Attributes</a>
-└─ <a href='#Todo'>Todo</a>
+└─ <a href='#Todo-(23x)'>Todo (23x)</a>
 </pre>
 
 ## Installation
@@ -220,7 +222,7 @@ Random useful code categorized into modules.
 └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L13'>Class: classproperty</a>
 </pre>
 
-## Todo
+## Todo (23x)
 | Module             | Message                                                                                   |
 |:-------------------|:------------------------------------------------------------------------------------------|
 | functions.py       | Add caching for SigInfo's signature methods                                               |
@@ -248,5 +250,5 @@ Random useful code categorized into modules.
 | objinfo.py         | Disable save, load and copy.                                                              |
 
 <sup>
-Generated 2021-02-05 11:17 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2021-02-05 12:08 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
