@@ -6,7 +6,7 @@ setup(
     name="generallibrary",
     author='Rickard "Mandera" Abraham',
     author_email="rickard.abraham@gmail.com",
-    version="2.5.14",
+    version="2.6",
     description="Random useful code categorized into modules.",
     long_description=(Path(__file__).parent / 'README.md').read_text(encoding='utf-8'),
     long_description_content_type="text/markdown",

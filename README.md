@@ -4,9 +4,9 @@ Random useful code categorized into modules.
 This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 
 ## Information
-| Package                                                            | Version                                            | Latest Release       | Python                                                                                                                   | Platform        | Todos                                                       |
-|:-------------------------------------------------------------------|:---------------------------------------------------|:---------------------|:-------------------------------------------------------------------------------------------------------------------------|:----------------|:------------------------------------------------------------|
-| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.5.14](https://pypi.org/project/generallibrary/) | 2021-02-05 12:08 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu | [23](https://github.com/ManderaGeneral/generallibrary#Todo) |
+| Package                                                            | Version                                         | Latest Release       | Python                                                                                                                   | Platform        | Todos                                                       |
+|:-------------------------------------------------------------------|:------------------------------------------------|:---------------------|:-------------------------------------------------------------------------------------------------------------------------|:----------------|:------------------------------------------------------------|
+| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.6](https://pypi.org/project/generallibrary/) | 2021-02-05 12:08 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu | [23](https://github.com/ManderaGeneral/generallibrary#Todo) |
 
 ## Contents
 <pre>
@@ -174,7 +174,7 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L435'>Method: view</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L303'>Class: Operators</a>
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L313'>Method: deco_define_comparisons</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L206'>Class: PythonVersion</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L210'>Class: PythonVersion</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L26'>Class: SigInfo</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L232'>Method: call</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L56'>Method: class_from_callable</a>
@@ -218,7 +218,7 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L435'>Method: view</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L16'>Class: Ver</a>
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L20'>Method: bump</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L192'>Class: VerInfo</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L196'>Class: VerInfo</a>
 └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L13'>Class: classproperty</a>
 </pre>
 
@@ -250,5 +250,5 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 | objinfo.py         | Disable save, load and copy.                                                              |
 
 <sup>
-Generated 2021-02-05 12:36 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2021-02-05 12:50 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
