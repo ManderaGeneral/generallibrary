@@ -115,7 +115,19 @@ class _NetworkDiagram_Global:
             nodes -= order[-1]
         return order
 
+    def get_ordered_index(self):
+        """ Return index that this Node has in get_ordered().
+            Aka hierarchy level.
+
+            :param NetworkDiagram self: """
+        for i, level in enumerate(self.get_ordered()):
+            if self in level:
+                return i
+
     def get_ordered_flat(self):
+        """ Return a flattened list of get_ordered().
+
+            :param NetworkDiagram self: """
         return [node for nodes in self.get_ordered() for node in nodes]
 
     def view(self):
