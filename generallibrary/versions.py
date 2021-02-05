@@ -19,10 +19,13 @@ class Ver(StrictVersion):
 
     def bump(self):
         """ Return a new Ver with bumped last value. """
-        bulk, micro = re.findall("(.*)(\\d)", str(self))[0]
-        return Ver(f"{bulk}{int(micro) + 1}")
-
-
+        if str(self).count(".") == 0:
+            return f"{self}.0.1"
+        elif str(self).count(".") == 1:
+            return f"{self}.1"
+        else:
+            bulk, micro = re.findall("(.*)(\\d)", str(self))[0]
+            return Ver(f"{bulk}{int(micro) + 1}")
 
 
 class _OsInfo:
@@ -33,6 +36,7 @@ class _OsInfo:
         "mac": "Darwin",
         "java": "Java"
     }
+
     def __init__(self):
         import platform
 

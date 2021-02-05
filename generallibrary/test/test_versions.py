@@ -1,7 +1,7 @@
 """."""
 import unittest
 
-from generallibrary.versions import VerInfo, get_installed_packages, package_is_installed
+from generallibrary.versions import VerInfo, get_installed_packages, package_is_installed, Ver
 
 
 class VersionsTest(unittest.TestCase):
@@ -58,7 +58,14 @@ class VersionsTest(unittest.TestCase):
         self.assertEqual(True, package_is_installed("generallibrary", "pyperclip"))
         self.assertEqual(False, package_is_installed("generallibrary", "random_package_not_existing"))
 
-
+    def test_bump(self):
+        self.assertEqual("1.0.0", Ver(1.0))
+        self.assertEqual("1.0.0", Ver("1.0"))
+        self.assertEqual("1.0.0", Ver("1.0.0"))
+        self.assertEqual("1.0.1", Ver("1.0").bump())
+        self.assertEqual("1.0.1", Ver("1.0.0").bump())
+        self.assertEqual("1.2.4", Ver("1.2.3").bump())
+        self.assertEqual("1.2.10", Ver("1.2.9").bump())
 
 
 
