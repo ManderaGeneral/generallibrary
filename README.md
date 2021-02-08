@@ -6,7 +6,7 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 ## Information
 | Package                                                            | Version                                           | Latest Release       | Python                                                                                                                   | Platform        | Todos                                                       |   Hierarchy |
 |:-------------------------------------------------------------------|:--------------------------------------------------|:---------------------|:-------------------------------------------------------------------------------------------------------------------------|:----------------|:------------------------------------------------------------|------------:|
-| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.6.2](https://pypi.org/project/generallibrary/) | 2021-02-07 11:19 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu | [23](https://github.com/ManderaGeneral/generallibrary#Todo) |           0 |
+| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.6.3](https://pypi.org/project/generallibrary/) | 2021-02-08 08:19 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu | [23](https://github.com/ManderaGeneral/generallibrary#Todo) |           0 |
 
 ## Contents
 <pre>
@@ -251,5 +251,5 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L1'>objinfo.py</a>                 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L21'>Disable save, load and copy.</a>                                                              |
 
 <sup>
-Generated 2021-02-08 08:10 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2021-02-08 08:20 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>

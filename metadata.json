@@ -1,6 +1,6 @@
 {
     "name": "generallibrary",
-    "version": "2.6.2",
+    "version": "2.6.3",
     "description": "Random useful code categorized into modules.",
     "install_requires": [
         "packaging",
