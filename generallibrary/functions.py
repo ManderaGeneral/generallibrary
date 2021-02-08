@@ -451,37 +451,13 @@ class CallTable:
         return self._generate(funcs=funcs)
 
 
+def wrapper_transfer(base, target):
+    """ Update a wrappers' metadata with base function's to properly propagate info. """
+    for attr in ("__doc__", "__module__", "__name__"):
+        setattr(target, attr, getattr(base, attr))
+    setattr(target, "wrapped", base)
+
+    return target
+
+
 from generallibrary.types_ import typeChecker
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
