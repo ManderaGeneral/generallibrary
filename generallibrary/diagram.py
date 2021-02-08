@@ -522,7 +522,6 @@ class Markdown(TreeDiagram):
             Enable `href` if inside a non-formatting tag such as <pre>. """
         if not enabled:
             return text
-
         if url is not None:
             link = url
         else:
@@ -572,7 +571,8 @@ class Markdown(TreeDiagram):
         if sort_by is not None:
             df = df.sort_values(by=sort_by)
 
-        self.add_lines(df.to_markdown(index=False).replace("_", "\\_"))
+        self.add_lines(df.to_markdown(index=False))
+        # self.add_lines(df.to_markdown(index=False).replace("_", "\\_"))
         return self
     
     def add_list_lines(self, *items, indent=0):
