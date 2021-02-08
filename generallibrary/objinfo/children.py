@@ -57,14 +57,6 @@ class _ObjInfoChildren:
 
         return _all_objInfo
 
-    # def __iter__(self):  # Todo: Define TreeDiagram.__iter__ as well, but without generation.
-    #     """ Generate attributes with a depth of 1 and returns a list of direct children.
-    #
-    #         :param generallibrary.ObjInfo self:
-    #         :rtype: collections.Iterable[generallibrary.ObjInfo] """
-    #     self.get_attrs()
-    #     return self.get_children()
-
 
 
 

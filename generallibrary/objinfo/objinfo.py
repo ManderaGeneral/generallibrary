@@ -15,10 +15,7 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
     """ Get whether obj is a module, function, class, method, property or variable.
         Automatically generates parents post creation for attributes that are not modules.
         Children are generated manually with `generate_attributes`.
-        Todo: Module tree for ObjInfo.
-        Todo: Another type of diagram for ObjInfo as an object can be an attribute of multiple objects.
-        Todo: Tests for ObjInfo.
-        Todo: Disable save, load and copy. """
+        Todo: Disable save, load and copy of ObjInfo's TreeDiagram. """
     def __init__(self, obj, parent=None, name=None):
         self.obj = obj
         self.cls = self.obj if self.is_class() else type(self.obj)

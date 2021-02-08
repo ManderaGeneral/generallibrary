@@ -30,9 +30,7 @@ def clipboard_get():
 @initBases
 class CodeLine(TreeDiagram):
     """ Tool to help with printing code line by line.
-        Top parent is ignored when printing.
-        Todo: Search for old CodeGen and replace.
-        Todo: Maybe put (parts of?) this directly in TreeDiagram. """
+        Top parent is ignored when printing. """
     indent_str = " " * 4
 
     def __init__(self, code_str=None, space_before=0, space_after=0, parent=None):
@@ -103,7 +101,6 @@ def get_original_obj_and_depth(obj):
 
 
 # https://stackoverflow.com/questions/26300594/print-code-link-into-pycharms-console
-# Todo: Refactor link methods to ObjInfo.
 def print_link(file=None, line=None, print_out=True):
     """ Print a link in PyCharm to a line in file.
         Defaults to line where this function was called. """

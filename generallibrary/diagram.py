@@ -139,11 +139,9 @@ class _NetworkDiagram_Global:
 
 class NetworkDiagram(_NetworkDiagram_Global):
     """ A network diagram node.
-        Todo: Tests for NetworkDiagram.
-        Todo: Storable NetworkDiagram.
-        Todo: Moveable NetworkDiagram.
+        Todo: Storable and moveable NetworkDiagram.
         Todo: Transform Network to and from Tree if possible.
-        Todo: Remove or hide Network route methods. """
+        Todo: Remove or hide NetworkDiagram route methods. """
     def __init__(self):
         self.links = []  # type: list[Link]
 
@@ -213,8 +211,7 @@ class TreeDiagram:
 
         Saves class name and has to access it as an attribute when using `load()`.
         Use metaclass generallibrary.HierarchyStorer to easily store inheriters base class.
-        Use initBases decorator to automatically call __init_post__.
-        Todo: Idea: Make TreeDiagram loadable with a generic list of lists for example. """
+        Use initBases decorator to automatically call __init_post__. """
     data_keys = []
 
     def __init__(self, parent=None, children_dicts=None):
@@ -248,8 +245,7 @@ class TreeDiagram:
     @classmethod
     def data_keys_add(cls, key, value, use_in_repr=False, unique=False, store_now=None):
         """ Define what attributes to keep track of automatically in __setattr__.
-            Returns value to enable oneliner in __init__.
-            Todo: Removable keys. """
+            Returns value to enable oneliner in __init__. """
         if cls.data_keys is TreeDiagram.data_keys:
             cls.data_keys = []
 
@@ -506,11 +502,7 @@ class TreeDiagram:
 
 @initBases
 class Markdown(TreeDiagram):
-    """ A section for a markdown file, built on TreeDiagram.
-
-        Todo: Create Markdown tree from markdown text.
-        Todo: Tests for Markdown.
-        Todo: Split line in lines with \n. """
+    """ A section for a markdown file, built on TreeDiagram. """
     def __init__(self, *lines, header=None, parent=None):
         self.header = header
         self.lines = []

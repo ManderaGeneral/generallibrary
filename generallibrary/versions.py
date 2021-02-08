@@ -12,8 +12,9 @@ from distutils.version import StrictVersion
 import re
 
 
-# Todo: Replace this temporary Ver class with revamped VerInfo split into isolated parts.
 class Ver(StrictVersion):
+    """ Generic version handler.
+        Todo: Use Ver in each part of VerInfo. """
     def __init__(self, ver):
         super().__init__(str(ver))
 

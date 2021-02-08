@@ -24,14 +24,11 @@ class classproperty:
 
 
 class SigInfo:
-    """
-    Handles a callable along with it's parameters.
-    Forgiving as it sets missing values to None.
-    Parameters can be changed but not callableObject.
-    Args are unpacked to allArgs using parameters of callableObject.
-    If there's a *packedParameter then it's stored as a list inside allArgs.
-    TODO: Add caching for SigInfo's signature methods
-    """
+    """ Handles a callable along with it's parameters.
+        Forgiving as it sets missing values to None.
+        Parameters can be changed but not callableObject.
+        Args are unpacked to allArgs using parameters of callableObject.
+        If there's a *packedParameter then it's stored as a list inside allArgs. """
     def __init__(self, /, callableObject, *args, **kwargs):  # / to end positional only characters, allows us to have "self" in kwargs for unbound methods
         assert callable(callableObject)
 
@@ -377,8 +374,7 @@ def deco_default_self_args(func):
 
 def deco_extend(outer_cls):
     """ Allows additional arguments when inheriting and extending a built-in.
-        Overrides __new__ to call cls' first base's __new__ with the single first given argument.
-        Todo: Test deco_extend with int and str. """
+        Overrides __new__ to call cls' first base's __new__ with the single first given argument. """
     def __new__(cls, *args, **kwargs):
         arg = args[0] if args else next(iter(kwargs.values()))
         return cls.__bases__[0].__new__(cls, arg)
