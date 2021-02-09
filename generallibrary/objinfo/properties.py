@@ -1,4 +1,6 @@
 
+from generallibrary import deco_propagate_while
+
 import inspect
 
 
@@ -32,6 +34,7 @@ class _ObjInfoProperties:
             :param generallibrary.ObjInfo self: """
         return not self.private() and str(self.name).startswith("_")
 
+    @deco_propagate_while(value=None, prop=lambda objInfo: objInfo.get_parent())
     def module(self):
         """ Return module of this ObjInfo's obj as returned by inspect or None.
 

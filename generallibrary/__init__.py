@@ -1,6 +1,6 @@
 
 from generallibrary.iterables import SortedList, getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, addToDictInDict, getFreeIndex, getRows, exclusive, inclusive, uniqueObjInList, combine, remove_duplicates, dict_index
-from generallibrary.functions import SigInfo, calculate, defaults, Operators, deco_cache, deco_cast_parameters, deco_extend, EmptyContext, deco_default_self_args, classproperty, CallTable
+from generallibrary.functions import SigInfo, calculate, defaults, Operators, deco_cache, deco_cast_parameters, deco_extend, EmptyContext, deco_default_self_args, classproperty, CallTable, deco_propagate_while
 from generallibrary.object import getsize, initBases, ObjInfo
 from generallibrary.time import Timer, sleep, current_datetime_formatted, current_datetime
 from generallibrary.types_ import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames, hasMethod, HierarchyStorer

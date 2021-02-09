@@ -1,3 +1,4 @@
+
 import inspect
 import re
 import functools
@@ -438,17 +439,17 @@ class CallTable:
             print(md, "\n")
         return md
 
-    def generate(self):
+    def generate(self, print_out=True):
         """ Generate table with stored funcs and args. """
-        return self._generate()
+        return self._generate(print_out=print_out)
 
-    def generate_with_args(self, **args):
+    def generate_with_args(self, print_out=True, **args):
         """ Generate table with stored funcs and new args. """
-        return self._generate(args=args)
+        return self._generate(args=args, print_out=print_out)
 
-    def generate_with_funcs(self, **funcs):
+    def generate_with_funcs(self, print_out=True, **funcs):
         """ Generate table with stored args and new funcs. """
-        return self._generate(funcs=funcs)
+        return self._generate(funcs=funcs, print_out=print_out)
 
 
 def wrapper_transfer(base, target):
@@ -458,6 +459,22 @@ def wrapper_transfer(base, target):
     setattr(target, "wrapped", base)
 
     return target
+
+
+def deco_propagate_while(value, prop):
+    def _deco(func):
+        def _wrapper(self, *args, **kwargs):
+            new_self = self
+            while True:
+                result = func(new_self, *args, **kwargs)
+                if result != value:
+                    break
+                new_self = prop(new_self)
+                if new_self is None:
+                    break
+            return result
+        return _wrapper
+    return _deco
 
 
 from generallibrary.types_ import typeChecker

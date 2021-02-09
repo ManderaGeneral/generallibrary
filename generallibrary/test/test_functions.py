@@ -1,7 +1,10 @@
 
 import unittest
 
-from generallibrary import SigInfo, defaults, VerInfo, deco_cache, deco_cast_parameters, EmptyContext, deco_default_self_args, classproperty
+from generallibrary.functions import *
+from generallibrary import VerInfo
+# from generallibrary import SigInfo, defaults, VerInfo, deco_cache, deco_cast_parameters, EmptyContext, deco_default_self_args, classproperty
+
 
 def _orphan():
     pass
@@ -237,10 +240,16 @@ class FunctionsTest(unittest.TestCase):
             return x
         self.assertEqual(True, isinstance(test("2"), int))
 
-
     def test_EmptyContext(self):
         with EmptyContext():
             pass
+
+    def test_calltable(self):
+        call = CallTable("test")
+        call.generate(print_out=False)
+        call.generate_with_args(foo="bar")
+        call.generate_with_funcs(foo="bar")
+
 
 
 
