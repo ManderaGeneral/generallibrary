@@ -1,7 +1,7 @@
 
 import unittest
 
-from generallibrary.versions import VerInfo, package_is_installed
+from generallibrary.versions import VerInfo
 from generallibrary.code import clipboard_copy, clipboard_get, CodeLine, debug, print_link, print_link_to_obj, get_lines
 
 
@@ -36,7 +36,7 @@ class CodeTest(unittest.TestCase):
 
     def test_print_link_to_obj(self):
         self.assertIn("line 8", print_link_to_obj(CodeTest))
-        self.assertIn("line 9", print_link_to_obj(CodeTest.test_clipboard))
+        self.assertIn("line 16", print_link_to_obj(CodeTest.test_CodeLine))
         self.assertIn("unittest/__init__.py\", line 1", print_link_to_obj(unittest))
 
     def test_get_lines(self):
