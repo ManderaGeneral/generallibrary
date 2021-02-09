@@ -8,3 +8,5 @@ import generallibrary
 # objInfo.get_attrs(depth=-1)
 # objInfo.view()
 
+print(floor(5123.14512))
+

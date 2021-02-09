@@ -1,10 +1,49 @@
 
 import unittest
 
-from generallibrary.values import clamp, sign, inrange, rectify, doubleRectify, confineTo
+from generallibrary.values import *
 
 
 class ValuesTest(unittest.TestCase):
+    def test_floor(self):
+        self.assertEqual(5, floor(5.7))
+        self.assertEqual(5, floor(5.1))
+        self.assertEqual(5, floor(5))
+        self.assertEqual(5, floor(5.5, 0))
+
+        self.assertEqual(50, floor(54.2, -1))
+        self.assertEqual(0, floor(54.2, -2))
+        self.assertEqual(0, floor(54.2, -5))
+
+        self.assertEqual(0, floor(154.2512, -3))
+        self.assertEqual(100, floor(154.2512, -2))
+        self.assertEqual(150, floor(154.2512, -1))
+        self.assertEqual(154, floor(154.2512, 0))
+        self.assertEqual(154.2, floor(154.2512, 1))
+        self.assertEqual(154.25, floor(154.2512, 2))
+        self.assertEqual(154.251, floor(154.2512, 3))
+        self.assertEqual(154.2512, floor(154.2512, 4))
+        self.assertEqual(154.2512, floor(154.2512, 5))
+
+    def test_ceil(self):
+        self.assertEqual(6, ceil(5.7))
+        self.assertEqual(6, ceil(5.1))
+        self.assertEqual(5, ceil(5))
+        self.assertEqual(6, ceil(5.5, 0))
+
+        self.assertEqual(60, ceil(54.2, -1))
+        self.assertEqual(100, ceil(54.2, -2))
+        self.assertEqual(1000, ceil(54.2, -3))
+
+        self.assertEqual(1000, ceil(154.2512, -3))
+        self.assertEqual(200, ceil(154.2512, -2))
+        self.assertEqual(160, ceil(154.2512, -1))
+        self.assertEqual(155, ceil(154.2512, 0))
+        self.assertEqual(154.3, ceil(154.2512, 1))
+        self.assertEqual(154.26, ceil(154.2512, 2))
+        self.assertEqual(154.252, ceil(154.2512, 3))
+        self.assertEqual(154.2512, ceil(154.2512, 4))
+
     def test_clamp(self):
         self.assertEqual(5, clamp(2, 5, 10))
         self.assertEqual(7, clamp(7, 5, 10))

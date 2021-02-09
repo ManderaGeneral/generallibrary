@@ -1,7 +1,26 @@
 
-from math import ceil
+import math
 import os
 import sys
+
+
+def _floor_and_ceil(value, decimals, method):
+    if decimals == 0:
+        return method(value)
+    else:
+        assert int(decimals) == decimals
+        factor = pow(10, decimals)
+        return method(value * factor) / factor
+
+
+def floor(value, decimals=0):
+    """ Like built-in round() but for floor with decimal arg. """
+    return _floor_and_ceil(value=value, decimals=decimals, method=math.floor)
+
+
+def ceil(value, decimals=0):
+    """ Like built-in round() but for ceil with decimal arg."""
+    return _floor_and_ceil(value=value, decimals=decimals, method=math.ceil)
 
 
 def clamp(value, minimum, maximum):
@@ -98,7 +117,7 @@ def confineTo(value, minimum, maximum, margin=0):
 
     valueRange = maximum - minimum + margin * 2
     rectifiedValue = doubleRectify(value, minimum - margin, maximum + margin)
-    jumps = ceil(abs(rectifiedValue) / valueRange)
+    jumps = math.ceil(abs(rectifiedValue) / valueRange)
     signValue = sign(rectifiedValue) * -1
     jumpValue = jumps * valueRange * signValue
 
