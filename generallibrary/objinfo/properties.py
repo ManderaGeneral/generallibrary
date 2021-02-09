@@ -41,12 +41,20 @@ class _ObjInfoProperties:
             :param generallibrary.ObjInfo self: """
         return inspect.getmodule(self.obj)
 
-    def file(self):
+    def file(self, relative=False):
         """ Return str file of this ObjInfo's obj as returned by inspect or None.
 
-            :param generallibrary.ObjInfo self: """
+            :param generallibrary.ObjInfo self:
+            :param relative: Whether to return a relative path by splitting on top module's name. """
         obj, _ = self.get_original_obj_and_depth()
-        return inspect.getfile(obj)
+        file = inspect.getfile(obj)
+        if relative:
+            top_module = self.get_parent(-1)
+            if top_module is None:
+                top_module = self
+            split_file = file.split(top_module.name)
+            file = f"{top_module.name}{split_file[-1]}"
+        return file
 
     def get_original_obj_and_depth(self, print_out=True):
         """ Relaying to function.
