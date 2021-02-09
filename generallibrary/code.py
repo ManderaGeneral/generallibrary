@@ -91,11 +91,12 @@ def debug(scope, *evals, printOut=True):
 
 def get_original_obj_and_depth(obj):
     """ Dig up original obj that might be wrapped or a property. """
+    depth = 0
     if isinstance(obj, property):
         obj = obj.fget
-    depth = 0
-    while hasattr(obj, "wrapped"):
-        obj = obj.wrapped
+        depth += 1
+    while hasattr(obj, "__wrapped__"):  # Used by get_original_obj_and_depth() and deco_cache()
+        obj = obj.__wrapped__
         depth += 1
     return obj, depth
 

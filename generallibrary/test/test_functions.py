@@ -247,8 +247,17 @@ class FunctionsTest(unittest.TestCase):
     def test_calltable(self):
         call = CallTable("test")
         call.generate(print_out=False)
-        call.generate_with_args(foo="bar")
-        call.generate_with_funcs(foo="bar")
+        call.generate_with_args(foo="bar", print_out=False)
+        call.generate_with_funcs(length=len, print_out=False)
+
+        call.set_args(foo="bars")
+        self.assertIn("4", call.generate_with_funcs(length=len, print_out=False))
+
+        call.set_funcs(type=type)
+        self.assertIn("<class 'str'>", call.generate(print_out=False))
+
+
+
 
 
 

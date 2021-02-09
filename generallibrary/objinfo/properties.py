@@ -41,6 +41,21 @@ class _ObjInfoProperties:
             :param generallibrary.ObjInfo self: """
         return inspect.getmodule(self.obj)
 
+    def file(self):
+        """ Return str file of this ObjInfo's obj as returned by inspect or None.
+
+            :param generallibrary.ObjInfo self: """
+        obj, _ = self.get_original_obj_and_depth()
+        return inspect.getfile(obj)
+
+    def get_original_obj_and_depth(self, print_out=True):
+        """ Relaying to function.
+
+            :param generallibrary.ObjInfo self: """
+        from generallibrary.code import get_original_obj_and_depth
+
+        return get_original_obj_and_depth(self.obj)
+
     def print_link_to_obj(self, print_out=True):
         """ Relaying to function.
 

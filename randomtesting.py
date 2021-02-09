@@ -1,14 +1,10 @@
 
 from generallibrary import *
+from generalfile import Path
 
+import generallibrary
 
-
-# objInfo = ObjInfo(SigInfo)
+# objInfo = ObjInfo(HierarchyStorer)
 # objInfo.get_attrs(depth=-1)
 # objInfo.view()
-
-
-
-print(ObjInfo(SigInfo.callableObject).module())
-
 
