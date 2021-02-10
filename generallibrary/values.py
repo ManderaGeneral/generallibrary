@@ -36,6 +36,7 @@ def clamp(value, minimum, maximum):
 
     return max(minimum, min(value, maximum))
 
+
 def sign(value, threshold=0):
     """
     Get sign value based on threshold that defaults to 0.
@@ -52,6 +53,7 @@ def sign(value, threshold=0):
 
     return 1
 
+
 def inrange(value, minimum, maximum):
     """
     Return whether value is between minimum and maximum.
@@ -65,6 +67,7 @@ def inrange(value, minimum, maximum):
 
     return minimum <= value <= maximum
 
+
 def rectify(value, threshold):
     """
     Return 0 if it's below threshold, otherwise difference.
@@ -75,6 +78,7 @@ def rectify(value, threshold):
     if value < threshold:
         return 0
     return value - threshold
+
 
 def doubleRectify(value, minimum, maximum):
     """
@@ -94,6 +98,7 @@ def doubleRectify(value, minimum, maximum):
         return value - minimum
     elif value > maximum:
         return value - maximum
+
 
 def confineTo(value, minimum, maximum, margin=0):
     """

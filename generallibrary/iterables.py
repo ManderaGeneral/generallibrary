@@ -58,6 +58,22 @@ class SortedList:
             del self.objects[index]
             del self._values[index]
 
+
+def get(iterable, index=None, default=None):
+    """ Get value of an iterable by index, mainly list and tuple that don't have a `get` method.
+        Returns first random value if set, returns default value if not found. """
+    if isinstance(iterable, set):
+        try:
+            return next(iter(iterable))
+        except StopIteration:
+            return default
+    else:
+        try:
+            return iterable[index]
+        except IndexError:
+            return default
+
+
 def getIterable(obj):
     """
     Returns the iterable values of a tuple, list or dict. Otherwise `False`.

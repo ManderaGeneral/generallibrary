@@ -33,6 +33,15 @@ class TreeDiagramTest(unittest.TestCase):
         del a.get_children()[0]
         self.assertEqual([c], a.get_children())
 
+        e = TreeDiagram(parent=a)
+        f = TreeDiagram(parent=a)
+
+        self.assertEqual(0, d.get_index())
+        self.assertEqual(1, e.get_index())
+        self.assertEqual(2, f.get_index())
+        self.assertEqual(0, a.get_index())
+
+
     def test_parent(self):
         a = TreeDiagram()
         self.assertEqual(None, a.get_parent())
@@ -129,11 +138,14 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(c, e.get_previous_sibling())
 
     def test_data_keys(self):
-        from generallibrary import initBases
+        tester = self
         @initBases
         class A(TreeDiagram):
             def __init__(self, foo):
-                self.foo = self.data_keys_add("foo", foo)
+                self.foo = self.data_keys_add("foo", foo, use_in_repr=True)
+            def hook_set_attribute(self, key, value, old_value):
+                if old_value is not None:
+                    tester.assertEqual(("foo", 5, "bar"), (key, value, old_value))
 
         a = A("bar")
         self.assertEqual("bar", a.foo)
@@ -146,8 +158,61 @@ class TreeDiagramTest(unittest.TestCase):
 
         self.assertEqual(5, b.copy_to().foo)
 
+        b.set_parent(parent=a)
+        self.assertEqual([b], a.get_children_by_key_values(foo=5))
+
+        c = A("hello").set_parent(parent=b)
+        self.assertEqual(c, b.get_child_by_key_values(foo="hello"))
+
+        self.assertEqual(["bar"], a.repr_list())
+
+    def test_hooks(self):
+        x = []
+        @initBases
+        class A(TreeDiagram):
+            def hook_create_pre(self): x.append(0)
+            def __init__(self, parent=None): x.append(1)
+            def hook_new_parent(self, parent, old_parent): x.append(2)
+            def hook_create_post(self): x.append(3)
+            def hook_lose_parent(self, old_parent, parent): x.append(4)
+            def hook_new_child(self, child): x.append(5)
+            def hook_lose_child(self, child): x.append(6)
+
+        a = A(parent=TreeDiagram())
+
+        parent = TreeDiagram()
+        a.set_parent(parent=parent)
+        TreeDiagram(parent=a).remove()
+
+        self.assertEqual([0, 1, 2, 3, 4, 2, 5, 6], x)
+
+    def test_save_with_keys(self):
+        @initBases
+        class A(TreeDiagram):
+            def __init__(self, foo, parent=None):
+                self.foo = self.data_keys_add("foo", foo)
+
+        a = A("hi")
+        b = A("there", parent=a)
+
+        self.assertEqual(a.save(), A.load(a.save()).save())
+        self.assertEqual("there", A.load(a.save()).get_child().foo)
+
+    def test_view(self):
+        a = TreeDiagram()
+        b = TreeDiagram(parent=a)
+        c = TreeDiagram(parent=a)
+        d = TreeDiagram(parent=b)
+
+        self.assertEqual(4, len(a.view(print_out=False).splitlines()))
+        self.assertEqual(2, len(b.view(print_out=False).splitlines()))
+        self.assertEqual(1, len(c.view(print_out=False).splitlines()))
+        self.assertEqual(1, len(d.view(print_out=False).splitlines()))
+
+        self.assertEqual(4, len(a.view(relative=True, print_out=False).splitlines()))
 
 
+from generallibrary import initBases
 
 
 

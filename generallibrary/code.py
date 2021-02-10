@@ -61,18 +61,18 @@ class CodeLine(TreeDiagram):
         return self.text()
 
 
-def debug(scope, *evals, printOut=True):
+def debug(scope, *evals, print_out=True):
     """
     Easily call eval() on an arbitrary amount of evaluation strings.
     Useful for debugging.
 
     Example:
-        debug(locals(), "value", "value + jumpValue", printOut=True)
+        debug(locals(), "value", "value + jumpValue", print_out=True)
         debug(locals())  # Prints all objects in scope
 
     :param dict scope: Just write locals()
     :param str evals: Variable names with or without operations
-    :param printOut: Whether to print directly or not
+    :param print_out: Whether to print directly or not
     :return: A nicely formatted string
     """
     if not evals:
@@ -84,7 +84,7 @@ def debug(scope, *evals, printOut=True):
         lines.append(f"{evalStr:>{n}} = {eval(evalStr, scope)}")
     lines.append("")
     text = "\n".join(lines)
-    if printOut:
+    if print_out:
         print(text)
     return text
 

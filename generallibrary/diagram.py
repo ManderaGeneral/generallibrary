@@ -2,7 +2,7 @@
 from generallibrary.object import initBases
 from generallibrary.functions import deco_extend
 from generallibrary.values import clamp
-
+from generallibrary.iterables import get
 
 import pandas
 
@@ -136,7 +136,6 @@ class _NetworkDiagram_Global:
             print(f"{node} linked to: {list(node.get_nodes(incoming=False))}")
 
 
-
 class NetworkDiagram(_NetworkDiagram_Global):
     """ A network diagram node.
         Todo: Storable and moveable NetworkDiagram.
@@ -230,7 +229,6 @@ class TreeDiagram:
         if children_dicts:
             for child_dict in children_dicts:
                 self.load(child_dict, parent=self)
-
         self.hook_create_post()
 
     def hook_create_pre(self): """ Pre-creation hook. """
@@ -238,7 +236,7 @@ class TreeDiagram:
     def hook_remove(self): """ Remove hook. """
     def hook_new_parent(self, parent, old_parent): """ New parent hook. """
     def hook_lose_parent(self, old_parent, parent): """ Lost parent hook. """
-    def hook_add_child(self, child): """ New child hook. """
+    def hook_new_child(self, child): """ New child hook. """
     def hook_lose_child(self, child): """ Lost child hook. """
     def hook_set_attribute(self, key, value, old_value): """ Attribute set hook. """
 
@@ -257,12 +255,6 @@ class TreeDiagram:
             store_now.data[key] = value
 
         return value
-
-    def _singular_alternatives(self, list_, index):
-        try:
-            return list_[index]
-        except IndexError:
-            return None
 
     def add(self, *args):
         """ Add a node as child. """
@@ -304,7 +296,7 @@ class TreeDiagram:
             else:
                 parent._children.insert(index, self)
 
-            parent.hook_add_child(self)
+            parent.hook_new_child(self)
             self.hook_new_parent(parent=parent, old_parent=old_parent)
 
         self._parent = parent
@@ -334,7 +326,7 @@ class TreeDiagram:
         if index == 0:
             return self._parent
         else:
-            return self._singular_alternatives(self.get_all_parents(), index)
+            return get(self.get_all_parents(), index)
 
     def get_children(self):
         """ Get a list of all children this Node has, empty list if None.
@@ -346,7 +338,7 @@ class TreeDiagram:
         """ Get a child by index, None if doesn't exist.
 
             :rtype: TreeDiagram or Any """
-        return self._singular_alternatives(self.get_children(), index)
+        return get(self.get_children(), index)
 
     def get_children_by_key_values(self, **key_values):
         """ Get a list of children that matches all given key values. """
@@ -356,7 +348,7 @@ class TreeDiagram:
         """ Get a child that matches all given key values.
 
             :rtype: TreeDiagram or Any """
-        return self._singular_alternatives(self.get_children_by_key_values(**key_values), index)
+        return get(self.get_children_by_key_values(**key_values), index)
 
     def get_all(self, include_self=True):
         """ Return a flat one-dimensional list of all nodes in this Tree.
@@ -402,8 +394,10 @@ class TreeDiagram:
 
     def get_index(self):
         """ Return index of this node among it's siblings. """
-        assert self.get_parent()
-        return self.get_parent().get_children().index(self)
+        if self.get_parent() is None:
+            return 0
+        else:
+            return self.get_parent().get_children().index(self)
 
     def set_index(self, index):
         """ Move this node among it's siblings. """
@@ -483,8 +477,7 @@ class TreeDiagram:
         return view
 
     def repr_list(self):
-        """ A list of strings used by dunder repr.
-            Easily overriden. """
+        """ A list of strings used by dunder repr. """
         return [self.data[keyInfo] for keyInfo in self.data_keys if keyInfo.use_in_repr]
 
     def __repr__(self):
@@ -586,4 +579,11 @@ class Markdown(TreeDiagram):
 
     def __str__(self):
         return '\n'.join(self.all_lines())
+
+
+
+
+
+
+
 

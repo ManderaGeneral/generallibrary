@@ -24,7 +24,7 @@ class CodeTest(unittest.TestCase):
 
     def test_debug(self):
         x, y, z = 1, 2, 3
-        self.assertIn("y * z + 3 = 9", debug(locals(), "x + y", "y * z + 3", "x", "self"))
+        self.assertIn("y * z + 3 = 9", debug(locals(), "x + y", "y * z + 3", "x", "self", print_out=False))
 
     def test_print_link(self):
         """ Hard to assert these methods truly work without manual check. """
