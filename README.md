@@ -6,7 +6,7 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 ## Information
 | Package                                                            | Ver                                             | Latest Release       | Python                                                                                                                   | Platform        | Todo                                                       |   Lvl | Tests   |
 |:-------------------------------------------------------------------|:------------------------------------------------|:---------------------|:-------------------------------------------------------------------------------------------------------------------------|:----------------|:-----------------------------------------------------------|------:|:--------|
-| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.7](https://pypi.org/project/generallibrary/) | 2021-02-09 15:48 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu | [5](https://github.com/ManderaGeneral/generallibrary#Todo) |     0 | 81.7 %  |
+| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.7](https://pypi.org/project/generallibrary/) | 2021-02-09 15:48 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu | [5](https://github.com/ManderaGeneral/generallibrary#Todo) |     0 | 86.4 %  |
 
 ## Contents
 <pre>
@@ -54,7 +54,7 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L238'>Method: hook_lose_parent</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L239'>Method: hook_new_child</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L237'>Method: hook_new_parent</a>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L236'>Method: hook_remove</a> <b>(Untested)</b>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L236'>Method: hook_remove</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L241'>Method: hook_set_attribute</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L417'>Method: load</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L306'>Method: remove</a>
@@ -65,20 +65,20 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L55'>Method: text</a>
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L437'>Method: view</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L387'>Class: EmptyContext</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L132'>Class: EnvVar</a> <b>(Untested)</b>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L132'>Class: EnvVar</a>
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L144'>Property: value</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/types_.py#L183'>Class: HierarchyStorer</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L497'>Class: Markdown</a> <b>(Untested)</b>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L497'>Class: Markdown</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L259'>Method: add</a>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L548'>Method: add_code_lines</a> <b>(Untested)</b>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L528'>Method: add_lines</a> <b>(Untested)</b>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L563'>Method: add_list_lines</a> <b>(Untested)</b>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L569'>Method: add_pre_lines</a> <b>(Untested)</b>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L553'>Method: add_table_lines</a> <b>(Untested)</b>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L537'>Method: all_lines</a> <b>(Untested)</b>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L559'>Method: add_code_lines</a>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L528'>Method: add_lines</a>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L554'>Method: add_list_lines</a>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L565'>Method: add_pre_lines</a>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L545'>Method: add_table_lines</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L433'>Method: copy_to</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L243'>Method: data_keys_add</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L353'>Method: get_all</a>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L534'>Method: get_all_lines</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L311'>Method: get_all_parents</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L337'>Method: get_child</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L347'>Method: get_child_by_key_values</a>
@@ -88,6 +88,7 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L387'>Method: get_next_sibling</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L322'>Method: get_parent</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L391'>Method: get_previous_sibling</a>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L521'>Method: get_section_lines</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L371'>Method: get_siblings</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L235'>Method: hook_create_post</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L234'>Method: hook_create_pre</a>
@@ -95,18 +96,17 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L238'>Method: hook_lose_parent</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L239'>Method: hook_new_child</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L237'>Method: hook_new_parent</a>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L236'>Method: hook_remove</a> <b>(Untested)</b>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L236'>Method: hook_remove</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L241'>Method: hook_set_attribute</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L504'>Method: link</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L417'>Method: load</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L306'>Method: remove</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L479'>Method: repr_list</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L410'>Method: save</a>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L521'>Method: section_lines</a> <b>(Untested)</b>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L402'>Method: set_index</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L269'>Method: set_parent</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L437'>Method: view</a>
-│  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L574'>Method: wrap_with_tags</a> <b>(Untested)</b>
+│  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L570'>Method: wrap_with_tags</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L139'>Class: NetworkDiagram</a> <b>(Untested)</b>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L147'>Method: get_link</a> <b>(Untested)</b>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L163'>Method: get_links</a> <b>(Untested)</b>
@@ -152,7 +152,7 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L238'>Method: hook_lose_parent</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L239'>Method: hook_new_child</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/parents.py#L89'>Method: hook_new_parent</a>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L236'>Method: hook_remove</a> <b>(Untested)</b>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L236'>Method: hook_remove</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L241'>Method: hook_set_attribute</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L37'>Method: identifier</a> <b>(Untested)</b>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/properties.py#L15'>Method: internal</a>
@@ -231,7 +231,7 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L238'>Method: hook_lose_parent</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L239'>Method: hook_new_child</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L237'>Method: hook_new_parent</a>
-│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L236'>Method: hook_remove</a> <b>(Untested)</b>
+│  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L236'>Method: hook_remove</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L241'>Method: hook_set_attribute</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L417'>Method: load</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L306'>Method: remove</a>
@@ -333,5 +333,5 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L1'>objinfo.py</a> | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L18'>Disable save, load and copy of ObjInfo's TreeDiagram.</a> |
 
 <sup>
-Generated 2021-02-10 09:00 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2021-02-11 09:33 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
