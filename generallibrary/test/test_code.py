@@ -1,8 +1,8 @@
 
-import unittest
-
+from generallibrary.code import *
 from generallibrary.versions import VerInfo
-from generallibrary.code import clipboard_copy, clipboard_get, CodeLine, debug, print_link, print_link_to_obj, get_lines
+
+import unittest
 
 
 class CodeTest(unittest.TestCase):

@@ -1,7 +1,7 @@
-"""."""
-import unittest
 
-from generallibrary.versions import VerInfo, get_installed_packages, package_is_installed, Ver
+from generallibrary.versions import *
+
+import unittest
 
 
 class VersionsTest(unittest.TestCase):

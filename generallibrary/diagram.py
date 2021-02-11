@@ -518,7 +518,7 @@ class Markdown(TreeDiagram):
             return f"<a href='{link}'>{text}</a>"
         return f"[{text}]({link})"
 
-    def section_lines(self):
+    def get_section_lines(self):
         """ Get a list of all lines in this section. """
         lines = self.lines.copy()
         if self.header:
@@ -527,14 +527,11 @@ class Markdown(TreeDiagram):
 
     def add_lines(self, *lines):
         """ Add lines to list, using splitlines. """
-        if self.lines:
-            self.lines.append("")
-
         for line in lines:  # type: str
             self.lines.extend(line.splitlines())
         return self
 
-    def all_lines(self):
+    def get_all_lines(self):
         """ Get a list of all lines in this entire Markdown by iterating all children.
 
             :rtype: list[str] """
@@ -542,28 +539,27 @@ class Markdown(TreeDiagram):
         for markdown in self.get_all():
             if lines:
                 lines.append("")
-            lines.extend(markdown.section_lines())
+            lines.extend(markdown.get_section_lines())
         return lines
 
-    def add_code_lines(self, *lines):
-        """ Add code lines, wrapped by quotes. """
-        self.add_lines("```", *lines, "```")
-        return self
-    
     def add_table_lines(self, *dicts, sort_by=None):
-        """ Add a table to the lines using pandas `to_markdown`. """
+        """ Add a table to the lines with packed dicts using pandas `to_markdown`. """
         df = pandas.DataFrame(dicts)
         if sort_by is not None:
             df = df.sort_values(by=sort_by)
 
         self.add_lines(df.to_markdown(index=False))
-        # self.add_lines(df.to_markdown(index=False).replace("_", "\\_"))
         return self
     
     def add_list_lines(self, *items, indent=0):
         """ Add list lines. """
-        for item in items:
-            self.add_lines(f"{'  ' * indent} - {item}")
+        self.add_lines(*[f"{'  ' * indent} - {item}" for item in items])
+        return self
+    
+    def add_code_lines(self, *lines):
+        """ Add code lines, wrapped by quotes. """
+        self.add_lines(*lines)
+        self.wrap_with_tags("```")
         return self
 
     def add_pre_lines(self, *lines):
@@ -572,13 +568,18 @@ class Markdown(TreeDiagram):
         return self
 
     def wrap_with_tags(self, *tags):
+        non_tags = "```",
         for tag in tags:
-            self.lines.insert(0, f"<{tag}>")
-            self.lines.append(f"</{tag}>")
+            if tag in non_tags:
+                self.lines.insert(0, tag)
+                self.lines.append(tag)
+            else:
+                self.lines.insert(0, f"<{tag}>")
+                self.lines.append(f"</{tag}>")
         return self
 
     def __str__(self):
-        return '\n'.join(self.all_lines())
+        return '\n'.join(self.get_all_lines())
 
 
 

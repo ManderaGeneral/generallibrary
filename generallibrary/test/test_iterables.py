@@ -1,7 +1,7 @@
 
-import unittest
+from generallibrary.iterables import *
 
-from generallibrary.iterables import getIterable, isIterable, depth, dictFirstValue, iterFirstValue, joinWithStr, addToListInDict, getRows, SortedList, appendToDict, addToDictInDict, getFreeIndex, exclusive, inclusive, uniqueObjInList, combine, remove_duplicates, dict_index
+import unittest
 
 
 class IterablesTest(unittest.TestCase):

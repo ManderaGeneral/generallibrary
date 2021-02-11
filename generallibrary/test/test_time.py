@@ -1,7 +1,7 @@
 
-import unittest
+from generallibrary.time import *
 
-from generallibrary.time import Timer, sleep, current_datetime_formatted
+import unittest
 
 
 class TimeTest(unittest.TestCase):

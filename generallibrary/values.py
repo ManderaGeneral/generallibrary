@@ -142,7 +142,7 @@ class EnvVar:
 
     @property
     def value(self):
-        """ Get value of env var. """
+        """ Get value of env var through os.environ """
         if self.name not in os.environ:
             raise KeyError(f"Env var '{self.name}' is not set.")
 
@@ -150,7 +150,7 @@ class EnvVar:
 
     @value.setter
     def value(self, value):
-        """ Set value of an env var, both in instance and os.environ. """
+        """ Set value of an env var in os.environ. """
         os.environ[self.name] = value
 
     def __str__(self):

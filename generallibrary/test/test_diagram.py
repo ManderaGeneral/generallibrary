@@ -1,8 +1,7 @@
 
-import unittest
+from generallibrary.diagram import *
 
-from generallibrary.versions import VerInfo
-from generallibrary.diagram import TreeDiagram
+import unittest
 
 
 class TreeDiagramTest(unittest.TestCase):
@@ -177,14 +176,17 @@ class TreeDiagramTest(unittest.TestCase):
             def hook_lose_parent(self, old_parent, parent): x.append(4)
             def hook_new_child(self, child): x.append(5)
             def hook_lose_child(self, child): x.append(6)
+            def hook_remove(self): x.append(7)
+
 
         a = A(parent=TreeDiagram())
 
         parent = TreeDiagram()
         a.set_parent(parent=parent)
         TreeDiagram(parent=a).remove()
+        a.remove()
 
-        self.assertEqual([0, 1, 2, 3, 4, 2, 5, 6], x)
+        self.assertEqual([0, 1, 2, 3, 4, 2, 5, 6, 4, 7], x)
 
     def test_save_with_keys(self):
         @initBases
@@ -210,6 +212,28 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(1, len(d.view(print_out=False).splitlines()))
 
         self.assertEqual(4, len(a.view(relative=True, print_out=False).splitlines()))
+
+    def test_markdown(self):
+        self.assertEqual("foo\nbar", str(Markdown().add_lines("foo", "bar")))
+        self.assertEqual("```\nfoo\n```", str(Markdown().add_code_lines("foo")))
+        self.assertEqual(" - foo\n - bar", str(Markdown().add_list_lines("foo", "bar")))
+        self.assertEqual(" - foo\n   - bar", str(Markdown().add_list_lines("foo").add_list_lines("bar", indent=1)))
+        self.assertEqual("<pre>\nfoo\nbar\n</pre>", str(Markdown().add_pre_lines("foo", "bar")))
+        self.assertEqual("| foo   |\n|:------|\n| bar   |", str(Markdown().add_table_lines({"foo": "bar"})))
+
+        markdown = Markdown()
+        markdown.add("foo", "bar")
+        markdown.add(Markdown("hello", "there").wrap_with_tags("```"))
+        markdown.add(Markdown("hi", "yo").wrap_with_tags("pre"))
+        self.assertEqual(['foo', 'bar', '', '```', 'hello', 'there', '```', '', '<pre>', 'hi', 'yo', '</pre>'], markdown.get_all_lines())
+
+        markdown1 = Markdown("line1", header="header1")
+        markdown2 = markdown1.add(Markdown("line2", header="header2"))
+        self.assertEqual(['# header1', 'line1'], markdown1.get_section_lines())
+        self.assertEqual(['## header2', 'line2'], markdown1.get_child().get_section_lines())
+        self.assertEqual(['# header1', 'line1', '', '## header2', 'line2'], markdown1.get_all_lines())
+
+
 
 
 from generallibrary import initBases

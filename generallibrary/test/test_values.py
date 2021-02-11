@@ -1,7 +1,7 @@
 
-import unittest
-
 from generallibrary.values import *
+
+import unittest
 
 
 class ValuesTest(unittest.TestCase):
@@ -114,5 +114,35 @@ class ValuesTest(unittest.TestCase):
         self.assertEqual(1.4, confineTo(1.4, 0, 1, margin=0.5))
         self.assertEqual(1.5, confineTo(1.5, 0, 1, margin=0.5))
         self.assertEqual(-0.49, confineTo(1.51, 0, 1, margin=0.5))
+
+    def test_EnvVar(self):
+        envVar = EnvVar("testing")
+        with self.assertRaises(KeyError):
+            x = envVar.value
+        envVar.value = "foo"
+        self.assertEqual("foo", envVar.value)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -1,6 +1,8 @@
 
+from generallibrary.text import *
+
 import unittest
-from generallibrary.text import comma_and_and
+
 
 class CodeTest(unittest.TestCase):
     def test_comma_and_and(self):

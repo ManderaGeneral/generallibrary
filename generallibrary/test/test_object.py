@@ -1,9 +1,7 @@
 
-import unittest
+from generallibrary.object import *
 
-from generallibrary.object import getsize, initBases
-from generallibrary import ObjInfo
-from generallibrary.objinfo.type import _ObjInfoType
+import unittest
 
 
 class ObjectTest(unittest.TestCase):
