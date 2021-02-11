@@ -233,6 +233,27 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(['## header2', 'line2'], markdown1.get_child().get_section_lines())
         self.assertEqual(['# header1', 'line1', '', '## header2', 'line2'], markdown1.get_all_lines())
 
+    def test_network_diagram(self):
+        a = NetworkDiagram()
+        self.assertEqual(set(), a.get_nodes())
+        self.assertEqual(set(), a.get_links())
+
+        b = NetworkDiagram()
+        a.link(b)
+        self.assertEqual({b}, a.get_nodes())
+        self.assertEqual(set(), a.get_nodes(outgoing=False))
+        self.assertEqual({b}, a.get_nodes(incoming=False))
+
+        self.assertEqual({a.get_link(b)}, a.get_links())
+        self.assertEqual({a, b}, a.get_nodes_all())
+        self.assertEqual({a, b}, a.get_routes().get_nodes())
+
+        self.assertEqual([{a}, {b}], a.get_ordered())
+        self.assertEqual(0, a.get_ordered_index())
+        self.assertEqual(1, b.get_ordered_index())
+        self.assertEqual([a, b], b.get_ordered_flat())
+
+
 
 
 

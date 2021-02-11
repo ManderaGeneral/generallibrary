@@ -136,11 +136,22 @@ class _NetworkDiagram_Global:
             print(f"{node} linked to: {list(node.get_nodes(incoming=False))}")
 
 
-class NetworkDiagram(_NetworkDiagram_Global):
+class _Diagram:
+    def _cast_to_self(self, *args, **kwargs):
+        """ Allows first arg to be same type as self or the args the create a new one. """
+        if args and type(args[0]) == type(self):
+            return args[0]
+        else:
+            return type(self)(*args, **kwargs)
+
+
+@initBases
+class NetworkDiagram(_Diagram, _NetworkDiagram_Global):
     """ A network diagram node.
         Todo: Storable and moveable NetworkDiagram.
-        Todo: Transform Network to and from Tree if possible.
-        Todo: Remove or hide NetworkDiagram route methods. """
+        Todo: Transform Network to and from Tree if possible. """
+    Link, Route, RouteGrp = Link, Route, RouteGrp
+
     def __init__(self):
         self.links = []  # type: list[Link]
 
@@ -151,8 +162,10 @@ class NetworkDiagram(_NetworkDiagram_Global):
                 return link
         return None
 
-    def link(self, target):
+    def link(self, *args, **kwargs):
         """ Link this Node to another unless the link exists, returns Link regardless. """
+        target = self._cast_to_self(*args, **kwargs)
+
         link = self.get_link(node=target)
         if link is None:
             link = Link(base=self, target=target)
@@ -204,7 +217,7 @@ class KeyInfo(str):
 
 
 @initBases
-class TreeDiagram:
+class TreeDiagram(_Diagram):
     """ Saveable tree diagram with optional storage.
         Usage: Inherit TreeDiagram and define what keys to store with `data_keys_add()` method.
 
@@ -256,13 +269,9 @@ class TreeDiagram:
 
         return value
 
-    def add(self, *args):
+    def add(self, *args, **kwargs):
         """ Add a node as child. """
-        if type(args[0]) == type(self):
-            child = args[0]
-        else:
-            child = type(self)(*args)
-
+        child = self._cast_to_self(*args, **kwargs)
         child.set_parent(parent=self)
         return child
 
@@ -271,7 +280,7 @@ class TreeDiagram:
 
             :param TreeDiagram or None parent:
             :param TreeDiagram or None old_parent:
-            :param index: """
+            :param index: Optionally set self's index of new parent. """
         if old_parent is ...:
             old_parent = self._parent
 
