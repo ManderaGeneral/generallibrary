@@ -138,9 +138,12 @@ class _NetworkDiagram_Global:
 
 class _Diagram:
     def _cast_to_self(self, *args, **kwargs):
-        """ Allows first arg to be same type as self or the args the create a new one. """
-        if args and type(args[0]) == type(self):
-            return args[0]
+        """ Allows first arg to be same type as self or the args the create a new one.
+
+            :param any self: """
+        combined = args + tuple(kwargs.values())
+        if args and type(combined[0]) == type(self):
+            return combined[0]
         else:
             return type(self)(*args, **kwargs)
 
