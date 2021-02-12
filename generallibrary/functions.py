@@ -337,7 +337,7 @@ class Operators:
 
 
 def deco_cast_parameters(**pars_to_cast):
-    """ Decorator to make sure `path` parameter is a Path.
+    """ Decorator to make sure `path` parameter is a Path for example.
         Example: @deco_cast_paramters(x=int, y=Vec2) """
     def _decorator(function):
         def _wrapper(*args, **kwargs):

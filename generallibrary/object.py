@@ -43,6 +43,9 @@ def initBases(cls):
     """
     cls_init = cls.__init__  # Unbound original __init__ method of class
 
+    if getattr(cls, "_is_wrapped_by_initBases", None) is cls:
+        return cls
+
     cls._is_wrapped_by_initBases = cls
 
     def _wrapper(*args, **kwargs):
@@ -73,6 +76,12 @@ def initBases(cls):
 
     cls.__init__ = _wrapper
     return cls
+
+
+class AutoInitBases(type):
+    """ Use as metaclass to automatically call initBases decorator on inheriters. """
+    def __init__(cls, *args, **kwargs):
+        type.__init__(initBases(cls), *args, **kwargs)
 
 
 from generallibrary.functions import SigInfo
