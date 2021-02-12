@@ -142,7 +142,7 @@ class _Diagram:
 
             :param any self: """
         combined = args + tuple(kwargs.values())
-        if args and type(combined[0]) == type(self):
+        if combined and type(combined[0]) == type(self):
             return combined[0]
         else:
             return type(self)(*args, **kwargs)
