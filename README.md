@@ -6,7 +6,7 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 ## Information
 | Package                                                            | Ver                                             | Latest Release       | Python                                                                                                                   | Platform        | Todo                                                       |   Lvl | Tests   |
 |:-------------------------------------------------------------------|:------------------------------------------------|:---------------------|:-------------------------------------------------------------------------------------------------------------------------|:----------------|:-----------------------------------------------------------|------:|:--------|
-| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.7](https://pypi.org/project/generallibrary/) | 2021-02-09 15:48 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu | [4](https://github.com/ManderaGeneral/generallibrary#Todo) |     0 | 87.0 %  |
+| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.7](https://pypi.org/project/generallibrary/) | 2021-02-09 15:48 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu | [4](https://github.com/ManderaGeneral/generallibrary#Todo) |     0 | 86.7 %  |
 
 ## Contents
 <pre>
@@ -26,6 +26,7 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 ## Attributes
 <pre>
 <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/__init__.py#L1'>Module: generallibrary</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/object.py#L81'>Class: AutoInitBases</a> <b>(Untested)</b>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L396'>Class: CallTable</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L442'>Method: generate</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L446'>Method: generate_with_args</a>
@@ -344,5 +345,5 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L1'>objinfo.py</a> | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L18'>Disable save, load and copy of ObjInfo's TreeDiagram.</a> |
 
 <sup>
-Generated 2021-02-12 07:47 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2021-02-12 18:31 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
