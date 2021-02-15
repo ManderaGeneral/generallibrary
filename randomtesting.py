@@ -8,37 +8,49 @@ import generallibrary
 from itertools import chain
 
 
-def flatten_gen(list_):
-    yield from (item for items in list_ for item in items)
 
-
-def flatten(list_):
-    return list(flatten_gen(list_=list_))
-
-
-def _extend_unique(total, add):
-    unique = [item for item in add if item not in total]
-    total.extend(unique)
-    return unique
-
-
-def _traverse_depth(*nodes, func, depth, _all_nodes=None):
+def _traverse_depth(*nodes, func, depth, flat, include_nodes=False, _all_nodes=None):
+    """ Exhausts each depth's nodes to yield results as list, then recursively yields next depth with previous result. """
     if depth is None:
         depth = 0
     if _all_nodes is None:
         _all_nodes = []
+    if flat is None:
+        flat = True
 
-    results = [node2 for node1 in nodes for node2 in func(node1) if node2 not in _all_nodes]
+    if include_nodes:
+        if flat:
+            yield from nodes
+        else:
+            yield list(nodes)
+
+    results = []
+    for node1 in nodes:
+        for node2 in func(node1):
+            if node2 not in _all_nodes and node2 not in results:
+                results.append(node2)
+                if flat:
+                    yield node2
+
     if results:
-        yield results
+        if not flat:
+            yield results
+
         _all_nodes.extend(results)
         if depth != 0:
-            yield from _traverse_depth(*results, func=func, depth=depth - 1, _all_nodes=_all_nodes)
+            yield from _traverse_depth(*results, func=func, depth=depth - 1, flat=flat, _all_nodes=_all_nodes)
+
+
+def _gen_or_list(gen_obj, gen_bool):
+    if gen_bool is None:
+        gen_bool = False
+    return gen_obj if gen_bool else list(gen_obj)
 
 
 def _deco_depth(func):
-    def _wrapper(node, depth=None):
-        yield from _traverse_depth(node, func=func, depth=depth)
+    def _wrapper(node, depth=None, flat=None, gen=None):
+        generator = _traverse_depth(node, func=func, depth=depth, flat=flat)
+        return _gen_or_list(gen_obj=generator, gen_bool=gen)
     return _wrapper
 
 
@@ -54,72 +66,27 @@ def _deco_cast_to_diagram(func):
     return _wrapper
 
 
-
 class _Diagram_QOL:
     """ Quality of life helper methods of Diagram. """
     def view(self):
         pass
 
-    def get_children(self, depth=None):
-        return flatten(self.get_children_gen(depth=depth))
-
-    def get_parents(self, depth=None):
-        return flatten(self.get_parents_gen(depth=depth))
-
-    def get_nodes(self, depth=None):
-        return flatten(self.get_nodes_gen(depth=depth))
-
-    def get_siblings(self, depth=None):
-        return flatten(self.get_siblings_gen(depth=depth))
-
-
-class _NetworkDiagram_QOL:
-    """ Quality of life helper methods of _NetworkDiagram_QOL. """
-    def get_spouses(self, depth=None):
-        return flatten(self.get_spouses_gen(depth=depth))
-
-
-class _TreeDiagram_QOL:
-    """ Quality of life helper methods of _TreeDiagram_QOL. """
-    def get_parent(self, depth=None):
-        return get(self.get_parents(depth=depth), depth)
-
 
 class _Diagram_Global:
     """ Core global methods of a Diagram. """
-    def get_ordered_gen(self):
-        origins = []
-        for node in self.get_nodes_gen(depth=-1):
-            if not node.get_parents():
-                origins.append(node)
-        yield origins
-        yield from _traverse_depth(*origins, func=self.get_children_gen.__func__, depth=-1)
+    def get_ordered(self, depth=None, flat=None, gen=None):
+        origins = [node for node in self.get_nodes(-1) if not node.get_parents()]
+        func = self.get_children.__func__
 
-    def get_ordered(self):
-        return list(self.get_ordered_gen())
+        generator = _traverse_depth(*origins, func=func, depth=depth, flat=flat, include_nodes=True)
+        return _gen_or_list(gen_obj=generator, gen_bool=gen)
 
 
 class _Diagram(_Diagram_Global, _Diagram_QOL, metaclass=AutoInitBases):
     """ Core methods of a Diagram. """
-    def __init__(self, _single_parent):
-        self._single_parent = _single_parent
-
+    def __init__(self):
         self._children = []  # type: list[_Diagram]
         self._parents = []  # type: list[_Diagram]
-
-    @_deco_depth
-    def get_children_gen(self, depth=None):
-        for child in self._children:
-            yield child
-
-    @_deco_depth
-    def get_parents_gen(self, depth=None):
-        for parent in self._parents:
-            yield parent
-
-    @_deco_depth
-    def get_nodes_gen(self, depth=None):
-        yield from chain(self.get_parents_gen(depth=depth), self.get_children_gen(depth=depth))
 
     @_deco_cast_to_diagram
     def set_parent(self, parent):
@@ -146,8 +113,23 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, metaclass=AutoInitBases):
         return child
 
     @_deco_depth
-    def get_siblings_gen(self, depth=None):
-        yield from self._siblings_and_spouses(self.get_parents_gen.__func__, self.get_children_gen.__func__)
+    def get_children(self, depth=None, flat=None, gen=None):
+        for child in self._children:
+            yield child
+
+    @_deco_depth
+    def get_parents(self, depth=None, flat=None, gen=None):
+        for parent in self._parents:
+            yield parent
+
+    @_deco_depth
+    def get_nodes(self, depth=None, flat=None, gen=None):
+        for node in chain(self._children, self._parents):
+            yield node
+
+    @_deco_depth
+    def get_siblings(self, depth=None, flat=None, gen=None):
+        yield from self._siblings_and_spouses(self.get_parents.__func__, self.get_children.__func__)
 
     def _siblings_and_spouses(self, func1, func2):
         for node1 in func1(self):
@@ -156,20 +138,27 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, metaclass=AutoInitBases):
                     yield node2
 
 
-class NetworkDiagram(_Diagram, _NetworkDiagram_QOL):
+class NetworkDiagram(_Diagram):
     """ A Diagram where each node can have any amount parents. """
-    def __init__(self, _single_parent=False):
+    _single_parent = False
+
+    def __init__(self):
         pass
 
     @_deco_depth
-    def get_spouses_gen(self, depth=None):
-        yield from self._siblings_and_spouses(self.get_children_gen.__func__, self.get_parents_gen.__func__)
+    def get_spouses(self, depth=None, flat=None, gen=None):
+        yield from self._siblings_and_spouses(self.get_children.__func__, self.get_parents.__func__)
 
 
-class TreeDiagram(_Diagram, _TreeDiagram_QOL):
+class TreeDiagram(_Diagram):
     """ A Diagram where each node cannot have more than one parent. """
-    def __init__(self, _single_parent=True):
+    _single_parent = True
+
+    def __init__(self):
         pass
+
+    def get_parent(self, depth=None):
+        return get(self.get_parents(depth=depth), depth)
 
 
 
@@ -183,18 +172,22 @@ class A(NetworkDiagram):
 
 
 a = A(10)
-a.add(2).add(3).add(a)
+a.add(2).add(3)#.add(a)
+a.add(4)
 
 # b = a.add(20)
 # c = a.add(21)
 # c.set_parent(11).add(22)
 
 
+# print(list(a.get_children_gen(4)))
+# print(list(a.get_parents_gen(4)))
+# print(list(a.get_nodes_gen(4)))
+# print(list(a.get_spouses_gen(4)))
 
-for x in a.get_nodes_gen():
-    print(x)  # Here ** Figure out how to combine in get_nodes
 
 
+print(a.get_ordered(depth=-1, flat=False, gen=True))
 
 
 
