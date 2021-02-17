@@ -28,6 +28,7 @@ class _ObjInfoParents:
 
     def _generate_parents(self):
         """ Generates all parents to this ObjInfo all the way up to and including module.
+            If an ObjInfo is created without a parent then it will call this method itself indirectly.
 
             :param generallibrary.ObjInfo self: """
         obj = self.obj.fget if self.is_property() else self.obj
@@ -69,10 +70,12 @@ class _ObjInfoParents:
     @classmethod
     def check_if_parent_eligible(cls, parent_obj, child_obj, name):
         """ Check relationship eligibility of parent to child.
+
             :param generallibrary.ObjInfo cls:
             :param parent_obj:
             :param child_obj:
             :param name: """
+
         parent_attr_obj = getattr(parent_obj, name, None)
 
         if cls._is_property(child_obj):
@@ -82,8 +85,14 @@ class _ObjInfoParents:
             child_obj = getattr(child_obj, "__func__", child_obj)
             parent_attr_obj = getattr(parent_attr_obj, "__func__", parent_attr_obj)
 
+        # from generallibrary.code import get_original_obj_and_depth
+        # parent_attr_obj, _ = get_original_obj_and_depth(parent_attr_obj)
+        # parent_obj, _ = get_original_obj_and_depth(parent_obj)
+
         if parent_attr_obj is child_obj:
             return True
+
+        # print(name, parent_attr_obj, child_obj)
         return False
 
     def hook_new_parent(self, parent, old_parent):
@@ -94,7 +103,5 @@ class _ObjInfoParents:
             :param old_parent: """
         assert self.name
         assert self.check_if_parent_eligible(parent.obj, self.obj, self.name)
-
-
 
 

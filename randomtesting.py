@@ -10,7 +10,9 @@ from itertools import chain
 
 
 def _traverse_depth(*nodes, func, depth, flat, include_nodes=False, _all_nodes=None):
-    """ Exhausts each depth's nodes to yield results as list, then recursively yields next depth with previous result. """
+    """ Exhausts each depth's nodes to yield results as list, then recursively yields next depth with previous result.
+
+        Todo: Generalize _traverse_depth() """
     if depth is None:
         depth = 0
     if _all_nodes is None:
@@ -55,7 +57,9 @@ def _deco_depth(func):
 
 
 def _deco_cast_to_diagram(func):
-    """ Allows first arg to be same type as self or the args the create a new one. """
+    """ Allows first arg to be same type as self or the args the create a new one.
+
+        Todo: Generalize _deco_cast_to_diagram() """
     def _wrapper(self, *args, **kwargs):
         combined = args + tuple(kwargs.values())
         if combined and (combined[0] is None or type(combined[0]) == type(self)):
@@ -63,7 +67,7 @@ def _deco_cast_to_diagram(func):
         else:
             diagram = type(self)(*args, **kwargs)
         return func(self, diagram)
-    return _wrapper
+    return wrapper_transfer(func, _wrapper)  # Todo: wrapper_transfer for every deco
 
 
 class _Diagram_QOL:
@@ -163,32 +167,41 @@ class TreeDiagram(_Diagram):
 
 
 
+
+# def hooks(cls):
+#     for attr in dir(cls):
+#         if not attr.startswith("_"):
+#             setattr(cls, f"{attr}_hook", test)
+#     return cls
+
+
+
 class A(NetworkDiagram):
     def __init__(self, value):
         self.value = value
 
+        hook(self.add, lambda: print(5))  # HERE ** Only works for instances, would be nice to work with cls too (Replacing old hooks)
+
     def __repr__(self):
         return str(self.value)
+
+
+
+
+def hook(method, func=None):
+    # setattr(method, "funcs", [func])
+    def _wrapper(*args, **kwargs):
+        func()
+        return method(*args, **kwargs)
+    setattr(method.__self__, method.__name__, _wrapper)
+
 
 
 a = A(10)
 a.add(2).add(3)#.add(a)
 a.add(4)
 
-# b = a.add(20)
-# c = a.add(21)
-# c.set_parent(11).add(22)
-
-
-# print(list(a.get_children_gen(4)))
-# print(list(a.get_parents_gen(4)))
-# print(list(a.get_nodes_gen(4)))
-# print(list(a.get_spouses_gen(4)))
-
-
-
-print(a.get_ordered(depth=-1, flat=False, gen=True))
-
+print(a.get_ordered(depth=-1, flat=False, gen=False))
 
 
 
