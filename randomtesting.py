@@ -180,39 +180,35 @@ class A(NetworkDiagram):
     def __init__(self, value):
         self.value = value
 
-        hook(self.add, lambda: print(5))  # HERE ** Only works for instances, would be nice to work with cls too (Replacing old hooks)
-
     def __repr__(self):
         return str(self.value)
-
-    @property
-    def test(self):
-        return 5
 
 
 
 def hook(method, func=None):
 
-    print(ObjInfo(method).get_parent())
+    objInfo = ObjInfo(method)
 
-    # original = get_origin(method)
-    # print(original.__qualname__)
-    #
-    # # setattr(method, "funcs", [func])
+    # setattr(method, "funcs", [func])
+
     # def _wrapper(*args, **kwargs):
     #     func()
     #     return method(*args, **kwargs)
+
     # setattr(method.__self__, method.__name__, _wrapper)
 
 
-a = A(10)
-a.add(2).add(3)#.add(a)
-a.add(4)
 
-print(a.get_ordered(depth=-1, flat=False, gen=False))
+hook(A.add, lambda: print(5))
+hook(A(2).add, lambda: print(5))
 
-print()
-print(ObjInfo(A(1).test).get_parent())
+
+# a = A(10)
+# a.add(2).add(3)#.add(a)
+# a.add(4)
+#
+# print(a.get_ordered(depth=-1, flat=False, gen=False))
+
 
 
 

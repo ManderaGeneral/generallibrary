@@ -48,7 +48,7 @@ class _ObjInfoParents:
 
         else:
             # To make the parent of a bound method an instance instead of class
-            if dunder_self := getattr(self.origin, "__self__", None):
+            if dunder_self := getattr(self.obj, "__self__", None):
                 objInfo = self.ObjInfo(obj=dunder_self)
 
             # Start with module and iterate downwards excluding last name in qualname, which we connect manually to self
