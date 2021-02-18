@@ -46,7 +46,7 @@ class _ObjInfoProperties:
 
             :param generallibrary.ObjInfo self:
             :param relative: Whether to return a relative path by splitting on top module's name. """
-        obj, _ = self.get_original_obj_and_depth()
+        obj = self.origin
         file = inspect.getfile(obj)
         if relative:
             top_module = self.get_parent(-1)
@@ -56,14 +56,6 @@ class _ObjInfoProperties:
             file = f"{top_module.name}{split_file[-1]}"
         return file
 
-    def get_original_obj_and_depth(self, print_out=True):
-        """ Relaying to function.
-
-            :param generallibrary.ObjInfo self: """
-        from generallibrary.code import get_original_obj_and_depth
-
-        return get_original_obj_and_depth(self.obj)
-
     def print_link_to_obj(self, print_out=True):
         """ Relaying to function.
 
@@ -72,6 +64,13 @@ class _ObjInfoProperties:
         from generallibrary.code import print_link_to_obj
 
         return print_link_to_obj(self.obj, print_out=print_out)
+
+    @classmethod
+    def get_origin(cls, obj=None, include_depth=False):
+        """ Relaying to function. """
+        from generallibrary.code import get_origin
+
+        return get_origin(obj=obj, include_depth=include_depth)
 
     def get_definition_line(self):
         """ Relaying to function.
@@ -112,7 +111,6 @@ class _ObjInfoProperties:
                 raise AttributeError(f"'{doc}' is not a proper a sentence from '{print_link_to_obj(self.obj, print_out=False)}'.")
 
         return doc
-
 
 
 

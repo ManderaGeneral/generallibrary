@@ -199,8 +199,7 @@ class ObjectTest(unittest.TestCase):
                 method_is_bound_method = bound_method == getattr(objInfo, name)
                 result = method(self=objInfo)
                 if result is not method_is_bound_method:
-                    raise AssertionError(f"{objInfo} returns {result} for {name}.")
-
+                    raise AssertionError(f"{objInfo.obj} returns {result} for {name}.")
 
         check(ObjInfo(unittest).is_module)
         check(ObjInfo(a).is_function)

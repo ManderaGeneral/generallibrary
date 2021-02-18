@@ -6,6 +6,6 @@ from generallibrary.time import Timer, sleep, current_datetime_formatted, curren
 from generallibrary.types_ import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames, hasMethod, HierarchyStorer
 from generallibrary.values import floor, ceil, clamp, sign, inrange, rectify, doubleRectify, confineTo, EnvVar, get_launch_options
 from generallibrary.versions import VerInfo, get_installed_packages, package_is_installed, PythonVersion, Ver
-from generallibrary.code import debug, CodeLine, clipboard_copy, clipboard_get, print_link, print_link_to_obj, get_lines, get_definition_line, get_original_obj_and_depth
+from generallibrary.code import debug, CodeLine, clipboard_copy, clipboard_get, print_link, print_link_to_obj, get_lines, get_definition_line, get_origin
 from generallibrary.diagram import TreeDiagram, Markdown, NetworkDiagram
 from generallibrary.text import comma_and_and, plur_sing

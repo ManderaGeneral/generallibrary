@@ -31,24 +31,24 @@ class _ObjInfoParents:
             If an ObjInfo is created without a parent then it will call this method itself indirectly.
 
             :param generallibrary.ObjInfo self: """
-        obj = self.obj.fget if self.is_property() else self.obj
+        # obj = self.obj.fget if self.is_property() else self.obj
 
-        module_name = getattr(obj, "__module__", None)
+        module_name = getattr(self.origin, "__module__", None)
         module = sys.modules.get(module_name)
 
-        qualname = getattr(obj, "__qualname__", "")
+        qualname = getattr(self.origin, "__qualname__", "")
         split_qualname = qualname.split(".")
 
         objInfo = None
         if self.is_module():
-            split_name = self.obj.__name__.split(".")
+            split_name = self.origin.__name__.split(".")
             for i in range(len(split_name) - 1):
                 parent_module = importlib.import_module(name=".".join(split_name[0:i + 1]))
                 objInfo = self.ObjInfo(obj=parent_module, parent=objInfo)
 
         else:
             # To make the parent of a bound method an instance instead of class
-            if dunder_self := getattr(self.obj, "__self__", None):
+            if dunder_self := getattr(self.origin, "__self__", None):
                 objInfo = self.ObjInfo(obj=dunder_self)
 
             # Start with module and iterate downwards excluding last name in qualname, which we connect manually to self
@@ -78,16 +78,15 @@ class _ObjInfoParents:
 
         parent_attr_obj = getattr(parent_obj, name, None)
 
-        if cls._is_property(child_obj):
-            child_obj = child_obj.fget
-            parent_attr_obj = parent_attr_obj.fget
-        else:
-            child_obj = getattr(child_obj, "__func__", child_obj)
-            parent_attr_obj = getattr(parent_attr_obj, "__func__", parent_attr_obj)
+        # if cls._is_property(child_obj):
+        #     child_obj = child_obj.fget
+        #     parent_attr_obj = parent_attr_obj.fget
+        # else:
+        #     child_obj = getattr(child_obj, "__func__", child_obj)
+        #     parent_attr_obj = getattr(parent_attr_obj, "__func__", parent_attr_obj)
 
-        # from generallibrary.code import get_original_obj_and_depth
-        # parent_attr_obj, _ = get_original_obj_and_depth(parent_attr_obj)
-        # parent_obj, _ = get_original_obj_and_depth(parent_obj)
+        parent_attr_obj = cls.get_origin(parent_attr_obj)
+        child_obj = cls.get_origin(child_obj)
 
         if parent_attr_obj is child_obj:
             return True

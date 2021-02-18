@@ -56,7 +56,7 @@ class _ObjInfoType:
         return not hasattr(self.obj, "__name__") and not self.is_property() and not self.is_method()
 
     def is_method(self):
-        """ Get whether obj is a method.
+        """ Get whether obj is a method of a class.
 
             :param generallibrary.ObjInfo self: """
         if inspect.ismethod(self.obj) or inspect.ismethoddescriptor(self.obj):

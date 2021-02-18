@@ -185,16 +185,24 @@ class A(NetworkDiagram):
     def __repr__(self):
         return str(self.value)
 
+    @property
+    def test(self):
+        return 5
 
 
 
 def hook(method, func=None):
-    # setattr(method, "funcs", [func])
-    def _wrapper(*args, **kwargs):
-        func()
-        return method(*args, **kwargs)
-    setattr(method.__self__, method.__name__, _wrapper)
 
+    print(ObjInfo(method).get_parent())
+
+    # original = get_origin(method)
+    # print(original.__qualname__)
+    #
+    # # setattr(method, "funcs", [func])
+    # def _wrapper(*args, **kwargs):
+    #     func()
+    #     return method(*args, **kwargs)
+    # setattr(method.__self__, method.__name__, _wrapper)
 
 
 a = A(10)
@@ -203,15 +211,8 @@ a.add(4)
 
 print(a.get_ordered(depth=-1, flat=False, gen=False))
 
-
-
-
-
-
-
-
-
-
+print()
+print(ObjInfo(A(1).test).get_parent())
 
 
 

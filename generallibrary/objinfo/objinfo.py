@@ -17,16 +17,17 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         Children are generated manually with `generate_attributes`.
         Todo: Disable save, load and copy of ObjInfo's TreeDiagram. """
     def __init__(self, obj, parent=None, name=None):
+        # Trying to ignore wrappers, seems better to revolve around origin. Can add additional methods to get wrappers and such
+        # self.obj = self.get_origin(obj)
         self.obj = obj
+
         self.cls = self.obj if self.is_class() else type(self.obj)
+        self.origin = self.get_origin(self.obj)
 
         if name is None:
-            if self.is_property():
-                name = self.obj.fget.__name__
-            else:
-                name = getattr(self.obj, "__name__", None)
-                if self.is_module():
-                    name = name.split(".")[-1]
+            name = getattr(self.origin, "__name__", None)
+            if self.is_module():
+                name = name.split(".")[-1]
 
         self.name = self.data_keys_add(key="name", value=name, use_in_repr=True, unique=True)  # type: str
 
@@ -48,6 +49,8 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
 
 
 setattr(ObjInfo, "ObjInfo", ObjInfo)
+
+
 
 
 

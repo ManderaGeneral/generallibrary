@@ -89,13 +89,13 @@ def debug(scope, *evals, print_out=True):
     return text
 
 
-def get_original_obj_and_depth(obj):
+def get_origin(obj, include_depth=False):
     """ Dig up original obj that might be wrapped or a property. """
     depth = 0
     while True:
         if isinstance(obj, property):
             obj = obj.fget
-        elif hasattr(obj, "__wrapped__"):  # Used by get_original_obj_and_depth() and deco_cache()
+        elif hasattr(obj, "__wrapped__"):
             obj = obj.__wrapped__
         elif hasattr(obj, "__func__"):
             obj = obj.__func__
@@ -103,7 +103,10 @@ def get_original_obj_and_depth(obj):
             break
         depth += 1
 
-    return obj, depth
+    if include_depth:
+        return obj, depth
+    else:
+        return obj
 
 
 # https://stackoverflow.com/questions/26300594/print-code-link-into-pycharms-console
@@ -125,14 +128,14 @@ def print_link_to_obj(obj, print_out=True):
     """ Print a link in PyCharm to a module, function, class, method or property. """
     line = get_definition_line(obj=obj)
 
-    obj, depth = get_original_obj_and_depth(obj=obj)
+    obj = get_origin(obj=obj)
     file = inspect.getfile(obj)
     return print_link(file=file, line=line, print_out=print_out)
 
 
 def get_definition_line(obj):
     """ Get line number of an object's definition. """
-    obj, depth = get_original_obj_and_depth(obj=obj)
+    obj, depth = get_origin(obj=obj, include_depth=True)
     return max(inspect.getsourcelines(obj)[1] + depth, 1)
 
 

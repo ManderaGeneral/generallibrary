@@ -456,7 +456,7 @@ def wrapper_transfer(base, target):
     """ Update a wrappers' metadata with base function's to properly propagate info. """
     for attr in ("__doc__", "__module__", "__name__"):
         setattr(target, attr, getattr(base, attr))
-    setattr(target, "__wrapped__", base)  # Used by get_original_obj_and_depth() and deco_cache()
+    setattr(target, "__wrapped__", base)
 
     return target
 
