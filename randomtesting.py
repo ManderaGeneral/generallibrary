@@ -53,7 +53,7 @@ def _deco_depth(func):
     def _wrapper(node, depth=None, flat=None, gen=None):
         generator = _traverse_depth(node, func=func, depth=depth, flat=flat)
         return _gen_or_list(gen_obj=generator, gen_bool=gen)
-    return _wrapper
+    return wrapper_transfer(func, _wrapper)
 
 
 def _deco_cast_to_diagram(func):
@@ -114,6 +114,7 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, metaclass=AutoInitBases):
 
             :param any child: """
         child.set_parent(parent=self)
+        print("add")
         return child
 
     @_deco_depth
@@ -184,31 +185,48 @@ class A(NetworkDiagram):
         return str(self.value)
 
 
-
-def hook(method, func=None):
-
-    objInfo = ObjInfo(method)
-
-    # setattr(method, "funcs", [func])
-
-    # def _wrapper(*args, **kwargs):
-    #     func()
-    #     return method(*args, **kwargs)
-
-    # setattr(method.__self__, method.__name__, _wrapper)
+class _Hook:
+    def __init__(self, func, after):
+        self.func = func
+        self.after = after
 
 
 
-hook(A.add, lambda: print(5))
-hook(A(2).add, lambda: print(5))
+def split_list(func, *args):
+    one, two = [], []
+    for arg in args:
+        if func(arg):
+            one.append(arg)
+        else:
+            two.append(arg)
+    return one, two
 
 
-# a = A(10)
-# a.add(2).add(3)#.add(a)
-# a.add(4)
-#
-# print(a.get_ordered(depth=-1, flat=False, gen=False))
+def hook(callable_, *funcs, after=False):
+    """ Hook into a callable. Stores funcs in callable's instance, class or even module. """
+    objInfo = ObjInfo(callable_)
+    owner = objInfo.get_parent().obj
 
+    if not hasattr(owner, "hooks"):
+        owner.hooks = {}
+    new = objInfo.name not in owner.hooks
+    addToListInDict(owner.hooks, objInfo.name, *[_Hook(func=func, after=after) for func in funcs])
+
+    def _wrapper(*args, **kwargs):
+        after, before = split_list(lambda x: x.after, *owner.hooks[objInfo.name])
+        sigInfo = SigInfo(callable_, *args, **kwargs)  # Call through SigInfo to easily relay any arguments
+        for hook_obj in before:
+            sigInfo.call(child_callable=hook_obj.func)
+        result = callable_(*args, **kwargs)
+        for hook_obj in after:
+            sigInfo.call(child_callable=hook_obj.func)
+        return result
+
+    if new:
+        wrapper_transfer(base=callable_, target=_wrapper)
+        setattr(objInfo.get_parent().obj, objInfo.name, _wrapper)
+
+    return owner.hooks[objInfo.name]
 
 
 
