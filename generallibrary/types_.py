@@ -32,8 +32,8 @@ def strToDynamicType(var):
 def _typeChecker_checkObject(obj, types, literalObjects):
     objDepth = depth(obj)
     typesDepth = len(types) - 1
-    if objDepth != typesDepth:
-        raise TypeError(f"Obj depth {objDepth} doesnt match types depth {typesDepth}")
+    # if objDepth != typesDepth:
+    #     raise TypeError(f"Obj depth {objDepth} doesnt match types depth {typesDepth}")
 
     for i, typeTuple in enumerate(types):
         # Returned ValueError if obj was pandas.DataFrame, so there are probably more objects that can raise any error

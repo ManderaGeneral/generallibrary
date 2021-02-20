@@ -5,32 +5,38 @@ import unittest
 
 
 class IterablesTest(unittest.TestCase):
-    def test_get_values(self):
-        self.assertEqual(get_values([]), [])
-        self.assertEqual(get_values({}), [])
-        self.assertEqual(get_values(tuple([5, 2])), (5, 2))
-        self.assertEqual(get_values([5, 2]), [5, 2])
-        self.assertEqual(get_values({"a": 5, "b": 2}), [5, 2])
+    def test_get_keys(self):
+        self.assertEqual([0, 1, 2], list(get_keys([1, 2, 3])))
+        self.assertEqual([0, 1, 2], list(get_keys((1, 2, 3))))
+        self.assertEqual([0, 1, 2], list(get_keys({1, 2, 3})))
+        self.assertEqual(["a", "b", "c"], list(get_keys({"a": 1, "b": 2, "c": 3})))
 
-        self.assertFalse(get_values(None))
-        self.assertFalse(get_values(5))
-        self.assertFalse(get_values("test"))
-        self.assertFalse(get_values(51.2))
-        self.assertFalse(get_values(True))
+    def test_get_values(self):
+        self.assertEqual([1, 2, 3], list(get_values([1, 2, 3])))
+        self.assertEqual([1, 2, 3], list(get_values((1, 2, 3))))
+        self.assertEqual({1, 2, 3}, set(get_values({1, 2, 3})))
+        self.assertEqual([1, 2, 3], list(get_values({"a": 1, "b": 2, "c": 3})))
+
+    def test_get_items(self):
+        self.assertEqual({0: 1, 1: 2, 2: 3}, dict(get_items([1, 2, 3])))
+        self.assertEqual({0: 1, 1: 2, 2: 3}, dict(get_items((1, 2, 3))))
+        self.assertEqual(3, len(dict(get_items({1, 2, 3}))))
+        self.assertEqual({"a": 1, "b": 2, "c": 3}, dict(get_items({"a": 1, "b": 2, "c": 3})))
 
     def test_is_iterable(self):
-        self.assertTrue(is_iterable(tuple()), [])
-        self.assertTrue(is_iterable([]), [])
-        self.assertTrue(is_iterable({}), [])
-        self.assertTrue(is_iterable(tuple([5, 2])), [5, 2])
-        self.assertTrue(is_iterable([5, 2]), [5, 2])
-        self.assertTrue(is_iterable({"a": 5, "b": 2}), [5, 2])
+        self.assertTrue(is_iterable(tuple()))
+        self.assertTrue(is_iterable([]))
+        self.assertTrue(is_iterable({}))
+        self.assertTrue(is_iterable(tuple([5, 2])))
+        self.assertTrue(is_iterable([5, 2]))
+        self.assertTrue(is_iterable({"a": 5, "b": 2}))
+        self.assertTrue(is_iterable("test"))
 
         self.assertFalse(is_iterable(None))
         self.assertFalse(is_iterable(5))
-        self.assertFalse(is_iterable("test"))
         self.assertFalse(is_iterable(51.2))
         self.assertFalse(is_iterable(True))
+        self.assertFalse(is_iterable(Ellipsis))
 
     def test_depth(self):
         self.assertEqual(depth(5), 0)
@@ -47,18 +53,8 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual(depth({"a": {"a": 5}}), 2)
 
     def test_iter_first_value(self):
-        self.assertRaises(TypeError, iter_first_value, [])
-        self.assertRaises(TypeError, iter_first_value, 5)
+        self.assertEqual(None, iter_first_value({}))
 
-        self.assertIsNone(iter_first_value({}))
-        self.assertEqual(iter_first_value({"a": 5}), 5)
-        self.assertEqual(iter_first_value({"a": 5, "b": 5}), 5)
-
-    def test_iter_first_value(self):
-        self.assertRaises(TypeError, iter_first_value, "hello")
-        self.assertRaises(TypeError, iter_first_value, 5)
-
-        self.assertIsNone(iter_first_value({}))
         self.assertEqual(iter_first_value({"a": 5}), 5)
         self.assertEqual(iter_first_value({"a": 5, "b": 5}), 5)
 
@@ -71,10 +67,9 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual(iter_first_value(tuple([5, 2, 3])), 5)
 
     def test_join_with_str(self):
-        self.assertRaises(TypeError, join_with_str, ".", 5)
-        self.assertRaises(TypeError, join_with_str, ".", "asdf")
+        self.assertRaises(Exception, join_with_str, ".", 5)
 
-        self.assertEqual(join_with_str(".", []), "")
+        self.assertEqual(join_with_str(".", "abc"), "a.b.c")
         self.assertEqual(join_with_str(".", [1, 2, 3]), "1.2.3")
         self.assertEqual(join_with_str(".", {"a": 1, "b": 2, "c": 3}), "1.2.3")
         self.assertEqual(join_with_str(".", {"a": "1", "b": 2, "c": 3}), "1.2.3")
@@ -205,33 +200,33 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual({'a': 5, 'b': 3}, inclusive(d, "a", "b"))
         self.assertEqual({"a": 5, "b": 3, "c": 4}, inclusive(d, "a", "b", "c"))
 
-    def test_uniqueObjInList(self):
+    def test_unique_obj_in_list(self):
         l = [5]
         self.assertEqual([5], l)
 
-        uniqueObjInList(l, 5, True)
+        unique_obj_in_list(l, 5, True)
         self.assertEqual([5], l)
 
-        uniqueObjInList(l, 5, False)
+        unique_obj_in_list(l, 5, False)
         self.assertEqual([], l)
 
         d = {"foo": "bar"}
-        uniqueObjInList(l, d, False)
+        unique_obj_in_list(l, d, False)
         self.assertEqual([], l)
 
-        uniqueObjInList(l, d, True)
+        unique_obj_in_list(l, d, True)
         self.assertEqual([d], l)
 
-        uniqueObjInList(l, d, True)
+        unique_obj_in_list(l, d, True)
         self.assertEqual([d], l)
 
-        uniqueObjInList(l, 4, True)
+        unique_obj_in_list(l, 4, True)
         self.assertEqual([d, 4], l)
 
-        uniqueObjInList(l, d, False)
+        unique_obj_in_list(l, d, False)
         self.assertEqual([4], l)
 
-        uniqueObjInList(l, 4, False)
+        unique_obj_in_list(l, 4, False)
         self.assertEqual([], l)
 
     def test_remove_duplicates(self):

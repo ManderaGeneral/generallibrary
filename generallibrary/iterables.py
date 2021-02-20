@@ -90,13 +90,17 @@ def is_iterable(obj):
 
 def depth(obj):
     """ Get depth of an object by recursively checking the first value. """
+    sentinel = object()
     depth = 0
     while True:
-        if get_values(obj):
-            obj = iter_first_value(obj)
-            depth += 1
-        else:
-            return depth
+        if not is_iterable(obj=obj):
+            break
+        first_value = iter_first_value(iterable=obj, default=sentinel)
+        if first_value == obj or first_value is sentinel:
+            break
+        obj = first_value
+        depth += 1
+    return depth
 
 
 def iter_first_value(iterable, default=None):
@@ -232,52 +236,38 @@ def get_rows(obj):
         rows.append([obj])
     return rows
 
-def exclusive(dictionary, *keys):
-    """
-    Returns a new dictionary without keys.
 
-    :param dict dictionary:
-    :param keys: Keys to be exluded.
-    """
+def exclusive(dictionary, *keys):
+    """ Returns a new dictionary without keys. """
     return {key: value for key, value in dictionary.items() if key not in keys}
 
-def inclusive(dictionary, *keys):
-    """
-    Returns a new dictionary without keys not in keys.
 
-    :param dict dictionary:
-    :param keys: Keys to include
-    """
+def inclusive(dictionary, *keys):
+    """ Returns a new dictionary with keys. """
     return {key: value for key, value in dictionary.items() if key in keys}
 
-def uniqueObjInList(l, obj, active):
-    """
-    Controls whether a unique object should be present in a list.
-    Adds obj to list if active and obj isn't in list.
-    Removes obj from list if not active and obj in list.
-    Changes list directly because of mutable.
 
-    :param list l:
-    :param any obj:
-    :param bool active:
-    """
+def unique_obj_in_list(list_, obj, active):
+    """ Controls whether a unique object should be present in a list.
+        Adds obj to list if active and obj isn't in list.
+        Removes obj from list if not active and obj in list. """
     if active:
-        if obj not in l:
-            l.append(obj)
+        if obj not in list_:
+            list_.append(obj)
     else:
-        if obj in l:
-            l.remove(obj)
+        if obj in list_:
+            list_.remove(obj)
 
-def remove_duplicates(l):
+
+def remove_duplicates(list_):
     """ Remove all duplicates in a list.
         Values must be hashable as they are passed through as dict keys. (Lists work but not Dicts) """
-    return list(dict.fromkeys(l))
-    # return list(set(l))
+    return list(dict.fromkeys(list_))
+
 
 def combine(**kwargs):
-    """
-    Create a list of dicts containing every unique combination from given object (Can be tuples).
-    """
+    """ Create a list of dicts containing every unique combination from given kwargs.
+        Values can be iterable or not. """
     execLines = []
     for i, (key, value) in enumerate(kwargs.items()):
         execLines.append(f"{' ' * i * 4}for {key} in (kwargs['{key}'] if is_iterable(kwargs['{key}']) else [kwargs['{key}']]):")
@@ -287,6 +277,7 @@ def combine(**kwargs):
     combinations = []
     exec("\n".join(execLines))
     return [] if combinations == [{}] else combinations
+
 
 from generallibrary.types_ import typeChecker
 

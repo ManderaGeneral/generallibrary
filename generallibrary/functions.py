@@ -338,10 +338,10 @@ class Operators:
 
 def deco_cast_parameters(**pars_to_cast):
     """ Decorator to make sure `path` parameter is a Path for example.
-        Example: @deco_cast_paramters(x=int, y=Vec2) """
-    def _decorator(function):
+        Example: @deco_cast_parameters(x=int, y=Vec2) """
+    def _decorator(func):
         def _wrapper(*args, **kwargs):
-            sigInfo = SigInfo(function, *args, **kwargs)
+            sigInfo = SigInfo(func, *args, **kwargs)
 
             for par_name, cls in pars_to_cast.items():
                 if par_name not in sigInfo.names:

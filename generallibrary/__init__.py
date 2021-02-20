@@ -1,5 +1,5 @@
 
-from generallibrary.iterables import SortedList, get_values, is_iterable, depth, iter_first_value, iter_first_value, join_with_str, extend_list_in_dict, update_dict_in_dict, get_free_index, get_rows, exclusive, inclusive, uniqueObjInList, combine, remove_duplicates, get_index, get, get_items
+from generallibrary.iterables import SortedList, get_values, is_iterable, depth, iter_first_value, iter_first_value, join_with_str, extend_list_in_dict, update_dict_in_dict, get_free_index, get_rows, exclusive, inclusive, unique_obj_in_list, combine, remove_duplicates, get_index, get, get_items
 from generallibrary.functions import SigInfo, calculate, defaults, Operators, deco_cache, deco_cast_parameters, deco_extend, EmptyContext, deco_default_self_args, classproperty, CallTable, deco_propagate_while, wrapper_transfer
 from generallibrary.object import getsize, initBases, AutoInitBases, ObjInfo
 from generallibrary.time import Timer, sleep, current_datetime_formatted, current_datetime

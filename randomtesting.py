@@ -231,27 +231,7 @@ def hook(callable_, *funcs, after=False):
 
 
 
-# for key, value in get_items(["a", "b", "c"]):
-#     print(key, value)
-# print()
-# for key, value in get_items(("a", "b", "c")):
-#     print(key, value)
-# print()
-# for key, value in get_items({"a", "b", "c"}):
-#     print(key, value)
-# print()
-# for key, value in get_items({4: "a", 5: "b", 6: "c"}):
-#     print(key, value)
-
-
-
 # HERE ** TnD for Hook and split_list
-
-
-
-
-
-
 
 
 
