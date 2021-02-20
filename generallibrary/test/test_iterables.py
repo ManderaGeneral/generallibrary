@@ -5,33 +5,32 @@ import unittest
 
 
 class IterablesTest(unittest.TestCase):
-    def test_getIterable(self):
-        self.assertEqual(getIterable(tuple()), [])
-        self.assertEqual(getIterable([]), [])
-        self.assertEqual(getIterable({}), [])
-        self.assertEqual(getIterable(tuple([5, 2])), [5, 2])
-        self.assertEqual(getIterable([5, 2]), [5, 2])
-        self.assertEqual(getIterable({"a": 5, "b": 2}), [5, 2])
+    def test_get_values(self):
+        self.assertEqual(get_values([]), [])
+        self.assertEqual(get_values({}), [])
+        self.assertEqual(get_values(tuple([5, 2])), (5, 2))
+        self.assertEqual(get_values([5, 2]), [5, 2])
+        self.assertEqual(get_values({"a": 5, "b": 2}), [5, 2])
 
-        self.assertFalse(getIterable(None))
-        self.assertFalse(getIterable(5))
-        self.assertFalse(getIterable("test"))
-        self.assertFalse(getIterable(51.2))
-        self.assertFalse(getIterable(True))
+        self.assertFalse(get_values(None))
+        self.assertFalse(get_values(5))
+        self.assertFalse(get_values("test"))
+        self.assertFalse(get_values(51.2))
+        self.assertFalse(get_values(True))
 
-    def test_isIterable(self):
-        self.assertTrue(isIterable(tuple()), [])
-        self.assertTrue(isIterable([]), [])
-        self.assertTrue(isIterable({}), [])
-        self.assertTrue(isIterable(tuple([5, 2])), [5, 2])
-        self.assertTrue(isIterable([5, 2]), [5, 2])
-        self.assertTrue(isIterable({"a": 5, "b": 2}), [5, 2])
+    def test_is_iterable(self):
+        self.assertTrue(is_iterable(tuple()), [])
+        self.assertTrue(is_iterable([]), [])
+        self.assertTrue(is_iterable({}), [])
+        self.assertTrue(is_iterable(tuple([5, 2])), [5, 2])
+        self.assertTrue(is_iterable([5, 2]), [5, 2])
+        self.assertTrue(is_iterable({"a": 5, "b": 2}), [5, 2])
 
-        self.assertFalse(isIterable(None))
-        self.assertFalse(isIterable(5))
-        self.assertFalse(isIterable("test"))
-        self.assertFalse(isIterable(51.2))
-        self.assertFalse(isIterable(True))
+        self.assertFalse(is_iterable(None))
+        self.assertFalse(is_iterable(5))
+        self.assertFalse(is_iterable("test"))
+        self.assertFalse(is_iterable(51.2))
+        self.assertFalse(is_iterable(True))
 
     def test_depth(self):
         self.assertEqual(depth(5), 0)
@@ -47,124 +46,124 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual(depth({"a": [5, 3]}), 2)
         self.assertEqual(depth({"a": {"a": 5}}), 2)
 
-    def test_dictFirstValue(self):
-        self.assertRaises(TypeError, dictFirstValue, [])
-        self.assertRaises(TypeError, dictFirstValue, 5)
+    def test_iter_first_value(self):
+        self.assertRaises(TypeError, iter_first_value, [])
+        self.assertRaises(TypeError, iter_first_value, 5)
 
-        self.assertIsNone(dictFirstValue({}))
-        self.assertEqual(dictFirstValue({"a": 5}), 5)
-        self.assertEqual(dictFirstValue({"a": 5, "b": 5}), 5)
+        self.assertIsNone(iter_first_value({}))
+        self.assertEqual(iter_first_value({"a": 5}), 5)
+        self.assertEqual(iter_first_value({"a": 5, "b": 5}), 5)
 
-    def test_iterFirstValue(self):
-        self.assertRaises(TypeError, iterFirstValue, "hello")
-        self.assertRaises(TypeError, iterFirstValue, 5)
+    def test_iter_first_value(self):
+        self.assertRaises(TypeError, iter_first_value, "hello")
+        self.assertRaises(TypeError, iter_first_value, 5)
 
-        self.assertIsNone(iterFirstValue({}))
-        self.assertEqual(iterFirstValue({"a": 5}), 5)
-        self.assertEqual(iterFirstValue({"a": 5, "b": 5}), 5)
+        self.assertIsNone(iter_first_value({}))
+        self.assertEqual(iter_first_value({"a": 5}), 5)
+        self.assertEqual(iter_first_value({"a": 5, "b": 5}), 5)
 
-        self.assertIsNone(iterFirstValue([]))
-        self.assertEqual(iterFirstValue([5]), 5)
-        self.assertEqual(iterFirstValue([5, 2, 3]), 5)
+        self.assertIsNone(iter_first_value([]))
+        self.assertEqual(iter_first_value([5]), 5)
+        self.assertEqual(iter_first_value([5, 2, 3]), 5)
 
-        self.assertIsNone(iterFirstValue(tuple()))
-        self.assertEqual(iterFirstValue(tuple([5])), 5)
-        self.assertEqual(iterFirstValue(tuple([5, 2, 3])), 5)
+        self.assertIsNone(iter_first_value(tuple()))
+        self.assertEqual(iter_first_value(tuple([5])), 5)
+        self.assertEqual(iter_first_value(tuple([5, 2, 3])), 5)
 
-    def test_joinWithStr(self):
-        self.assertRaises(TypeError, joinWithStr, ".", 5)
-        self.assertRaises(TypeError, joinWithStr, ".", "asdf")
+    def test_join_with_str(self):
+        self.assertRaises(TypeError, join_with_str, ".", 5)
+        self.assertRaises(TypeError, join_with_str, ".", "asdf")
 
-        self.assertEqual(joinWithStr(".", []), "")
-        self.assertEqual(joinWithStr(".", [1, 2, 3]), "1.2.3")
-        self.assertEqual(joinWithStr(".", {"a": 1, "b": 2, "c": 3}), "1.2.3")
-        self.assertEqual(joinWithStr(".", {"a": "1", "b": 2, "c": 3}), "1.2.3")
-        self.assertEqual(joinWithStr(".", tuple([1, 2, 3])), "1.2.3")
-        self.assertEqual(joinWithStr(".", [["foo", "bar"]]), "['foo', 'bar']")
-        self.assertEqual(joinWithStr(".", [["foo", "bar"], ["foo", "bar"]]), "['foo', 'bar'].['foo', 'bar']")
+        self.assertEqual(join_with_str(".", []), "")
+        self.assertEqual(join_with_str(".", [1, 2, 3]), "1.2.3")
+        self.assertEqual(join_with_str(".", {"a": 1, "b": 2, "c": 3}), "1.2.3")
+        self.assertEqual(join_with_str(".", {"a": "1", "b": 2, "c": 3}), "1.2.3")
+        self.assertEqual(join_with_str(".", tuple([1, 2, 3])), "1.2.3")
+        self.assertEqual(join_with_str(".", [["foo", "bar"]]), "['foo', 'bar']")
+        self.assertEqual(join_with_str(".", [["foo", "bar"], ["foo", "bar"]]), "['foo', 'bar'].['foo', 'bar']")
 
-    def test_addToListInDict(self):
-        self.assertRaises(AssertionError, addToListInDict, None, "key", 5)
-        self.assertRaises(AssertionError, addToListInDict, [], "key", 5)
-        self.assertRaises(AssertionError, addToListInDict, {"key": "notlist"}, "key", 5)
-        self.assertRaises(AssertionError, addToListInDict, {"key": {}}, "key", 5)
+    def test_extend_list_in_dict(self):
+        self.assertRaises(AssertionError, extend_list_in_dict, None, "key", 5)
+        self.assertRaises(AssertionError, extend_list_in_dict, [], "key", 5)
+        self.assertRaises(AssertionError, extend_list_in_dict, {"key": "notlist"}, "key", 5)
+        self.assertRaises(AssertionError, extend_list_in_dict, {"key": {}}, "key", 5)
 
         d = {}
-        self.assertEqual({"test": [5]}, addToListInDict(d, "test", 5))
-        self.assertEqual({"test": [5, 3]}, addToListInDict(d, "test", 3))
-        self.assertEqual({"test": [5, 3, 2, 0]}, addToListInDict(d, "test", 2, 0))
-        self.assertEqual({"test": [5, 3, 2, 0, None, True]}, addToListInDict(d, "test", None, True))
+        self.assertEqual({"test": [5]}, extend_list_in_dict(d, "test", 5))
+        self.assertEqual({"test": [5, 3]}, extend_list_in_dict(d, "test", 3))
+        self.assertEqual({"test": [5, 3, 2, 0]}, extend_list_in_dict(d, "test", 2, 0))
+        self.assertEqual({"test": [5, 3, 2, 0, None, True]}, extend_list_in_dict(d, "test", None, True))
         self.assertEqual({"test": [5, 3, 2, 0, None, True]}, d)
 
-        self.assertEqual({"random": "foobar", True: [5, None, True, 2, "hi"]}, addToListInDict({"random": "foobar"}, True, 5, None, True, 2, "hi"))
+        self.assertEqual({"random": "foobar", True: [5, None, True, 2, "hi"]}, extend_list_in_dict({"random": "foobar"}, True, 5, None, True, 2, "hi"))
 
-    def test_addToDictInDict(self):
-        self.assertRaises(AssertionError, addToDictInDict, None, "key", a=5)
-        self.assertRaises(AssertionError, addToDictInDict, [], "key", a=5)
-        self.assertRaises(AssertionError, addToDictInDict, {"key": "notdict"}, "key", a=5)
-        self.assertRaises(AssertionError, addToDictInDict, {"key": []}, "key", a=5)
+    def test_update_dict_in_dict(self):
+        self.assertRaises(AssertionError, update_dict_in_dict, None, "key", a=5)
+        self.assertRaises(AssertionError, update_dict_in_dict, [], "key", a=5)
+        self.assertRaises(AssertionError, update_dict_in_dict, {"key": "notdict"}, "key", a=5)
+        self.assertRaises(AssertionError, update_dict_in_dict, {"key": []}, "key", a=5)
 
         d = {}
-        self.assertEqual({"test": {"a": 5}}, addToDictInDict(d, "test", a=5))
-        self.assertEqual({"test": {"a": 5, "b": 3}}, addToDictInDict(d, "test", b=3))
-        self.assertEqual({"test": {"a": 5, "b": 3, "c": 2, "d": 0}}, addToDictInDict(d, "test", c=2, d=0))
-        self.assertEqual({"test": {"a": 5, "b": 3, "c": 2, "d": 0, "e": None, "f": True}}, addToDictInDict(d, "test", e=None, f=True))
+        self.assertEqual({"test": {"a": 5}}, update_dict_in_dict(d, "test", a=5))
+        self.assertEqual({"test": {"a": 5, "b": 3}}, update_dict_in_dict(d, "test", b=3))
+        self.assertEqual({"test": {"a": 5, "b": 3, "c": 2, "d": 0}}, update_dict_in_dict(d, "test", c=2, d=0))
+        self.assertEqual({"test": {"a": 5, "b": 3, "c": 2, "d": 0, "e": None, "f": True}}, update_dict_in_dict(d, "test", e=None, f=True))
         self.assertEqual({"test": {"a": 5, "b": 3, "c": 2, "d": 0, "e": None, "f": True}}, d)
 
         self.assertEqual({"random": "foobar", True: {"b": 5, "c": None, "d": True, "e": 2, "f": "hi"}},
-                         addToDictInDict({"random": "foobar"}, True, b=5, c=None, d=True, e=2, f="hi"))
+                         update_dict_in_dict({"random": "foobar"}, True, b=5, c=None, d=True, e=2, f="hi"))
 
-    def test_getFreeIndex(self):
+    def test_get_free_index(self):
         d = {}
-        self.assertEqual(0, getFreeIndex(d))
+        self.assertEqual(0, get_free_index(d))
 
         d = {1: True}
-        self.assertEqual(0, getFreeIndex(d))
+        self.assertEqual(0, get_free_index(d))
 
         d[0] = True
-        self.assertEqual(2, getFreeIndex(d))
+        self.assertEqual(2, get_free_index(d))
 
         d[0.2] = True
-        self.assertEqual(2, getFreeIndex(d))
+        self.assertEqual(2, get_free_index(d))
 
         d[2.2] = True
-        self.assertEqual(2, getFreeIndex(d))
+        self.assertEqual(2, get_free_index(d))
 
         d["2"] = True
-        self.assertEqual(2, getFreeIndex(d))
+        self.assertEqual(2, get_free_index(d))
 
-    def test_appendToDict(self):
+    def test_append_to_dict(self):
         d = {}
-        appendToDict(d, 5)
+        append_to_dict(d, 5)
         self.assertEqual({0: 5}, d)
 
-        appendToDict(d, "hello")
+        append_to_dict(d, "hello")
         self.assertEqual({0: 5, 1: "hello"}, d)
 
-        appendToDict(d, 3.2)
+        append_to_dict(d, 3.2)
         self.assertEqual({0: 5, 1: "hello", 2: 3.2}, d)
 
         del d[1]
         self.assertEqual({0: 5, 2: 3.2}, d)
 
-        appendToDict(d, "hello")
+        append_to_dict(d, "hello")
         self.assertEqual({0: 5, 1: "hello", 2: 3.2}, d)
 
-    def test_getRows(self):
-        self.assertEqual([[5]], getRows(5))
-        self.assertEqual([[1, 2, 3]], getRows([1, 2, 3]))
-        self.assertEqual([[1, 2, 3]], getRows([[1, 2, 3]]))
-        self.assertEqual([[1, 2, 3]], getRows({1: [2, 3]}))
+    def test_get_rows(self):
+        self.assertEqual([[5]], get_rows(5))
+        self.assertEqual([[1, 2, 3]], get_rows([1, 2, 3]))
+        self.assertEqual([[1, 2, 3]], get_rows([[1, 2, 3]]))
+        self.assertEqual([[1, 2, 3]], get_rows({1: [2, 3]}))
 
-        self.assertEqual([[1, 2, 3], [4, 5, 6]], getRows({1: [2, 3], 4: [5, 6]}))
-        self.assertEqual([[1, 2, 3], [4, 5, 6]], getRows([[1, 2, 3], [4, 5, 6]]))
-        self.assertEqual([[1, 2, 3], [4, 5, 6]], getRows([{"a": 1,"b": 2,"c": 3}, {"d": 4, "e": 5, "f": 6}]))
-        self.assertEqual([[1, 2, 3], [4, 5, 6]], getRows({1: {"b": 2, "c": 3}, 4: {"e": 5, "f": 6}}))
+        self.assertEqual([[1, 2, 3], [4, 5, 6]], get_rows({1: [2, 3], 4: [5, 6]}))
+        self.assertEqual([[1, 2, 3], [4, 5, 6]], get_rows([[1, 2, 3], [4, 5, 6]]))
+        self.assertEqual([[1, 2, 3], [4, 5, 6]], get_rows([{"a": 1,"b": 2,"c": 3}, {"d": 4, "e": 5, "f": 6}]))
+        self.assertEqual([[1, 2, 3], [4, 5, 6]], get_rows({1: {"b": 2, "c": 3}, 4: {"e": 5, "f": 6}}))
 
-        self.assertEqual([], getRows([]))
-        self.assertEqual([[], []], getRows([[], []]))
-        self.assertEqual([], getRows(None))
-        self.assertEqual([[0]], getRows(0))
+        self.assertEqual([], get_rows([]))
+        self.assertEqual([[], []], get_rows([[], []]))
+        self.assertEqual([], get_rows(None))
+        self.assertEqual([[0]], get_rows(0))
 
     def test_SortedList(self):
         sortedList = SortedList(1, 2, 3)
@@ -251,11 +250,11 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual([{"hello": 3, "there": 2}], combine(hello=3, there=2))
         self.assertEqual([{'hello': 3, 'there': 2}, {'hello': 3, 'there': "foobar"}], combine(hello=3, there=[2, "foobar"]))
 
-    def test_dict_index(self):
-        self.assertEqual("a", dict_index({"a": 2, "b": 4}, 2))
-        self.assertEqual("b", dict_index({"a": 2, "b": 4}, 4))
-        self.assertEqual(None, dict_index({"a": 2, "b": 4}, 3, None))
-        self.assertRaises(StopIteration, lambda: dict_index({"a": 2, "b": 4}, 3))
+    def test_get_index(self):
+        self.assertEqual("a", get_index({"a": 2, "b": 4}, 2))
+        self.assertEqual("b", get_index({"a": 2, "b": 4}, 4))
+        self.assertEqual(None, get_index({"a": 2, "b": 4}, 3, None))
+        self.assertRaises(StopIteration, lambda: get_index({"a": 2, "b": 4}, 3))
 
 
 

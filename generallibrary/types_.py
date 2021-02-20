@@ -69,8 +69,8 @@ def _typeChecker_checkObject(obj, types, literalObjects):
             if isBoolAndBoolOrObjectNotInList or not (objTypeInList or objClassNameInList):
                 raise TypeError(f"obj {obj} wasn't type {typeTuple} in depth {i}/{typesDepth}")
 
-        if isIterable(obj):
-            obj = iterFirstValue(obj)
+        if is_iterable(obj):
+            obj = iter_first_value(obj)
         elif i < objDepth:
             raise TypeError(f"obj {obj} is not iterable but atleast one more subtype is required in depth {i}/{typesDepth}")
 
@@ -209,4 +209,4 @@ class HierarchyStorer(type):
         base_cls._inheriters.append(cls)
 
 
-from generallibrary.iterables import depth, iterFirstValue, isIterable
+from generallibrary.iterables import depth, iter_first_value, is_iterable

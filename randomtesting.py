@@ -85,7 +85,6 @@ class _Diagram_Global:
         generator = _traverse_depth(*origins, func=func, depth=depth, flat=flat, include_nodes=True)
         return _gen_or_list(gen_obj=generator, gen_bool=gen)
 
-
 class _Diagram(_Diagram_Global, _Diagram_QOL, metaclass=AutoInitBases):
     """ Core methods of a Diagram. """
     def __init__(self):
@@ -193,6 +192,7 @@ class _Hook:
 
 
 def split_list(func, *args):
+    """ Split args into one list containing all args where func returned True, and rest in the second one. """
     one, two = [], []
     for arg in args:
         if func(arg):
@@ -210,7 +210,7 @@ def hook(callable_, *funcs, after=False):
     if not hasattr(owner, "hooks"):
         owner.hooks = {}
     new = objInfo.name not in owner.hooks
-    addToListInDict(owner.hooks, objInfo.name, *[_Hook(func=func, after=after) for func in funcs])
+    extend_list_in_dict(owner.hooks, objInfo.name, *[_Hook(func=func, after=after) for func in funcs])
 
     def _wrapper(*args, **kwargs):
         after, before = split_list(lambda x: x.after, *owner.hooks[objInfo.name])
@@ -227,6 +227,43 @@ def hook(callable_, *funcs, after=False):
         setattr(objInfo.get_parent().obj, objInfo.name, _wrapper)
 
     return owner.hooks[objInfo.name]
+
+
+
+
+# for key, value in get_items(["a", "b", "c"]):
+#     print(key, value)
+# print()
+# for key, value in get_items(("a", "b", "c")):
+#     print(key, value)
+# print()
+# for key, value in get_items({"a", "b", "c"}):
+#     print(key, value)
+# print()
+# for key, value in get_items({4: "a", 5: "b", 6: "c"}):
+#     print(key, value)
+
+
+
+# HERE ** TnD for Hook and split_list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

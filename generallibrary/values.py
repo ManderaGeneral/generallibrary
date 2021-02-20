@@ -162,7 +162,7 @@ class EnvVar:
 
 def get_launch_options():
     """ Return a dict of given args from launch options.
-        Uses sys.argv, attempts to split on '=', if missing then getFreeIndex is used as key.
+        Uses sys.argv, attempts to split on '=', if missing then get_free_index is used as key.
         WARNING: Removes all extra values in sys.argv (As unittest couldn't handle it) """
     args = {}
     while len(sys.argv) > 1:
@@ -171,12 +171,12 @@ def get_launch_options():
             split = arg.split("=")
             args[split[0]] = split[1]
         else:
-            args[getFreeIndex(args)] = arg
+            args[get_free_index(args)] = arg
         del sys.argv[1]
     return args
 
 
-from generallibrary.iterables import getFreeIndex
+from generallibrary.iterables import get_free_index
 
 
 
