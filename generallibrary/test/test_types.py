@@ -1,5 +1,5 @@
 
-from generallibrary.types_ import *
+from generallibrary.types import *
 
 import unittest
 

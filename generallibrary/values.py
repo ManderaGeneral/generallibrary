@@ -1,4 +1,6 @@
 
+from generallibrary.iterables import get_free_index
+
 import math
 import os
 import sys
@@ -175,8 +177,6 @@ def get_launch_options():
         del sys.argv[1]
     return args
 
-
-from generallibrary.iterables import get_free_index
 
 
 

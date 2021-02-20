@@ -1,7 +1,9 @@
 
-from generallibrary import deco_propagate_while
+
+from generallibrary.functions import deco_propagate_while
 
 import inspect
+import re
 
 
 class _ObjInfoProperties:
@@ -34,7 +36,7 @@ class _ObjInfoProperties:
             :param generallibrary.ObjInfo self: """
         return not self.private() and str(self.name).startswith("_")
 
-    @deco_propagate_while(value=None, prop=lambda objInfo: objInfo.get_parent())
+    @deco_propagate_while(value=None, prop_func=lambda objInfo: objInfo.get_parent())
     def module(self):
         """ Return module of this ObjInfo's obj as returned by inspect or None.
 
@@ -81,12 +83,18 @@ class _ObjInfoProperties:
         return get_definition_line(self.obj)
 
     def get_lines(self):
-        """ Relaying to function.
+        """ Return a list of source lines from an obj.
+            Used to extract todos.
+            Experimental. Works on modules, classes and functions available to `inspect`.
 
             :param generallibrary.ObjInfo self: """
-        from generallibrary.code import get_lines
-
-        return get_lines(self.obj)
+        self.get_attrs()
+        lines = []
+        for objInfo in self.get_all():
+            if objInfo.is_class() or objInfo.is_function():
+                obj_lines = inspect.getsourcelines(objInfo.obj)[0]
+                lines.extend([line for line in obj_lines if not re.match("^( *)?\\n$", line)])
+        return lines
 
     def doc(self, only_first_line=False, require_sentence=False):
         """ Return documentation string of this ObjInfo's obj.
@@ -111,7 +119,5 @@ class _ObjInfoProperties:
                 raise AttributeError(f"'{doc}' is not a proper a sentence from '{print_link_to_obj(self.obj, print_out=False)}'.")
 
         return doc
-
-
 
 

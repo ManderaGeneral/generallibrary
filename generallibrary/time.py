@@ -45,3 +45,5 @@ def current_datetime(timezone="Europe/Paris"):
 def current_datetime_formatted(timezone="Europe/Paris", format_str="%Y-%m-%d %H:%M %Z"):
     """ Get a nicely formatted date and time string. """
     return current_datetime(timezone=timezone).strftime(format_str)
+
+

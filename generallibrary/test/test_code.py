@@ -39,10 +39,4 @@ class CodeTest(unittest.TestCase):
         self.assertIn("line 16", print_link_to_obj(CodeTest.test_CodeLine))
         self.assertIn("unittest/__init__.py\", line 1", print_link_to_obj(unittest))
 
-    def test_get_lines(self):
-        import generallibrary
-        get_lines(self.test_get_lines)
-        get_lines(get_lines)
-        get_lines(generallibrary)
-
 

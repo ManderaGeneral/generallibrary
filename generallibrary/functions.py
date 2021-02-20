@@ -1,4 +1,8 @@
 
+from generallibrary.iterables import split_list, extend_list_in_dict
+from generallibrary.types import typeChecker
+from generallibrary.objinfo.objinfo import ObjInfo
+
 import inspect
 import re
 import functools
@@ -461,7 +465,8 @@ def wrapper_transfer(base, target):
     return target
 
 
-def deco_propagate_while(value, prop):
+def deco_propagate_while(value, prop_func):
+    """ Call decorated function recursively until it doesn't return given value. """
     def _deco(func):
         def _wrapper(self, *args, **kwargs):
             new_self = self
@@ -469,7 +474,7 @@ def deco_propagate_while(value, prop):
                 result = func(new_self, *args, **kwargs)
                 if result != value:
                     break
-                new_self = prop(new_self)
+                new_self = prop_func(new_self)
                 if new_self is None:
                     break
             return result
@@ -477,4 +482,37 @@ def deco_propagate_while(value, prop):
     return _deco
 
 
-from generallibrary.types_ import typeChecker
+class _Hook:
+    def __init__(self, func, after):
+        self.func = func
+        self.after = after
+
+
+def hook(callable_, *funcs, after=False):
+    """ Hook into a callable. Stores funcs in callable's instance, class or even module. """
+    objInfo = ObjInfo(callable_)
+    owner = objInfo.get_parent().obj
+
+    if not hasattr(owner, "hooks"):
+        owner.hooks = {}
+    new = objInfo.name not in owner.hooks
+    extend_list_in_dict(owner.hooks, objInfo.name, *[_Hook(func=func, after=after) for func in funcs])
+
+    def _wrapper(*args, **kwargs):
+        after, before = split_list(lambda x: x.after, *owner.hooks[objInfo.name])
+        sigInfo = SigInfo(callable_, *args, **kwargs)  # Call through SigInfo to easily relay any arguments
+        for hook_obj in before:
+            sigInfo.call(child_callable=hook_obj.func)
+        result = callable_(*args, **kwargs)
+        for hook_obj in after:
+            sigInfo.call(child_callable=hook_obj.func)
+        return result
+
+    if new:
+        wrapper_transfer(base=callable_, target=_wrapper)
+        setattr(objInfo.get_parent().obj, objInfo.name, _wrapper)
+
+    return owner.hooks[objInfo.name]
+
+
+

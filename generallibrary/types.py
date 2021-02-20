@@ -1,4 +1,6 @@
 
+from generallibrary.iterables import depth, iter_first_value, is_iterable
+
 
 def strToDynamicType(var):
     """
@@ -209,4 +211,3 @@ class HierarchyStorer(type):
         base_cls._inheriters.append(cls)
 
 
-from generallibrary.iterables import depth, iter_first_value, is_iterable

@@ -1,6 +1,5 @@
 
 from generallibrary.object import initBases
-
 from generallibrary.diagram import TreeDiagram
 
 from generallibrary.objinfo.children import _ObjInfoChildren
@@ -49,8 +48,6 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
 
 
 setattr(ObjInfo, "ObjInfo", ObjInfo)
-
-
 
 
 

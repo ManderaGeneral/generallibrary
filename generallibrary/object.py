@@ -1,8 +1,9 @@
 
+from generallibrary.functions import SigInfo
+
 import sys
 from types import ModuleType, FunctionType
 from gc import get_referents
-import inspect
 
 
 def getsize(obj):
@@ -41,6 +42,7 @@ def initBases(cls):
 
     Also looks for defined `__init_post__` methods, stores them in `instance.__init_post__s` and calls them all after all inits.
     """
+
     cls_init = cls.__init__  # Unbound original __init__ method of class
 
     if getattr(cls, "_is_wrapped_by_initBases", None) is cls:
@@ -84,8 +86,9 @@ class AutoInitBases(type):
         type.__init__(initBases(cls), *args, **kwargs)
 
 
-from generallibrary.functions import SigInfo
-from generallibrary.objinfo.objinfo import ObjInfo
+
+
+
 
 
 

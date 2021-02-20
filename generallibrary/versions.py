@@ -5,6 +5,7 @@ Get package info?
 """
 
 from generallibrary.object import initBases
+from generallibrary.functions import Operators
 
 from packaging import version
 import pkg_resources
@@ -205,8 +206,6 @@ class DuckTyping:
         Would have to deal with syntax error by some importing technique then I guess. """
 
 
-from generallibrary.functions import Operators
-
 @Operators.deco_define_comparisons(lambda left: left.version, lambda right: version.parse(str(right)))
 class PythonVersion(DuckTyping):
     """ Used by VerInfo.pythonVersion to easily compare python versions to int, float or string. """
@@ -225,9 +224,11 @@ class PythonVersion(DuckTyping):
     def __ge__(self, other): ...
     def __le__(self, other): ...
 
+
 def get_installed_packages():
     """ Get a list of all installed packages as strings. """
     return [pkg.key for pkg in pkg_resources.working_set]
+
 
 def package_is_installed(*names):
     """ Returns whether a package is installed. """

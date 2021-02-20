@@ -1,12 +1,11 @@
 
-import pyperclip
-import os
-import inspect
-import re
-import pandas as pd
 
 from generallibrary.diagram import TreeDiagram
 from generallibrary.object import initBases
+
+import pyperclip
+import os
+import inspect
 
 
 def clipboard_copy(s):
@@ -137,31 +136,6 @@ def get_definition_line(obj):
     """ Get line number of an object's definition. """
     obj, depth = get_origin(obj=obj, include_depth=True)
     return max(inspect.getsourcelines(obj)[1] + depth, 1)
-
-
-def get_lines(obj):
-    """ Return a list of source lines from an obj.
-        Used to extract todos.
-        Experimental. Works on modules, classes and functions available to `inspect`. """
-    parent_objInfo = ObjInfo(obj)
-    parent_objInfo.get_attrs()
-    lines = []
-    for objInfo in parent_objInfo.get_all():  # type: ObjInfo
-        if objInfo.is_class() or objInfo.is_function():
-            obj_lines = inspect.getsourcelines(objInfo.obj)[0]
-            lines.extend([line for line in obj_lines if not re.match("^( *)?\\n$", line)])
-    return lines
-
-
-from generallibrary.object import ObjInfo
-
-
-
-
-
-
-
-
 
 
 

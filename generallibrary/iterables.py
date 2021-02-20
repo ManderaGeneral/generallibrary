@@ -9,8 +9,6 @@ class SortedList:
         :param objects: Objects to be added instantly
         :param function[any] -> float getValueFunc: A function that only takes obj as parameter and returns a float to be used for sorting.
         """
-        if objects and typeChecker(objects[0], "function", error=False):
-            raise AttributeError("First object was a function, make sure to use the 'getValueFunc' key.")
 
         if getValueFunc is None:
             getValueFunc = lambda obj: obj
@@ -279,7 +277,17 @@ def combine(**kwargs):
     return [] if combinations == [{}] else combinations
 
 
-from generallibrary.types_ import typeChecker
+def split_list(func, *args):
+    """ Split args into one list containing all args where func returned True, and rest in the second one. """
+    one, two = [], []
+    for arg in args:
+        if func(arg):
+            one.append(arg)
+        else:
+            two.append(arg)
+    return one, two
+
+
 
 
 
