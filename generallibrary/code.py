@@ -31,6 +31,8 @@ class CodeLine(TreeDiagram):
     indent_str = " " * 4
 
     def __init__(self, code_str=None, space_before=0, space_after=0, parent=None):
+        if code_str is None:
+            code_str = ""
         self.code_str = code_str
         self.space_before = space_before
         self.space_after = space_after

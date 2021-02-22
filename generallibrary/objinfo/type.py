@@ -8,7 +8,8 @@ class _ObjInfoType:
     def type(self, nice_output=False):
         """ Get a string of what type obj is.
 
-            :param generallibrary.ObjInfo self: """
+            :param generallibrary.ObjInfo self:
+            :param nice_output: """
         types = [name for name, method in self.type_methods.items() if method(self)]
 
         # if len(types) != 1:

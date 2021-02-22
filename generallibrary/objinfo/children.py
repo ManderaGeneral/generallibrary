@@ -25,7 +25,7 @@ class _ObjInfoChildren:
             :param generallibrary.ObjInfo self:
             :param depth: Depth to iterate, -1 is infinite.
             :param _all_objInfo:
-            :param _filters:
+            :param _top_objInfo:
             :rtype: list[generallibrary.ObjInfo] """
         if not depth:
             return

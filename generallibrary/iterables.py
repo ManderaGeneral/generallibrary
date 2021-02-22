@@ -288,37 +288,10 @@ def split_list(func, *args):
     return one, two
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def pivot_list(list_, index):
+    """ Return an altered list where it's first value is the given index for the original list. """
+    index %= len(list_)
+    return list_[index:] + list_[:index]
 
 
 

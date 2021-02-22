@@ -14,14 +14,16 @@ class A(NetworkDiagram):
 
 
 
-
 a = A(1)
-a.add(2)
+b = a.add(2)
+c = a.add(3)
+c.set_parent(4)
+
+print(a.get_spouses())
+print(c.get_siblings())
 
 
-# print(a.get_children())
-# print(a.get_parents())
-print(a.get_ordered())
+
 
 
 

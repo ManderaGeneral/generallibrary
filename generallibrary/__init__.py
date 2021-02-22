@@ -1,5 +1,5 @@
 
-from generallibrary.iterables import SortedList, get_values, is_iterable, depth, iter_first_value, iter_first_value, join_with_str, extend_list_in_dict, update_dict_in_dict, get_free_index, get_rows, exclusive, inclusive, unique_obj_in_list, combine, remove_duplicates, get_index, get, get_items, split_list
+from generallibrary.iterables import SortedList, get_values, is_iterable, depth, iter_first_value, iter_first_value, join_with_str, extend_list_in_dict, update_dict_in_dict, get_free_index, get_rows, exclusive, inclusive, unique_obj_in_list, combine, remove_duplicates, get_index, get, get_items, split_list, pivot_list
 from generallibrary.object import getsize
 from generallibrary.text import comma_and_and, plur_sing
 from generallibrary.time import Timer, sleep, current_datetime_formatted, current_datetime
