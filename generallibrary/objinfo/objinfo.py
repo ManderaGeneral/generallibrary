@@ -1,6 +1,6 @@
 
 from generallibrary.iterables import extend_list_in_dict, split_list
-from generallibrary.functions import SigInfo, wrapper_transfer, initBases
+from generallibrary.functions import SigInfo, wrapper_transfer
 from generallibrary.diagram import TreeDiagram
 
 from generallibrary.objinfo.children import _ObjInfoChildren

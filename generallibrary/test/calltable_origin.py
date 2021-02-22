@@ -24,7 +24,7 @@ top_objInfo.filters = []
 top_objInfo.get_attrs(depth=1)
 
 
-callTable = CallTable("ObjInfo").set_args(**{objInfo.name: objInfo for objInfo in top_objInfo.get_all() if objInfo.name})
+callTable = CallTable("ObjInfo").set_args(**{objInfo.name: objInfo for objInfo in top_objInfo.get_nodes(depth=-1) if objInfo.name})
 
 
 callTable.generate_with_funcs(

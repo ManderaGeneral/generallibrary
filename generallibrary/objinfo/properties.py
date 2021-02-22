@@ -90,7 +90,7 @@ class _ObjInfoProperties:
             :param generallibrary.ObjInfo self: """
         self.get_attrs()
         lines = []
-        for objInfo in self.get_all():
+        for objInfo in self.get_nodes(depth=-1):
             if objInfo.is_class() or objInfo.is_function():
                 obj_lines = inspect.getsourcelines(objInfo.obj)[0]
                 lines.extend([line for line in obj_lines if not re.match("^( *)?\\n$", line)])
