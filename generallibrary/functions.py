@@ -1,7 +1,4 @@
-
-from generallibrary.iterables import split_list, extend_list_in_dict
 from generallibrary.types import typeChecker
-from generallibrary.objinfo.objinfo import ObjInfo
 
 import inspect
 import re
@@ -482,37 +479,58 @@ def deco_propagate_while(value, prop_func):
     return _deco
 
 
-class _Hook:
-    def __init__(self, func, after):
-        self.func = func
-        self.after = after
 
+def initBases(cls):
+    """
+    Decorator function for class to automatically initalize all inherited classes.
 
-def hook(callable_, *funcs, after=False):
-    """ Hook into a callable. Stores funcs in callable's instance, class or even module. """
-    objInfo = ObjInfo(callable_)
-    owner = objInfo.get_parent().obj
+    Wrap a class' unbound __init__ method to take any arguments.
+    When wrapper is called it iterates DIRECT bases to call their unbound __init__ methods along with it's own original __init__.
 
-    if not hasattr(owner, "hooks"):
-        owner.hooks = {}
-    new = objInfo.name not in owner.hooks
-    extend_list_in_dict(owner.hooks, objInfo.name, *[_Hook(func=func, after=after) for func in funcs])
+    Also looks for defined `__init_post__` methods, stores them in `instance.__init_post__s` and calls them all after all inits.
+    """
+
+    cls_init = cls.__init__  # Unbound original __init__ method of class
+
+    if getattr(cls, "_is_wrapped_by_initBases", None) is cls:
+        return cls
+
+    cls._is_wrapped_by_initBases = cls
 
     def _wrapper(*args, **kwargs):
-        after, before = split_list(lambda x: x.after, *owner.hooks[objInfo.name])
-        sigInfo = SigInfo(callable_, *args, **kwargs)  # Call through SigInfo to easily relay any arguments
-        for hook_obj in before:
-            sigInfo.call(child_callable=hook_obj.func)
-        result = callable_(*args, **kwargs)
-        for hook_obj in after:
-            sigInfo.call(child_callable=hook_obj.func)
-        return result
+        cls_SigInfo = SigInfo(cls_init, *args, **kwargs)
 
-    if new:
-        wrapper_transfer(base=callable_, target=_wrapper)
-        setattr(objInfo.get_parent().obj, objInfo.name, _wrapper)
+        if not cls_SigInfo["self"]:
+            raise AttributeError(f"{cls} hasn't defined it's `__init__`")
 
-    return owner.hooks[objInfo.name]
+        initialized_bases = []
+
+        if getattr(cls_SigInfo["self"], "__init_post__s", None) is None:
+            cls_SigInfo["self"].__init_post__s = []
+
+
+        for base in cls.__bases__ + (cls, ):
+            init = cls_init if base is cls else base.__init__
+
+            if init is not object.__init__ and init not in initialized_bases:
+                cls_SigInfo.call(child_callable=init)
+                initialized_bases.append(init)
+
+
+                if getattr(base, "__init_post__", None) and base.__init_post__ not in cls_SigInfo["self"].__init_post__s:
+                    cls_SigInfo["self"].__init_post__s.append(base.__init_post__)
+        if cls is cls_SigInfo["self"].__class__ and getattr(cls_SigInfo["self"], "__init_post__s", None) is not None:
+            for post_init in cls_SigInfo["self"].__init_post__s:
+                cls_SigInfo.call(child_callable=post_init)
+
+    cls.__init__ = _wrapper
+    return cls
+
+
+class AutoInitBases(type):
+    """ Use as metaclass to automatically call initBases decorator on inheriters. """
+    def __init__(cls, *args, **kwargs):
+        type.__init__(initBases(cls), *args, **kwargs)
 
 
 

@@ -1,5 +1,6 @@
 
-from generallibrary.object import initBases
+from generallibrary.iterables import extend_list_in_dict, split_list
+from generallibrary.functions import SigInfo, wrapper_transfer, initBases
 from generallibrary.diagram import TreeDiagram
 
 from generallibrary.objinfo.children import _ObjInfoChildren
@@ -9,7 +10,6 @@ from generallibrary.objinfo.properties import _ObjInfoProperties
 from generallibrary.objinfo.parents import _ObjInfoParents
 
 
-@initBases
 class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties, _ObjInfoParents, TreeDiagram):
     """ Get whether obj is a module, function, class, method, property or variable.
         Automatically generates parents post creation for attributes that are not modules.
@@ -50,6 +50,34 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
 setattr(ObjInfo, "ObjInfo", ObjInfo)
 
 
+class _Hook:
+    def __init__(self, func, after):
+        self.func = func
+        self.after = after
 
 
+def hook(callable_, *funcs, after=False):
+    """ Hook into a callable. Stores funcs in callable's instance, class or even module. """
+    objInfo = ObjInfo(callable_)
+    owner = objInfo.get_parent().obj
 
+    if not hasattr(owner, "hooks"):
+        owner.hooks = {}
+    new = objInfo.name not in owner.hooks
+    extend_list_in_dict(owner.hooks, objInfo.name, *[_Hook(func=func, after=after) for func in funcs])
+
+    def _wrapper(*args, **kwargs):
+        after, before = split_list(lambda x: x.after, *owner.hooks[objInfo.name])
+        sigInfo = SigInfo(callable_, *args, **kwargs)  # Call through SigInfo to easily relay any arguments
+        for hook_obj in before:
+            sigInfo.call(child_callable=hook_obj.func)
+        result = callable_(*args, **kwargs)
+        for hook_obj in after:
+            sigInfo.call(child_callable=hook_obj.func)
+        return result
+
+    if new:
+        wrapper_transfer(base=callable_, target=_wrapper)
+        setattr(objInfo.get_parent().obj, objInfo.name, _wrapper)
+
+    return owner.hooks[objInfo.name]

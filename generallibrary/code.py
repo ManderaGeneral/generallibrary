@@ -1,7 +1,6 @@
 
 
 from generallibrary.diagram import TreeDiagram
-from generallibrary.object import initBases
 
 import pyperclip
 import os
@@ -26,7 +25,6 @@ def clipboard_get():
     return pyperclip.paste()
 
 
-@initBases
 class CodeLine(TreeDiagram):
     """ Tool to help with printing code line by line.
         Top parent is ignored when printing. """

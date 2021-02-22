@@ -4,8 +4,7 @@ Get Operating System.
 Get package info?
 """
 
-from generallibrary.object import initBases
-from generallibrary.functions import Operators
+from generallibrary.functions import Operators, initBases
 
 from packaging import version
 import pkg_resources

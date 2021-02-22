@@ -1,511 +1,175 @@
 
-from generallibrary.object import initBases
-from generallibrary.functions import deco_extend
+from generallibrary.functions import AutoInitBases, wrapper_transfer
 from generallibrary.values import clamp
 from generallibrary.iterables import get
 
 import pandas
+from itertools import chain
 
 
-class Route(list):
-    """ List of Nodes (NetworkDiagram) in connected order.
-        A route ends when it goes into a dead-end or itself.
-        A route can go any direction through links depending on given `incoming` and `outgoing` arguments. """
-    def get_links(self):
-        """ Get a set of all links connecting nodes in Route.
 
-            :rtype: set[Link] """
-        return {link for link in set().union(*[node.links for node in self]) if link.base in self and link.target in self}
+def _traverse_depth(*nodes, func, depth, flat, include_nodes=False, _all_nodes=None):
+    """ Exhausts each depth's nodes to yield results as list, then recursively yields next depth with previous result.
 
-    def copy(self):
-        """ Simple override to return a new copied Route instance. """
-        return Route(self)
+        Todo: Generalize _traverse_depth() """
+    if depth is None:
+        depth = 0
+    if _all_nodes is None:
+        _all_nodes = []
+    if flat is None:
+        flat = True
 
-    def is_circular(self):
-        """ Return whether this Route is circular by seeing if the last node exists more than once. """
-        return len(self) > 2 and self[-1] in self[:-3:]
-
-    def is_uturn(self):
-        """ Return whether this route is a u-turn by seeing if the last node is the third last node. """
-        return len(self) > 2 and self[-1] is self[-3]
-
-    def __repr__(self):
-        # return f"{type(self).__name__}: {len(self)}x{' ⟲' * self.is_circular()}{' ⮌' * self.is_uturn()}"
-        return f"{type(self).__name__}: {super().__repr__()}{' ⟲' * self.is_circular()}{' ⮌' * self.is_uturn()}"
-
-
-class RouteGrp(list):
-    """ List of Routes. """
-    def __init__(self, *routes, origin, depth, incoming, outgoing):
-        super().__init__(routes)
-
-        self.origin = origin
-        self.depth = depth
-        self.incoming = incoming
-        self.outgoing = outgoing
-
-    def get_nodes(self):
-        """ Get a set of all nodes.
-
-            :rtype: set[NetworkDiagram] """
-        return set().union(*self)
-
-    def get_links(self):
-        """ Get a set of all links.
-
-            :rtype: set[Link] """
-        return set().union(*[route.get_links() for route in self])
-
-    def get_active_links(self, node):
-        """ Get a list of direct active links to a node using incoming and outgoing.
-
-            :rtype: list[Link] """
-        return [link for link in node.links if link.check_direction(node=node, incoming=self.incoming, outgoing=self.outgoing)]
-
-    def get_connected_nodes(self, node):
-        """ Get a list of connected nodes from active links. """
-        return [link.other_node(node) for link in self.get_active_links(node=node)]
-
-
-class Link:
-    """ A link between two Nodes. """
-    def __init__(self, base, target):
-        self.base = base  # type: NetworkDiagram
-        self.target = target  # type: NetworkDiagram
-
-    def other_node(self, node):
-        """ Return the opposite node of given one. """
-        return self.base if self.target is node else self.target
-
-    def check_direction(self, node, incoming, outgoing):
-        return (incoming and self.target is node) or (outgoing and self.base is node)
-
-    def __str__(self):
-        return f"{self.base} -> {self.target}"
-    __repr__ = __str__
-
-
-class _NetworkDiagram_Global:
-    """ Methods for NetworkDiagram that disregards origin. """
-    def get_nodes_all(self):
-        """ Return a set of all connected Nodes.
-
-            :param NetworkDiagram self:
-            :rtype: set[NetworkDiagram] or None """
-        return self.get_routes().get_nodes()
-
-    def get_ordered(self):
-        """ Return an ordered list containing sets of nodes.
-            Starts at node(s) without incoming connections and goes along directions of links.
-
-            :param NetworkDiagram self:
-            :rtype: list[set[NetworkDiagram]] or None """
-        nodes = self.get_nodes_all()
-        order = []
-        while nodes:
-            order.append(set())
-            for node in nodes.copy():
-                incoming_nodes = node.get_nodes(outgoing=False)
-                if not incoming_nodes.intersection(nodes):
-                    order[-1].add(node)
-
-            if not order[-1]:
-                raise AttributeError(f"Encountered circular links.")
-
-            nodes -= order[-1]
-        return order
-
-    def get_ordered_index(self):
-        """ Return index that this Node has in get_ordered().
-            Aka hierarchy level.
-
-            :param NetworkDiagram self: """
-        for i, level in enumerate(self.get_ordered()):
-            if self in level:
-                return i
-
-    def get_ordered_flat(self):
-        """ Return a flattened list of get_ordered().
-
-            :param NetworkDiagram self: """
-        return [node for nodes in self.get_ordered() for node in nodes]
-
-    def view(self):
-        """ :param NetworkDiagram self: """
-        for node in self.get_routes().get_nodes():
-            print(f"{node} linked to: {list(node.get_nodes(incoming=False))}")
-
-
-class _Diagram:
-    def _cast_to_self(self, *args, **kwargs):
-        """ Allows first arg to be same type as self or the args the create a new one.
-
-            :param any self: """
-        combined = args + tuple(kwargs.values())
-        if combined and type(combined[0]) == type(self):
-            return combined[0]
+    if include_nodes:
+        if flat:
+            yield from nodes
         else:
-            return type(self)(*args, **kwargs)
+            yield list(nodes)
+
+    results = []
+    for node1 in nodes:
+        for node2 in func(node1):
+            if node2 not in _all_nodes and node2 not in results:
+                results.append(node2)
+                if flat:
+                    yield node2
+
+    if results:
+        if not flat:
+            yield results
+
+        _all_nodes.extend(results)
+        if depth != 0:
+            yield from _traverse_depth(*results, func=func, depth=depth - 1, flat=flat, _all_nodes=_all_nodes)
 
 
-@initBases
-class NetworkDiagram(_Diagram, _NetworkDiagram_Global):
-    """ A network diagram node.
-        Todo: Storable and moveable NetworkDiagram.
-        Todo: Transform Network to and from Tree if possible. """
-    Link, Route, RouteGrp = Link, Route, RouteGrp
+def _gen_or_list(gen_obj, gen_bool):
+    if gen_bool is None:
+        gen_bool = False
+    return gen_obj if gen_bool else list(gen_obj)
 
+
+def _deco_depth(func):
+    def _wrapper(node, depth=None, flat=None, gen=None):
+        generator = _traverse_depth(node, func=func, depth=depth, flat=flat)
+        return _gen_or_list(gen_obj=generator, gen_bool=gen)
+    return wrapper_transfer(func, _wrapper)
+
+
+def _deco_cast_to_diagram(func):
+    """ Allows first arg to be same type as self or the args the create a new one.
+
+        Todo: Generalize _deco_cast_to_diagram() """
+    def _wrapper(self, *args, **kwargs):
+        combined = args + tuple(kwargs.values())
+        if combined and (combined[0] is None or type(combined[0]) == type(self)):
+            diagram = combined[0]
+        else:
+            diagram = type(self)(*args, **kwargs)
+        return func(self, diagram)
+    return wrapper_transfer(func, _wrapper)  # Todo: wrapper_transfer for every deco
+
+
+class _Diagram_QOL:
+    """ Quality of life helper methods of Diagram. """
+    def view(self):
+        pass
+
+
+class _Diagram_Global:
+    """ Core global methods of a Diagram. """
+    def get_ordered(self, depth=None, flat=None, gen=None):
+        origins = [node for node in self.get_nodes(-1) if not node.get_parents()]
+        func = self.get_children.__func__
+
+        generator = _traverse_depth(*origins, func=func, depth=depth, flat=flat, include_nodes=True)
+        return _gen_or_list(gen_obj=generator, gen_bool=gen)
+
+
+class _Diagram(_Diagram_Global, _Diagram_QOL, metaclass=AutoInitBases):
+    """ Core methods of a Diagram. """
     def __init__(self):
-        self.links = []  # type: list[Link]
+        self._children = []  # type: list[_Diagram]
+        self._parents = []  # type: list[_Diagram]
 
-    def get_link(self, node):
-        """ Return a Link this Node has outgoing to another given Node or None. """
-        for link in set(self.links).intersection(node.links):
-            if link.base is self and link.target is node:
-                return link
-        return None
+    @_deco_cast_to_diagram
+    def set_parent(self, parent):
+        if self._single_parent or parent is None:
+            for old_parent in self._parents:
+                old_parent._children.remove(self)
+            self._parents.clear()
 
-    def link(self, *args, **kwargs):
-        """ Link this Node to another unless the link exists, returns Link regardless. """
-        target = self._cast_to_self(*args, **kwargs)
+        elif parent in self._parents:
+            parent._children.remove(self)
+            self._parents.remove(parent)
 
-        link = self.get_link(node=target)
-        if link is None:
-            link = Link(base=self, target=target)
-            self.links.append(link)
-            target.links.append(link)
-        return link
+        if parent is not None:
+            self._parents.append(parent)
+            parent._children.append(self)
+        return parent
 
-    def get_links(self, incoming=True, outgoing=True):
-        """ Get a set of links by optional direction connected to this Node.
+    @_deco_cast_to_diagram
+    def add(self, child):
+        """ Add a node as child, either with one arg being of own type or with args to create a new one.
 
-            :rtype: set[Link] """
-        return {link for link in self.links if link.check_direction(node=self, incoming=incoming, outgoing=outgoing)}
-
-    def get_nodes(self, incoming=True, outgoing=True):
-        """ Get a set of nodes by optional direction connected to this Node.
-
-            :rtype: set[NetworkDiagram] """
-        return {link.other_node(node=self) for link in self.get_links(incoming=incoming, outgoing=outgoing)}
-
-    def get_routes(self, depth=-1, incoming=True, outgoing=True, _route=None, _routes=None):
-        """ Get a RouteGrp, a list of Route instances, originating from this Node. """
-        if _route is None:
-            _route = Route()
-            _routes = RouteGrp(_route, origin=self, depth=depth, incoming=incoming, outgoing=outgoing)
-
-        _route.append(self)
-        if depth == 0 or _route.count(self) > 1:
-            return _routes
-
-        _original_route = _route.copy()
-        for i, node in enumerate(_routes.get_connected_nodes(node=self)):
-            if i == 0:
-                new_route = _route
-            else:
-                new_route = _original_route.copy()
-                _routes.append(new_route)
-            node.get_routes(depth=depth - 1, incoming=incoming, outgoing=outgoing, _route=new_route, _routes=_routes)
-        return _routes
-
-
-
-@deco_extend
-class KeyInfo(str):
-    """ Store extra info on a string for Diagram key value. """
-    def __init__(self, key, use_in_repr, unique):
-        self.key = key
-        self.use_in_repr = use_in_repr
-        self.unique = unique
-
-
-@initBases
-class TreeDiagram(_Diagram):
-    """ Saveable tree diagram with optional storage.
-        Usage: Inherit TreeDiagram and define what keys to store with `data_keys_add()` method.
-
-        Saves class name and has to access it as an attribute when using `load()`.
-        Use metaclass generallibrary.HierarchyStorer to easily store inheriters base class.
-        Use initBases decorator to automatically call __init_post__. """
-    data_keys = []
-
-    def __init__(self, parent=None, children_dicts=None):
-        self._children = []
-        self.data = {}
-        self._parent = None
-
-        self.hook_create_pre()
-
-    def __init_post__(self, parent=None, children_dicts=None):
-        """ Do this stuff post to match TreeDiagram().set_parent() behaviour.
-            Otherwise new parent hook is called before inheriters' inits.
-            @initBases calls this automatically. """
-        self.set_parent(parent=parent, old_parent=None)
-
-        if children_dicts:
-            for child_dict in children_dicts:
-                self.load(child_dict, parent=self)
-        self.hook_create_post()
-
-    def hook_create_pre(self): """ Pre-creation hook. """
-    def hook_create_post(self): """ Post-creation hook. """
-    def hook_remove(self): """ Remove hook. """
-    def hook_new_parent(self, parent, old_parent): """ New parent hook. """
-    def hook_lose_parent(self, old_parent, parent): """ Lost parent hook. """
-    def hook_new_child(self, child): """ New child hook. """
-    def hook_lose_child(self, child): """ Lost child hook. """
-    def hook_set_attribute(self, key, value, old_value): """ Attribute set hook. """
-
-    @classmethod
-    def data_keys_add(cls, key, value, use_in_repr=False, unique=False, store_now=None):
-        """ Define what attributes to keep track of automatically in __setattr__.
-            Returns value to enable oneliner in __init__. """
-        if cls.data_keys is TreeDiagram.data_keys:
-            cls.data_keys = []
-
-        keyInfo = KeyInfo(key=key, use_in_repr=use_in_repr, unique=unique)
-        if keyInfo not in cls.data_keys:
-            cls.data_keys.append(keyInfo)
-
-        if store_now is not None:
-            store_now.data[key] = value
-
-        return value
-
-    def add(self, *args, **kwargs):
-        """ Add a node as child. """
-        child = self._cast_to_self(*args, **kwargs)
+            :param any child: """
         child.set_parent(parent=self)
+        print("add")
         return child
 
-    def set_parent(self, parent, old_parent=..., index=None):
-        """ Set a new parent for this Node.
+    @_deco_depth
+    def get_children(self, depth=None, flat=None, gen=None):
+        for child in self._children:
+            yield child
 
-            :param TreeDiagram or None parent:
-            :param TreeDiagram or None old_parent:
-            :param index: Optionally set self's index of new parent. """
-        if old_parent is ...:
-            old_parent = self._parent
+    @_deco_depth
+    def get_parents(self, depth=None, flat=None, gen=None):
+        for parent in self._parents:
+            yield parent
 
-        if old_parent:
-            old_parent._children.remove(self)
+    @_deco_depth
+    def get_nodes(self, depth=None, flat=None, gen=None):
+        for node in chain(self._children, self._parents):
+            yield node
 
-            old_parent.hook_lose_child(child=self)
-            self.hook_lose_parent(old_parent=old_parent, parent=parent)
+    @_deco_depth
+    def get_siblings(self, depth=None, flat=None, gen=None):
+        yield from self._siblings_and_spouses(self.get_parents.__func__, self.get_children.__func__)
 
-        if parent:
-            # Remove possible existing child with matching unique key values
-            for keyInfo in self.data_keys:
-                if keyInfo.unique:
-                    sibling = parent.get_child_by_key_values(**{keyInfo: getattr(self, keyInfo)})
-                    if sibling:
-                        sibling.remove()
-
-            # if self in parent.all_parents():
-            #     raise AttributeError(f"Cannot set {parent} as parent for {self} as it becomes circular. ")
-            if index is None:
-                parent._children.append(self)
-            else:
-                parent._children.insert(index, self)
-
-            parent.hook_new_child(self)
-            self.hook_new_parent(parent=parent, old_parent=old_parent)
-
-        self._parent = parent
-        # return parent
-        return self
-
-    def remove(self):
-        """ Remove this Node. """
-        self.set_parent(None)
-        self.hook_remove()
-
-    def get_all_parents(self):
-        """ Get a list of all parents recursively.
-            Empty list of no parents.
-
-            :rtype: list[TreeDiagram or Any] """
-        part = self
-        parents = []
-        while part := part.get_parent():
-            parents.append(part)
-        return parents
-
-    def get_parent(self, index=0):
-        """ Get this Node's parent.
-
-            :rtype: TreeDiagram or Any """
-        if index == 0:
-            return self._parent
-        else:
-            return get(self.get_all_parents(), index)
-
-    def get_children(self):
-        """ Get a list of all children this Node has, empty list if None.
-
-            :rtype: list[TreeDiagram or Any] """
-        return self._children.copy()
-
-    def get_child(self, index=0):
-        """ Get a child by index, None if doesn't exist.
-
-            :rtype: TreeDiagram or Any """
-        return get(self.get_children(), index)
-
-    def get_children_by_key_values(self, **key_values):
-        """ Get a list of children that matches all given key values. """
-        return [child for child in self.get_children() if all([getattr(child, key) == value for key, value in key_values.items()])]
-
-    def get_child_by_key_values(self, index=0, **key_values):
-        """ Get a child that matches all given key values.
-
-            :rtype: TreeDiagram or Any """
-        return get(self.get_children_by_key_values(**key_values), index)
-
-    def get_all(self, include_self=True):
-        """ Return a flat one-dimensional list of all nodes in this Tree.
-
-            :rtype: list[TreeDiagram or any] """
-        nodes = []
-        temp = [self]
-        while temp:
-            treeDiagram = temp[0]
-            del temp[0]
-
-            if not (treeDiagram is self and not include_self):
-                nodes.append(treeDiagram)
-
-            children = treeDiagram.get_children()
-            for child in reversed(children):
-                temp.insert(0, child)
-        return nodes
-
-    def get_siblings(self):
-        """ Get a list of all siblings. """
-        if self.get_parent() is None:
-            return []
-        l = self.get_parent().get_children()
-        l.remove(self)
-        return l
-
-    def _sibling_helper(self, direction):
-        if self.get_parent() is None:
-            return None
-        parent = self.get_parent()
-        children = parent.get_children()
-        index = children.index(self) + direction
-        return children[index] if 0 <= index < len(children) else None
-
-    def get_next_sibling(self):
-        """ Return the next sibling or None if this is the last child. """
-        return self._sibling_helper(1)
-
-    def get_previous_sibling(self):
-        """ Return the previous sibling or None if this is the last child. """
-        return self._sibling_helper(-1)
-
-    def get_index(self):
-        """ Return index of this node among it's siblings. """
-        if self.get_parent() is None:
-            return 0
-        else:
-            return self.get_parent().get_children().index(self)
-
-    def set_index(self, index):
-        """ Move this node among it's siblings. """
-        parent = self.get_parent()
-        assert parent
-        if parent.get_children()[index] is not self:
-            self.remove()
-            self.set_parent(parent=parent, index=index)
-
-    def save(self):
-        """ Recursively save by returning a new dictionary. """
-        data = self.data.copy()
-        data["children_dicts"] = [child.save() for child in self.get_children()]
-        data["class_name"] = self.__class__.__name__  # Maybe put this in init instead
-        return data
-
-    @classmethod
-    def load(cls, d, parent=None):
-        """ Create a new Tree from a dictionary save.
-
-            :rtype: TreeDiagram or Any """
-        class_ = cls if cls.__name__ == d["class_name"] else getattr(cls, d["class_name"], globals().get(d["class_name"]))
-        if class_ is None:  # Maybe we could search bases as well, giving us a fourt option... Very messy
-            raise AttributeError(f"Couldn't find class '{d['class_name']}' inside itself, try HierarchyStorer.")
-
-        instance = class_(parent=parent, **d)
-        # If a key is not already defined by argument in an __init__ (through **d above) then we need to set it here
-        for keyInfo in instance.data_keys:
-            if getattr(instance, keyInfo, None) != d[keyInfo]:
-                setattr(instance, keyInfo, d[keyInfo])
-        return instance
-
-    def copy_to(self, parent=None):
-        """ Copy this Node along with it's children by using save and load."""
-        return self.load(d=self.save(), parent=parent)
-
-    def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", print_out=True):
-        """ Get a printable string showing a clear view of this TreeDiagram structure.
-            Hides additional lines of a node's repr. """
-        top = self.copy_to(None) if relative else self
-
-        lines = []
-        for node in top.get_all():
-            lanes = []
-            all_parents = node.get_all_parents()
-
-            if all_parents:
-                del all_parents[-1]
-                all_parents.insert(0, node)
-
-            for i, parent in enumerate(all_parents):
-                if i == 0:
-                    if parent.get_next_sibling():
-                        lane = f"├{'─' * indent}{spacer}"
-                    else:
-                        lane = f"└{'─' * indent}{spacer}"
-                else:
-                    if parent.get_next_sibling():
-                        lane = f"│{spacer * indent}{spacer}"
-                    else:
-                        lane = f"{spacer}{spacer * indent}{spacer}"
-
-                lanes.insert(0, lane)
-
-            node_str = str(custom_repr(node) if custom_repr else node)
-            if "\n" in node_str:
-                node_str = f"{node_str.splitlines()[0]} ..."
-            lines.append(f"{''.join(lanes)}{node_str}")
-
-        if relative:
-            top.remove()
-
-        view = "\n".join(lines)
-        if print_out:
-            print(view)
-
-        return view
-
-    def repr_list(self):
-        """ A list of strings used by dunder repr. """
-        return [self.data[keyInfo] for keyInfo in self.data_keys if keyInfo.use_in_repr]
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__} {', '.join(map(str, self.repr_list()))}>"
-
-        # return f"<{self.__class__.__name__} {repr(getattr(self, '_children', ''))}>"
-
-    def __setattr__(self, key, value):
-        if key in self.data_keys:
-            old_value = self.data.get(key)
-            self.data[key] = value
-            self.hook_set_attribute(key=key, value=value, old_value=old_value)
-        object.__setattr__(self, key, value)
+    def _siblings_and_spouses(self, func1, func2):
+        for node1 in func1(self):
+            for node2 in func2(node1):
+                if node2 is not self:
+                    yield node2
 
 
-@initBases
+class NetworkDiagram(_Diagram):
+    """ A Diagram where each node can have any amount parents. """
+    _single_parent = False
+
+    def __init__(self):
+        pass
+
+    @_deco_depth
+    def get_spouses(self, depth=None, flat=None, gen=None):
+        yield from self._siblings_and_spouses(self.get_children.__func__, self.get_parents.__func__)
+
+
+class TreeDiagram(_Diagram):
+    """ A Diagram where each node cannot have more than one parent. """
+    _single_parent = True
+
+    def __init__(self):
+        pass
+
+    def get_parent(self, depth=None):
+        return get(self.get_parents(depth=depth), depth)
+
+
+
+
+
+
+
 class Markdown(TreeDiagram):
     """ A section for a markdown file, built on TreeDiagram. """
     def __init__(self, *lines, header=None, parent=None):
