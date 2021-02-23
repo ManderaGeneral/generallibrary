@@ -18,10 +18,7 @@ c = a.add(3)
 d = c.add(4)
 
 
-# a.view()
-# b.view()
-c.view(relative=False)
-
+print(d.get_ordered_index())
 
 
 

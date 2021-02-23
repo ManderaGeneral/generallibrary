@@ -32,7 +32,7 @@ def strToDynamicType(var):
     return var
 
 def _typeChecker_checkObject(obj, types, literalObjects):
-    objDepth = depth(obj)
+    # objDepth = depth(obj)
     typesDepth = len(types) - 1
     # if objDepth != typesDepth:
     #     raise TypeError(f"Obj depth {objDepth} doesnt match types depth {typesDepth}")
@@ -73,8 +73,8 @@ def _typeChecker_checkObject(obj, types, literalObjects):
 
         if is_iterable(obj):
             obj = iter_first_value(obj)
-        elif i < objDepth:
-            raise TypeError(f"obj {obj} is not iterable but atleast one more subtype is required in depth {i}/{typesDepth}")
+        # elif i < objDepth:
+        #     raise TypeError(f"obj {obj} is not iterable but atleast one more subtype is required in depth {i}/{typesDepth}")
 
 def _typeChecker_prepareTypesList(types, literalObjects):
     newTypes = []

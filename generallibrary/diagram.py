@@ -94,6 +94,18 @@ class _Diagram_QOL:
         else:
             return [self]
 
+    def _singular_alternative(self, method, index, depth, filt):
+        if index is None:
+            index = 0
+
+        generator = method.__func__(self, depth=depth, flat=True, gen=True, filt=filt)
+        if index < 0:
+            return get(iterable=tuple(generator), index=index)
+        else:
+            for i, node in enumerate(generator):
+                if i == index:
+                    return node
+
     def get_index(self, parent=None, child=None):
         """ Get the index this node has in target node's container. Parent takes precedence if both are defined.
             Defaults to returning index of first parent's children. Returns 0 if orphan.
@@ -174,17 +186,13 @@ class _Diagram_QOL:
             :rtype: TreeDiagram or NetworkDiagram or Any """
         return self._singular_alternative(self.get_siblings, index=index, depth=depth, filt=filt)
 
-    def _singular_alternative(self, method, index, depth, filt):
-        if index is None:
-            index = 0
+    def get_ordered_index(self):
+        """ Get which layer this node is in based on global get_ordered().
 
-        generator = method.__func__(self, depth=depth, flat=True, gen=True, filt=filt)
-        if index < 0:
-            return get(iterable=tuple(generator), index=index)
-        else:
-            for i, node in enumerate(generator):
-                if i == index:
-                    return node
+            :param TreeDiagram or NetworkDiagram or Any self: """
+        for i, layer in enumerate(self.get_ordered(flat=False, gen=True)):
+            if self in layer:
+                return i
 
 
 class _Diagram_Global:
@@ -209,11 +217,13 @@ class _Diagram_Global:
             Starts with orphan nodes and traverses to return/yield nodes which have had their parents already returned/yielded.
 
             :param TreeDiagram or NetworkDiagram or Any self:
-            :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
+            :param int or None depth: Default depth of -1.
             :param bool or None flat: Whether to return/yield nodes directly or in lists.
             :param bool or None gen: Whether to return a generator or list.
             :param filt: Optional functional filter, expects 1 node as argument.
             :raises AttributeError: If there are no orphan nodes. """
+        if depth is None:
+            depth = -1
         origins = [node for node in self.get_all() if not node.get_parents()]
         if not origins:
             raise AttributeError("Could not find any orphan nodes.")
@@ -246,15 +256,15 @@ class _Diagram_Storage:
     def __repr__(self):
         return f"<{self.__class__.__name__} {join_with_str(', ', self.repr_list())}>"
 
-    def save(self):
+    def save_node(self):
         return pickle.dumps(self)
 
     @staticmethod
-    def load(pickled_bytes):
+    def load_node(pickled_bytes):
         return pickle.loads(pickled_bytes)
 
-    def copy(self):
-        return self.load(pickled_bytes=self.save())
+    def copy_node(self):
+        return self.load_node(pickled_bytes=self.save_node())
 
 
 class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoInitBases):
@@ -373,7 +383,7 @@ class TreeDiagram(_Diagram):
         """ Get a printable string showing a clear view of this TreeDiagram structure.
             Hides additional lines of a node's repr. """
         if relative:
-            top = self.copy()
+            top = self.copy_node()
             top.set_parent(parent=None)
         else:
             top = self

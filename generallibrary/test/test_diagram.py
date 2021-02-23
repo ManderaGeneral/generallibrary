@@ -108,7 +108,7 @@ class TreeDiagramTest(unittest.TestCase):
         c = TreeDiagram(parent=a)
         d = TreeDiagram(parent=b)
 
-        a_copy = a.copy().get_all()
+        a_copy = a.copy_node().get_all()
         self.assertEqual(str(a.get_all()), str(a_copy))
 
         b.remove()
@@ -153,13 +153,13 @@ class TreeDiagramTest(unittest.TestCase):
         a = A("bar")
         self.assertEqual("bar", a.foo)
 
-        b = a.copy()
+        b = a.copy_node()
         self.assertEqual("bar", b.foo)
 
         b.foo = 5
         self.assertEqual(5, b.foo)
 
-        self.assertEqual(5, b.copy().foo)
+        self.assertEqual(5, b.copy_node().foo)
 
         b.set_parent(parent=a)
         self.assertEqual([b], a.get_children(filt=lambda node: node.foo == 5))
@@ -173,8 +173,8 @@ class TreeDiagramTest(unittest.TestCase):
         a = A("hi")
         b = A("there", parent=a)
 
-        self.assertEqual(a.save(), A.load(a.save()).save())
-        self.assertEqual("there", A.load(a.save()).get_child().foo)
+        self.assertEqual(a.save_node(), A.load_node(a.save_node()).save_node())
+        self.assertEqual("there", A.load_node(a.save_node()).get_child().foo)
 
     def test_view(self):
         a = TreeDiagram()
