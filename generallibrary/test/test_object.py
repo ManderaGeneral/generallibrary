@@ -1,5 +1,7 @@
 
 from generallibrary.object import *
+from generallibrary.objinfo.objinfo import ObjInfo
+from generallibrary.functions import initBases
 
 import unittest
 
@@ -227,16 +229,16 @@ class ObjectTest(unittest.TestCase):
         objInfo.filters = []
         objInfo.get_attrs()
 
-        self.assertEqual(True, objInfo.get_child_by_key_values(name="_self").protected())
-        self.assertEqual(False, objInfo.get_child_by_key_values(name="self").protected())
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_self").protected())
+        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "self").protected())
 
-        self.assertEqual(True, objInfo.get_child_by_key_values(name="_attr").protected())
-        self.assertEqual(False, objInfo.get_child_by_key_values(name="attr").protected())
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_attr").protected())
+        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "attr").protected())
 
-        self.assertEqual(False, objInfo.get_child_by_key_values(name="_Foo__private").protected())
-        self.assertEqual(True, objInfo.get_child_by_key_values(name="_Foo__private").private())
-        self.assertEqual(True, objInfo.get_child_by_key_values(name="_Foo__private").internal())
-        self.assertEqual(False, objInfo.get_child_by_key_values(name="_Foo__private").public())
+        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "_Foo__private").protected())
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_Foo__private").private())
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_Foo__private").internal())
+        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "_Foo__private").public())
 
         self.assertEqual(False, ObjInfo(a).protected())
         self.assertEqual(False, ObjInfo(a()).protected())

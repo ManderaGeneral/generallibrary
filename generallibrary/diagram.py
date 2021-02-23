@@ -5,6 +5,7 @@ from generallibrary.iterables import get, join_with_str, pivot_list
 
 import pandas
 from itertools import chain
+import pickle
 
 
 def _traverse_depth(*nodes, func, depth, flat, filt, include_origins=False, _all_nodes=None):
@@ -24,6 +25,7 @@ def _traverse_depth(*nodes, func, depth, flat, filt, include_origins=False, _all
             yield from nodes
         else:
             yield list(nodes)
+        _all_nodes.extend(nodes)
 
     results = []
     for node1 in nodes:
@@ -81,14 +83,47 @@ class DataKey(str):
 
 class _Diagram_QOL:
     """ Quality of life helper methods of Diagram. """
-    def view(self):
-        pass
+    def _get_children_or_parents(self, parent, child):
+        if (parent, child) == (None, None):
+            parent = self.get_parent()
+
+        if parent:
+            return parent._children
+        elif child:
+            return child._parents
+        else:
+            return [self]
+
+    def get_index(self, parent=None, child=None):
+        """ Get the index this node has in target node's container. Parent takes precedence if both are defined.
+            Defaults to returning index of first parent's children. Returns 0 if orphan.
+
+            :param TreeDiagram or NetworkDiagram or Any self:
+            :param TreeDiagram or NetworkDiagram or Any parent:
+            :param TreeDiagram or NetworkDiagram or Any child:
+            :raises ValueError: If given node doesn't contain self. """
+        return self._get_children_or_parents(parent=parent, child=child).index(self)
+
+    def set_index(self, index, parent=None, child=None):
+        """ Set the index this node has in target node's container. Parent takes precedence if both are defined.
+            Defaults to setting index of first parent's children. Nothing happens if orphan and parent is defined.
+
+            :param TreeDiagram or NetworkDiagram or Any self:
+            :param int index:
+            :param TreeDiagram or NetworkDiagram or Any parent:
+            :param TreeDiagram or NetworkDiagram or Any child:
+            :raises ValueError: If given node doesn't contain self. """
+        container = self._get_children_or_parents(parent=parent, child=child)
+        if index != container.index(self):
+            container.remove(self)
+            container.insert(index, self)
 
     @_deco_cast_to_diagram
     def add(self, child):
         """ Add a node as child, either with one arg being of own type or with args to create a new one.
+            Returns child.
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param TreeDiagram or NetworkDiagram or Any child: """
         child.set_parent(parent=self)
         return child
@@ -96,43 +131,47 @@ class _Diagram_QOL:
     def remove(self):
         """ Remove this node, which is simply setting it's parent to None.
 
-            :param TreeDiagram or NetworkDiagram self: """
+            :param TreeDiagram or NetworkDiagram or Any self: """
         self.set_parent(parent=None)
 
     def get_child(self, index=None, depth=None, filt=None):
         """ Singular QOL alternative for get_children().
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None index: Index of node to be returned. Possible filter is applied before.
             :param int or None depth: Default depth of 0 will return single direct layer. Get unlimited with -1. Previous layers are included.
-            :param filt: Optional functional filter, expects 1 node as argument. """
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :rtype: TreeDiagram or NetworkDiagram or Any """
         return self._singular_alternative(self.get_children, index=index, depth=depth, filt=filt)
 
     def get_parent(self, index=None, depth=None, filt=None):
         """ Singular QOL alternative for get_parents().
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None index: Index of node to be returned. Possible filter is applied before.
             :param int or None depth: Default depth of 0 will return single direct layer. Get unlimited with -1. Previous layers are included.
-            :param filt: Optional functional filter, expects 1 node as argument. """
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :rtype: TreeDiagram or NetworkDiagram or Any """
         return self._singular_alternative(self.get_parents, index=index, depth=depth, filt=filt)
 
     def get_node(self, index=None, depth=None, filt=None):
         """ Singular QOL alternative for get_nodes().
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None index: Index of node to be returned. Possible filter is applied before.
             :param int or None depth: Default depth of 0 will return single direct layer. Get unlimited with -1. Previous layers are included.
-            :param filt: Optional functional filter, expects 1 node as argument. """
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :rtype: TreeDiagram or NetworkDiagram or Any """
         return self._singular_alternative(self.get_nodes, index=index, depth=depth, filt=filt)
 
     def get_sibling(self, index=None, depth=None, filt=None):
         """ Singular QOL alternative for get_siblings().
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None index: Index of node to be returned. Possible filter is applied before.
             :param int or None depth: Default depth of 0 will return single direct layer. Get unlimited with -1. Previous layers are included.
-            :param filt: Optional functional filter, expects 1 node as argument. """
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :rtype: TreeDiagram or NetworkDiagram or Any """
         return self._singular_alternative(self.get_siblings, index=index, depth=depth, filt=filt)
 
     def _singular_alternative(self, method, index, depth, filt):
@@ -150,21 +189,36 @@ class _Diagram_QOL:
 
 class _Diagram_Global:
     """ Core global methods of a Diagram. """
+    def get_all(self, depth=None, flat=None, gen=None, filt=None):
+        """ Returns/yields all nodes, starting with self.
+
+            :param TreeDiagram or NetworkDiagram or Any self:
+            :param int or None depth: Default depth of -1.
+            :param bool or None flat: Whether to return/yield nodes directly or in lists.
+            :param bool or None gen: Whether to return a generator or list.
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :rtype: list[TreeDiagram or NetworkDiagram] """
+        if depth is None:
+            depth = -1
+        func = self.get_nodes.__func__
+        generator = _traverse_depth(self, func=func, depth=depth, flat=flat, filt=filt, include_origins=True)
+        return _gen_or_list(gen_obj=generator, return_generator=gen)
+
     def get_ordered(self, depth=None, flat=None, gen=None, filt=None):
         """ Top to Bottom.
             Starts with orphan nodes and traverses to return/yield nodes which have had their parents already returned/yielded.
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: Whether to return/yield nodes directly or in lists.
             :param bool or None gen: Whether to return a generator or list.
-            :param filt: Optional functional filter, expects 1 node as argument. """
-        origins = [node for node in self.get_nodes(-1) if not node.get_parents()]
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :raises AttributeError: If there are no orphan nodes. """
+        origins = [node for node in self.get_all() if not node.get_parents()]
         if not origins:
             raise AttributeError("Could not find any orphan nodes.")
 
         func = self.get_children.__func__
-
         generator = _traverse_depth(*origins, func=func, depth=depth, flat=flat, filt=filt, include_origins=True)
         return _gen_or_list(gen_obj=generator, return_generator=gen)
 
@@ -175,8 +229,7 @@ class _Diagram_Storage:
 
     @classmethod
     def data_keys_add(cls, key, value, use_in_repr=False, unique=False):
-        """ Define what attributes to keep track of automatically in __setattr__.
-            Returns value to enable oneliner in __init__. """
+        """ Define what attributes to be unique and to be used in repr. """
         if cls.data_keys is TreeDiagram.data_keys:
             cls.data_keys = []
 
@@ -193,6 +246,16 @@ class _Diagram_Storage:
     def __repr__(self):
         return f"<{self.__class__.__name__} {join_with_str(', ', self.repr_list())}>"
 
+    def save(self):
+        return pickle.dumps(self)
+
+    @staticmethod
+    def load(pickled_bytes):
+        return pickle.loads(pickled_bytes)
+
+    def copy(self):
+        return self.load(pickled_bytes=self.save())
+
 
 class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoInitBases):
     """ Core methods of a Diagram. """
@@ -206,8 +269,9 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
     @_deco_cast_to_diagram
     def set_parent(self, parent):
         """ Set a new parent for this Node.
+            Returns self.
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param TreeDiagram or NetworkDiagram or Any parent: """
         if self._single_parent or parent is None:
             for old_parent in self._parents:
@@ -222,23 +286,24 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
             # Remove possible existing child with matching unique key values
             for data_key in self.data_keys:
                 if data_key.unique:
-                    filt = lambda node: getattr(node, data_key) == getattr(self, data_key)
+                    filt = lambda node: getattr(node, data_key, object()) == getattr(self, data_key, object())
                     for sibling in parent.get_children(filt=filt):
                         sibling.set_parent(None)
 
             self._parents.append(parent)
             parent._children.append(self)
-        return parent
+        return self
 
     @_deco_depth
     def get_children(self, depth=None, flat=None, gen=None, filt=None):
         """ Down.
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: Whether to return/yield nodes directly or in lists.
             :param bool or None gen: Whether to return a generator or list.
-            :param filt: Optional functional filter, expects 1 node as argument. """
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :rtype: list[TreeDiagram or NetworkDiagram] """
         for child in self._children:
             yield child
 
@@ -246,11 +311,12 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
     def get_parents(self, depth=None, flat=None, gen=None, filt=None):
         """ Up.
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: Whether to return/yield nodes directly or in lists.
             :param bool or None gen: Whether to return a generator or list.
-            :param filt: Optional functional filter, expects 1 node as argument. """
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :rtype: list[TreeDiagram or NetworkDiagram] """
         for parent in self._parents:
             yield parent
 
@@ -258,11 +324,12 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
     def get_nodes(self, depth=None, flat=None, gen=None, filt=None):
         """ Up + Down.
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: Whether to return/yield nodes directly or in lists.
             :param bool or None gen: Whether to return a generator or list.
-            :param filt: Optional functional filter, expects 1 node as argument. """
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :rtype: list[TreeDiagram or NetworkDiagram] """
         for node in chain(self._children, self._parents):
             yield node
 
@@ -270,11 +337,12 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
     def get_siblings(self, depth=None, flat=None, gen=None, filt=None):
         """ Up -> Down.
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: Whether to return/yield nodes directly or in lists.
             :param bool or None gen: Whether to return a generator or list.
-            :param filt: Optional functional filter, expects 1 node as argument. """
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :rtype: list[TreeDiagram or NetworkDiagram] """
         yield from self._siblings_and_spouses(self.get_parents, self.get_children)
 
     def _siblings_and_spouses(self, method1, method2):
@@ -296,8 +364,57 @@ class TreeDiagram(_Diagram):
         pass
 
     def get_parent(self, index=None, depth=None, filt=None):
-        """ Override to remove redundant depth, as index and depth are very similiar for TreeDiagram's get_parent. """
+        """ Override to remove redundant depth, as index and depth are very similiar for TreeDiagram's get_parent.
+
+            :rtype: TreeDiagram or NetworkDiagram or Any """
         return _Diagram.get_parent(self=self, index=index, depth=index, filt=filt)
+
+    def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", print_out=True):
+        """ Get a printable string showing a clear view of this TreeDiagram structure.
+            Hides additional lines of a node's repr. """
+        if relative:
+            top = self.copy()
+            top.set_parent(parent=None)
+        else:
+            top = self
+
+        lines = []
+        for node in [top] + top.get_children(depth=-1):
+            lanes = []
+            all_parents = node.get_parents(-1)
+
+            if all_parents:
+                del all_parents[-1]
+                all_parents.insert(0, node)
+
+            for i, parent in enumerate(all_parents):  # type: int, TreeDiagram
+                sibling_index = parent.get_index()
+                if i == 0:
+                    if len(parent.get_siblings()) == sibling_index:
+                        lane = f"└{'─' * indent}{spacer}"
+                    else:
+                        lane = f"├{'─' * indent}{spacer}"
+                else:
+                    if len(parent.get_siblings()) == sibling_index:
+                        lane = f"{spacer}{spacer * indent}{spacer}"
+                    else:
+                        lane = f"│{spacer * indent}{spacer}"
+
+                lanes.insert(0, lane)
+
+            node_str = str(custom_repr(node) if custom_repr else node)
+            if "\n" in node_str:
+                node_str = f"{node_str.splitlines()[0]} ..."
+            lines.append(f"{''.join(lanes)}{node_str}")
+
+        if relative:
+            top.remove()
+
+        view = "\n".join(lines)
+        if print_out:
+            print(view)
+
+        return view
 
 
 class NetworkDiagram(_Diagram):
@@ -311,20 +428,22 @@ class NetworkDiagram(_Diagram):
     def get_spouses(self, depth=None, flat=None, gen=None, filt=None):
         """ Down -> Up.
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: Whether to return/yield nodes directly or in lists.
             :param bool or None gen: Whether to return a generator or list.
-            :param filt: Optional functional filter, expects 1 node as argument. """
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :rtype: list[TreeDiagram or NetworkDiagram] """
         yield from self._siblings_and_spouses(self.get_children, self.get_parents)
 
     def get_spouse(self, index=None, depth=None, filt=None):
         """ Singular QOL alternative for get_spouses().
 
-            :param TreeDiagram or NetworkDiagram self:
+            :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None index: Index of node to be returned. Possible filter is applied before.
             :param int or None depth: Default depth of 0 will return single direct layer. Get unlimited with -1. Previous layers are included.
-            :param filt: Optional functional filter, expects 1 node as argument. """
+            :param filt: Optional functional filter, expects 1 node as argument.
+            :rtype: TreeDiagram or NetworkDiagram or Any """
         return self._singular_alternative(self.get_spouses, index=index, depth=depth, filt=filt)
 
 
@@ -374,7 +493,7 @@ class Markdown(TreeDiagram):
 
             :rtype: list[str] """
         lines = []
-        for markdown in self.get_nodes(depth=-1):
+        for markdown in self.get_all():
             if lines:
                 lines.append("")
             lines.extend(markdown.get_section_lines())

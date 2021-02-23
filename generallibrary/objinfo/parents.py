@@ -4,27 +4,21 @@ import importlib
 
 
 class _ObjInfoParents:
-    def hook_create_post(self):
+    def __init_post__(self):
         """ Attempt to generate parents after creation if missing.
 
             :param generallibrary.ObjInfo self: """
         if self.get_parent() is None:
             self._generate_parents()
 
-    def _find_modules(self):
-        """ Get a list of modules that has self.obj as a direct attribute.
-
-            :param generallibrary.ObjInfo self: """
-        for module in sys.modules.values():
-            try:
-                module_has_obj = self.obj in module.__dict__.values()
-            except:
-                module_has_obj = False
-
-            if module_has_obj:
-                for key, value in module.__dict__.items():
-                    if value == self.obj:
-                        yield module, key
+    # def hook_new_parent(self, parent, old_parent):
+    #     """ Assert child is an attribute of it's parent.
+    #
+    #         :param generallibrary.ObjInfo self:
+    #         :param parent:
+    #         :param old_parent: """
+    #     assert self.name
+    #     assert self.check_if_parent_eligible(parent.obj, self.obj, self.name)
 
     def _generate_parents(self):
         """ Generates all parents to this ObjInfo all the way up to and including module.
@@ -67,6 +61,21 @@ class _ObjInfoParents:
         if objInfo:
             self.set_parent(objInfo)
 
+    def _find_modules(self):
+        """ Get a list of modules that has self.obj as a direct attribute.
+
+            :param generallibrary.ObjInfo self: """
+        for module in sys.modules.values():
+            try:
+                module_has_obj = self.obj in module.__dict__.values()
+            except:
+                module_has_obj = False
+
+            if module_has_obj:
+                for key, value in module.__dict__.items():
+                    if value == self.obj:
+                        yield module, key
+
     @classmethod
     def check_if_parent_eligible(cls, parent_obj, child_obj, name):
         """ Check relationship eligibility of parent to child.
@@ -93,14 +102,5 @@ class _ObjInfoParents:
 
         # print(name, parent_attr_obj, child_obj)
         return False
-
-    def hook_new_parent(self, parent, old_parent):
-        """ Assert child is an attribute of it's parent.
-
-            :param generallibrary.ObjInfo self:
-            :param parent:
-            :param old_parent: """
-        assert self.name
-        assert self.check_if_parent_eligible(parent.obj, self.obj, self.name)
 
 

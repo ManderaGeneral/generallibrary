@@ -1,7 +1,20 @@
 
 from generallibrary.diagram import *
+from generallibrary.objinfo.objinfo import hook
 
 import unittest
+
+
+
+
+class A(TreeDiagram):
+    def __init__(self, foo, parent=None):
+        self.foo = self.data_keys_add("foo", foo, use_in_repr=True)
+
+
+class B(NetworkDiagram):
+    def __init__(self, foo, parent=None):
+        self.foo = foo
 
 
 class TreeDiagramTest(unittest.TestCase):
@@ -74,32 +87,32 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(a.get_children(), [b, c])
 
     def test_get_all(self):
-        a = TreeDiagram()
-        self.assertEqual([a], a.get_nodes(depth=-1))
+        a = A(1)
+        self.assertEqual([a], a.get_all())
 
-        b = TreeDiagram(parent=a)
-        self.assertEqual([a, b], a.get_nodes(depth=-1))
+        b = A(2, parent=a)
+        self.assertEqual([a, b], a.get_all())
 
-        c = TreeDiagram(parent=a)
-        self.assertEqual([a, b, c], a.get_nodes(depth=-1))
+        c = A(3, parent=a)
+        self.assertEqual([a, b, c], a.get_all())
 
-        d = TreeDiagram(parent=b)
-        self.assertEqual([a, b, d, c], a.get_nodes(depth=-1))
-
-        b.remove()
-        self.assertEqual([a, c], a.get_nodes(depth=-1))
-
-    def test_copy_to(self):
-        a = TreeDiagram()
-        b = TreeDiagram(parent=a)
-        c = TreeDiagram(parent=a)
-        d = TreeDiagram(parent=b)
-
-        a_copy = a.copy_to().get_nodes(depth=-1)
-        self.assertEqual(str(a.get_nodes(depth=-1)), str(a_copy))
+        d = A(4, parent=b)
+        self.assertEqual([a, b, c, d], a.get_all())
 
         b.remove()
-        self.assertNotEqual(str(a.get_nodes(depth=-1)), str(a_copy))
+        self.assertEqual([a, c], a.get_all())
+
+    def test_copy(self):
+        a = TreeDiagram()
+        b = TreeDiagram(parent=a)
+        c = TreeDiagram(parent=a)
+        d = TreeDiagram(parent=b)
+
+        a_copy = a.copy().get_all()
+        self.assertEqual(str(a.get_all()), str(a_copy))
+
+        b.remove()
+        self.assertNotEqual(str(a.get_all()), str(a_copy))
 
     def test_siblings(self):
         a = TreeDiagram()
@@ -124,76 +137,39 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual([c, e], b.get_siblings())
 
 
-        self.assertEqual(None, a.get_next_sibling())
-        self.assertEqual(None, a.get_previous_sibling())
+        self.assertEqual(None, a.get_sibling())
+        self.assertEqual(None, a.get_sibling(-1))
 
-        self.assertEqual(c, b.get_next_sibling())
-        self.assertEqual(None, b.get_previous_sibling())
+        self.assertEqual(c, b.get_sibling())
+        self.assertEqual(e, b.get_sibling(-1))
 
-        self.assertEqual(e, c.get_next_sibling())
-        self.assertEqual(b, c.get_previous_sibling())
+        self.assertEqual(e, c.get_sibling())
+        self.assertEqual(b, c.get_sibling(-1))
 
-        self.assertEqual(None, e.get_next_sibling())
-        self.assertEqual(c, e.get_previous_sibling())
+        self.assertEqual(b, e.get_sibling())
+        self.assertEqual(c, e.get_sibling(-1))
 
     def test_data_keys(self):
-        tester = self
-        @initBases
-        class A(TreeDiagram):
-            def __init__(self, foo):
-                self.foo = self.data_keys_add("foo", foo, use_in_repr=True)
-            def hook_set_attribute(self, key, value, old_value):
-                if old_value is not None:
-                    tester.assertEqual(("foo", 5, "bar"), (key, value, old_value))
-
         a = A("bar")
         self.assertEqual("bar", a.foo)
 
-        b = a.copy_to()
+        b = a.copy()
         self.assertEqual("bar", b.foo)
 
         b.foo = 5
         self.assertEqual(5, b.foo)
 
-        self.assertEqual(5, b.copy_to().foo)
+        self.assertEqual(5, b.copy().foo)
 
         b.set_parent(parent=a)
-        self.assertEqual([b], a.get_children_by_key_values(foo=5))
+        self.assertEqual([b], a.get_children(filt=lambda node: node.foo == 5))
 
         c = A("hello").set_parent(parent=b)
-        self.assertEqual(c, b.get_child_by_key_values(foo="hello"))
+        self.assertEqual(c, b.get_child(filt=lambda node: node.foo == "hello"))
 
         self.assertEqual(["bar"], a.repr_list())
 
-    def test_hooks(self):
-        x = []
-        @initBases
-        class A(TreeDiagram):
-            def hook_create_pre(self): x.append(0)
-            def __init__(self, parent=None): x.append(1)
-            def hook_new_parent(self, parent, old_parent): x.append(2)
-            def hook_create_post(self): x.append(3)
-            def hook_lose_parent(self, old_parent, parent): x.append(4)
-            def hook_new_child(self, child): x.append(5)
-            def hook_lose_child(self, child): x.append(6)
-            def hook_remove(self): x.append(7)
-
-
-        a = A(parent=TreeDiagram())
-
-        parent = TreeDiagram()
-        a.set_parent(parent=parent)
-        TreeDiagram(parent=a).remove()
-        a.remove()
-
-        self.assertEqual([0, 1, 2, 3, 4, 2, 5, 6, 4, 7], x)
-
     def test_save_with_keys(self):
-        @initBases
-        class A(TreeDiagram):
-            def __init__(self, foo, parent=None):
-                self.foo = self.data_keys_add("foo", foo)
-
         a = A("hi")
         b = A("there", parent=a)
 
@@ -234,24 +210,23 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(['# header1', 'line1', '', '## header2', 'line2'], markdown1.get_all_lines())
 
     def test_network_diagram(self):
-        a = NetworkDiagram()
-        self.assertEqual(set(), a.get_nodes())
-        self.assertEqual(set(), a.get_links())
+        a1 = A(1)
+        a2 = A(2)
+        a3 = A(3)
+        a1.set_parent(a2)
+        a1.set_parent(a3)
+        self.assertEqual([a3], a1.get_parents())
 
-        b = NetworkDiagram()
-        a.link(b)
-        self.assertEqual({b}, a.get_nodes())
-        self.assertEqual(set(), a.get_nodes(outgoing=False))
-        self.assertEqual({b}, a.get_nodes(incoming=False))
+        a1 = B(1)
+        a2 = B(2)
+        a3 = B(3)
+        a1.set_parent(a2)
+        a1.set_parent(a3)
+        self.assertEqual([a2, a3], a1.get_parents())
 
-        self.assertEqual({a.get_link(b)}, a.get_links())
-        self.assertEqual({a, b}, a.get_nodes_all())
-        self.assertEqual({a, b}, a.get_routes().get_nodes())
 
-        self.assertEqual([{a}, {b}], a.get_ordered())
-        self.assertEqual(0, a.get_ordered_index())
-        self.assertEqual(1, b.get_ordered_index())
-        self.assertEqual([a, b], b.get_ordered_flat())
+
+
 
 
 
