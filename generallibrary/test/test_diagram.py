@@ -93,14 +93,14 @@ class TreeDiagramTest(unittest.TestCase):
         b = A(2, parent=a)
         self.assertEqual([a, b], a.get_all())
 
-        c = A(3, parent=a)
+        c = A(3, parent=b)
         self.assertEqual([a, b, c], a.get_all())
 
-        d = A(4, parent=b)
+        d = A(4, parent=a)
         self.assertEqual([a, b, c, d], a.get_all())
 
         b.remove()
-        self.assertEqual([a, c], a.get_all())
+        self.assertEqual([a, d], a.get_all())
 
     def test_copy(self):
         a = TreeDiagram()

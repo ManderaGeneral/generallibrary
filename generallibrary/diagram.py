@@ -8,19 +8,12 @@ from itertools import chain
 import pickle
 
 
-def _traverse_depth(*nodes, func, depth, flat, filt, include_origins=False, _all_nodes=None):
+def _traverse_depth_horizontal(*nodes, func, depth, flat, filt, include_self=False, _all_nodes=None):
     """ Exhausts each depth's nodes to yield results as list, then recursively yields next depth with previous result.
         Possibly yielded origins (If include_origins is True) are unaffected by optional filt attribute.
 
-        Todo: Generalize _traverse_depth() """
-    if depth is None:
-        depth = 0
-    if _all_nodes is None:
-        _all_nodes = []
-    if flat is None:
-        flat = True
-
-    if include_origins:
+        Todo: Generalize _traverse_depth_*() """
+    if include_self:
         if flat:
             yield from nodes
         else:
@@ -30,13 +23,16 @@ def _traverse_depth(*nodes, func, depth, flat, filt, include_origins=False, _all
     results = []
     for node1 in nodes:
         for node2 in func(node1):
-            if node2 not in _all_nodes and node2 not in results:
-                if filt and not filt(node2):
-                    continue
+            if node2 in _all_nodes:
+                continue
+            if node2 in results:
+                continue
+            if filt and not filt(node2):
+                continue
 
-                results.append(node2)
-                if flat:
-                    yield node2
+            results.append(node2)
+            if flat:
+                yield node2
 
     if results:
         if not flat:
@@ -44,17 +40,47 @@ def _traverse_depth(*nodes, func, depth, flat, filt, include_origins=False, _all
 
         _all_nodes.extend(results)
         if depth != 0:
-            yield from _traverse_depth(*results, func=func, depth=depth - 1, flat=flat, filt=filt, _all_nodes=_all_nodes)
+            yield from _traverse_depth_horizontal(*results, func=func, depth=depth - 1, flat=flat, filt=filt, include_self=False, _all_nodes=_all_nodes)
+
+
+def _traverse_depth_vertical(*nodes, func, depth, flat, filt, include_self, _all_nodes=None):
+    """ Traverse vertically. """
+    for node in nodes:
+        if include_self:
+            yield node
+            _all_nodes.append(node)
+
+        if depth is StopIteration:
+            continue
+
+        for node2 in func(node):
+            if node2 in _all_nodes:
+                continue
+            if filt and not filt(node2):
+                continue
+            new_depth = StopIteration if depth == 0 else depth - 1
+            yield from _traverse_depth_vertical(node2, func=func, depth=new_depth, flat=flat, filt=filt, include_self=True, _all_nodes=_all_nodes)
 
 
 def _gen_or_list(gen_obj, return_generator):
     return gen_obj if return_generator else list(gen_obj)
 
 
+def _traverser(*nodes, func, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None):
+    if depth is None:           depth = 0
+    if flat is None:            flat = True
+    if include_self is None:    include_self = False
+    if gen is None:             gen = False
+    if vertical is None:        vertical = True
+
+    traverser = _traverse_depth_vertical if vertical else _traverse_depth_horizontal
+    generator = traverser(*nodes, func=func, depth=depth, flat=flat, filt=filt, include_self=include_self, _all_nodes=[])
+    return _gen_or_list(gen_obj=generator, return_generator=gen)
+
+
 def _deco_depth(func):
-    def _wrapper(node, depth=None, flat=None, gen=None, filt=None):
-        generator = _traverse_depth(node, func=func, depth=depth, flat=flat, filt=filt)
-        return _gen_or_list(gen_obj=generator, return_generator=gen)
+    def _wrapper(node, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None):
+        return _traverser(node, func=func, depth=depth, flat=flat, filt=filt, include_self=include_self, gen=gen, vertical=vertical)
     return wrapper_transfer(func, _wrapper)
 
 
@@ -196,29 +222,29 @@ class _Diagram_QOL:
 
 
 class _Diagram_Global:
-    """ Core global methods of a Diagram. """
-    def get_all(self, depth=None, flat=None, gen=None, filt=None):
-        """ Returns/yields all nodes, starting with self.
+    """ Global methods of a Diagram. """
+    def get_all(self, depth=None, flat=None, filt=None, gen=None):
+        """ QOL, shortcut for get_nodes() with depth being -1 and include_self being True.
+            Will return/yield all nodes, originating from self.
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of -1.
-            :param bool or None flat: Whether to return/yield nodes directly or in lists.
-            :param bool or None gen: Whether to return a generator or list.
+            :param bool or None flat: Whether to return/yield nodes directly or in lists. Ignored if vertical. Defaults to True.
             :param filt: Optional functional filter, expects 1 node as argument.
-            :rtype: list[TreeDiagram or NetworkDiagram] """
+            :param bool or None gen: Whether to return a generator or list. Defaults to False.
+            :rtype: list[TreeDiagram or NetworkDiagram or Any] """
         if depth is None:
             depth = -1
         func = self.get_nodes.__func__
-        generator = _traverse_depth(self, func=func, depth=depth, flat=flat, filt=filt, include_origins=True)
-        return _gen_or_list(gen_obj=generator, return_generator=gen)
+        return _traverser(self, func=func, depth=depth, flat=flat, filt=filt, include_self=True, gen=gen, vertical=True)
 
-    def get_ordered(self, depth=None, flat=None, gen=None, filt=None):
-        """ Top to Bottom.
-            Starts with orphan nodes and traverses to return/yield nodes which have had their parents already returned/yielded.
+    def get_ordered(self, depth=None, flat=None, filt=None, gen=None):
+        """ Top to Bottom horizontally.
+            Starts with orphan nodes and traverses to return/yield nodes which have had their respective parents already returned/yielded.
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of -1.
-            :param bool or None flat: Whether to return/yield nodes directly or in lists.
+            :param bool or None flat: Whether to return/yield nodes directly or in lists. Ignored if vertical.
             :param bool or None gen: Whether to return a generator or list.
             :param filt: Optional functional filter, expects 1 node as argument.
             :raises AttributeError: If there are no orphan nodes. """
@@ -229,8 +255,7 @@ class _Diagram_Global:
             raise AttributeError("Could not find any orphan nodes.")
 
         func = self.get_children.__func__
-        generator = _traverse_depth(*origins, func=func, depth=depth, flat=flat, filt=filt, include_origins=True)
-        return _gen_or_list(gen_obj=generator, return_generator=gen)
+        return _traverser(*origins, func=func, depth=depth, flat=flat, filt=filt, include_self=True, gen=gen, vertical=False)
 
 
 class _Diagram_Storage:
@@ -305,54 +330,62 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
         return self
 
     @_deco_depth
-    def get_children(self, depth=None, flat=None, gen=None, filt=None):
+    def get_children(self, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None):
         """ Down.
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
-            :param bool or None flat: Whether to return/yield nodes directly or in lists.
-            :param bool or None gen: Whether to return a generator or list.
+            :param bool or None flat: Whether to return/yield nodes directly or in lists. Ignored if vertical. Defaults to True.
             :param filt: Optional functional filter, expects 1 node as argument.
-            :rtype: list[TreeDiagram or NetworkDiagram] """
+            :param bool or None gen: Whether to return a generator or list. Defaults to False.
+            :param bool or None include_self: Defaults to False.
+            :param bool or None vertical: Whether to traverse one node at a time, or layer by layer. Defaults to True.
+            :rtype: list[TreeDiagram or NetworkDiagram or Any] """
         for child in self._children:
             yield child
 
     @_deco_depth
-    def get_parents(self, depth=None, flat=None, gen=None, filt=None):
+    def get_parents(self, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None):
         """ Up.
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
-            :param bool or None flat: Whether to return/yield nodes directly or in lists.
-            :param bool or None gen: Whether to return a generator or list.
+            :param bool or None flat: Whether to return/yield nodes directly or in lists. Ignored if vertical. Defaults to True.
             :param filt: Optional functional filter, expects 1 node as argument.
-            :rtype: list[TreeDiagram or NetworkDiagram] """
+            :param bool or None gen: Whether to return a generator or list. Defaults to False.
+            :param bool or None include_self: Defaults to False.
+            :param bool or None vertical: Whether to traverse one node at a time, or layer by layer. Defaults to True.
+            :rtype: list[TreeDiagram or NetworkDiagram or Any] """
         for parent in self._parents:
             yield parent
 
     @_deco_depth
-    def get_nodes(self, depth=None, flat=None, gen=None, filt=None):
+    def get_nodes(self, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None):
         """ Up + Down.
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
-            :param bool or None flat: Whether to return/yield nodes directly or in lists.
-            :param bool or None gen: Whether to return a generator or list.
+            :param bool or None flat: Whether to return/yield nodes directly or in lists. Ignored if vertical. Defaults to True.
             :param filt: Optional functional filter, expects 1 node as argument.
-            :rtype: list[TreeDiagram or NetworkDiagram] """
+            :param bool or None gen: Whether to return a generator or list. Defaults to False.
+            :param bool or None include_self: Defaults to False.
+            :param bool or None vertical: Whether to traverse one node at a time, or layer by layer. Defaults to True.
+            :rtype: list[TreeDiagram or NetworkDiagram or Any] """
         for node in chain(self._children, self._parents):
             yield node
 
     @_deco_depth
-    def get_siblings(self, depth=None, flat=None, gen=None, filt=None):
+    def get_siblings(self, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None):
         """ Up -> Down.
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
-            :param bool or None flat: Whether to return/yield nodes directly or in lists.
-            :param bool or None gen: Whether to return a generator or list.
+            :param bool or None flat: Whether to return/yield nodes directly or in lists. Ignored if vertical. Defaults to True.
             :param filt: Optional functional filter, expects 1 node as argument.
-            :rtype: list[TreeDiagram or NetworkDiagram] """
+            :param bool or None gen: Whether to return a generator or list. Defaults to False.
+            :param bool or None include_self: Defaults to False.
+            :param bool or None vertical: Whether to traverse one node at a time, or layer by layer. Defaults to True.
+            :rtype: list[TreeDiagram or NetworkDiagram or Any] """
         yield from self._siblings_and_spouses(self.get_parents, self.get_children)
 
     def _siblings_and_spouses(self, method1, method2):
@@ -435,15 +468,17 @@ class NetworkDiagram(_Diagram):
         pass
 
     @_deco_depth
-    def get_spouses(self, depth=None, flat=None, gen=None, filt=None):
+    def get_spouses(self, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None):
         """ Down -> Up.
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
-            :param bool or None flat: Whether to return/yield nodes directly or in lists.
-            :param bool or None gen: Whether to return a generator or list.
+            :param bool or None flat: Whether to return/yield nodes directly or in lists. Ignored if vertical. Defaults to True.
             :param filt: Optional functional filter, expects 1 node as argument.
-            :rtype: list[TreeDiagram or NetworkDiagram] """
+            :param bool or None gen: Whether to return a generator or list. Defaults to False.
+            :param bool or None include_self: Defaults to False.
+            :param bool or None vertical: Whether to traverse one node at a time, or layer by layer. Defaults to True.
+            :rtype: list[TreeDiagram or NetworkDiagram or Any] """
         yield from self._siblings_and_spouses(self.get_children, self.get_parents)
 
     def get_spouse(self, index=None, depth=None, filt=None):
@@ -495,7 +530,7 @@ class Markdown(TreeDiagram):
     def add_lines(self, *lines):
         """ Add lines to list, using splitlines. """
         for line in lines:  # type: str
-            self.lines.extend(line.splitlines())
+            self.lines.extend(str(line).splitlines())
         return self
 
     def get_all_lines(self):
