@@ -1,3 +1,4 @@
+
 name: workflow
 on:
   push:
@@ -22,10 +23,10 @@ jobs:
           pip install setuptools wheel twine
       - name: Install 4 git repos
         run: |
-          pip install git+https://github.com/ManderaGeneral/generallibrary.git
-          pip install git+https://github.com/ManderaGeneral/generalfile.git
-          pip install git+https://github.com/ManderaGeneral/generalvector.git
           pip install git+https://github.com/ManderaGeneral/generalpackager.git
+          pip install git+https://github.com/ManderaGeneral/generalvector.git
+          pip install git+https://github.com/ManderaGeneral/generalfile.git
+          pip install git+https://github.com/ManderaGeneral/generallibrary.git
       - name: Run Packager method 'workflow_unittest'
         run: |
           python -c "from generalpackager import Packager; Packager('generalpackager', '').workflow_unittest()"
@@ -48,10 +49,10 @@ jobs:
           pip install setuptools wheel twine
       - name: Install 4 git repos
         run: |
-          pip install git+https://github.com/ManderaGeneral/generallibrary.git
-          pip install git+https://github.com/ManderaGeneral/generalfile.git
-          pip install git+https://github.com/ManderaGeneral/generalvector.git
           pip install git+https://github.com/ManderaGeneral/generalpackager.git
+          pip install git+https://github.com/ManderaGeneral/generalvector.git
+          pip install git+https://github.com/ManderaGeneral/generalfile.git
+          pip install git+https://github.com/ManderaGeneral/generallibrary.git
       - name: Run Packager method 'workflow_sync'
         run: |
           python -c "from generalpackager import Packager; Packager('generalpackager', '').workflow_sync()"
