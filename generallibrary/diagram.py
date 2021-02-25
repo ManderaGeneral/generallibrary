@@ -8,72 +8,41 @@ from itertools import chain
 import pickle
 
 
-def _skip_node_check(node, filt, order_func, all_nodes):
-    if node in all_nodes:
-        return True
-    if filt and not filt(node):
+def _skip_node_check(node, order_func, _all_nodes):
+    if node in _all_nodes:
         return True
     if order_func:
         for order_node in order_func(node):
-            if order_node not in all_nodes:
+            if order_node not in _all_nodes:
                 return True
     return False
 
 
-def _traverse_depth_horizontal(*nodes, func, depth, flat, filt, include_self, order_func, _all_nodes):
-    """ Exhausts each depth's nodes to yield results as list, then recursively yields next depth with previous result.
-        Possibly yielded origins (If include_origins is True) are unaffected by optional filt attribute. """
-    nodes = [node for node in nodes if not _skip_node_check(node, filt, order_func, _all_nodes)]
+def _traverse(*nodes, func, depth, flat, filt, include_self, order_func, vertical, _all_nodes):
+    nodes = [node for node in nodes if not _skip_node_check(node=node, order_func=order_func, _all_nodes=_all_nodes)]
+    if not nodes:
+        return StopIteration
 
     if include_self:
         if flat:
             yield from nodes
         else:
-            yield list(nodes)
-
+            yield nodes
     _all_nodes.extend(nodes)
 
-    results = []
-    for node1 in nodes:
-        for node2 in func(node1):
-            if _skip_node_check(node2, filt, order_func, _all_nodes):
-                continue
+    if depth is not StopIteration:
+        next_depth = StopIteration if depth == 0 else depth - 1
+        next_nodes = [node2 for node in nodes for node2 in func(node) if not filt or filt(node2)]
 
-            results.append(node2)
-            if flat:
-                yield node2
+        def next_traverse(*nodes2):
+            return _traverse(*nodes2, func=func, depth=next_depth, flat=flat, filt=filt, include_self=True, order_func=order_func, vertical=vertical, _all_nodes=_all_nodes)
 
-    if results:
-        if not flat:
-            yield results
+        if vertical:
+            for node in next_nodes:
+                yield from next_traverse(node)
 
-        if depth != 0:
-            yield from _traverse_depth_horizontal(*results, func=func, depth=depth - 1, flat=flat, filt=filt, include_self=False, order_func=order_func, _all_nodes=_all_nodes)
-
-
-def _traverse_depth_vertical(*nodes, func, depth, flat, filt, include_self, order_func, _all_nodes):
-    """ Traverse vertically. """
-    for node in nodes:
-        if _skip_node_check(node, filt, order_func, _all_nodes):
-            continue
-
-        if include_self:
-            yield node
-            _all_nodes.append(node)
-
-        if depth is StopIteration:
-            continue
-
-        for node2 in func(node):
-            if _skip_node_check(node2, filt, order_func, _all_nodes):
-                continue
-
-            new_depth = StopIteration if depth == 0 else depth - 1
-            yield from _traverse_depth_vertical(node2, func=func, depth=new_depth, flat=flat, filt=filt, include_self=True, order_func=order_func, _all_nodes=_all_nodes)
-
-
-def _gen_or_list(gen_obj, return_generator):
-    return gen_obj if return_generator else list(gen_obj)
+        else:
+            yield from next_traverse(*next_nodes)
 
 
 def _traverser(*nodes, func, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None, order_func=None):
@@ -83,9 +52,8 @@ def _traverser(*nodes, func, depth=None, flat=None, filt=None, include_self=None
     if gen is None:             gen = False
     if vertical is None:        vertical = True
 
-    traverser = _traverse_depth_vertical if vertical else _traverse_depth_horizontal
-    generator = traverser(*nodes, func=func, depth=depth, flat=flat, filt=filt, include_self=include_self, order_func=order_func, _all_nodes=[])
-    return _gen_or_list(gen_obj=generator, return_generator=gen)
+    generator = _traverse(*nodes, func=func, depth=depth, flat=flat, filt=filt, include_self=include_self, order_func=order_func, vertical=vertical, _all_nodes=[])
+    return generator if gen else list(generator)
 
 
 def _deco_depth(func):
