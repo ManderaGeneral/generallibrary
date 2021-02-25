@@ -8,26 +8,35 @@ from itertools import chain
 import pickle
 
 
-def _traverse_depth_horizontal(*nodes, func, depth, flat, filt, include_self=False, _all_nodes=None):
-    """ Exhausts each depth's nodes to yield results as list, then recursively yields next depth with previous result.
-        Possibly yielded origins (If include_origins is True) are unaffected by optional filt attribute.
+def _skip_node_check(node, filt, order_func, all_nodes):
+    if node in all_nodes:
+        return True
+    if filt and not filt(node):
+        return True
+    if order_func:
+        for order_node in order_func(node):
+            if order_node not in all_nodes:
+                return True
+    return False
 
-        Todo: Generalize _traverse_depth_*() """
+
+def _traverse_depth_horizontal(*nodes, func, depth, flat, filt, include_self, order_func, _all_nodes):
+    """ Exhausts each depth's nodes to yield results as list, then recursively yields next depth with previous result.
+        Possibly yielded origins (If include_origins is True) are unaffected by optional filt attribute. """
+    nodes = [node for node in nodes if not _skip_node_check(node, filt, order_func, _all_nodes)]
+
     if include_self:
         if flat:
             yield from nodes
         else:
             yield list(nodes)
-        _all_nodes.extend(nodes)
+
+    _all_nodes.extend(nodes)
 
     results = []
     for node1 in nodes:
         for node2 in func(node1):
-            if node2 in _all_nodes:
-                continue
-            if node2 in results:
-                continue
-            if filt and not filt(node2):
+            if _skip_node_check(node2, filt, order_func, _all_nodes):
                 continue
 
             results.append(node2)
@@ -38,14 +47,16 @@ def _traverse_depth_horizontal(*nodes, func, depth, flat, filt, include_self=Fal
         if not flat:
             yield results
 
-        _all_nodes.extend(results)
         if depth != 0:
-            yield from _traverse_depth_horizontal(*results, func=func, depth=depth - 1, flat=flat, filt=filt, include_self=False, _all_nodes=_all_nodes)
+            yield from _traverse_depth_horizontal(*results, func=func, depth=depth - 1, flat=flat, filt=filt, include_self=False, order_func=order_func, _all_nodes=_all_nodes)
 
 
-def _traverse_depth_vertical(*nodes, func, depth, flat, filt, include_self, _all_nodes=None):
+def _traverse_depth_vertical(*nodes, func, depth, flat, filt, include_self, order_func, _all_nodes):
     """ Traverse vertically. """
     for node in nodes:
+        if _skip_node_check(node, filt, order_func, _all_nodes):
+            continue
+
         if include_self:
             yield node
             _all_nodes.append(node)
@@ -54,19 +65,18 @@ def _traverse_depth_vertical(*nodes, func, depth, flat, filt, include_self, _all
             continue
 
         for node2 in func(node):
-            if node2 in _all_nodes:
+            if _skip_node_check(node2, filt, order_func, _all_nodes):
                 continue
-            if filt and not filt(node2):
-                continue
+
             new_depth = StopIteration if depth == 0 else depth - 1
-            yield from _traverse_depth_vertical(node2, func=func, depth=new_depth, flat=flat, filt=filt, include_self=True, _all_nodes=_all_nodes)
+            yield from _traverse_depth_vertical(node2, func=func, depth=new_depth, flat=flat, filt=filt, include_self=True, order_func=order_func, _all_nodes=_all_nodes)
 
 
 def _gen_or_list(gen_obj, return_generator):
     return gen_obj if return_generator else list(gen_obj)
 
 
-def _traverser(*nodes, func, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None):
+def _traverser(*nodes, func, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None, order_func=None):
     if depth is None:           depth = 0
     if flat is None:            flat = True
     if include_self is None:    include_self = False
@@ -74,7 +84,7 @@ def _traverser(*nodes, func, depth=None, flat=None, filt=None, include_self=None
     if vertical is None:        vertical = True
 
     traverser = _traverse_depth_vertical if vertical else _traverse_depth_horizontal
-    generator = traverser(*nodes, func=func, depth=depth, flat=flat, filt=filt, include_self=include_self, _all_nodes=[])
+    generator = traverser(*nodes, func=func, depth=depth, flat=flat, filt=filt, include_self=include_self, order_func=order_func, _all_nodes=[])
     return _gen_or_list(gen_obj=generator, return_generator=gen)
 
 
@@ -240,7 +250,9 @@ class _Diagram_Global:
 
     def get_ordered(self, depth=None, flat=None, filt=None, gen=None):
         """ Top to Bottom horizontally.
-            Starts with orphan nodes and traverses to return/yield nodes which have had their respective parents already returned/yielded.
+            Starts with orphan nodes and traverses to return/yield children nodes which have had their respective parents already returned/yielded.
+
+            HERE ** We're not actually checking that parents are already yielded.
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of -1.
@@ -253,9 +265,9 @@ class _Diagram_Global:
         origins = [node for node in self.get_all() if not node.get_parents()]
         if not origins:
             raise AttributeError("Could not find any orphan nodes.")
-
         func = self.get_children.__func__
-        return _traverser(*origins, func=func, depth=depth, flat=flat, filt=filt, include_self=True, gen=gen, vertical=False)
+        order_func = self.get_parents.__func__
+        return _traverser(*origins, func=func, depth=depth, flat=flat, filt=filt, include_self=True, gen=gen, vertical=False, order_func=order_func)
 
 
 class _Diagram_Storage:

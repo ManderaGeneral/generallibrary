@@ -21,7 +21,7 @@ d = a.add(4)
 # print(a.get_children(include_self=True, depth=3))
 
 
-print(a.get_ordered())
+print(a.get_all())
 
 
 
