@@ -112,7 +112,8 @@ class _ObjInfoProperties:
         if doc and only_first_line:
             doc = doc.splitlines()[0]
 
-        doc = doc.removesuffix(" ")
+        if doc.endswith(" "):
+            doc = doc[:-1]
 
         if require_sentence:
             if not doc or not doc.endswith(".") or not doc[0].isupper():
