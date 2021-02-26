@@ -1,12 +1,24 @@
 
 from generallibrary.object import *
 from generallibrary.objinfo.objinfo import ObjInfo
-from generallibrary.functions import initBases
+from generallibrary.functions import initBases, AutoInitBases
 
 import unittest
 
 
 class ObjectTest(unittest.TestCase):
+    def test_AutoInitBases(self):
+        class A(metaclass=AutoInitBases):
+            def __init__(self):
+                self.x = 1
+
+        class B(A):
+            def __init__(self):
+                self.y = 2
+
+        self.assertEqual(1, B().x)
+        self.assertEqual(2, B().y)
+
     def test_getsize(self):
         """Hard to make too specific tests I think due to 64-bit vs 32-bit for example."""
         x = []
@@ -242,6 +254,37 @@ class ObjectTest(unittest.TestCase):
 
         self.assertEqual(False, ObjInfo(a).protected())
         self.assertEqual(False, ObjInfo(a()).protected())
+
+    def test_check_if_parent_eligible(self):
+        self.assertEqual(True, ObjInfo.check_if_parent_eligible(sys.modules["test_object"], _Foo, "_Foo"))
+        self.assertEqual(False, ObjInfo.check_if_parent_eligible(sys.modules["test_object"], _Foo, "Foo"))
+        self.assertEqual(False, ObjInfo.check_if_parent_eligible(sys.modules["test_object"], _Foo.self, "self"))
+        self.assertEqual(True, ObjInfo.check_if_parent_eligible(_Foo, _Foo.self, "self"))
+
+    def test_doc(self):
+        def foo():
+            """ bar
+                hello """
+        self.assertEqual("bar\nhello", ObjInfo(foo).doc(only_first_line=False))
+        self.assertEqual("bar", ObjInfo(foo).doc(only_first_line=True))
+        self.assertRaises(AttributeError, ObjInfo(foo).doc, require_sentence=True)
+
+        def empty():
+            pass
+
+        self.assertEqual("", ObjInfo(empty).doc(only_first_line=False))
+        self.assertEqual("", ObjInfo(empty).doc(only_first_line=True))
+        self.assertRaises(AttributeError, ObjInfo(empty).doc, require_sentence=True)
+
+        def proper():
+            """ Proper. """
+
+        self.assertEqual("Proper.", ObjInfo(proper).doc(only_first_line=False))
+        self.assertEqual("Proper.", ObjInfo(proper).doc(only_first_line=True))
+        self.assertEqual("Proper.", ObjInfo(proper).doc(require_sentence=True))
+
+    def test_file(self):
+        pass  # HERE **
 
 
 class _Foo:

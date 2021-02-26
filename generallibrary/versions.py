@@ -8,7 +8,6 @@ from generallibrary.functions import Operators, initBases
 
 from packaging import version
 import pkg_resources
-import setuptools
 from distutils.version import StrictVersion
 import re
 

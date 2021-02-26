@@ -220,8 +220,6 @@ class _Diagram_Global:
         """ Top to Bottom horizontally.
             Starts with orphan nodes and traverses to return/yield children nodes which have had their respective parents already returned/yielded.
 
-            HERE ** We're not actually checking that parents are already yielded.
-
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: Default depth of -1.
             :param bool or None flat: Whether to return/yield nodes directly or in lists. Ignored if vertical.
@@ -307,7 +305,8 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
 
             self._parents.append(parent)
             parent._children.append(self)
-        return self
+        # return self
+        return parent
 
     @_deco_depth
     def get_children(self, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None):
@@ -351,7 +350,7 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
             :param bool or None include_self: Defaults to False.
             :param bool or None vertical: Whether to traverse one node at a time, or layer by layer. Defaults to True.
             :rtype: list[TreeDiagram or NetworkDiagram or Any] """
-        for node in chain(self._children, self._parents):
+        for node in chain(self._parents, self._children):
             yield node
 
     @_deco_depth

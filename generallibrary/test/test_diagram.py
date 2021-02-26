@@ -11,10 +11,16 @@ class A(TreeDiagram):
     def __init__(self, foo, parent=None):
         self.foo = self.data_keys_add("foo", foo, use_in_repr=True)
 
+    def __repr__(self):
+        return str(self.foo)
+
 
 class B(NetworkDiagram):
     def __init__(self, foo, parent=None):
         self.foo = foo
+
+    def __repr__(self):
+        return str(self.foo)
 
 
 class TreeDiagramTest(unittest.TestCase):
@@ -53,7 +59,6 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(2, f.get_index())
         self.assertEqual(0, a.get_index())
 
-
     def test_parent(self):
         a = TreeDiagram()
         self.assertEqual(None, a.get_parent())
@@ -85,6 +90,23 @@ class TreeDiagramTest(unittest.TestCase):
 
         c.set_index(1)
         self.assertEqual(a.get_children(), [b, c])
+
+    def test_get_nodes(self):
+        a = A(1)
+        b = a.add(2)
+        c = b.add(3)
+
+        self.assertEqual([a, c], b.get_nodes())
+        self.assertEqual([b], a.get_nodes())
+        self.assertEqual([b, c], a.get_nodes(1))
+        self.assertEqual([b, c], a.get_nodes(-1))
+        self.assertEqual([a, b], a.get_nodes(include_self=True))
+
+        self.assertEqual(b, a.get_node())
+        self.assertEqual(None, a.get_node(1))
+        self.assertEqual(c, a.get_node(1, 1))
+        self.assertEqual(a, b.get_node())
+        self.assertEqual(c, b.get_node(1))
 
     def test_get_all(self):
         a = A(1)
@@ -149,6 +171,24 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(b, e.get_sibling())
         self.assertEqual(c, e.get_sibling(-1))
 
+    def test_get_spouses(self):
+        a = B(1)
+        b = a.add(2)
+        c = b.set_parent(3)
+        d = c.add(4)
+        e = d.set_parent(5)
+
+        self.assertEqual([a, c], b.get_parents())
+        self.assertEqual([c], a.get_spouses())
+        self.assertEqual([a, c], a.get_spouses(include_self=True))
+        self.assertEqual(c, a.get_spouse())
+
+        self.assertEqual([c, e], a.get_spouses(depth=1))
+        self.assertEqual([c, a], e.get_spouses(depth=1))
+        self.assertEqual(a, e.get_spouse(index=1, depth=1))
+
+        self.assertEqual([c], e.get_spouses(depth=0))
+
     def test_data_keys(self):
         a = A("bar")
         self.assertEqual("bar", a.foo)
@@ -164,7 +204,7 @@ class TreeDiagramTest(unittest.TestCase):
         b.set_parent(parent=a)
         self.assertEqual([b], a.get_children(filt=lambda node: node.foo == 5))
 
-        c = A("hello").set_parent(parent=b)
+        c = A("hello", parent=b)
         self.assertEqual(c, b.get_child(filt=lambda node: node.foo == "hello"))
 
         self.assertEqual(["bar"], a.repr_list())
@@ -224,8 +264,22 @@ class TreeDiagramTest(unittest.TestCase):
         a1.set_parent(a3)
         self.assertEqual([a2, a3], a1.get_parents())
 
+    def test_get_ordered(self):
+        a = A(1)
+        b = a.add(2)
+        c = b.add(3)
+        d = b.add(4)
+        e = A(0)
+        a.set_parent(e)
 
+        self.assertEqual([e, a, b, c, d], a.get_ordered())
+        self.assertEqual([[e], [a], [b], [c, d]], a.get_ordered(flat=False))
 
+        self.assertEqual(0, e.get_ordered_index())
+        self.assertEqual(1, a.get_ordered_index())
+        self.assertEqual(2, b.get_ordered_index())
+        self.assertEqual(3, c.get_ordered_index())
+        self.assertEqual(3, d.get_ordered_index())
 
 
 
