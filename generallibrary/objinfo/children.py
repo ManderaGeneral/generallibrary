@@ -2,7 +2,7 @@
 
 class _ObjInfoChildren:
     def __init__(self):
-        self.filters = [self._default_filter]
+        self.filters = [self._default_filter]  # Todo: Remove ObjInfo.filters and use TreeDiagram's filt argument instead.
 
     @staticmethod
     def _default_filter(objInfo):

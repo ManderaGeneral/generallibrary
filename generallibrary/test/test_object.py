@@ -284,7 +284,18 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual("Proper.", ObjInfo(proper).doc(require_sentence=True))
 
     def test_file(self):
-        pass  # HERE **
+        self.assertEqual("test_object.py", ObjInfo(_Foo).file(relative=True))
+        self.assertEqual("test_object.py", ObjInfo(_Foo.self).file(relative=True))
+
+    def test_filters_check(self):
+        pass
+
+    def test_origins(self):
+        self.assertEqual(True, ObjInfo(_Foo.self).from_class())
+        self.assertEqual(True, ObjInfo(_Bar.self).from_class())
+
+        # self.assertEqual(True, ObjInfo(_Bar.self).from_base())
+        self.assertEqual(False, ObjInfo(_Bar.uhm).from_base())
 
 
 class _Foo:
@@ -311,6 +322,11 @@ class _Foo:
         return
 
     def __private(self):
+        pass
+
+
+class _Bar(_Foo):
+    def uhm(self):
         pass
 
 
