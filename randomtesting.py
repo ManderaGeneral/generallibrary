@@ -16,8 +16,3 @@ class A(TreeDiagram):
 # b = a.add(2)
 # c = b.add(3)
 # d = a.add(4)
-
-
-
-
-

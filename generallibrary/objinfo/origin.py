@@ -1,4 +1,6 @@
 
+import inspect
+
 
 class _ObjInfoOrigin:
     """ Only one of these methods starting with 'from_' will return True. """
@@ -20,7 +22,7 @@ class _ObjInfoOrigin:
         """ Get whether this attribute came from a builtin.
 
             :param generallibrary.ObjInfo self: """
-        return getattr(self._last_cls_with_name(), "__module__", None) == "builtins"
+        return inspect.isbuiltin(self.obj) or getattr(self._last_cls_with_name(), "__module__", None) == "builtins"
 
     def from_base(self):
         """ Get whether this attribute came from one of it's cls' non-builtin bases.

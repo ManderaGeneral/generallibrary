@@ -294,8 +294,30 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(True, ObjInfo(_Foo.self).from_class())
         self.assertEqual(True, ObjInfo(_Bar.self).from_class())
 
-        # self.assertEqual(True, ObjInfo(_Bar.self).from_base())
         self.assertEqual(False, ObjInfo(_Bar.uhm).from_base())
+
+        self.assertEqual(False, ObjInfo(_Bar.uhm).from_builtin())
+        self.assertEqual(True, ObjInfo("".startswith).from_builtin())
+
+        self.assertEqual(False, ObjInfo(_Bar.attr).from_instance())
+
+        objInfo = ObjInfo(_Bar())
+        objInfo.get_attrs()
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "instance_var").from_instance())
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "self").from_base())
+
+    def test_get_definition_line(self):
+        self.assertEqual(9, ObjInfo(ObjectTest).get_definition_line())
+
+    def test_get_origin(self):
+        class FooBar:
+            @property
+            def test(self):
+                return
+
+        self.assertEqual("test", ObjInfo(FooBar.test).name)
+        self.assertEqual("test", ObjInfo.get_origin(FooBar.test).__name__)
+
 
 
 class _Foo:
@@ -326,6 +348,9 @@ class _Foo:
 
 
 class _Bar(_Foo):
+    def __init__(self):
+        self.instance_var = 4
+
     def uhm(self):
         pass
 

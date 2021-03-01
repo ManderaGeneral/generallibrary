@@ -68,7 +68,7 @@ class _ObjInfoProperties:
         return print_link_to_obj(self.obj, print_out=print_out)
 
     @classmethod
-    def get_origin(cls, obj=None, include_depth=False):
+    def get_origin(cls, obj, include_depth=False):
         """ Relaying to function. """
         from generallibrary.code import get_origin
 
