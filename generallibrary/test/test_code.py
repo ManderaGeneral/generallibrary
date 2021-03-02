@@ -27,15 +27,15 @@ class CodeTest(unittest.TestCase):
 
     def test_print_link(self):
         """ Hard to assert these methods truly work without manual check. """
-        print_link("../code.py", 23)
-        print_link("test_code.py", 23)
-        print_link("test_code.py")
-        print_link(line=23)
-        print_link()
+        print_link("../code.py", 23, print_out=False)
+        print_link("test_code.py", 23, print_out=False)
+        print_link("test_code.py", print_out=False)
+        print_link(line=23, print_out=False)
+        print_link(print_out=False)
 
     def test_print_link_to_obj(self):
-        self.assertIn("line 8", print_link_to_obj(CodeTest))
-        self.assertIn("line 16", print_link_to_obj(CodeTest.test_CodeLine))
-        self.assertIn("unittest/__init__.py\", line 1", print_link_to_obj(unittest))
+        self.assertIn("line 8", print_link_to_obj(CodeTest, print_out=False))
+        self.assertIn("line 16", print_link_to_obj(CodeTest.test_CodeLine, print_out=False))
+        self.assertIn("unittest/__init__.py\", line 1", print_link_to_obj(unittest, print_out=False))
 
 

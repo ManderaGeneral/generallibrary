@@ -12,6 +12,8 @@ def comma_and_and(*values, period=True):
         return f"{', '.join(values[:-1])} and {values[-1]}{period}"
 
 
-def plur_sing(count, word):
-    """ Conditionally add an 's' if count isn't 1. """
-    return f"{count} {word}{'s' * (count != 1)}"
+def plur_sing(count, word, suffix=None):
+    """ Conditionally add an 's' for example, if count isn't 1. """
+    if suffix is None:
+        suffix = "s"
+    return f"{count} {word}{suffix * (count != 1)}"

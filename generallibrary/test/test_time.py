@@ -14,3 +14,10 @@ class TimeTest(unittest.TestCase):
 
     def test_current_date_and_time(self):
         current_datetime_formatted()
+
+    def test_reset(self):
+        timer = Timer()
+        sleep(0.1)
+        time = timer.seconds()
+        timer.reset()
+        self.assertEqual(True, timer.seconds() < time)

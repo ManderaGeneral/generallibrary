@@ -105,6 +105,8 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual([], SigInfo(_Foo._bar).names)
         self.assertEqual(["cls"], SigInfo(_Foo._bar).positional_extra)
 
+        self.assertEqual(_Foo._bar, SigInfo(_Foo._bar).callableObject)
+
 
     def test_namesRequired(self):
         self.assertEqual(["x"], SigInfo(lambda x: 5).namesRequired)
@@ -169,16 +171,19 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual([1, 2], SigInfo(lambda *arguments: 5, 1, 2)["arguments"])
         self.assertEqual([2], SigInfo(lambda x, *arguments: 5, 1, 2)["arguments"])
 
-        self.assertEqual({"foo": "bar", "test": 5}, SigInfo(lambda x, *arguments, **keywordargs: 5, 1, 2, foo="bar", test=5).packedKwargs)
+        self.assertEqual({"foo": "bar", "test": 5}, SigInfo(lambda x, *arguments, **keywordargs: None, 1, 2, foo="bar", test=5).packedKwargs)
 
-        sigInfo = SigInfo(lambda x, y=6, *arguments, z=7, **keywordargs: 8, 1, 2, 3, 4, foo="bar", test=5)
+        sigInfo = SigInfo(lambda x, y=6, *arguments, z=7, **keywordargs: None, 1, 2, 3, 4, foo="bar", test=5)
         self.assertEqual(1, sigInfo["x"])
         self.assertEqual(2, sigInfo["y"])
         self.assertEqual([3, 4], sigInfo["arguments"])
         self.assertEqual(7, sigInfo["z"])
         self.assertEqual({"foo": "bar", "test": 5}, sigInfo.packedKwargs)
 
-        sigInfo = SigInfo(lambda x, **kwargs: 3, 1, x=2)
+        self.assertEqual([1, 2, 3, 4], sigInfo.unpackedArgs)
+        self.assertEqual({"z": 7, "foo": "bar", "test": 5}, sigInfo.unpackedKwargs)
+
+        sigInfo = SigInfo(lambda x, **kwargs: None, 1, x=2)
         self.assertEqual(2, sigInfo["x"])
 
     def test_sigInfoCall(self):
@@ -256,17 +261,68 @@ class FunctionsTest(unittest.TestCase):
         call.set_funcs(type=type)
         self.assertIn("<class 'str'>", call.generate(print_out=False))
 
+    def test_deco_define_comparisons(self):
+        @Operators.deco_define_comparisons(lambda left: left.val)
+        class Compare:
+            def __init__(self, val):
+                self.val = val
 
+        a = Compare(1)
+        b = Compare(2)
+        self.assertEqual(True, a < b)
+        self.assertEqual(False, a > b)
+        self.assertEqual(False, a == b)
+        self.assertEqual(True, a != b)
+        self.assertEqual(True, a <= b)
+        self.assertEqual(False, a >= b)
 
+    def test_calculate(self):
+        self.assertEqual(5, calculate("x + y", 2, 3))
+        self.assertEqual(6, calculate("x * y", 2, 3))
+        self.assertEqual(8, calculate("x + y * x", 2, 3))
 
+    def test_deco_extend(self):
+        @deco_extend
+        class MyInt(int):
+            def __init__(self, value, other):
+                self.value = value
+                self.other = other
 
+        self.assertEqual(1, MyInt(1, 2))
+        self.assertEqual(1, MyInt(1, 2).value)
+        self.assertEqual(2, MyInt(1, 2).other)
 
+    def test_deco_propagate_while(self):
+        class A(int):
+            @deco_propagate_while(False, lambda a: A(a + 1))
+            def greater_than_10(self):
+                return self > 10
+        self.assertEqual(True, A(1).greater_than_10())
 
+    def test_wrapper_transfer(self):
+        def deco(func):
+            def _wrapper():
+                return func()
+            return _wrapper
 
+        def deco_transfer(func):
+            def _wrapper():
+                return func()
+            return wrapper_transfer(func, _wrapper)
 
+        @deco
+        def x():
+            """ Doc x. """
 
+        @deco_transfer
+        def y():
+            """ Doc x. """
 
+        self.assertEqual(None, x.__doc__)
+        self.assertEqual("_wrapper", x.__name__)
 
+        self.assertEqual(" Doc x. ", y.__doc__)
+        self.assertEqual("y", y.__name__)
 
 
 

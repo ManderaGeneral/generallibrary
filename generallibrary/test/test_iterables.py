@@ -251,7 +251,22 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual(None, get_index({"a": 2, "b": 4}, 3, None))
         self.assertRaises(StopIteration, lambda: get_index({"a": 2, "b": 4}, 3))
 
+    def test_pivot_list(self):
+        l = [1, 2, 3]
+        self.assertEqual([3, 1, 2], pivot_list(l, -4))
+        self.assertEqual([1, 2, 3], pivot_list(l, -3))
+        self.assertEqual([2, 3, 1], pivot_list(l, -2))
+        self.assertEqual([3, 1, 2], pivot_list(l, -1))
+        self.assertEqual([1, 2, 3], pivot_list(l, 0))
+        self.assertEqual([2, 3, 1], pivot_list(l, 1))
+        self.assertEqual([3, 1, 2], pivot_list(l, 2))
+        self.assertEqual([1, 2, 3], pivot_list(l, 3))
+        self.assertEqual([2, 3, 1], pivot_list(l, 4))
 
+    def test_split_list(self):
+        l = [1, 2, 3]
+        self.assertEqual(([1], [2, 3]), split_list(lambda x: x < 2, *l))
+        self.assertEqual(([1, 3], [2]), split_list(lambda x: x != 2, *l))
 
 
 

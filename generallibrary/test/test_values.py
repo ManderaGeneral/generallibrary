@@ -122,7 +122,8 @@ class ValuesTest(unittest.TestCase):
         envVar.value = "foo"
         self.assertEqual("foo", envVar.value)
 
-
+    def test_get_launch_options(self):
+        self.assertEqual({}, get_launch_options())
 
 
 

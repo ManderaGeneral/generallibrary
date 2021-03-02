@@ -255,6 +255,11 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(False, ObjInfo(a).protected())
         self.assertEqual(False, ObjInfo(a()).protected())
 
+        objInfo_self = objInfo.get_child(filt=lambda node: node.name == "self")
+        self.assertEqual(True, objInfo.filters_check(objInfo_self))
+        objInfo.filters.append(lambda objInfo: objInfo.name != "self")
+        self.assertEqual(False, objInfo.filters_check(objInfo_self))
+
     def test_check_if_parent_eligible(self):
         self.assertEqual(True, ObjInfo.check_if_parent_eligible(sys.modules["test_object"], _Foo, "_Foo"))
         self.assertEqual(False, ObjInfo.check_if_parent_eligible(sys.modules["test_object"], _Foo, "Foo"))
@@ -287,9 +292,6 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual("test_object.py", ObjInfo(_Foo).file(relative=True))
         self.assertEqual("test_object.py", ObjInfo(_Foo.self).file(relative=True))
 
-    def test_filters_check(self):
-        pass
-
     def test_origins(self):
         self.assertEqual(True, ObjInfo(_Foo.self).from_class())
         self.assertEqual(True, ObjInfo(_Bar.self).from_class())
@@ -318,6 +320,13 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual("test", ObjInfo(FooBar.test).name)
         self.assertEqual("test", ObjInfo.get_origin(FooBar.test).__name__)
 
+    def test_identifier(self):
+        self.assertEqual(ObjInfo(_Foo).identifier(), ObjInfo(_Foo).identifier())
+
+    def test_nice_repr(self):
+        objInfo = ObjInfo(_Foo)
+        self.assertEqual(True, "_Foo" in objInfo.nice_repr())
+        self.assertEqual(True, "Class" in objInfo.nice_repr())
 
 
 class _Foo:

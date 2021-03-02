@@ -2,6 +2,7 @@
 from generallibrary.versions import *
 
 import unittest
+import os
 
 
 class VersionsTest(unittest.TestCase):
@@ -10,16 +11,34 @@ class VersionsTest(unittest.TestCase):
         self.assertTrue(verInfo.os in verInfo._translate)
         self.assertEqual(1, sum((verInfo.windows, verInfo.linux, verInfo.mac, verInfo.java)))
 
-    def test_python(self):
+    def test_caseSensitive(self):
+        with open("Foo", "w") as file:
+            file.write("bar")
+        try:
+            with open("foo", "r"):
+                pass
+        except FileNotFoundError:
+            sensitive = True
+        else:
+            sensitive = False
+        os.remove("Foo")
+        self.assertEqual(sensitive, VerInfo().caseSensitive)
+
+    def test_pathDelimiter(self):
+        self.assertIn(VerInfo().pathDelimiter, ("/", "\\"))
+
+    def test_PythonVersion(self):
         verInfo = VerInfo()
         self.assertGreaterEqual(verInfo.pythonMajor, 2)
         self.assertGreaterEqual(verInfo.pythonMinor, 0)
         self.assertGreaterEqual(verInfo.pythonMicro, 0)
         self.assertGreaterEqual(verInfo.pythonSerial, 0)
+        self.assertGreaterEqual("", verInfo.pythonSerialString)
 
         self.assertEqual(1, sum((verInfo.pythonAlpha, verInfo.pythonBeta, verInfo.pythonCandidate, verInfo.pythonFinal)))
 
         self.assertLessEqual(len(verInfo.pythonReleaseKeyword), 2)
+        self.assertLessEqual("final", verInfo.pythonReleaseLevel)
 
         self.assertLessEqual(verInfo.pythonString.count("."), 2)
 

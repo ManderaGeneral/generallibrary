@@ -246,18 +246,14 @@ ignore = ["+", "-", "*", "/", "(", ")", "sqrt"]
 
 
 def _tokenize(expression):
-    """
-    Tokenize an expression
-    Taken from myself at https://stackoverflow.com/questions/61948141/python-function-from-mathematical-expression-string/61949248
-    """
+    """ Tokenize an expression.
+        Taken from myself at https://stackoverflow.com/questions/61948141/python-function-from-mathematical-expression-string/61949248 """
     return re.findall(r"(\b\w*[.]?\w+\b|[()+*\-/])", expression)
 
 
 def calculate(expression, *args):
-    """
-    Automatically fills variables of a formula in a string then evaluates it.
-    Enter args in the order that they appear.
-    """
+    """ Automatically fills variables of a formula in a string then evaluates it.
+        Enter args in the order that they appear. """
     seenArgs = {}
     newTokens = []
     tokens = _tokenize(expression)
@@ -310,31 +306,26 @@ class Operators:
     }
 
     @classmethod
-    def deco_define_comparisons(cls, leftLambda, rightLambda):
-        """
-        Define all comparision operators for this class.
-        Provide two functions that return left and right values.
-        Automatically fills 'left' and 'right' parameters by name.
-        Will make class instances unhashable as the `__eq__` method is defined without defining `__hash__`.
+    def deco_define_comparisons(cls, leftLambda, rightLambda=None):
+        """ Define all comparision operators for this class.
+            Provide two functions that take one value and returns left and right values.
+            Will make class instances unhashable as the `__eq__` method is defined without defining `__hash__`.
 
-        Stubs:
-            def __eq__(self, other): ...
-            def __gt__(self, other): ...
-            def __lt__(self, other): ...
-            def __ge__(self, other): ...
-            def __le__(self, other): ...
-        """
-        def wrapper(baseCls):
-            """."""
+            Stubs:
+                def __eq__(self, other): ...
+                def __gt__(self, other): ...
+                def __lt__(self, other): ...
+                def __ge__(self, other): ...
+                def __le__(self, other): ... """
+        if rightLambda is None:
+            rightLambda = leftLambda
+
+        def _wrapper(baseCls):
             for name, func in cls.comparisons.items():
-
-                lambdaFunc = lambda left, right, func=func: func(
-                    SigInfo(leftLambda, left=left, right=right).call(),
-                    SigInfo(rightLambda, left=left, right=right).call())
-                setattr(baseCls, name, lambdaFunc)
+                setattr(baseCls, name, lambda a, b, func=func: func(leftLambda(a), rightLambda(b)))
 
             return baseCls
-        return wrapper
+        return _wrapper
 
 
 def deco_cast_parameters(**pars_to_cast):
@@ -463,7 +454,8 @@ def wrapper_transfer(base, target):
 
 
 def deco_propagate_while(value, prop_func):
-    """ Call decorated function recursively until it doesn't return given value. """
+    """ Call decorated method recursively until it doesn't return given value.
+        Todo: Generalize deco_propagate_while, make it work on functions and have more options for value. """
     def _deco(func):
         def _wrapper(self, *args, **kwargs):
             new_self = self
@@ -477,7 +469,6 @@ def deco_propagate_while(value, prop_func):
             return result
         return _wrapper
     return _deco
-
 
 
 def initBases(cls):
