@@ -123,7 +123,8 @@ class ValuesTest(unittest.TestCase):
         self.assertEqual("foo", envVar.value)
 
     def test_get_launch_options(self):
-        self.assertEqual({}, get_launch_options())
+        launch_options = get_launch_options()
+        self.assertEqual(True, not launch_options or launch_options[0] == "discover")
 
 
 
