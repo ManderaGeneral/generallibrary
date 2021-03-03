@@ -1,3 +1,4 @@
+
 from generallibrary.types import typeChecker
 
 import inspect
@@ -17,7 +18,8 @@ class classproperty:
         @classproperty
         def foo(cls):
             return cls.bar
-        https://stackoverflow.com/a/13624858/3936044 """
+        https://stackoverflow.com/a/13624858/3936044
+        Todo: Setter for classproperty deco. """
     def __init__(self, fget):
         self.fget = fget
 

@@ -79,3 +79,11 @@ def hook(callable_, *funcs, after=False):
         setattr(objInfo.get_parent().obj, objInfo.name, _wrapper)
 
     return owner.hooks[objInfo.name]
+
+
+def cache_clear(obj):
+    objInfo = ObjInfo(obj)
+    objInfo.get_attrs()
+    for attr in objInfo.get_children(filt=lambda objInfo: hasattr(objInfo.obj, "cache_clear")):
+        attr.obj.cache_clear()
+

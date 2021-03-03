@@ -1,6 +1,6 @@
 
 from generallibrary.functions import *
-from generallibrary import VerInfo
+from generallibrary import VerInfo, cache_clear
 
 import unittest
 
@@ -324,8 +324,22 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(" Doc x. ", y.__doc__)
         self.assertEqual("y", y.__name__)
 
+    def test_cache_clear(self):
+        class A:
+            bar = 2
 
+            @classmethod
+            @deco_cache()
+            def foo(cls):
+                return cls.bar
 
+        self.assertEqual(2, A().foo())
+
+        A.bar = 4
+        self.assertEqual(2, A().foo())
+
+        cache_clear(A)
+        self.assertEqual(4, A().foo())
 
 
 
