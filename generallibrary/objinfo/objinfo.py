@@ -83,7 +83,8 @@ def hook(callable_, *funcs, after=False):
 
 def cache_clear(obj):
     objInfo = ObjInfo(obj)
+    objInfo.filters.append(lambda objInfo: hasattr(objInfo.obj, "cache_clear"))
     objInfo.get_attrs()
-    for attr in objInfo.get_children(filt=lambda objInfo: hasattr(objInfo.obj, "cache_clear")):
+    for attr in objInfo.get_children():
         attr.obj.cache_clear()
 
