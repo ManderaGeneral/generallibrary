@@ -348,19 +348,20 @@ def deco_cast_parameters(**pars_to_cast):
     return _decorator
 
 
-def deco_default_self_args(func):
+def deco_bound_defaults(func):
     """ As an alternative to setting each and every parameter's default value to `None` for a method.
         Automatically sets each undefined parameter to self's attribute, which allows us to set a parameter `None`.
         Note: Parameters names must match attributes in self. """
     def _wrapper(*args, **kwargs):
         sigInfo = SigInfo(func, *args, **kwargs)
+        obj = sigInfo["self"] if "self" in sigInfo.names else sigInfo["cls"]
 
         for required_parameter in sigInfo.namesRequired:
             if required_parameter not in sigInfo.allArgs:
                 try:
-                    attr_value = getattr(sigInfo["self"], required_parameter)
+                    attr_value = getattr(obj, required_parameter)
                 except AttributeError:
-                    raise AttributeError(f"Missing attribute '{required_parameter}' for instance '{sigInfo['self']}'.")
+                    raise AttributeError(f"Missing attribute '{required_parameter}' for obj '{obj}'.")
                 sigInfo[required_parameter] = attr_value
 
         return sigInfo.call()

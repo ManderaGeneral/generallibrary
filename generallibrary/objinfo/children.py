@@ -1,4 +1,5 @@
 
+from generalfile import Path
 
 class _ObjInfoChildren:
     def __init__(self):
@@ -21,6 +22,7 @@ class _ObjInfoChildren:
             Can generate recursively based on depth.
             Existing attribute ObjInfos will be replaced as the name key is unique.
             Returns a list of all generated ObjInfos' identifiers.
+            Todo: Figure out a proper way to generate children. Replace get_attrs, get_paths_recursive etc.
 
             :param generallibrary.ObjInfo self:
             :param depth: Depth to iterate, -1 is infinite.

@@ -27,14 +27,14 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(5, Foo.x)
         self.assertEqual(3, Foo().x)
 
-    def test_deco_default_self_args(self):
+    def test_deco_bound_defaults(self):
         class A:
             x = 1
 
             def __init__(self):
                 self.y = 2
 
-            @deco_default_self_args
+            @deco_bound_defaults
             def foo(self, x, y, z=3):
                 return x, y, z
 
