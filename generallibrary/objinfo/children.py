@@ -1,5 +1,4 @@
 
-from generalfile import Path
 
 class _ObjInfoChildren:
     def __init__(self):

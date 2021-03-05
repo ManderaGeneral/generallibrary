@@ -344,7 +344,7 @@ def deco_cast_parameters(**pars_to_cast):
                     sigInfo[par_name] = cls(sigInfo[par_name])
 
             return sigInfo.call()
-        return _wrapper
+        return wrapper_transfer(func, _wrapper)
     return _decorator
 
 
@@ -365,7 +365,7 @@ def deco_bound_defaults(func):
                 sigInfo[required_parameter] = attr_value
 
         return sigInfo.call()
-    return _wrapper
+    return wrapper_transfer(func, _wrapper)
 
 
 def deco_extend(outer_cls):
@@ -452,7 +452,6 @@ def wrapper_transfer(base, target):
     for attr in ("__doc__", "__module__", "__name__"):
         setattr(target, attr, getattr(base, attr))
     setattr(target, "__wrapped__", base)
-
     return target
 
 
@@ -470,7 +469,7 @@ def deco_propagate_while(value, prop_func):
                 if new_self is None:
                     break
             return result
-        return _wrapper
+        return wrapper_transfer(func, _wrapper)
     return _deco
 
 
