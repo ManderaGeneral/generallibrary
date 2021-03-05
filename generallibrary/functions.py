@@ -5,6 +5,7 @@ import inspect
 import re
 import functools
 import pandas as pd
+import json
 
 
 def deco_cache():
@@ -86,6 +87,7 @@ class SigInfo:
             return self.positionalArgNames
 
     @property
+    @deco_cache()
     def parameters(self):
         """ Get list of inspect parameter objects. """
         return list(inspect.signature(self.callableObject).parameters.values())
@@ -482,7 +484,6 @@ def initBases(cls):
 
     Also looks for defined `__init_post__` methods, stores them in `instance.__init_post__s` and calls them all after all inits.
     """
-
     cls_init = cls.__init__  # Unbound original __init__ method of class
 
     if getattr(cls, "_is_wrapped_by_initBases", None) is cls:
@@ -523,7 +524,60 @@ def initBases(cls):
 class AutoInitBases(type):
     """ Use as metaclass to automatically call initBases decorator on inheriters. """
     def __init__(cls, *args, **kwargs):
+        """ :param Any cls: """
         type.__init__(initBases(cls), *args, **kwargs)
+
+
+class Recycle:
+    """ Inherit this class to make instantiating two classes with the same args yield the same instance object. """
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(cls, "_instances"):
+            cls._instances = {}
+
+        sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
+        key = json.dumps([str(sigInfo[name]) for name in sorted(sigInfo.allArgs) if name != "self"])
+
+        if key not in cls._instances:
+            cls._instances[key] = object.__new__(cls)
+        return cls._instances[key]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

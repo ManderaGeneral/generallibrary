@@ -1,6 +1,6 @@
 
 from generallibrary.functions import *
-from generallibrary import VerInfo, cache_clear
+from generallibrary import VerInfo, cache_clear, TreeDiagram
 
 import unittest
 
@@ -98,6 +98,9 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual("kwargz", SigInfo(hello).packedKwargsName)
 
         class _Foo:
+            def __init__(self, x, y):
+                pass
+
             @classmethod
             def _bar(cls):
                 pass
@@ -107,6 +110,10 @@ class FunctionsTest(unittest.TestCase):
 
         self.assertEqual(_Foo._bar, SigInfo(_Foo._bar).callableObject)
 
+        self.assertEqual(["x", "y"], SigInfo(_Foo).names)
+        self.assertEqual({"x": 1, "y": 2}, SigInfo(_Foo, 1, 2).allArgs)
+        self.assertEqual({"x": 1, "y": 2}, SigInfo(_Foo, 1, y=2).allArgs)
+        self.assertEqual({"x": 1, "y": 2}, SigInfo(_Foo, x=1, y=2).allArgs)
 
     def test_namesRequired(self):
         self.assertEqual(["x"], SigInfo(lambda x: 5).namesRequired)
@@ -340,6 +347,25 @@ class FunctionsTest(unittest.TestCase):
 
         cache_clear(A)
         self.assertEqual(4, A().foo())
+
+    def test_singleton(self):
+        class A(Recycle):
+            def __init__(self):
+                pass
+        self.assertIs(A(), A())
+
+        class A(Recycle):
+            def __init__(self, x):
+                pass
+        self.assertIs(A(x=1), A(1))
+
+        class A(TreeDiagram, Recycle):
+            def __init__(self, x):
+                pass
+        self.assertIs(A(x=1), A(x=1))
+        self.assertIs(A(x=1), A(x=1))
+
+        self.assertIsNot(A(1), A(2))
 
 
 
