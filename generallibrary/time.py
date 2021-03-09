@@ -1,7 +1,11 @@
 
+from generallibrary.functions import Operators
+
 import time
 from datetime import datetime
 import pytz
+from dateutil import parser
+from dateutil.tz import gettz
 
 
 class Timer:
@@ -37,13 +41,103 @@ def sleep(seconds):
     time.sleep(seconds)
 
 
-def current_datetime(timezone="Europe/Paris"):
+# HERE ** Remove old funcs
+def current_datetime(timezone=None):
     """ Get current aware datetime. """
+    if timezone is None:
+        timezone = "Europe/Paris"
     return datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(pytz.timezone(timezone))
 
 
-def current_datetime_formatted(timezone="Europe/Paris", format_str="%Y-%m-%d %H:%M %Z"):
+def get_datetime_format():
+    return "%Y-%m-%d %H:%M %Z"
+
+
+def current_datetime_formatted(timezone=None, format_str=None):
     """ Get a nicely formatted date and time string. """
+    if timezone is None:
+        timezone = "Europe/Paris"
+    if format_str is None:
+        format_str = get_datetime_format()
     return current_datetime(timezone=timezone).strftime(format_str)
+
+
+@Operators.deco_define_comparisons(lambda time: time.datetime)
+class Time:
+    """ Simplify datetime, truncating seconds and microseonds for now. """
+    timezone = "Europe/Paris"
+    format = "%Y-%m-%d %H:%M %Z"
+
+    def __init__(self, time):
+        if isinstance(time, Time):
+            time = time.datetime
+        else:
+            if isinstance(time, str):
+                time = parser.parse(time, tzinfos={"CET": gettz("CET"), "CEST": gettz("CEST")})
+            if str(time.tzinfo) != self.timezone:
+                time = time.astimezone(self.get_timezone_obj())
+            time = time.replace(second=0, microsecond=0)
+
+        self.datetime = time
+
+    @classmethod
+    def get_timezone_obj(cls):
+        return pytz.timezone(cls.timezone)
+
+    @classmethod
+    def now(cls):
+        return Time(datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(cls.get_timezone_obj()))
+
+    def __sub__(self, other):
+        difference = self.datetime - Time(other).datetime
+        return difference.total_seconds()
+
+    def __str__(self):
+        return self.datetime.strftime(self.format)
+
+    def __repr__(self):
+        return repr(self.datetime)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
