@@ -41,44 +41,26 @@ def sleep(seconds):
     time.sleep(seconds)
 
 
-# HERE ** Remove old funcs
-def current_datetime(timezone=None):
-    """ Get current aware datetime. """
-    if timezone is None:
-        timezone = "Europe/Paris"
-    return datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(pytz.timezone(timezone))
-
-
-def get_datetime_format():
-    return "%Y-%m-%d %H:%M %Z"
-
-
-def current_datetime_formatted(timezone=None, format_str=None):
-    """ Get a nicely formatted date and time string. """
-    if timezone is None:
-        timezone = "Europe/Paris"
-    if format_str is None:
-        format_str = get_datetime_format()
-    return current_datetime(timezone=timezone).strftime(format_str)
-
-
-@Operators.deco_define_comparisons(lambda time: time.datetime)
-class Time:
+@Operators.deco_define_comparisons(lambda date: date.datetime)
+class Date:
     """ Simplify datetime, truncating seconds and microseonds for now. """
     timezone = "Europe/Paris"
     format = "%Y-%m-%d %H:%M %Z"
 
-    def __init__(self, time):
-        if isinstance(time, Time):
-            time = time.datetime
+    def __init__(self, date):
+        if isinstance(date, Date):
+            datetime = date.datetime
         else:
-            if isinstance(time, str):
-                time = parser.parse(time, tzinfos={"CET": gettz("CET"), "CEST": gettz("CEST")})
-            if str(time.tzinfo) != self.timezone:
-                time = time.astimezone(self.get_timezone_obj())
-            time = time.replace(second=0, microsecond=0)
+            if isinstance(date, str):
+                datetime = parser.parse(date, tzinfos={"CET": gettz("CET"), "CEST": gettz("CEST")})
+            else:
+                datetime = date
 
-        self.datetime = time
+            if str(datetime.tzinfo) != self.timezone:
+                datetime = datetime.astimezone(self.get_timezone_obj())
+            datetime = datetime.replace(second=0, microsecond=0)
+
+        self.datetime = datetime
 
     @classmethod
     def get_timezone_obj(cls):
@@ -86,10 +68,10 @@ class Time:
 
     @classmethod
     def now(cls):
-        return Time(datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(cls.get_timezone_obj()))
+        return Date(datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(cls.get_timezone_obj()))
 
     def __sub__(self, other):
-        difference = self.datetime - Time(other).datetime
+        difference = self.datetime - Date(other).datetime
         return difference.total_seconds()
 
     def __str__(self):

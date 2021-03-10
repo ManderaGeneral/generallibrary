@@ -23,15 +23,15 @@ from dateutil import parser
 from dateutil.tz import gettz
 import pytz
 
-# print(Time(datetime.now()))
-# print(Time.now())
-# print(Time("12:21"))
+# print(DateTime(datetime.now()))
+# print(DateTime.now())
+# print(DateTime("12:21"))
 
 print(pytz.timezone("Europe/Paris"))
 print(pytz.timezone("CET"))
 
 
-# time = Time("2021-02-26 15:48 CET")
+# time = DateTime("2021-02-26 15:48 CET")
 
 
 

@@ -2,7 +2,7 @@
 from generallibrary.iterables import SortedList, get_values, is_iterable, depth, iter_first_value, iter_first_value, join_with_str, extend_list_in_dict, update_dict_in_dict, get_free_index, get_rows, exclusive, inclusive, unique_obj_in_list, combine, remove_duplicates, get_index, get, get_items, split_list, pivot_list
 from generallibrary.object import getsize
 from generallibrary.text import comma_and_and, plur_sing
-from generallibrary.time import Timer, sleep, current_datetime_formatted, current_datetime, get_datetime_format, Time
+from generallibrary.time import Timer, sleep, Date
 from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames, hasMethod, HierarchyStorer
 from generallibrary.functions import SigInfo, calculate, defaults, Operators, deco_cache, deco_cast_parameters, deco_extend, EmptyContext, deco_bound_defaults, classproperty, CallTable, deco_propagate_while, wrapper_transfer, initBases, AutoInitBases, Recycle
 from generallibrary.values import floor, ceil, clamp, sign, inrange, rectify, doubleRectify, confineTo, EnvVar, get_launch_options

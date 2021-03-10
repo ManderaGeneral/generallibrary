@@ -2,7 +2,7 @@
 from generallibrary.time import *
 
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 class TimeTest(unittest.TestCase):
@@ -14,10 +14,11 @@ class TimeTest(unittest.TestCase):
         self.assertGreater(Timer(0).seconds(), 1588527842)
 
     def test_current_date_and_time(self):
-        current_datetime_formatted()
+        Date.now()
+        Date.get_timezone_obj()
 
     def test_get_datetime_format(self):
-        self.assertEqual(True, isinstance(get_datetime_format(), str))
+        self.assertEqual(True, isinstance(Date.format, str))
 
     def test_reset(self):
         timer = Timer()
@@ -27,10 +28,9 @@ class TimeTest(unittest.TestCase):
         self.assertEqual(True, timer.seconds() < time)
 
     def test_time(self):
-        self.assertLess(abs(Time(datetime.now()) - Time.now()), 1)
-        self.assertLessEqual(Time(datetime.now()), Time.now())
-        now = Time.now()
-        self.assertEqual(now, Time(str(now)))
-        self.assertEqual(now, Time(f"{now.datetime.hour}:{now.datetime.minute}"))
-
+        self.assertLess(abs(Date(datetime.now()) - Date.now()), 1)
+        self.assertLessEqual(Date(datetime.now()), Date.now())
+        now = Date.now()
+        self.assertEqual(now, Date(str(now)))
+        self.assertEqual(now, Date(f"{now.datetime.hour}:{now.datetime.minute}"))
 
