@@ -356,8 +356,9 @@ class FunctionsTest(unittest.TestCase):
 
         class A(Recycle):
             def __init__(self, x):
-                pass
+                self.y = []
         self.assertIs(A(x=1), A(1))
+        self.assertIs(A(x=1).y, A(1).y)  # HERE ** Prevent init of recycled, possibly by making it a decorator instead
 
         class A(TreeDiagram, Recycle):
             def __init__(self, x):

@@ -273,6 +273,7 @@ class _Diagram_Storage:
 class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoInitBases):
     """ Core methods of a Diagram. """
     def __init__(self, parent=None):
+        print(hasattr(self, "_children"))
         self._children = []  # type: list[_Diagram]
         self._parents = []  # type: list[_Diagram]
 
@@ -308,6 +309,9 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
         # return self
         return parent
 
+    def spawn_children(self): pass
+    def spawn_parents(self): pass
+
     @_deco_depth
     def get_children(self, depth=None, flat=None, filt=None, include_self=None, gen=None, vertical=None):
         """ Down.
@@ -320,6 +324,7 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
             :param bool or None include_self: Defaults to False.
             :param bool or None vertical: Whether to traverse one node at a time, or layer by layer. Defaults to True.
             :rtype: list[TreeDiagram or NetworkDiagram or Any] """
+        self.spawn_children()
         for child in self._children:
             yield child
 
@@ -335,6 +340,7 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
             :param bool or None include_self: Defaults to False.
             :param bool or None vertical: Whether to traverse one node at a time, or layer by layer. Defaults to True.
             :rtype: list[TreeDiagram or NetworkDiagram or Any] """
+        self.spawn_parents()
         for parent in self._parents:
             yield parent
 

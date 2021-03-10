@@ -537,7 +537,10 @@ class Recycle:
         sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
         key = json.dumps([str(sigInfo[name]) for name in sorted(sigInfo.allArgs) if name != "self"])
 
-        if key not in cls._instances:
+        if key in cls._instances:
+            obj = cls._instances[key]
+            setattr(obj, "__init__", AttributeError)
+        else:
             cls._instances[key] = object.__new__(cls)
         return cls._instances[key]
 
