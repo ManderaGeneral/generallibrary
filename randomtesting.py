@@ -18,22 +18,20 @@ from generalfile import Path
 # d = a.add(4)
 
 
-from datetime import datetime
-from dateutil import parser
-from dateutil.tz import gettz
-import pytz
 
-# print(DateTime(datetime.now()))
-# print(DateTime.now())
-# print(DateTime("12:21"))
-
-print(pytz.timezone("Europe/Paris"))
-print(pytz.timezone("CET"))
+class Base:
+    pass
 
 
-# time = DateTime("2021-02-26 15:48 CET")
+@initBases
+class A(Recycle, Base):
+    def __init__(self, x):
+        self.y = []
+
+print(id(A(1).y))
+
+print(id(A(1).y))
 
 
-
-
+print(id(A(2).y))
 

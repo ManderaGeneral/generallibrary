@@ -507,7 +507,8 @@ def initBases(cls):
             init = cls_init if base is cls else base.__init__
 
             if init is not object.__init__ and init not in initialized_bases:
-                cls_SigInfo.call(child_callable=init)
+                if getattr(cls_SigInfo["self"], "_recycle_is_new", True):
+                    cls_SigInfo.call(child_callable=init)
                 initialized_bases.append(init)
 
 
@@ -517,7 +518,8 @@ def initBases(cls):
             for post_init in cls_SigInfo["self"].__init_post__s:
                 cls_SigInfo.call(child_callable=post_init)
 
-    cls.__init__ = _wrapper
+    # cls.__init__ = _wrapper
+    cls.__init__ = wrapper_transfer(cls.__init__, _wrapper)
     return cls
 
 
@@ -530,20 +532,27 @@ class AutoInitBases(type):
 
 class Recycle:
     """ Inherit this class to make instantiating two classes with the same args yield the same instance object. """
+    @staticmethod
+    def _deco_init(func):
+        def _wrapper(self, *args, **kwargs):
+            if self._recycle_is_new:
+                func(self, *args, **kwargs)
+        return wrapper_transfer(func, _wrapper)
+
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, "_instances"):
             cls._instances = {}
 
         sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
         key = json.dumps([str(sigInfo[name]) for name in sorted(sigInfo.allArgs) if name != "self"])
-
-        if key in cls._instances:
-            obj = cls._instances[key]
-            setattr(obj, "__init__", AttributeError)
-        else:
+        if is_new := key not in cls._instances:
             cls._instances[key] = object.__new__(cls)
-        return cls._instances[key]
+        obj = cls._instances[key]
+        obj._recycle_is_new = is_new
+        return obj
 
+    def __init_subclass__(cls, **kwargs):
+        cls.__init__ = cls._deco_init(cls.__init__)
 
 
 

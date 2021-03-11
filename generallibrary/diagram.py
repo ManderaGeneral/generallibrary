@@ -273,7 +273,7 @@ class _Diagram_Storage:
 class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoInitBases):
     """ Core methods of a Diagram. """
     def __init__(self, parent=None):
-        print(hasattr(self, "_children"))
+        # print(hasattr(self, "_children"))
         self._children = []  # type: list[_Diagram]
         self._parents = []  # type: list[_Diagram]
 
