@@ -348,25 +348,28 @@ class FunctionsTest(unittest.TestCase):
         cache_clear(A)
         self.assertEqual(4, A().foo())
 
-    def test_singleton(self):
+    def test_recycle(self):
         class A(Recycle):
+            _recycle_keys = {}
             def __init__(self):
                 pass
         self.assertIs(A(), A())
 
-        class A(Recycle):
+        class B(Recycle):
+            _recycle_keys = {"x": str}
             def __init__(self, x):
                 self.y = []
-        self.assertIs(A(x=1), A(1))
-        self.assertIs(A(x=1).y, A(1).y)  # HERE ** Prevent init of recycled, possibly by making it a decorator instead
+        self.assertIs(B(x=1), B(1))
+        self.assertIs(B(x=1).y, B(1).y)
 
-        class A(TreeDiagram, Recycle):
+        class C(TreeDiagram, Recycle):
+            _recycle_keys = {"x": str}
             def __init__(self, x):
                 pass
-        self.assertIs(A(x=1), A(x=1))
-        self.assertIs(A(x=1), A(x=1))
+        self.assertIs(C(x=1), C(x=1))
+        self.assertIs(C(x=1), C(x=1))
 
-        self.assertIsNot(A(1), A(2))
+        self.assertIsNot(C(1), C(2))
 
 
 

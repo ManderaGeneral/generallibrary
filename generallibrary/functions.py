@@ -532,6 +532,8 @@ class AutoInitBases(type):
 
 class Recycle:
     """ Inherit this class to make instantiating two classes with the same args yield the same instance object. """
+    _recycle_keys = None
+
     @staticmethod
     def _deco_init(func):
         def _wrapper(self, *args, **kwargs):
@@ -540,11 +542,14 @@ class Recycle:
         return wrapper_transfer(func, _wrapper)
 
     def __new__(cls, *args, **kwargs):
+        if not isinstance(cls._recycle_keys, dict):
+            raise AttributeError(f"_recycle_keys has not been set to a dict for {cls}")
         if not hasattr(cls, "_instances"):
             cls._instances = {}
 
         sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
-        key = json.dumps([str(sigInfo[name]) for name in sorted(sigInfo.allArgs) if name != "self"])
+        key = json.dumps([func(sigInfo[name]) for name, func in cls._recycle_keys.items()])
+
         if is_new := key not in cls._instances:
             cls._instances[key] = object.__new__(cls)
         obj = cls._instances[key]
