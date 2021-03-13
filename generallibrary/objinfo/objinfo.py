@@ -26,11 +26,7 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
             if self.is_module():
                 name = name.split(".")[-1]
 
-        self.name = self.data_keys_add(key="name", value=name, use_in_repr=True, unique=True)  # type: str
-
-    def repr_list(self):
-        """ Overried TreeDiagram's repr content to show type. """
-        return super().repr_list() + [self.type()]
+        self.name = name
 
     def identifier(self):
         """ Returns a tuple of parent's obj's id and it's own's obj's id.

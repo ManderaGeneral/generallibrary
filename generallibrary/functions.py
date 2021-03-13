@@ -20,7 +20,8 @@ class classproperty:
         def foo(cls):
             return cls.bar
         https://stackoverflow.com/a/13624858/3936044
-        Todo: Setter for classproperty deco. """
+        Todo: Setter for classproperty deco.
+        Todo: Remove classproperty once 3.8 is no longer supported. """
     def __init__(self, fget):
         self.fget = fget
 

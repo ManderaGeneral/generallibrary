@@ -9,7 +9,7 @@ import unittest
 
 class A(TreeDiagram):
     def __init__(self, foo, parent=None):
-        self.foo = self.data_keys_add("foo", foo, use_in_repr=True)
+        self.foo = foo
 
     def __repr__(self):
         return str(self.foo)
@@ -124,17 +124,17 @@ class TreeDiagramTest(unittest.TestCase):
         b.remove()
         self.assertEqual([a, d], a.get_all())
 
-    def test_copy(self):
+    def test_copy_node(self):
         a = TreeDiagram()
         b = TreeDiagram(parent=a)
         c = TreeDiagram(parent=a)
         d = TreeDiagram(parent=b)
 
         a_copy = a.copy_node().get_all()
-        self.assertEqual(str(a.get_all()), str(a_copy))
+        self.assertEqual(len(a.get_all()), len(a_copy))
 
-        b.remove()
-        self.assertNotEqual(str(a.get_all()), str(a_copy))
+        x = B(3)
+        self.assertEqual(x.foo, x.copy_node().foo)
 
     def test_siblings(self):
         a = TreeDiagram()
@@ -188,26 +188,6 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(a, e.get_spouse(index=1, depth=1))
 
         self.assertEqual([c], e.get_spouses(depth=0))
-
-    def test_data_keys(self):
-        a = A("bar")
-        self.assertEqual("bar", a.foo)
-
-        b = a.copy_node()
-        self.assertEqual("bar", b.foo)
-
-        b.foo = 5
-        self.assertEqual(5, b.foo)
-
-        self.assertEqual(5, b.copy_node().foo)
-
-        b.set_parent(parent=a)
-        self.assertEqual([b], a.get_children(filt=lambda node: node.foo == 5))
-
-        c = A("hello", parent=b)
-        self.assertEqual(c, b.get_child(filt=lambda node: node.foo == "hello"))
-
-        self.assertEqual(["bar"], a.repr_list())
 
     def test_save_with_keys(self):
         a = A("hi")

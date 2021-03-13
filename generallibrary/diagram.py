@@ -238,27 +238,6 @@ class _Diagram_Global:
 
 class _Diagram_Storage:
     """ Core methods to store, save and load attributes. """
-    data_keys = []
-
-    @classmethod
-    def data_keys_add(cls, key, value, use_in_repr=False, unique=False):
-        """ Define what attributes to be unique and to be used in repr. """
-        if cls.data_keys is TreeDiagram.data_keys:
-            cls.data_keys = []
-
-        data_key = DataKey(key=key, use_in_repr=use_in_repr, unique=unique)
-        if data_key not in cls.data_keys:
-            cls.data_keys.append(data_key)
-
-        return value
-
-    def repr_list(self):
-        """ A list of strings used by dunder repr. """
-        return [getattr(self, data_key) for data_key in self.data_keys if data_key.use_in_repr]
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__} {join_with_str(', ', self.repr_list())}>"
-
     def save_node(self):
         return pickle.dumps(self)
 
@@ -277,8 +256,10 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
         self._children = []  # type: list[_Diagram]
         self._parents = []  # type: list[_Diagram]
 
+    # def __init_post__(self, parent=None):
         if parent is not None:
             self.set_parent(parent=parent)
+
 
     @_deco_cast_to_diagram
     def set_parent(self, parent):
@@ -297,13 +278,6 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
             self._parents.remove(parent)
 
         if parent is not None:
-            # Remove possible existing child with matching unique key values
-            for data_key in self.data_keys:
-                if data_key.unique:
-                    filt = lambda node: getattr(node, data_key, object()) == getattr(self, data_key, object())
-                    for sibling in parent.get_children(filt=filt):
-                        sibling.set_parent(None)
-
             self._parents.append(parent)
             parent._children.append(self)
         # return self
