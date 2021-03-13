@@ -5,6 +5,11 @@ from generalfile import Path
 
 
 
+a = TreeDiagram()
+
+print(a.get_parents())
+
+
 # class A(TreeDiagram):
 #     def __init__(self, value, parent=None):
 #         self.value = value
@@ -19,19 +24,19 @@ from generalfile import Path
 
 
 
-class Base:
-    pass
+# class Base:
+#     pass
+#
+#
+# @initBases
+# class A(Recycle, Base):
+#     def __init__(self, x):
+#         self.y = []
+#
+# print(id(A(1).y))
+#
+# print(id(A(1).y))
 
 
-@initBases
-class A(Recycle, Base):
-    def __init__(self, x):
-        self.y = []
-
-print(id(A(1).y))
-
-print(id(A(1).y))
-
-
-print(id(A(2).y))
+# print(id(A(2).y))
 
