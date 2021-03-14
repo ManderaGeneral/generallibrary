@@ -215,6 +215,7 @@ class _Diagram_Global:
     def get_ordered(self, depth=None, flat=None, filt=None, gen=None, spawn=None):
         """ Top to Bottom horizontally.
             Starts with orphan nodes and traverses to return/yield children nodes which have had their respective parents already returned/yielded.
+            Todo: Reversed get_ordered going Bottom to Top horizontally?
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: -1 - Depth of 0 will return/yield single direct layer. Get unlimited with -1.
@@ -296,7 +297,7 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
             :param bool or None vertical: True - Whether to traverse one node at a time, or layer by layer.
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
             :rtype: list[TreeDiagram or NetworkDiagram or Any] """
-        if spawn:  # HERE ** Do tests for this
+        if spawn:
             self.spawn_children()
         for child in self._children:
             yield child

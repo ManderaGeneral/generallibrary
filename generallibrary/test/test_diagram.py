@@ -261,6 +261,54 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(3, c.get_ordered_index())
         self.assertEqual(3, d.get_ordered_index())
 
+    def test_spawn(self):
+        class Spawn(TreeDiagram):
+            def __init__(self, x, parent=None):
+                self.x = x
+
+            def __str__(self):
+                return str(self.x)
+
+            def __repr__(self):
+                return str(self)
+
+            def spawn_parents(self):
+                if not self._parents and self.x < 5:
+                    self.set_parent(self.x + 1)
+
+            def spawn_children(self):
+                if not self._children and self.x > 0:
+                    Spawn(self.x - 1, parent=self)
+
+        self.assertEqual(None, Spawn(2).get_parent(spawn=False))
+        self.assertEqual(3, Spawn(2).get_parent().x)
+
+        self.assertEqual(None, Spawn(2).get_child(spawn=False))
+        self.assertEqual(1, Spawn(2).get_child().x)
+
+        self.assertEqual(None, Spawn(2).get_sibling(spawn=False))
+        self.assertEqual(None, Spawn(2).get_sibling())
+
+        spawn = Spawn(2)
+        self.assertEqual([], [x.x for x in spawn.get_parents(spawn=False)])
+        self.assertEqual([3], [x.x for x in spawn.get_parents()])
+        self.assertEqual([3], [x.x for x in spawn.get_parents()])
+
+        self.assertEqual([], [x.x for x in spawn.get_children(spawn=False)])
+        self.assertEqual([1], [x.x for x in spawn.get_children()])
+        self.assertEqual([1], [x.x for x in spawn.get_children()])
+
+        self.assertEqual([], [x.x for x in Spawn(2).get_nodes(spawn=False)])
+        self.assertEqual([3, 1], [x.x for x in Spawn(2).get_nodes()])
+
+        self.assertEqual([5, 4, 3, 2, 1, 0], [x.x for x in Spawn(2).get_ordered()])
+
+
+
+
+
+
+
 
 
 
