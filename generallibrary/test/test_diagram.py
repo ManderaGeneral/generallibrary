@@ -45,7 +45,7 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(None, a.get_child(2))
         self.assertEqual(c, a.get_child(-1))
 
-        b.remove()
+        b.set_parent(None)
         self.assertEqual([c], a.get_children())
 
         del a.get_children()[0]
@@ -80,7 +80,7 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(b, d.get_parent(-2))
         self.assertEqual([b, a], d.get_parents(depth=-1))
 
-        b.remove()
+        b.set_parent(None)
         self.assertEqual(b, d.get_parent())
         self.assertEqual(None, d.get_parent().get_parent())
         self.assertEqual([b], d.get_parents(depth=-1))
@@ -93,8 +93,8 @@ class TreeDiagramTest(unittest.TestCase):
 
     def test_get_nodes(self):
         a = A(1)
-        b = a.add(2)
-        c = b.add(3)
+        b = a.add_node(2)
+        c = b.add_node(3)
 
         self.assertEqual([a, c], b.get_nodes())
         self.assertEqual([b], a.get_nodes())
@@ -121,7 +121,7 @@ class TreeDiagramTest(unittest.TestCase):
         d = A(4, parent=a)
         self.assertEqual([a, b, c, d], a.get_all())
 
-        b.remove()
+        b.set_parent(None)
         self.assertEqual([a, d], a.get_all())
 
     def test_copy_node(self):
@@ -173,9 +173,9 @@ class TreeDiagramTest(unittest.TestCase):
 
     def test_get_spouses(self):
         a = B(1)
-        b = a.add(2)
+        b = a.add_node(2)
         c = b.set_parent(3)
-        d = c.add(4)
+        d = c.add_node(4)
         e = d.set_parent(5)
 
         self.assertEqual([a, c], b.get_parents())
@@ -218,13 +218,13 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual("| foo   |\n|:------|\n| bar   |", str(Markdown().add_table_lines({"foo": "bar"})))
 
         markdown = Markdown()
-        markdown.add("foo", "bar")
-        markdown.add(Markdown("hello", "there").wrap_with_tags("```"))
-        markdown.add(Markdown("hi", "yo").wrap_with_tags("pre"))
+        markdown.add_node("foo", "bar")
+        markdown.add_node(Markdown("hello", "there").wrap_with_tags("```"))
+        markdown.add_node(Markdown("hi", "yo").wrap_with_tags("pre"))
         self.assertEqual(['foo', 'bar', '', '```', 'hello', 'there', '```', '', '<pre>', 'hi', 'yo', '</pre>'], markdown.get_all_lines())
 
         markdown1 = Markdown("line1", header="header1")
-        markdown2 = markdown1.add(Markdown("line2", header="header2"))
+        markdown2 = markdown1.add_node(Markdown("line2", header="header2"))
         self.assertEqual(['# header1', 'line1'], markdown1.get_section_lines())
         self.assertEqual(['## header2', 'line2'], markdown1.get_child().get_section_lines())
         self.assertEqual(['# header1', 'line1', '', '## header2', 'line2'], markdown1.get_all_lines())
@@ -246,9 +246,9 @@ class TreeDiagramTest(unittest.TestCase):
 
     def test_get_ordered(self):
         a = A(1)
-        b = a.add(2)
-        c = b.add(3)
-        d = b.add(4)
+        b = a.add_node(2)
+        c = b.add_node(3)
+        d = b.add_node(4)
         e = A(0)
         a.set_parent(e)
 
@@ -303,7 +303,17 @@ class TreeDiagramTest(unittest.TestCase):
 
         self.assertEqual([5, 4, 3, 2, 1, 0], [x.x for x in Spawn(2).get_ordered()])
 
+    def test_remove_node(self):
+        a = A(1)
+        b = a.add_node(2)
+        c = b.add_node(3)
 
+        self.assertEqual([b], a.get_children())
+        self.assertEqual([c], b.get_children())
+
+        a.remove_node()
+        self.assertEqual([], a.get_children())
+        self.assertEqual([], b.get_children())
 
 
 

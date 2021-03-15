@@ -54,7 +54,7 @@ class _ObjInfoChildren:
                 if objInfo.identifier() not in _all_objInfo:
                     objInfo.get_attrs(depth=depth - 1, _all_objInfo=_all_objInfo, _top_objInfo=_top_objInfo)
             else:
-                objInfo.remove()
+                objInfo.remove_node()
 
         return _all_objInfo
 

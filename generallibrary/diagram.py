@@ -126,7 +126,7 @@ class _Diagram_QOL:
             container.insert(index, self)
 
     @_deco_cast_to_diagram
-    def add(self, child):
+    def add_node(self, child):
         """ Add a node as child, either with one arg being of own type or with args to create a new one.
             Returns child.
 
@@ -135,11 +135,13 @@ class _Diagram_QOL:
         child.set_parent(parent=self)
         return child
 
-    def remove(self):
-        """ Remove this node, which is simply setting it's parent to None.
+    def remove_node(self):
+        """ Remove this node recursively. Use set_parent(None) instead if children should be unaffected.
 
             :param TreeDiagram or NetworkDiagram or Any self: """
         self.set_parent(parent=None)
+        for child in self.get_children(gen=True, spawn=False):
+            child.remove_node()
 
     def get_child(self, index=None, depth=None, filt=None, spawn=None):
         """ Singular QOL alternative for get_children().
@@ -258,11 +260,10 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
         if parent is not None:
             self.set_parent(parent=parent)
 
-
     @_deco_cast_to_diagram
     def set_parent(self, parent):
         """ Set a new parent for this Node.
-            Returns self.
+            Returns parent.
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param TreeDiagram or NetworkDiagram or Any parent: """
@@ -414,7 +415,7 @@ class TreeDiagram(_Diagram):
             lines.append(f"{''.join(lanes)}{node_str}")
 
         if relative:
-            top.remove()
+            top.remove_node()
 
         view = "\n".join(lines)
         if print_out:
