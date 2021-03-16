@@ -249,7 +249,7 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual("a", get_index({"a": 2, "b": 4}, 2))
         self.assertEqual("b", get_index({"a": 2, "b": 4}, 4))
         self.assertEqual(None, get_index({"a": 2, "b": 4}, 3, None))
-        self.assertRaises(StopIteration, lambda: get_index({"a": 2, "b": 4}, 3))
+        self.assertRaises(ValueError, lambda: get_index({"a": 2, "b": 4}, 3))
 
     def test_pivot_list(self):
         l = [1, 2, 3]
@@ -268,6 +268,28 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual(([1], [2, 3]), split_list(lambda x: x < 2, *l))
         self.assertEqual(([1, 3], [2]), split_list(lambda x: x != 2, *l))
 
+    def test_remove_dict(self):
+        a = {"a": "b", 5: "c"}
+        self.assertEqual(True, remove(a, "b"))
+        self.assertEqual({5: "c"}, a)
+        self.assertEqual(False, remove(a, "b"))
+        self.assertEqual({5: "c"}, a)
+
+        self.assertEqual(True, remove(a, "c"))
+        self.assertEqual({}, a)
+        self.assertEqual(False, remove(a, "c"))
+
+    def test_remove_list(self):
+        a = ["a", "b", 5]
+        self.assertEqual(True, remove(a, "b"))
+        self.assertEqual(["a", 5], a)
+        self.assertEqual(False, remove(a, "b"))
+
+    def test_remove_set(self):
+        a = {"a", "b", 5}
+        self.assertEqual(True, remove(a, "b"))
+        self.assertEqual({"a", 5}, a)
+        self.assertEqual(False, remove(a, "b"))
 
 
 

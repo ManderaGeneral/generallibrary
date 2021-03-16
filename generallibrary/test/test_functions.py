@@ -353,7 +353,11 @@ class FunctionsTest(unittest.TestCase):
             _recycle_keys = {}
             def __init__(self):
                 pass
-        self.assertIs(A(), A())
+        a = A()
+        self.assertIs(a, A())
+
+        a.recycle_clear()
+        self.assertIsNot(a, A())
 
         class B(Recycle):
             _recycle_keys = {"x": str}

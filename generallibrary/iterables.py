@@ -178,14 +178,35 @@ def get(iterable, index=None, default=None):
 
 
 def get_index(iterable, match, default=...):
-    """ Get the first match' index. """
+    """ Get the first match' index.
+        If not found it returns default value if specified, otherwise raises ValueError. """
     try:
         return next(key for key, value in get_items(iterable) if value == match)
     except StopIteration as e:
         if default is Ellipsis:
-            raise e
+            raise ValueError(f"{match} was not found in {iterable}")
         else:
             return default
+
+
+def remove(iterable, match):
+    """ Remove member of an iterable, works for dict, list and set.
+        Returns True if removed, False if not found. """
+    if isinstance(iterable, set):
+        try:
+            iterable.remove(match)
+        except KeyError:
+            return False
+        else:
+            return True
+    else:
+        index = get_index(iterable, match, sentinel := object())
+        if index is sentinel:
+            return False
+        else:
+            del iterable[index]
+            return True
+
 
 
 def _get_rows_helper(iterableObj, key=None):
@@ -254,7 +275,7 @@ def unique_obj_in_list(list_, obj, active):
             list_.append(obj)
     else:
         if obj in list_:
-            list_.remove(obj)
+            list_.remove(obj, )
 
 
 def remove_duplicates(list_):
@@ -292,8 +313,6 @@ def pivot_list(list_, index):
     """ Return a new altered list where it's first value is the given index for the original list. """
     index %= len(list_)
     return list_[index:] + list_[:index]
-
-
 
 
 

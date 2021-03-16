@@ -140,6 +140,9 @@ class _Diagram_QOL:
 
             :param TreeDiagram or NetworkDiagram or Any self: """
         self.set_parent(parent=None)
+        if hasattr(self, "recycle_clear"):
+            self.recycle_clear()
+
         for child in self.get_children(gen=True, spawn=False):
             child.remove_node()
 
@@ -357,7 +360,7 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
             node_list = method2.__func__(node1, gen=False, spawn=spawn)
 
             ordered_node_list = pivot_list(list_=node_list, index=node_list.index(self))
-            ordered_node_list.remove(self)
+            ordered_node_list.remove(self, )
 
             for node2 in ordered_node_list:
                 yield node2

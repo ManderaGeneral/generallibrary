@@ -4,10 +4,9 @@ from generalfile import Path
 
 
 
+# a = TreeDiagram()
 
-a = TreeDiagram()
-
-print(a.get_parents())
+# print(a.get_parents())
 
 
 # class A(TreeDiagram):

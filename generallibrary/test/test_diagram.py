@@ -315,6 +315,33 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual([], a.get_children())
         self.assertEqual([], b.get_children())
 
+    def test_remove_node_recycle(self):
+        from generallibrary.functions import Recycle
+
+        class C(TreeDiagram, Recycle):
+            _recycle_keys = {"x": str}
+
+            def __init__(self, x, parent=None):
+                self.x = x
+
+        a = C(1)
+        self.assertIs(a, C(1))
+
+        b = a.add_node(2)
+        self.assertIs(b, C(2))
+
+        b.remove_node()
+        self.assertIsNot(b, C(2))
+
+        b = a.add_node(2)
+        self.assertIs(a, b.get_parent())
+
+        c = b.add_node(3)
+        self.assertIs(c, C(3))
+        a.remove_node()
+        self.assertIsNot(c, C(3))
+
+
 
 
 

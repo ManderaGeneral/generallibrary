@@ -1,5 +1,7 @@
 
 from generallibrary.types import typeChecker
+from generallibrary.iterables import remove
+
 
 import inspect
 import re
@@ -453,7 +455,8 @@ class CallTable:
 def wrapper_transfer(base, target):
     """ Update a wrappers' metadata with base function's to properly propagate info. """
     for attr in ("__doc__", "__module__", "__name__"):
-        setattr(target, attr, getattr(base, attr))
+        if hasattr(base, attr):
+            setattr(target, attr, getattr(base, attr))
     setattr(target, "__wrapped__", base)
     return target
 
@@ -534,33 +537,39 @@ class AutoInitBases(type):
 class Recycle:
     """ Inherit this class to make instantiating two classes with the same args yield the same instance object. """
     _recycle_keys = None
+    _recycle_is_new = None
 
     @staticmethod
-    def _deco_init(func):
+    def _recycle_deco_init(func):
         def _wrapper(self, *args, **kwargs):
             if self._recycle_is_new:
                 func(self, *args, **kwargs)
         return wrapper_transfer(func, _wrapper)
 
+    @classmethod
+    def _recycle_key(cls, args, kwargs):
+        sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
+        return json.dumps([func(sigInfo[name]) for name, func in cls._recycle_keys.items()])
+
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls._recycle_keys, dict):
-            raise AttributeError(f"_recycle_keys has not been set to a dict for {cls}")
+            from generallibrary.code import print_link_to_obj
+            print_link_to_obj(cls)
+            raise AttributeError(f"Attribute _recycle_keys has not been set to a dict for {cls}. Key is attr name, value is callable which is given attribute as arg. Set to empty dict for singleton. ")
         if not hasattr(cls, "_instances"):
             cls._instances = {}
 
-        sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
-        key = json.dumps([func(sigInfo[name]) for name, func in cls._recycle_keys.items()])
-
+        key = cls._recycle_key(args, kwargs)
         if is_new := key not in cls._instances:
             cls._instances[key] = object.__new__(cls)
-        obj = cls._instances[key]
-        obj._recycle_is_new = is_new
-        return obj
+        cls._instances[key]._recycle_is_new = is_new
+        return cls._instances[key]
 
     def __init_subclass__(cls, **kwargs):
-        cls.__init__ = cls._deco_init(cls.__init__)
+        cls.__init__ = cls._recycle_deco_init(cls.__init__)
 
-
+    def recycle_clear(self):
+        return remove(self._instances, self)
 
 
 
