@@ -538,6 +538,7 @@ class Recycle:
     """ Inherit this class to make instantiating two classes with the same args yield the same instance object. """
     _recycle_keys = None
     _recycle_is_new = None
+    _recycle_instances = None
 
     @staticmethod
     def _recycle_deco_init(func):
@@ -556,21 +557,26 @@ class Recycle:
             from generallibrary.code import print_link_to_obj
             print_link_to_obj(cls)
             raise AttributeError(f"Attribute _recycle_keys has not been set to a dict for {cls}. Key is attr name, value is callable which is given attribute as arg. Set to empty dict for singleton. ")
-        if not hasattr(cls, "_instances"):
-            cls._instances = {}
+        if getattr(cls, "_recycle_instances", None) is None:
+            cls._recycle_instances = {}
 
         key = cls._recycle_key(args, kwargs)
-        if is_new := key not in cls._instances:
-            cls._instances[key] = object.__new__(cls)
-        cls._instances[key]._recycle_is_new = is_new
-        return cls._instances[key]
+        if is_new := key not in cls._recycle_instances:
+            cls._recycle_instances[key] = object.__new__(cls)
+        cls._recycle_instances[key]._recycle_is_new = is_new
+        return cls._recycle_instances[key]
 
     def __init_subclass__(cls, **kwargs):
         cls.__init__ = cls._recycle_deco_init(cls.__init__)
 
     def recycle_clear(self):
-        return remove(self._instances, self)
+        """ Remove this stored instance from recyclables. """
+        return remove(self._recycle_instances, self)
 
+    def recycle_clear_all(self):
+        """ Clear all recyclables. """
+        if isinstance(self._recycle_instances, dict):
+            self._recycle_instances.clear()
 
 
 
