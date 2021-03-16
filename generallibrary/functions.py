@@ -573,10 +573,11 @@ class Recycle:
         """ Remove this stored instance from recyclables. """
         return remove(self._recycle_instances, self)
 
-    def recycle_clear_all(self):
+    @classmethod
+    def recycle_clear_all(cls):
         """ Clear all recyclables. """
-        if isinstance(self._recycle_instances, dict):
-            self._recycle_instances.clear()
+        if isinstance(cls._recycle_instances, dict):
+            cls._recycle_instances.clear()
 
 
 

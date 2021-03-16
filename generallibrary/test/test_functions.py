@@ -375,6 +375,10 @@ class FunctionsTest(unittest.TestCase):
 
         self.assertIsNot(C(1), C(2))
 
+        self.assertEqual(2, len(C._recycle_instances))
+        C.recycle_clear_all()
+        self.assertEqual(0, len(C._recycle_instances))
+
 
 
 
