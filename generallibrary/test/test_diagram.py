@@ -33,6 +33,10 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual([b], a.get_children())
         self.assertEqual(b, a.get_child())
 
+        self.assertEqual(a, b.get_parent())
+        self.assertEqual(b, b.get_parent(include_self=True))
+        self.assertEqual(a, b.get_parent(include_self=True, filt=lambda x: x is not b))
+
         c = TreeDiagram(parent=a)
         self.assertEqual([b, c], a.get_children())
         self.assertEqual(b, a.get_child())
@@ -58,6 +62,7 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(1, e.get_index())
         self.assertEqual(2, f.get_index())
         self.assertEqual(0, a.get_index())
+
 
     def test_parent(self):
         a = TreeDiagram()

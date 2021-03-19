@@ -518,7 +518,7 @@ def initBases(cls):
 
                 if getattr(base, "__init_post__", None) and base.__init_post__ not in cls_SigInfo["self"].__init_post__s:
                     cls_SigInfo["self"].__init_post__s.append(base.__init_post__)
-        if cls is cls_SigInfo["self"].__class__ and getattr(cls_SigInfo["self"], "__init_post__s", None) is not None:
+        if cls is cls_SigInfo["self"].__class__ and getattr(cls_SigInfo["self"], "__init_post__s", None) is not None and getattr(cls_SigInfo["self"], "_recycle_is_new", True):
             for post_init in cls_SigInfo["self"].__init_post__s:
                 cls_SigInfo.call(child_callable=post_init)
 
