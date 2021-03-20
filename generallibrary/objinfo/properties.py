@@ -51,7 +51,7 @@ class _ObjInfoProperties:
         obj = self.origin
         file = inspect.getfile(obj)
         if relative:
-            top_module = self.get_parent(-1)
+            top_module = self.get_parent(depth=-1, index=-1)
             if top_module is None:
                 top_module = self
             split_file = file.split(top_module.name)

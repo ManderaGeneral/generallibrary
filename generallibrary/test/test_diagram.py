@@ -24,6 +24,14 @@ class B(NetworkDiagram):
 
 
 class TreeDiagramTest(unittest.TestCase):
+    def test_singular(self):
+        a = A(1)
+        b = a.add_node(2)
+        c = b.add_node(3)
+
+        self.assertEqual(b, c.get_parent(depth=1))
+        self.assertEqual(a, c.get_parent(depth=1, index=1))
+
     def test_children(self):
         a = TreeDiagram()
         self.assertEqual([], a.get_children())
@@ -36,6 +44,7 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(a, b.get_parent())
         self.assertEqual(b, b.get_parent(include_self=True))
         self.assertEqual(a, b.get_parent(include_self=True, filt=lambda x: x is not b))
+        self.assertEqual(None, b.get_parent(filt=lambda path: False))
 
         c = TreeDiagram(parent=a)
         self.assertEqual([b, c], a.get_children())
@@ -80,9 +89,9 @@ class TreeDiagramTest(unittest.TestCase):
 
         d = TreeDiagram(parent=b)
         self.assertEqual(b, d.get_parent())
-        self.assertEqual(a, d.get_parent(1))
-        self.assertEqual(a, d.get_parent(-1))
-        self.assertEqual(b, d.get_parent(-2))
+        self.assertEqual(a, d.get_parent(1, 1))
+        self.assertEqual(a, d.get_parent(-1, -1))
+        self.assertEqual(b, d.get_parent(-2, -2))
         self.assertEqual([b, a], d.get_parents(depth=-1))
 
         b.set_parent(None)

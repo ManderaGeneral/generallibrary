@@ -234,7 +234,7 @@ class ObjectTest(unittest.TestCase):
 
     def test_ObjInfo_parents(self):
         objInfo = ObjInfo(ObjInfo)
-        self.assertEqual("generallibrary", objInfo.get_parent(-1).obj.__name__)
+        self.assertEqual("generallibrary", objInfo.get_parent(depth=-1, index=-1).obj.__name__)
 
     def test_ObjInfo_protected(self):
         objInfo = ObjInfo(_Foo)

@@ -379,13 +379,6 @@ class TreeDiagram(_Diagram):
     def __init__(self, parent=None):
         pass
 
-    def get_parent(self, index=None, depth=None, filt=None, include_self=None, spawn=None):
-        """ Override to combine index and depth as they are very similiar for TreeDiagram's get_parent.
-
-            :rtype: TreeDiagram or NetworkDiagram or Any """
-        combined = index or depth
-        return _Diagram.get_parent(self=self, index=combined, depth=combined, filt=filt, include_self=include_self, spawn=spawn)
-
     def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", print_out=True):
         """ Get a printable string showing a clear view of this TreeDiagram structure.
             Hides additional lines of a node's repr. """
