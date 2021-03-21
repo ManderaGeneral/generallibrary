@@ -33,7 +33,7 @@ def _traverse(*nodes, func, depth, flat, filt, include_self, order_func, vertica
 
     if depth is not StopIteration:
         next_depth = StopIteration if depth == 0 else depth - 1
-        next_nodes = [node2 for node in nodes for node2 in func(node, spawn=spawn) if not filt or filt(node2)]
+        next_nodes = [node2 for node in nodes for node2 in func(node, spawn=spawn)]
 
         def next_traverse(*nodes2):
             return _traverse(*nodes2, func=func, depth=next_depth, flat=flat, filt=filt, include_self=True, order_func=order_func, vertical=vertical, spawn=spawn, _all_nodes=_all_nodes)
@@ -379,7 +379,7 @@ class TreeDiagram(_Diagram):
     def __init__(self, parent=None):
         pass
 
-    def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", print_out=True):
+    def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", spawn=False, print_out=True):
         """ Get a printable string showing a clear view of this TreeDiagram structure.
             Hides additional lines of a node's repr. """
         if relative:
@@ -389,9 +389,9 @@ class TreeDiagram(_Diagram):
             top = self
 
         lines = []
-        for node in [top] + top.get_children(depth=-1):
+        for node in [top] + top.get_children(depth=-1, spawn=spawn):
             lanes = []
-            all_parents = node.get_parents(-1)
+            all_parents = node.get_parents(depth=-1, spawn=spawn)
 
             if all_parents:
                 del all_parents[-1]
@@ -400,12 +400,12 @@ class TreeDiagram(_Diagram):
             for i, parent in enumerate(all_parents):  # type: int, TreeDiagram
                 sibling_index = parent.get_index()
                 if i == 0:
-                    if len(parent.get_siblings()) == sibling_index:
+                    if len(parent.get_siblings(spawn=spawn)) == sibling_index:
                         lane = f"└{'─' * indent}{spacer}"
                     else:
                         lane = f"├{'─' * indent}{spacer}"
                 else:
-                    if len(parent.get_siblings()) == sibling_index:
+                    if len(parent.get_siblings(spawn=spawn)) == sibling_index:
                         lane = f"{spacer}{spacer * indent}{spacer}"
                     else:
                         lane = f"│{spacer * indent}{spacer}"

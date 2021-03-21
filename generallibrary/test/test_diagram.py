@@ -355,7 +355,12 @@ class TreeDiagramTest(unittest.TestCase):
         a.remove_node()
         self.assertIsNot(c, C(3))
 
+    def test_filt(self):
+        a = A(1)
+        b = a.add_node(2)
+        c = b.add_node(3)
 
+        self.assertEqual(a, c.get_parent(depth=-1, filt=lambda node: node == a))
 
 
 
