@@ -26,11 +26,15 @@ def _pattern(pattern):
 
 
 def replace(string, **translation):
+    """ Replace strings in a string with other strings!
+        Uses regex and * is treated as wildcard. """
     for a, b in translation.items():
         string = re.sub(_pattern(a), str(b), string)
     return string
 
 
 def match(string, *patterns):
+    """ Search string for matches, True if any match is found.
+        Uses regex and * is treated as wildcard. """
     return any(re.search(replace(_pattern(pattern), **{r"\*": ".+"}), string, re.IGNORECASE) for pattern in patterns)
 
