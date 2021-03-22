@@ -31,6 +31,7 @@ class CodeTest(unittest.TestCase):
         self.assertEqual("hi there hi", replace("foo bar foo", foo="hi", bar="there"))
         self.assertEqual("hello", replace("foo bar foo", **{"foo bar foo": "hello"}))
         self.assertEqual("he11o", replace("hello", l=1))
+        self.assertEqual("&", replace("hello", hello="&"))
         self.assertEqual("foo/bar", replace("foobar", ob="o/b"))
         self.assertEqual("foo/bar", replace("foo\\bar", **{"\\": "/"}))
         self.assertEqual("foo\\bar", replace("foo/bar", **{"/": "\\"}))

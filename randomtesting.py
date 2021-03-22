@@ -4,4 +4,5 @@ from generalfile import Path
 
 
 
+print(replace("foo", foo="&#47;"))
 

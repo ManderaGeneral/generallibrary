@@ -31,7 +31,7 @@ def replace(string, reverse=False, **translation):
     for a, b in translation.items():
         if reverse:
             a, b = b, a
-        string = re.sub(_pattern(a), _pattern(b), string)
+        string = re.sub(_pattern(a), str(b).replace("\\", "\\\\"), string)
     return string
 
 
