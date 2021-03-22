@@ -25,11 +25,13 @@ def _pattern(pattern):
     return re.escape(str(pattern))
 
 
-def replace(string, **translation):
+def replace(string, reverse=False, **translation):
     """ Replace strings in a string with other strings!
         Uses regex and * is treated as wildcard. """
     for a, b in translation.items():
-        string = re.sub(_pattern(a), str(b), string)
+        if reverse:
+            a, b = b, a
+        string = re.sub(_pattern(a), _pattern(b), string)
     return string
 
 

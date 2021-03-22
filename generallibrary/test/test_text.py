@@ -33,8 +33,22 @@ class CodeTest(unittest.TestCase):
         self.assertEqual("he11o", replace("hello", l=1))
         self.assertEqual("foo/bar", replace("foobar", ob="o/b"))
         self.assertEqual("foo/bar", replace("foo\\bar", **{"\\": "/"}))
-        self.assertEqual("foo\\bar", replace("foo/bar", **{"/": "\\\\"}))
+        self.assertEqual("foo\\bar", replace("foo/bar", **{"/": "\\"}))
         self.assertEqual("123", replace("abc", **{"a": 1, "b": 2, "c": 3}))
+
+    def test_replace_reversed(self):
+        tests = {
+            "foo bar": {"foo": "hi", "bar": "there"},
+            "abc": {"a": 1, "b": 2, "c": 3},
+            "foo/bar": {"/": "\\"},
+            "foo\\bar": {"\\": "/"},
+        }
+
+        for string, translation in tests.items():
+            replaced = replace(string, **translation)
+            self.assertNotEqual(string, replaced)
+            self.assertEqual(string, replace(replaced, reverse=True, **translation))
+
 
     def test_match(self):
         self.assertEqual(True, match("foo bar", "foo"))
