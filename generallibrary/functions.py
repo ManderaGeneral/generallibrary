@@ -365,8 +365,8 @@ def deco_bound_defaults(func):
             if required_parameter not in sigInfo.allArgs:
                 try:
                     attr_value = getattr(obj, required_parameter)
-                except AttributeError:
-                    raise AttributeError(f"Missing attribute '{required_parameter}' for obj '{obj}'.")
+                except AttributeError as e:
+                    raise AttributeError(f"Missing attribute '{required_parameter}' for obj '{obj}'.") from e
                 sigInfo[required_parameter] = attr_value
 
         return sigInfo.call()

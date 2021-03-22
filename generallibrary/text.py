@@ -1,4 +1,6 @@
 
+import re
+
 
 def comma_and_and(*values, period=True):
     """ Return a properly formatted string, eg: a, b and c. """
@@ -17,3 +19,18 @@ def plur_sing(count, word, suffix=None):
     if suffix is None:
         suffix = "s"
     return f"{count} {word}{suffix * (count != 1)}"
+
+
+def _pattern(pattern):
+    return re.escape(str(pattern))
+
+
+def replace(string, **translation):
+    for a, b in translation.items():
+        string = re.sub(_pattern(a), str(b), string)
+    return string
+
+
+def match(string, *patterns):
+    return any(re.search(replace(_pattern(pattern), **{r"\*": ".+"}), string, re.IGNORECASE) for pattern in patterns)
+

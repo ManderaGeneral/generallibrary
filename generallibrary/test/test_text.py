@@ -27,6 +27,20 @@ class CodeTest(unittest.TestCase):
         self.assertEqual("1.5 kisses", plur_sing(1.5, "kiss", "es"))
         self.assertEqual("2 kisses", plur_sing(2, "kiss", "es"))
 
+    def test_replace(self):
+        self.assertEqual("hi there hi", replace("foo bar foo", foo="hi", bar="there"))
+        self.assertEqual("hello", replace("foo bar foo", **{"foo bar foo": "hello"}))
+        self.assertEqual("he11o", replace("hello", l=1))
+        self.assertEqual("foo/bar", replace("foobar", ob="o/b"))
+        self.assertEqual("foo/bar", replace("foo\\bar", **{"\\": "/"}))
+        self.assertEqual("foo\\bar", replace("foo/bar", **{"/": "\\\\"}))
+        self.assertEqual("123", replace("abc", **{"a": 1, "b": 2, "c": 3}))
 
+    def test_match(self):
+        self.assertEqual(True, match("foo bar", "foo"))
+        self.assertEqual(True, match("foo bar", "bar"))
+        self.assertEqual(True, match("foo bar", " "))
+        self.assertEqual(True, match("foo bar", ""))
+        self.assertEqual(True, match("foo bar", "f*r"))
 
-
+        self.assertEqual(False, match("foo bar", "!"))
