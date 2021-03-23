@@ -2,7 +2,13 @@
 from generallibrary import *
 from generalfile import Path
 
+from pprint import pprint
 
 
-print(replace("foo", foo="&#47;"))
+def foo():
+    """ bar
+        hello """
+
+print(ObjInfo(foo).doc(only_first_line=False))
+print(ObjInfo(foo).doc(only_first_line=False))
 

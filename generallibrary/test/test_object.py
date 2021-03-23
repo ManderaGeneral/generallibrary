@@ -238,8 +238,7 @@ class ObjectTest(unittest.TestCase):
 
     def test_ObjInfo_protected(self):
         objInfo = ObjInfo(_Foo)
-        objInfo.filters = []
-        objInfo.get_attrs()
+        objInfo.children_internal_state = None
 
         self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_self").protected())
         self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "self").protected())
@@ -254,11 +253,6 @@ class ObjectTest(unittest.TestCase):
 
         self.assertEqual(False, ObjInfo(a).protected())
         self.assertEqual(False, ObjInfo(a()).protected())
-
-        objInfo_self = objInfo.get_child(filt=lambda node: node.name == "self")
-        self.assertEqual(True, objInfo.filters_check(objInfo_self))
-        objInfo.filters.append(lambda objInfo: objInfo.name != "self")
-        self.assertEqual(False, objInfo.filters_check(objInfo_self))
 
     def test_check_if_parent_eligible(self):
         self.assertEqual(True, ObjInfo.check_if_parent_eligible(sys.modules["test_object"], _Foo, "_Foo"))
@@ -304,7 +298,6 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(False, ObjInfo(_Bar.attr).from_instance())
 
         objInfo = ObjInfo(_Bar())
-        objInfo.get_attrs()
         self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "instance_var").from_instance())
         self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "self").from_base())
 

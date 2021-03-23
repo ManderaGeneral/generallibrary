@@ -1,62 +1,39 @@
 
 
 class _ObjInfoChildren:
+    """ Set internal state to None to ignore it. """
+    children_internal_state = False
+    children_builtin_state = False
+
+    all_identifiers = []
+
     def __init__(self):
-        self.filters = [self._default_filter]  # Todo: Remove ObjInfo.filters and use TreeDiagram's filt argument instead.
+        self.spawned_children = False
 
-    @staticmethod
-    def _default_filter(objInfo):
-        return not objInfo.internal() and not objInfo.from_builtin()
+    def spawn_children(self):
+        """ :param generallibrary.ObjInfo self:"""
+        if not self.spawned_children:
+            self.spawned_children = True
 
-    def filters_check(self, objInfo):
-        """ Check all filter funcs in self.filters.
+            for name in dir(self.obj):
+                if name in ("__dict__", ) or not hasattr(self.obj, name):
+                    continue
+                attr = getattr(self.obj, name)
+                if not self.check_if_parent_eligible(parent_obj=self.obj, child_obj=attr, name=name):
+                    continue
 
-            :param generallibrary.ObjInfo self:
-            :param objInfo: """
-        return all([func(objInfo) for func in self.filters])
+                objInfo = self.ObjInfo(obj=attr, name=name)
 
-    def get_attrs(self, depth=1, _all_objInfo=None, _top_objInfo=None):
-        """ Generate attributes for this ObjInfo's obj.
-            Uses filters of top objInfo (First given).
-            Can generate recursively based on depth.
-            Existing attribute ObjInfos will be replaced as the name key is unique.
-            Returns a list of all generated ObjInfos' identifiers.
-            Todo: Figure out a proper way to generate children. Replace get_attrs, get_paths_recursive etc.
+                if self.children_internal_state is not None and self.children_internal_state != objInfo.internal():
+                    continue
+                if self.children_builtin_state is not None and self.children_builtin_state != objInfo.from_builtin():
+                    continue
 
-            :param generallibrary.ObjInfo self:
-            :param depth: Depth to iterate, -1 is infinite.
-            :param _all_objInfo:
-            :param _top_objInfo:
-            :rtype: list[generallibrary.ObjInfo] """
-        if not depth:
-            return
+                if objInfo.identifier() in self.all_identifiers:
+                    objInfo.spawned_children = True  # Include duplicates but don't spawn their children more than once
 
-        if _all_objInfo is None:
-            _all_objInfo = []
-        _all_objInfo.append(self.identifier())
-
-        if _top_objInfo is None:
-            _top_objInfo = self
-
-        # for name in getattr(self.obj, "__dict__", {}).keys():
-        for name in dir(self.obj):
-            if name in ("__dict__", ):
-                continue
-
-            sentinel = object()
-            attr = getattr(self.obj, name, sentinel)
-            if attr is sentinel or not self.check_if_parent_eligible(parent_obj=self.obj, child_obj=attr, name=name):
-                continue
-
-            objInfo = self.ObjInfo(obj=attr, parent=self, name=name)
-
-            if _top_objInfo.filters_check(objInfo):
-                if objInfo.identifier() not in _all_objInfo:
-                    objInfo.get_attrs(depth=depth - 1, _all_objInfo=_all_objInfo, _top_objInfo=_top_objInfo)
-            else:
-                objInfo.remove_node()
-
-        return _all_objInfo
+                self.all_identifiers.append(objInfo.identifier())
+                objInfo.set_parent(parent=self)
 
 
 

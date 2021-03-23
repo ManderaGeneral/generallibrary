@@ -19,12 +19,7 @@ class Foo(Base):
 
 
 
-top_objInfo = ObjInfo(Foo())
-top_objInfo.filters = []
-top_objInfo.get_attrs(depth=1)
-
-
-callTable = CallTable("ObjInfo").set_args(**{objInfo.name: objInfo for objInfo in top_objInfo.get_all() if objInfo.name})
+callTable = CallTable("ObjInfo").set_args(**{objInfo.name: objInfo for objInfo in ObjInfo(Foo()).get_all(depth=1) if objInfo.name})
 
 
 callTable.generate_with_funcs(

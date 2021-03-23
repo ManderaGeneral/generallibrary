@@ -88,7 +88,6 @@ class _ObjInfoProperties:
             Experimental. Works on modules, classes and functions available to `inspect`.
 
             :param generallibrary.ObjInfo self: """
-        self.get_attrs()
         lines = []
         for objInfo in self.get_all():
             if objInfo.is_class() or objInfo.is_function():

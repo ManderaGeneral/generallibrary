@@ -1,6 +1,6 @@
 
 from generallibrary.iterables import extend_list_in_dict, split_list
-from generallibrary.functions import SigInfo, wrapper_transfer
+from generallibrary.functions import SigInfo, wrapper_transfer, Recycle
 from generallibrary.diagram import TreeDiagram
 
 from generallibrary.objinfo.children import _ObjInfoChildren
@@ -15,6 +15,9 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         Automatically generates parents post creation for attributes that are not modules.
         Children are generated manually with `generate_attributes`.
         Todo: Disable save, load and copy of ObjInfo's TreeDiagram. """
+
+    # _recycle_keys = {"id": lambda obj: ObjInfo._identifier(obj=obj)}  # Todo: Recycle ObjInfo
+
     def __init__(self, obj, parent=None, name=None):
         self.obj = obj
 
@@ -28,15 +31,26 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
 
         self.name = name
 
-    def identifier(self):
-        """ Returns a tuple of parent's obj's id and it's own's obj's id.
-            Made for ObjInfo.get_attrs(), I want to have identical attributes listed, but not it's attributes. """
-        return id(self.obj)
-        # return id(getattr(self.get_parent(), "obj", None)), id(self.obj)
+    sentinel = object()
+
+    def identifier(self, obj=sentinel):
+        """ Returns an identifier for any object. """
+        if obj is self.sentinel:
+            obj = self.obj
+        return self._identifier(obj=obj)
+
+    @staticmethod
+    def _identifier(obj):
+        return id(obj)
 
     def nice_repr(self):
         """ Return a nice represantion string with capitalized type and name. """
         return f"{self.type(nice_output=True)}: {self.name}"
+
+    def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", spawn=False, print_out=True):
+        if custom_repr is None:
+            custom_repr = ObjInfo.nice_repr
+        return TreeDiagram.view(self, indent=indent, relative=relative, custom_repr=custom_repr, spacer=spacer, spawn=spawn, print_out=print_out)
 
     ObjInfo = ...
 
@@ -78,9 +92,6 @@ def hook(callable_, *funcs, after=False):
 
 
 def cache_clear(obj):
-    objInfo = ObjInfo(obj)
-    objInfo.filters.append(lambda objInfo: hasattr(objInfo.obj, "cache_clear"))
-    objInfo.get_attrs()
-    for attr in objInfo.get_children():
-        attr.obj.cache_clear()
+    for objInfo in ObjInfo(obj).get_children(depth=-1, include_self=True, gen=True, filt=lambda objInfo: hasattr(objInfo.obj, "cache_clear")):
+        objInfo.obj.cache_clear()
 
