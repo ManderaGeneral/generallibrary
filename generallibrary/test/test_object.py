@@ -240,16 +240,16 @@ class ObjectTest(unittest.TestCase):
         objInfo = ObjInfo(_Foo)
         objInfo.children_states = {}
 
-        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_self").protected())
-        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "self").protected())
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_self", traverse_excluded=True).protected())
+        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "self", traverse_excluded=True).protected())
 
-        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_attr").protected())
-        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "attr").protected())
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_attr", traverse_excluded=True).protected())
+        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "attr", traverse_excluded=True).protected())
 
-        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "_Foo__private").protected())
-        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_Foo__private").private())
-        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_Foo__private").internal())
-        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "_Foo__private").public())
+        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "_Foo__private", traverse_excluded=True).protected())
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_Foo__private", traverse_excluded=True).private())
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_Foo__private", traverse_excluded=True).internal())
+        self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "_Foo__private", traverse_excluded=True).public())
 
         self.assertEqual(False, ObjInfo(a).protected())
         self.assertEqual(False, ObjInfo(a()).protected())
@@ -298,8 +298,8 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(False, ObjInfo(_Bar.attr).from_instance())
 
         objInfo = ObjInfo(_Bar())
-        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "instance_var").from_instance())
-        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "self").from_base())
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "instance_var", traverse_excluded=True).from_instance())
+        self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "self", traverse_excluded=True).from_base())
 
     def test_get_definition_line(self):
         self.assertEqual(9, ObjInfo(ObjectTest).get_definition_line())

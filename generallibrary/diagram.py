@@ -12,6 +12,7 @@ def _skip_node_check(node, order_func, filt, traverse_excluded, _all_nodes):
     if node in _all_nodes:
         return True
     if filt and not traverse_excluded and not filt(node):
+        # node.set_parent(None)  # HERE **
         return True
     if order_func:
         for order_node in order_func(node):
@@ -55,7 +56,7 @@ def _traverse(*nodes, func, depth, flat, filt, traverse_excluded, include_self, 
 def _traverser(*nodes, func, depth=None, flat=None, filt=None, traverse_excluded=None, include_self=None, gen=None, vertical=None, order_func=None, spawn=None):
     if depth is None:               depth = 0
     if flat is None:                flat = True
-    if traverse_excluded is None:   traverse_excluded = True
+    if traverse_excluded is None:   traverse_excluded = False
     if include_self is None:        include_self = False
     if gen is None:                 gen = False
     if vertical is None:            vertical = True
@@ -160,8 +161,8 @@ class _Diagram_QOL:
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None index: Index of node to be returned. Possible filter is applied before.
             :param int or None depth: Default depth of 0 will return single direct layer. Get unlimited with -1. Previous layers are included.
-            :param filt: Optional functional filter, expects 1 node as argument.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None include_self: False
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
             :rtype: TreeDiagram or NetworkDiagram or Any """
@@ -173,8 +174,8 @@ class _Diagram_QOL:
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None index: Index of node to be returned. Possible filter is applied before.
             :param int or None depth: Default depth of 0 will return single direct layer. Get unlimited with -1. Previous layers are included.
-            :param filt: Optional functional filter, expects 1 node as argument.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None include_self: False
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
             :rtype: TreeDiagram or NetworkDiagram or Any """
@@ -186,8 +187,8 @@ class _Diagram_QOL:
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None index: Index of node to be returned. Possible filter is applied before.
             :param int or None depth: Default depth of 0 will return single direct layer. Get unlimited with -1. Previous layers are included.
-            :param filt: Optional functional filter, expects 1 node as argument.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None include_self: False
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
             :rtype: TreeDiagram or NetworkDiagram or Any """
@@ -199,8 +200,8 @@ class _Diagram_QOL:
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None index: Index of node to be returned. Possible filter is applied before.
             :param int or None depth: Default depth of 0 will return single direct layer. Get unlimited with -1. Previous layers are included.
-            :param filt: Optional functional filter, expects 1 node as argument.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None include_self: False
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
             :rtype: TreeDiagram or NetworkDiagram or Any """
@@ -224,8 +225,8 @@ class _Diagram_Global:
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: -1 - Depth of 0 will return/yield single direct layer. Get unlimited with -1.
             :param bool or None flat: True - Whether to return/yield nodes directly or in lists. Ignored if vertical.
-            :param filt: None - Optional functional filter, expects 1 node as argument.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None gen: False - Whether to return a generator or list.
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
             :rtype: list[TreeDiagram or NetworkDiagram or Any] """
@@ -242,8 +243,8 @@ class _Diagram_Global:
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: -1 - Depth of 0 will return/yield single direct layer. Get unlimited with -1.
             :param bool or None flat: True - Whether to return/yield nodes directly or in lists. Ignored if vertical.
-            :param filt: None - Optional functional filter, expects 1 node as argument.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None gen: False - Whether to return a generator or list.
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
             :rtype: list[TreeDiagram or NetworkDiagram or Any] """
@@ -313,9 +314,9 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: 0 - Depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: True - Whether to return/yield nodes directly or in lists. Ignored if vertical.
-            :param filt: None - Optional functional filter, expects 1 node as argument.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
             :param bool or None gen: False - Whether to return a generator or list.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None include_self: False
             :param bool or None vertical: True - Whether to traverse one node at a time, or layer by layer.
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
@@ -332,9 +333,9 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: 0 - Depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: True - Whether to return/yield nodes directly or in lists. Ignored if vertical.
-            :param filt: None - Optional functional filter, expects 1 node as argument.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
             :param bool or None gen: False - Whether to return a generator or list.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None include_self: False
             :param bool or None vertical: True - Whether to traverse one node at a time, or layer by layer.
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
@@ -351,9 +352,9 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: 0 - Depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: True - Whether to return/yield nodes directly or in lists. Ignored if vertical.
-            :param filt: None - Optional functional filter, expects 1 node as argument.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
             :param bool or None gen: False - Whether to return a generator or list.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None include_self: False
             :param bool or None vertical: True - Whether to traverse one node at a time, or layer by layer.
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
@@ -368,9 +369,9 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: 0 - Depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: True - Whether to return/yield nodes directly or in lists. Ignored if vertical.
-            :param filt: None - Optional functional filter, expects 1 node as argument.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
             :param bool or None gen: False - Whether to return a generator or list.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None include_self: False
             :param bool or None vertical: True - Whether to traverse one node at a time, or layer by layer.
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
@@ -458,9 +459,9 @@ class NetworkDiagram(_Diagram):
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: 0 - Depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: True - Whether to return/yield nodes directly or in lists. Ignored if vertical.
-            :param filt: None - Optional functional filter, expects 1 node as argument.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
             :param bool or None gen: False - Whether to return a generator or list.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None include_self: False
             :param bool or None vertical: True - Whether to traverse one node at a time, or layer by layer.
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
@@ -473,8 +474,8 @@ class NetworkDiagram(_Diagram):
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None index: Index of node to be returned. Possible filter is applied before.
             :param int or None depth: Default depth of 0 will return single direct layer. Get unlimited with -1. Previous layers are included.
-            :param filt: Optional functional filter, expects 1 node as argument.
-            :param bool or None traverse_excluded: True - Whether to traverse a node even though it has been filtered out from result.
+            :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None include_self: False
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
             :rtype: TreeDiagram or NetworkDiagram or Any """

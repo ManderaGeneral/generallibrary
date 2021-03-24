@@ -102,6 +102,6 @@ def hook(callable_, *funcs, after=False):
 
 
 def cache_clear(obj):
-    for objInfo in ObjInfo(obj).get_children(depth=-1, include_self=True, gen=True, filt=lambda objInfo: hasattr(objInfo.obj, "cache_clear")):
+    for objInfo in ObjInfo(obj).get_children(depth=-1, include_self=True, gen=True, filt=lambda objInfo: hasattr(objInfo.obj, "cache_clear"), traverse_excluded=True):
         objInfo.obj.cache_clear()
 

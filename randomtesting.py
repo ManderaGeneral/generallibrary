@@ -19,6 +19,6 @@ b = a.add_node(2)
 c = b.add_node(3)
 
 
-# print(a.get_children(depth=-1, filt=lambda x: x.x != 2))
+print(a.get_child(traverse_excluded=True, filt=lambda node: node is a or node.x == 2))
 
 

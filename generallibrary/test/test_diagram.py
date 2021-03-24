@@ -43,7 +43,7 @@ class TreeDiagramTest(unittest.TestCase):
 
         self.assertEqual(a, b.get_parent())
         self.assertEqual(b, b.get_parent(include_self=True))
-        self.assertEqual(a, b.get_parent(include_self=True, filt=lambda x: x is not b))
+        self.assertEqual(a, b.get_parent(include_self=True, filt=lambda x: x is not b, traverse_excluded=True))
         self.assertEqual(None, b.get_parent(filt=lambda path: False))
 
         c = TreeDiagram(parent=a)
@@ -294,6 +294,11 @@ class TreeDiagramTest(unittest.TestCase):
                 if not self._children and self.x > 0:
                     Spawn(self.x - 1, parent=self)
 
+        # spawn = Spawn(2)
+        # self.assertEqual([], spawn.get_children(spawn=False))  # HERE **
+        # self.assertEqual([], spawn.get_children(filt=lambda node: False))
+        # self.assertEqual([], spawn.get_children(spawn=False))
+
         self.assertEqual(None, Spawn(2).get_parent(spawn=False))
         self.assertEqual(3, Spawn(2).get_parent().x)
 
@@ -360,7 +365,7 @@ class TreeDiagramTest(unittest.TestCase):
         b = a.add_node(2)
         c = b.add_node(3)
 
-        self.assertEqual(a, c.get_parent(depth=-1, filt=lambda node: node == a))
+        self.assertEqual(a, c.get_parent(depth=-1, filt=lambda node: node == a, traverse_excluded=True))
 
     def test_traverse_excluded(self):
         a = A(1)
@@ -368,8 +373,9 @@ class TreeDiagramTest(unittest.TestCase):
         c = b.add_node(3)
 
         self.assertEqual([b, c], a.get_children(depth=-1))
-        self.assertEqual([c], a.get_children(depth=-1, filt=lambda node: node != b))
+        self.assertEqual([c], a.get_children(depth=-1, filt=lambda node: node != b, traverse_excluded=True))
         self.assertEqual([], a.get_children(depth=-1, filt=lambda node: node != b, traverse_excluded=False))
+
 
 
 
