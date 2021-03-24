@@ -316,10 +316,10 @@ class ObjectTest(unittest.TestCase):
     def test_identifier(self):
         self.assertEqual(ObjInfo(_Foo).identifier(), ObjInfo(_Foo).identifier())
 
-    def test_nice_repr(self):
+    def test_repr(self):
         objInfo = ObjInfo(_Foo)
-        self.assertEqual(True, "_Foo" in objInfo.nice_repr())
-        self.assertEqual(True, "Class" in objInfo.nice_repr())
+        self.assertEqual(True, "_Foo" in repr(objInfo))
+        self.assertEqual(True, "Class" in repr(objInfo))
 
 
 class _Foo:

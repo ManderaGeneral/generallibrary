@@ -379,7 +379,7 @@ class TreeDiagram(_Diagram):
     def __init__(self, parent=None):
         pass
 
-    def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", spawn=False, print_out=True):
+    def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", spawn=False, filt=None, vertical=True, print_out=True):
         """ Get a printable string showing a clear view of this TreeDiagram structure.
             Hides additional lines of a node's repr. """
         if relative:
@@ -389,7 +389,7 @@ class TreeDiagram(_Diagram):
             top = self
 
         lines = []
-        for node in [top] + top.get_children(depth=-1, spawn=spawn):
+        for node in top.get_children(depth=-1, gen=True, include_self=True, spawn=spawn, filt=filt, vertical=vertical):
             lanes = []
             all_parents = node.get_parents(depth=-1, spawn=spawn)
 

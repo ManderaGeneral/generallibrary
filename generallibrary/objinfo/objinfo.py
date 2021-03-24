@@ -58,14 +58,9 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
     def _identifier(obj):
         return id(obj)
 
-    def nice_repr(self):
+    def __repr__(self):
         """ Return a nice represantion string with capitalized type and name. """
         return f"{self.type(nice_output=True)}: {self.name}"
-
-    def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", spawn=True, print_out=True):
-        if custom_repr is None:
-            custom_repr = ObjInfo.nice_repr
-        return TreeDiagram.view(self, indent=indent, relative=relative, custom_repr=custom_repr, spacer=spacer, spawn=spawn, print_out=print_out)
 
     ObjInfo = ...
 
