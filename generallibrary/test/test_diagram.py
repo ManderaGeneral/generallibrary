@@ -376,6 +376,14 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual([c], a.get_children(depth=-1, filt=lambda node: node != b, traverse_excluded=True))
         self.assertEqual([], a.get_children(depth=-1, filt=lambda node: node != b, traverse_excluded=False))
 
+    def test_disconnect(self):
+        a = A(1)
+        b = a.add_node(2)
+        c = b.add_node(3)
+
+        c.disconnect(lambda node: node is b)
+
+        self.assertEqual([a], a.get_all())
 
 
 

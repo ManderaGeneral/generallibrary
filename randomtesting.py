@@ -18,7 +18,8 @@ a = A(1)
 b = a.add_node(2)
 c = b.add_node(3)
 
+b.disconnect(lambda node: node.x == 3)
 
-print(a.get_child(traverse_excluded=True, filt=lambda node: node is a or node.x == 2))
+print(a.get_all())
 
 

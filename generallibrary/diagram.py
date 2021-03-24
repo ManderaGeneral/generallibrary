@@ -12,7 +12,6 @@ def _skip_node_check(node, order_func, filt, traverse_excluded, _all_nodes):
     if node in _all_nodes:
         return True
     if filt and not traverse_excluded and not filt(node):
-        # node.set_parent(None)  # HERE **
         return True
     if order_func:
         for order_node in order_func(node):
@@ -214,6 +213,14 @@ class _Diagram_QOL:
         for i, layer in enumerate(self.get_ordered(flat=False, gen=True)):
             if self in layer:
                 return i
+
+    def disconnect(self, filt):
+        """ Iterate all nodes and set nodes passing the filter's parent to None.
+
+            :param TreeDiagram or NetworkDiagram or Any self:
+            :param filt: """
+        for node in self.get_all(spawn=False, gen=True, filt=filt, traverse_excluded=True):
+            node.set_parent(None)
 
 
 class _Diagram_Global:
