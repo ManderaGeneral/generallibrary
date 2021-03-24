@@ -17,6 +17,21 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         Todo: Disable save, load and copy of ObjInfo's TreeDiagram. """
 
     # _recycle_keys = {"id": lambda obj: ObjInfo._identifier(obj=obj)}  # Todo: Recycle ObjInfo
+    children_states = {
+        _ObjInfoProperties.public: True,
+
+        _ObjInfoOrigin.from_builtin: False,
+        # _ObjInfoOrigin.from_instance: None,
+        # _ObjInfoOrigin.from_base: None,
+        # _ObjInfoOrigin.from_class: None,
+
+        _ObjInfoType.is_module: False,
+        # _ObjInfoType.is_function: None,
+        # _ObjInfoType.is_class: None,
+        # _ObjInfoType.is_property: None,
+        # _ObjInfoType.is_instance: None,
+        # _ObjInfoType.is_method: None,
+    }
 
     def __init__(self, obj, parent=None, name=None):
         self.obj = obj
@@ -47,7 +62,7 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         """ Return a nice represantion string with capitalized type and name. """
         return f"{self.type(nice_output=True)}: {self.name}"
 
-    def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", spawn=False, print_out=True):
+    def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", spawn=True, print_out=True):
         if custom_repr is None:
             custom_repr = ObjInfo.nice_repr
         return TreeDiagram.view(self, indent=indent, relative=relative, custom_repr=custom_repr, spacer=spacer, spawn=spawn, print_out=print_out)

@@ -3,7 +3,8 @@ import inspect
 
 
 class _ObjInfoOrigin:
-    """ Only one of these methods starting with 'from_' will return True. """
+    """ Only one of these methods starting with 'from_' will return True.
+        Todo: Do ObjInfo.type() equivalent for origin (from_*). """
     def _last_cls_with_name(self):
         """ Get the last of parent's cls that has this name in it.
 
@@ -22,7 +23,8 @@ class _ObjInfoOrigin:
         """ Get whether this attribute came from a builtin.
 
             :param generallibrary.ObjInfo self: """
-        return inspect.isbuiltin(self.obj) or getattr(self._last_cls_with_name(), "__module__", None) == "builtins"
+        names = "fget", "fset", "fdel", "denominator", "imag", "numerator", "real", "cache_parameters"
+        return inspect.isbuiltin(self.obj) or getattr(self._last_cls_with_name(), "__module__", None) == "builtins" or self.name in names
 
     def from_base(self):
         """ Get whether this attribute came from one of it's cls' non-builtin bases.

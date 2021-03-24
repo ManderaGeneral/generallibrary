@@ -238,7 +238,7 @@ class ObjectTest(unittest.TestCase):
 
     def test_ObjInfo_protected(self):
         objInfo = ObjInfo(_Foo)
-        objInfo.children_internal_state = None
+        objInfo.children_states = {}
 
         self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "_self").protected())
         self.assertEqual(False, objInfo.get_child(filt=lambda node: node.name == "self").protected())
