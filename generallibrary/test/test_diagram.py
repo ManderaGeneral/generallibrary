@@ -362,6 +362,14 @@ class TreeDiagramTest(unittest.TestCase):
 
         self.assertEqual(a, c.get_parent(depth=-1, filt=lambda node: node == a))
 
+    def test_traverse_excluded(self):
+        a = A(1)
+        b = a.add_node(2)
+        c = b.add_node(3)
+
+        self.assertEqual([b, c], a.get_children(depth=-1))
+        self.assertEqual([c], a.get_children(depth=-1, filt=lambda node: node != b))
+        self.assertEqual([], a.get_children(depth=-1, filt=lambda node: node != b, traverse_excluded=False))
 
 
 

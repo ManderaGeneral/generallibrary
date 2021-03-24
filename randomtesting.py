@@ -6,17 +6,19 @@ from pprint import pprint
 
 
 
+class A(TreeDiagram):
+    def __init__(self, x):
+        self.x = x
+
+    def __repr__(self):
+        return str(self.x)
 
 
-class A:
-    def b(self):
-        pass
-
-    def c(self):
-        pass
+a = A(1)
+b = a.add_node(2)
+c = b.add_node(3)
 
 
-objInfo = ObjInfo(A)
+# print(a.get_children(depth=-1, filt=lambda x: x.x != 2))
 
-objInfo.view(spawn=True, filt=lambda x: x.name != "c")
 
