@@ -91,7 +91,8 @@ class Date:
         return self.datetime.strftime(self.format)
 
     def __repr__(self):
-        return repr(self.datetime)
+        return str(self)
+        # return repr(self.datetime)
 
 
 
