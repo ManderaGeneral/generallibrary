@@ -16,7 +16,7 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         Children are generated manually with `generate_attributes`.
         Todo: Disable save, load and copy of ObjInfo's TreeDiagram. """
 
-    # _recycle_keys = {"id": lambda obj: ObjInfo._identifier(obj=obj)}  # Todo: Recycle ObjInfo
+    # _recycle_keys = {"id": lambda obj: ObjInfo._identifier(obj=obj)}  # Todo: Recycle ObjInfo, issue is that it becomes a NetworkDiagram (Sort of already is)
     children_states = {
         _ObjInfoProperties.public: True,
 

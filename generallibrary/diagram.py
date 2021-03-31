@@ -257,6 +257,7 @@ class _Diagram_Global:
             :rtype: list[TreeDiagram or NetworkDiagram or Any] """
         if depth is None:
             depth = -1
+
         origins = [node for node in self.get_all() if not node.get_parents()]
         if not origins:
             raise AttributeError("Could not find any orphan nodes.")
@@ -500,6 +501,12 @@ class Markdown(TreeDiagram):
         self.lines = []
         self.add_lines(*lines)
 
+    def __str__(self):
+        return '\n'.join(self.get_all_lines())
+
+    def __contains__(self, item):
+        return str(self).__contains__(item)
+
     @staticmethod
     def link(text, header=None, url=None, href=False, enabled=True):
         """ Return a link to a header or url.
@@ -576,9 +583,6 @@ class Markdown(TreeDiagram):
                 self.lines.insert(0, f"<{tag}>")
                 self.lines.append(f"</{tag}>")
         return self
-
-    def __str__(self):
-        return '\n'.join(self.get_all_lines())
 
 
 

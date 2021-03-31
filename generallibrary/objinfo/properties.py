@@ -53,7 +53,11 @@ class _ObjInfoProperties:
             :param generallibrary.ObjInfo self:
             :param relative: Whether to return a relative path by splitting on top module's name. """
         obj = self.origin
-        file = inspect.getfile(obj)
+        try:
+            file = inspect.getfile(obj)
+        except TypeError:
+            return
+
         if relative:
             top_module = self.get_parent(depth=-1, index=-1)
             if top_module is None:

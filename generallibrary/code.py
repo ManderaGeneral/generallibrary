@@ -37,6 +37,12 @@ class CodeLine(TreeDiagram):
         self.space_before = space_before
         self.space_after = space_after
 
+    def __str__(self):
+        return self.text()
+
+    def __contains__(self, item):
+        return str(self).__contains__(item)
+
     def get_lines(self, watermark=True):
         """ Generate a list of formatted code lines by iterating stored _Line instances. """
         lines = []
@@ -55,9 +61,6 @@ class CodeLine(TreeDiagram):
         """ Generate and print copyable code. """
         code = "\n".join(self.get_lines(watermark=watermark))
         return code
-
-    def __str__(self):
-        return self.text()
 
 
 def debug(scope, *evals, print_out=True):
