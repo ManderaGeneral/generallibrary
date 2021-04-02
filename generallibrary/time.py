@@ -70,7 +70,8 @@ class Date:
                 datetime = date
 
             if str(datetime.tzinfo) != self.timezone:
-                datetime = datetime.astimezone(self.get_timezone_obj())
+                datetime = self.get_timezone_obj().localize(datetime)
+
             datetime = datetime.replace(second=0, microsecond=0)
 
         self.datetime = datetime

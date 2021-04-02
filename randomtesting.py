@@ -1,31 +1,19 @@
 
 from generallibrary import *
-from generalfile import Path
-
-from pprint import pprint
 
 
-# ObjInfo(Path).view(spawn=True)
+a = Date.now()
+print(a)
+print(str(Date.now()))
 
-print(len(ObjInfo(Path).get_children()))
-print(len(ObjInfo(Path).get_children(-1)))
+b = Date(str(Date.now()))
+print(b)
 
 
+# print(a.datetime.tzinfo)
+# print(b.datetime.tzinfo)
 
-
-# class A(TreeDiagram):
-#     def __init__(self, x):
-#         self.x = x
-#
-#     def __repr__(self):
-#         return str(self.x)
-#
-#
-# a = A(1)
-# b = a.add_node(2)
-# c = b.add_node(3)
-#
-# b.disconnect(lambda node: node.x == 3)
-#
-# print(a.get_all())
-
+# 2021-04-02 16:00 CEST
+# 2021-04-02 16:00 CEST
+# here
+# 2021-04-02 16:00 CEST
