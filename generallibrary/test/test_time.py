@@ -2,7 +2,6 @@
 from generallibrary.time import *
 
 import unittest
-from datetime import datetime
 
 
 class TimeTest(unittest.TestCase):
