@@ -47,6 +47,13 @@ class _ObjInfoOrigin:
         parent = self.get_parent()
         return bool(parent and parent.is_instance() and not self._last_cls_with_name())
 
+    def from_module(self):
+        """ Get whether this attribute's parent is a module.
+
+            :param generallibrary.ObjInfo self: """
+        parent = self.get_parent()
+        return bool(parent and parent.is_module())
+
 
 
 

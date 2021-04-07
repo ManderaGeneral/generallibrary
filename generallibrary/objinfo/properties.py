@@ -45,6 +45,9 @@ class _ObjInfoProperties:
         """ Return module of this ObjInfo's obj as returned by inspect or None.
 
             :param generallibrary.ObjInfo self: """
+        return self._module()
+
+    def _module(self):
         return inspect.getmodule(self.obj)
 
     def file(self, relative=False):
@@ -88,7 +91,11 @@ class _ObjInfoProperties:
             :param generallibrary.ObjInfo self: """
         from generallibrary.code import get_definition_line
 
-        return get_definition_line(self.obj)
+        # return get_definition_line(self.obj)
+        try:
+            return get_definition_line(self.obj)
+        except TypeError:
+            return 1
 
     def get_lines(self):
         """ Return a list of source lines from an obj.
