@@ -322,6 +322,7 @@ def pivot_list(list_, index):
 
 
 def flatten(list_, gen=False):
+    """ Flatten a list. """
     if gen:
         return itertools.chain(*list_)
     else:

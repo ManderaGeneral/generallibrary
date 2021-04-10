@@ -12,8 +12,9 @@ import json
 
 def deco_cache():
     """ Enable caching for a method or function.
-        Put after possible static/class method deco. """
-    return functools.cache
+        Put after possible static/class method deco.
+        Can change to functools.cache when 3.8 support is dropped. """
+    return functools.lru_cache()
 
 
 class classproperty:
