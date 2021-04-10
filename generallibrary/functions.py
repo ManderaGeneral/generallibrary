@@ -13,7 +13,7 @@ import json
 def deco_cache():
     """ Enable caching for a method or function.
         Put after possible static/class method deco. """
-    return functools.lru_cache()
+    return functools.cache
 
 
 class classproperty:

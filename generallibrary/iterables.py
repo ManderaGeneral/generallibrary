@@ -1,4 +1,6 @@
 
+import itertools
+
 
 class SortedList:
     """
@@ -319,6 +321,11 @@ def pivot_list(list_, index):
     return list_[index:] + list_[:index]
 
 
+def flatten(list_, gen=False):
+    if gen:
+        return itertools.chain(*list_)
+    else:
+        return list(flatten(list_=list_, gen=True))
 
 
 

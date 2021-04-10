@@ -2,18 +2,8 @@
 from generallibrary import *
 
 
-a = Date.now()
-print(a)
-print(str(Date.now()))
 
-b = Date(str(Date.now()))
-print(b)
+a = [[1,2,3],[4,5,6],[7,8,9]]
 
 
-# print(a.datetime.tzinfo)
-# print(b.datetime.tzinfo)
-
-# 2021-04-02 16:00 CEST
-# 2021-04-02 16:00 CEST
-# here
-# 2021-04-02 16:00 CEST
+print(flatten(a))

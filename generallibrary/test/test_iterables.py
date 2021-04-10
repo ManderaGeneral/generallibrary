@@ -292,8 +292,9 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual({"a", 5}, a)
         self.assertEqual(False, remove(a, "b"))
 
-
-
+    def test_flatten(self):
+        a = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+        self.assertEqual([1, 2, 3, 4, 5, 6, 7, 8, 9], flatten(a))
 
 
 
