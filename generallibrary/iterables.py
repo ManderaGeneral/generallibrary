@@ -278,10 +278,14 @@ def unique_obj_in_list(list_, obj, active):
             list_.remove(obj, )
 
 
-def remove_duplicates(list_):
+def remove_duplicates(list_, func=None):
     """ Remove all duplicates in a list.
-        Values must be hashable as they are passed through as dict keys. (Lists work but not Dicts) """
-    return list(dict.fromkeys(list_))
+        Set func to use another value than a self hash for determining if duplicate.
+        Values must be hashable (If func is None) as they are passed through as dict keys. (Lists work but not Dicts) """
+    if func is None:
+        return list(dict.fromkeys(list_))
+    else:
+        return list({func(obj): obj for obj in list_}.values())
 
 
 def combine(**kwargs):

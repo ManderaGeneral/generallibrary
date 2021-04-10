@@ -235,6 +235,7 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual(["hi", "there"], remove_duplicates(["hi", "there", "hi"]))
         self.assertEqual([(1, 2)], remove_duplicates([(1, 2), (1, 2)]))
 
+        self.assertEqual([1.1, 1.6], remove_duplicates([0.9, 1, 1.1, 1.6], func=round))
         # self.assertEqual([{1: "foo", "bar": 5}], remove_duplicates([{1: "foo", "bar": 5}, {1: "foo", "bar": 5}]))
 
     def test_combine(self):
