@@ -297,6 +297,9 @@ class ObjectTest(unittest.TestCase):
 
         self.assertEqual(False, ObjInfo(_Bar.attr).from_instance())
 
+        self.assertEqual(True, ObjInfo(_Bar).from_module())
+        self.assertEqual(False, ObjInfo(_Bar.self).from_module())
+
         objInfo = ObjInfo(_Bar())
         self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "instance_var", traverse_excluded=True).from_instance())
         self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "self", traverse_excluded=True).from_base())
