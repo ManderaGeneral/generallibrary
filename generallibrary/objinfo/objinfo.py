@@ -14,9 +14,11 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
     """ Get whether obj is a module, function, class, method, property or variable.
         Automatically generates parents post creation for attributes that are not modules.
         Children are generated manually with `generate_attributes`.
-        Todo: Disable save, load and copy of ObjInfo's TreeDiagram. """
 
-    # _recycle_keys = {"id": lambda obj: ObjInfo._identifier(obj=obj)}  # Todo: Recycle ObjInfo, issue is that it becomes a NetworkDiagram (Sort of already is)
+        Todo: Recycle ObjInfo.
+        Issue is that it becomes a NetworkDiagram (Sort of already is) """
+
+    # _recycle_keys = {"id": lambda obj: ObjInfo._identifier(obj=obj)}
     children_states = {
         _ObjInfoProperties.public: True,
 
@@ -33,6 +35,8 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         # _ObjInfoType.is_method: None,
     }
 
+    save_node = load_node = copy_node = NotImplemented
+
     def __init__(self, obj, parent=None, name=None):
         self.obj = obj
 
@@ -45,6 +49,7 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
                 name = name.split(".")[-1]
 
         self.name = name
+
 
     sentinel = object()
 

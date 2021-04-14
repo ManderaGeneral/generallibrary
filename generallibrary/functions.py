@@ -23,7 +23,6 @@ class classproperty:
         def foo(cls):
             return cls.bar
         https://stackoverflow.com/a/13624858/3936044
-        Todo: Setter for classproperty deco.
         Todo: Remove classproperty once 3.8 is no longer supported. """
     def __init__(self, fget):
         self.fget = fget
@@ -354,6 +353,18 @@ def deco_cast_parameters(**pars_to_cast):
     return _decorator
 
 
+def deco_cast_to_self(func):
+    """ Allows first arg to be same type as self or the args to create a new one. """
+    def _wrapper(self, *args, **kwargs):
+        combined = args + tuple(kwargs.values())
+        if combined and (combined[0] is None or type(combined[0]) == type(self)):
+            arg = combined[0]
+        else:
+            arg = type(self)(*args, **kwargs)
+        return func(self, arg)
+    return wrapper_transfer(func, _wrapper)
+
+
 def deco_bound_defaults(func):
     """ As an alternative to setting each and every parameter's default value to `None` for a method.
         Automatically sets each undefined parameter to self's attribute, which allows us to set a parameter `None`.
@@ -463,8 +474,7 @@ def wrapper_transfer(base, target):
 
 
 def deco_propagate_while(value, prop_func):
-    """ Call decorated method recursively until it doesn't return given value.
-        Todo: Generalize deco_propagate_while, make it work on functions and have more options for value. """
+    """ Call decorated method recursively until it doesn't return given value. """
     def _deco(func):
         def _wrapper(self, *args, **kwargs):
             new_self = self
@@ -579,40 +589,5 @@ class Recycle:
         """ Clear all recyclables. """
         if isinstance(cls._recycle_instances, dict):
             cls._recycle_instances.clear()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

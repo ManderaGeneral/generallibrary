@@ -26,7 +26,7 @@ class TimeTest(unittest.TestCase):
         timer.reset()
         self.assertEqual(True, timer.seconds() < time)
 
-    def test_time(self):  # Todo: Fix Date test on Linux.
+    def test_time(self):
         now = Date.now()
         self.assertEqual(now, Date(str(now)))
         self.assertEqual(now, Date(f"{now.datetime.hour}:{now.datetime.minute}"))

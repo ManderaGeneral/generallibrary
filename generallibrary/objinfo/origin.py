@@ -3,8 +3,7 @@ import inspect
 
 
 class _ObjInfoOrigin:
-    """ Only one of these methods starting with 'from_' will return True.
-        Todo: Do ObjInfo.type() equivalent for origin (from_*). """
+    """ Only one of these methods starting with 'from_' will return True. """
     def _last_cls_with_name(self):
         """ Get the last of parent's cls that has this name in it.
 

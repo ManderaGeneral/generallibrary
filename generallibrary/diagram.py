@@ -1,5 +1,5 @@
 
-from generallibrary.functions import AutoInitBases, wrapper_transfer
+from generallibrary.functions import AutoInitBases, wrapper_transfer, deco_cast_to_self
 from generallibrary.values import clamp
 from generallibrary.iterables import get, pivot_list
 
@@ -71,20 +71,6 @@ def _deco_depth(func):
     return wrapper_transfer(func, _wrapper)
 
 
-def _deco_cast_to_diagram(func):
-    """ Allows first arg to be same type as self or the args the create a new one.
-
-        Todo: Generalize _deco_cast_to_diagram() """
-    def _wrapper(self, *args, **kwargs):
-        combined = args + tuple(kwargs.values())
-        if combined and (combined[0] is None or type(combined[0]) == type(self)):
-            diagram = combined[0]
-        else:
-            diagram = type(self)(*args, **kwargs)
-        return func(self, diagram)
-    return wrapper_transfer(func, _wrapper)  # Todo: wrapper_transfer for every deco
-
-
 class _Diagram_QOL:
     """ Quality of life helper methods of Diagram. """
     def _get_children_or_parents(self, parent, child):
@@ -133,7 +119,7 @@ class _Diagram_QOL:
             container.remove(self)
             container.insert(index, self)
 
-    @_deco_cast_to_diagram
+    @deco_cast_to_self
     def add_node(self, child):
         """ Add a node as child, either with one arg being of own type or with args to create a new one.
             Returns child.
@@ -245,7 +231,6 @@ class _Diagram_Global:
     def get_ordered(self, depth=None, flat=None, filt=None, traverse_excluded=None, gen=None, spawn=None):
         """ Top to Bottom horizontally.
             Starts with orphan nodes and traverses to return/yield children nodes which have had their respective parents already returned/yielded.
-            Todo: Reversed get_ordered going Bottom to Top horizontally?
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param int or None depth: -1 - Depth of 0 will return/yield single direct layer. Get unlimited with -1.
@@ -290,7 +275,7 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
         if parent is not None:
             self.set_parent(parent=parent)
 
-    @_deco_cast_to_diagram
+    @deco_cast_to_self
     def set_parent(self, parent):
         """ Set a new parent for this Node.
             Returns parent.

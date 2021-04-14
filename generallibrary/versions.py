@@ -81,6 +81,7 @@ class _PythonInfo:
         "candidate": "rc",
         "final": ""
     }
+
     def __init__(self):
         import sys
         self._versionInfo = sys.version_info
