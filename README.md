@@ -235,5 +235,5 @@ This package and 3 other make up [ManderaGeneral](https://github.com/Mandera).
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L1'>functions.py</a>     | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L26'>Remove classproperty once 3.8 is no longer supported.</a> |
 
 <sup>
-Generated 2021-04-14 18:44 CEST for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/0eee840'>0eee840</a>.
+Generated 2021-04-15 12:12 CEST for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
