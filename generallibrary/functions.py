@@ -8,6 +8,15 @@ import re
 import functools
 import pandas as pd
 import json
+import importlib
+
+
+def import_module(name, error=True):
+    try:
+        return importlib.import_module(name=name)
+    except ModuleNotFoundError as e:
+        if error:
+            raise e
 
 
 def deco_cache():

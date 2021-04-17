@@ -175,7 +175,7 @@ def get(iterable, index=None, default=None):
     else:
         try:
             return iterable[index]
-        except IndexError:
+        except (IndexError, KeyError):
             return default
 
 
