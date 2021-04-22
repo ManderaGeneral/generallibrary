@@ -329,6 +329,12 @@ def flatten(list_, gen=False):
         return list(flatten(list_=list_, gen=True))
 
 
+def subtract_list(a, b):
+    a = a.copy()
+    for x in b:
+        if x in a:
+            a.remove(x)
+    return a
 
 
 

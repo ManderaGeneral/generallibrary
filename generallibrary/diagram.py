@@ -1,7 +1,7 @@
 
 from generallibrary.functions import AutoInitBases, wrapper_transfer, deco_cast_to_self
 from generallibrary.values import clamp
-from generallibrary.iterables import get, pivot_list
+from generallibrary.iterables import get, pivot_list, subtract_list
 
 import pandas
 from itertools import chain
@@ -207,6 +207,28 @@ class _Diagram_QOL:
             :param filt: """
         for node in self.get_all(spawn=False, gen=True, filt=filt, traverse_excluded=True):
             node.set_parent(None)
+
+    def graph(self):
+        """ :param TreeDiagram or NetworkDiagram or Any self: """
+        routes = []
+        for route in self._routes():
+            for old_route in routes:
+                if len(route) == len(old_route) and not subtract_list(route, old_route):
+                    break
+            else:
+                routes.append(route)
+        return routes
+
+    def _routes(self, *nodes):
+        """ :param TreeDiagram or NetworkDiagram or Any self: """
+        nodes = list(nodes) + [self]
+        for node in self.get_nodes():
+            if node in nodes:
+                if node is not nodes[-2]:
+                    yield nodes + [node]
+            else:
+                yield from node._routes(*nodes)
+
 
 
 class _Diagram_Global:
