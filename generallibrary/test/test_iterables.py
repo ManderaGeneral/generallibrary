@@ -296,7 +296,11 @@ class IterablesTest(unittest.TestCase):
         a = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
         self.assertEqual([1, 2, 3, 4, 5, 6, 7, 8, 9], flatten(a))
 
-
+    def test_subtract_list(self):
+        self.assertEqual([1], subtract_list([1, 2], [2]))
+        self.assertEqual([1], subtract_list([1, 1], [1]))
+        self.assertEqual([], subtract_list([1, 1], [1, 1]))
+        self.assertEqual([False], subtract_list([False, True, None], [None, True]))
 
 
 

@@ -379,7 +379,10 @@ class FunctionsTest(unittest.TestCase):
         C.recycle_clear_all()
         self.assertEqual(0, len(C._recycle_instances))
 
-
+    def test_import_module(self):
+        self.assertEqual("generallibrary", import_module("generallibrary").__name__)
+        self.assertEqual("pandas", import_module("pandas").__name__)
+        self.assertEqual(None, import_module("doesntexist", error=False))
 
 
 
