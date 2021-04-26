@@ -208,28 +208,6 @@ class _Diagram_QOL:
         for node in self.get_all(spawn=False, gen=True, filt=filt, traverse_excluded=True):
             node.set_parent(None)
 
-    def graph(self):
-        """ :param TreeDiagram or NetworkDiagram or Any self: """
-        routes = []
-        for route in self._routes():
-            for old_route in routes:
-                if len(route) == len(old_route) and not subtract_list(route, old_route):
-                    break
-            else:
-                routes.append(route)
-        return routes
-
-    def _routes(self, *nodes):
-        """ :param TreeDiagram or NetworkDiagram or Any self: """
-        nodes = list(nodes) + [self]
-        for node in self.get_nodes():
-            if node in nodes:
-                if node is not nodes[-2]:
-                    yield nodes + [node]
-            else:
-                yield from node._routes(*nodes)
-
-
 
 class _Diagram_Global:
     """ Global methods of a Diagram. """
@@ -286,7 +264,43 @@ class _Diagram_Storage:
         return self.load_node(pickled_bytes=self.save_node())
 
 
-class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoInitBases):
+class _Diagram_Graph:
+    def graph(self):
+        """ :param TreeDiagram or NetworkDiagram or Any self: """
+        loops = self.get_loops()
+        return loops
+
+
+    def get_loops(self):
+        loops = []
+        for loop in self._yield_loops():
+            if not any([loop.equals(old_loop) for old_loop in loops]):
+                loops.append(loop)
+        return loops
+
+    def _yield_loops(self, *nodes):
+        """ :param TreeDiagram or NetworkDiagram or Any self: """
+        nodes = list(nodes) + [self]
+        for node in self.get_nodes():
+            if node in nodes:
+                if node is not nodes[-2]:
+                    yield Loop(*nodes)
+            else:
+                yield from node._yield_loops(*nodes)
+
+
+class Loop:
+    def __init__(self, *nodes):
+        self.nodes = list(nodes)
+
+    def __repr__(self):
+        return str(self.nodes)
+
+    def equals(self, loop):
+        return len(self.nodes) == len(loop.nodes) and not subtract_list(self.nodes, loop.nodes)
+
+
+class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, _Diagram_Graph, metaclass=AutoInitBases):
     """ Core methods of a Diagram. """
     def __init__(self, parent=None):
         # print(hasattr(self, "_children"))
