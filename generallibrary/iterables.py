@@ -330,6 +330,7 @@ def flatten(list_, gen=False):
 
 
 def subtract_list(a, b):
+    """ Returns a new list with elements in b removed from a. """
     a = a.copy()
     for x in b:
         if x in a:

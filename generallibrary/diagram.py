@@ -265,20 +265,61 @@ class _Diagram_Storage:
 
 
 class _Diagram_Graph:
+    def __init__(self):
+        self.loops = []
+
     def graph(self):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
         loops = self.get_loops()
         return loops
 
-
     def get_loops(self):
+        """ :param TreeDiagram or NetworkDiagram or Any self: """
+        loops = self._yield_all_loops()
+        loops = self._exclude_mirrored_loops(loops)
+        loops = self._extract_smallest_loops(loops)
+
+        self._assign_loops_to_nodes(loops)
+        return loops
+
+    def _extract_smallest_loops(self, loops):
+        """ :param TreeDiagram or NetworkDiagram or Any self: """
+        while True:
+            for loop in loops:
+                loop_nodes = loop.nodes.copy()
+                other_loops = loops.copy()
+                other_loops.remove(loop)
+
+                # See if smaller loops have all of the loop_nodes combined
+                for loop2 in other_loops:
+                    if len(loop2.nodes) < len(loop.nodes):
+                        loop_nodes = subtract_list(loop_nodes, loop2.nodes)
+
+                if not loop_nodes:
+                    loops.remove(loop)
+                    break
+            else:
+                break
+
+        return loops
+
+    def _assign_loops_to_nodes(self, loops):
+        """ :param TreeDiagram or NetworkDiagram or Any self: """
+        for node in self.get_all():
+            node.loops.clear()
+        for loop in loops:
+            for node in loop.nodes:
+                node.loops.append(loop)
+
+    def _exclude_mirrored_loops(self, all_loops):
+        """ :param TreeDiagram or NetworkDiagram or Any self: """
         loops = []
-        for loop in self._yield_loops():
+        for loop in all_loops:
             if not any([loop.equals(old_loop) for old_loop in loops]):
                 loops.append(loop)
         return loops
 
-    def _yield_loops(self, *nodes):
+    def _yield_all_loops(self, *nodes):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
         nodes = list(nodes) + [self]
         for node in self.get_nodes():
@@ -286,7 +327,7 @@ class _Diagram_Graph:
                 if node is not nodes[-2]:
                     yield Loop(*nodes)
             else:
-                yield from node._yield_loops(*nodes)
+                yield from node._yield_all_loops(*nodes)
 
 
 class Loop:
