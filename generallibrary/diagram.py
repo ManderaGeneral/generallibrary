@@ -271,16 +271,21 @@ class _Diagram_Graph:
     def graph(self):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
         loops = self.get_loops()
+
+        self._relate_loops(loops=loops)
+
         return loops
 
     def get_loops(self):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
         loops = self._yield_all_loops()
-        loops = self._exclude_mirrored_loops(loops)
-        loops = self._extract_smallest_loops(loops)
-
-        self._assign_loops_to_nodes(loops)
+        loops = self._exclude_mirrored_loops(loops=loops)
+        loops = self._extract_smallest_loops(loops=loops)
+        self._assign_loops_to_nodes(loops=loops)
         return loops
+
+    def _relate_loops(self, loops):
+        """ :param TreeDiagram or NetworkDiagram or Any self: """
 
     def _extract_smallest_loops(self, loops):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
@@ -311,13 +316,13 @@ class _Diagram_Graph:
             for node in loop.nodes:
                 node.loops.append(loop)
 
-    def _exclude_mirrored_loops(self, all_loops):
+    def _exclude_mirrored_loops(self, loops):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
-        loops = []
-        for loop in all_loops:
-            if not any([loop.equals(old_loop) for old_loop in loops]):
-                loops.append(loop)
-        return loops
+        mirrored_loops = []
+        for loop in loops:
+            if not any([loop.equals(old_loop) for old_loop in mirrored_loops]):
+                mirrored_loops.append(loop)
+        return mirrored_loops
 
     def _yield_all_loops(self, *nodes):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
@@ -328,17 +333,6 @@ class _Diagram_Graph:
                     yield Loop(*nodes)
             else:
                 yield from node._yield_all_loops(*nodes)
-
-
-class Loop:
-    def __init__(self, *nodes):
-        self.nodes = list(nodes)
-
-    def __repr__(self):
-        return str(self.nodes)
-
-    def equals(self, loop):
-        return len(self.nodes) == len(loop.nodes) and not subtract_list(self.nodes, loop.nodes)
 
 
 class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, _Diagram_Graph, metaclass=AutoInitBases):
@@ -650,6 +644,15 @@ class Markdown(TreeDiagram):
 
 
 
+class Loop(NetworkDiagram):
+    def __init__(self, *nodes):
+        self.nodes = list(nodes)
+
+    def __repr__(self):
+        return str(self.nodes)
+
+    def equals(self, loop):
+        return len(self.nodes) == len(loop.nodes) and not subtract_list(self.nodes, loop.nodes)
 
 
 
