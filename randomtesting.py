@@ -1,3 +1,4 @@
+import pickle
 
 from generallibrary import *
 
@@ -11,16 +12,46 @@ class A(NetworkDiagram):
         return str(self.x)
 
 
+
+
+# 3 Triangles in grid
+# a = A("a")
+# b = a.add_node("b")
+# c = b.add_node("c")
+# d = c.add_node("d")
+# e = d.add_node("e")
+# a.add_node(c)
+# b.add_node(d)
+# b.add_node(e)
+# print(a.get_loops())
+
+
+# Square with triangle inside
 a = A("a")
 b = a.add_node("b")
 c = b.add_node("c")
-c.add_node(a)
-
 d = c.add_node("d")
 d.add_node(a)
 
+e = a.add_node("e")
+e.add_node(d)
 
-print(a.graph())
+
+
+print(a.get_loops())
+
+
+
+# a = A("a")
+# b = a.add_node("b")
+# c = b.add_node("c")
+# c.add_node(a)
+#
+# d = c.add_node("d")
+# d.add_node(a)
+#
+#
+# print(a.graph())
 
 
 

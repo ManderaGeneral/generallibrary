@@ -1,7 +1,7 @@
 
 from generallibrary.functions import AutoInitBases, wrapper_transfer, deco_cast_to_self
 from generallibrary.values import clamp
-from generallibrary.iterables import get, pivot_list, subtract_list
+from generallibrary.iterables import get, pivot_list, subtract_list, flatten
 
 import pandas
 from itertools import chain
@@ -266,7 +266,7 @@ class _Diagram_Storage:
 
 class _Diagram_Graph:
     def __init__(self):
-        self.loops = []
+        self.loops = set()
 
     def graph(self):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
@@ -314,7 +314,7 @@ class _Diagram_Graph:
             node.loops.clear()
         for loop in loops:
             for node in loop.nodes:
-                node.loops.append(loop)
+                node.loops.add(loop)
 
     def _exclude_mirrored_loops(self, loops):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
@@ -330,7 +330,8 @@ class _Diagram_Graph:
         for node in self.get_nodes():
             if node in nodes:
                 if node is not nodes[-2]:
-                    yield Loop(*nodes)
+                    index = nodes.index(node)
+                    yield Loop(*nodes[index:])
             else:
                 yield from node._yield_all_loops(*nodes)
 
@@ -644,7 +645,7 @@ class Markdown(TreeDiagram):
 
 
 
-class Loop(NetworkDiagram):
+class Loop(TreeDiagram):
     def __init__(self, *nodes):
         self.nodes = list(nodes)
 
@@ -653,6 +654,23 @@ class Loop(NetworkDiagram):
 
     def equals(self, loop):
         return len(self.nodes) == len(loop.nodes) and not subtract_list(self.nodes, loop.nodes)
+
+    def get_connected_loops(self):
+        loops = set.union(*[node.loops for node in self.nodes])
+        loops.remove(self)
+        return loops
+
+    def can_contain_loop(self, loop):
+        """ Take all nodes and subtract direct childrens' sandwiched nodes."""
+        return all([node in self.nodes for node in loop.nodes])
+
+
+
+
+
+class Zone:
+    def __init__(self, *nodes):
+        self.nodes = nodes
 
 
 
