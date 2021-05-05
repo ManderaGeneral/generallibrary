@@ -1,6 +1,6 @@
 
 from generallibrary.functions import AutoInitBases, wrapper_transfer, deco_cast_to_self
-from generallibrary.values import clamp
+from generallibrary.values import clamp, confineTo
 from generallibrary.iterables import get, pivot_list, subtract_list, flatten
 
 import pandas
@@ -277,7 +277,8 @@ class _Diagram_Graph:
         return loops
 
     def get_loops(self):
-        """ :param TreeDiagram or NetworkDiagram or Any self: """
+        """ :param TreeDiagram or NetworkDiagram or Any self:
+            :rtype: list[Loop] """
         loops = self._yield_all_loops()
         loops = self._exclude_mirrored_loops(loops=loops)
         loops = self._extract_smallest_loops(loops=loops)
@@ -295,9 +296,9 @@ class _Diagram_Graph:
                 other_loops = loops.copy()
                 other_loops.remove(loop)
 
-                # See if smaller loops have all of the loop_nodes combined
+                # See if smaller or equal loops have all of the loop_nodes combined
                 for loop2 in other_loops:
-                    if len(loop2.nodes) < len(loop.nodes):
+                    if len(loop2.nodes) <= len(loop.nodes):
                         loop_nodes = subtract_list(loop_nodes, loop2.nodes)
 
                 if not loop_nodes:
@@ -642,9 +643,6 @@ class Markdown(TreeDiagram):
         return self
 
 
-
-
-
 class Loop(TreeDiagram):
     def __init__(self, *nodes):
         self.nodes = list(nodes)
@@ -652,17 +650,61 @@ class Loop(TreeDiagram):
     def __repr__(self):
         return str(self.nodes)
 
+    @property
+    def nodes_set(self):
+        return set(self.nodes)
+
+    def _next_prev_node(self, node, incr):
+        return self.nodes[confineTo(self.nodes.index(node) + incr, 0, len(self.nodes) - 1)]
+
+    def next_node(self, node):
+        return self._next_prev_node(node=node, incr=1)
+
+    def prev_node(self, node):
+        return self._next_prev_node(node=node, incr=-1)
+
+    def nearby_nodes(self, node):
+        return self.next_node(node=node), self.prev_node(node=node)
+
     def equals(self, loop):
-        return len(self.nodes) == len(loop.nodes) and not subtract_list(self.nodes, loop.nodes)
+        return len(self.nodes) == len(loop.nodes) and not (self.nodes_set - loop.nodes_set)
+        # return len(self.nodes) == len(loop.nodes) and not subtract_list(self.nodes, loop.nodes)
 
     def get_connected_loops(self):
         loops = set.union(*[node.loops for node in self.nodes])
         loops.remove(self)
         return loops
 
-    def can_contain_loop(self, loop):
-        """ Take all nodes and subtract direct childrens' sandwiched nodes."""
-        return all([node in self.nodes for node in loop.nodes])
+    def get_shared_nodes(self, loop):
+        """ Symmetrical. """
+        return self.nodes_set.intersection(loop.nodes_set)
+
+    def get_exclusive_nodes(self, loop):
+        """ Not symmetrical. """
+        return self.nodes_set - self.get_shared_nodes(loop=loop)
+
+    def get_edge_nodes(self, loop):
+        """ Symmetrical. """
+        exclusive = self.get_exclusive_nodes(loop=loop)
+        return set(flatten(map(self.nearby_nodes, exclusive))) - exclusive
+
+    # --- Folding logic below ---
+
+    def get_blocked_nodes(self, loop):
+        """ Not symmetrical. """
+        return self.get_shared_nodes(loop=loop) - self.get_edge_nodes(loop=loop)
+
+    def available_nodes(self):
+        nodes = self.nodes_set
+        for loop in self.get_children():
+            nodes -= self.get_blocked_nodes(loop=loop)
+            nodes.update(loop.get_exclusive_nodes(loop=self))
+
+        return nodes
+
+    def can_contain(self, loop):
+        assert loop.get_parent(spawn=False) is None
+        return not (self.get_shared_nodes(loop=loop) - self.available_nodes())
 
 
 

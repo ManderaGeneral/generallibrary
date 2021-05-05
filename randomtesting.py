@@ -27,19 +27,37 @@ class A(NetworkDiagram):
 
 
 # Square with triangle inside
+# a = A("a")
+# b = a.add_node("b")
+# c = b.add_node("c")
+# d = c.add_node("d")
+# d.add_node(a)
+# e = a.add_node("e")
+# e.add_node(d)
+
+
+# Pentagon with square inside
 a = A("a")
 b = a.add_node("b")
 c = b.add_node("c")
 d = c.add_node("d")
-d.add_node(a)
+e = d.add_node("e")
+e.add_node(a)
+f = e.add_node("f")
+f.add_node(c)
 
-e = a.add_node("e")
-e.add_node(d)
+
+loops = a.get_loops()
+small = loops[0]
+big = loops[1]
+assert len(small.nodes) < len(big.nodes)
 
 
+# big.add_node(small)
+# print(big.available_nodes())
 
-print(a.get_loops())
-
+print(big.can_contain(small))
+print(small.can_contain(big))
 
 
 # a = A("a")
