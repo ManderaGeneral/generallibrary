@@ -1,7 +1,8 @@
 
-from generallibrary.functions import AutoInitBases, wrapper_transfer, deco_cast_to_self
+from generallibrary.functions import AutoInitBases, wrapper_transfer, deco_cast_to_self, Recycle
 from generallibrary.values import clamp, confineTo
 from generallibrary.iterables import get, pivot_list, subtract_list, flatten
+
 
 import pandas
 from itertools import chain
@@ -273,11 +274,23 @@ class _Diagram_Graph:
         loops = self.get_loops()
 
         self._relate_loops(loops=loops)
-
+        loops[0].get_parent(-1, -1, include_self=True).view()
         return loops
 
+    def get_links(self):
+        """ Return a set of sets containing two nodes, paired by child and/or parent.
+
+            :param TreeDiagram or NetworkDiagram or Any self: """
+        links = set()
+        for node in self.get_all():
+            links.update({frozenset({node, child}) for child in node.get_children()})
+            links.update({frozenset({node, parent}) for parent in node.get_parents()})
+        return links
+
     def get_loops(self):
-        """ :param TreeDiagram or NetworkDiagram or Any self:
+        """ Get a list of all unrelated Loops.
+
+            :param TreeDiagram or NetworkDiagram or Any self:
             :rtype: list[Loop] """
         loops = self._yield_all_loops()
         loops = self._exclude_mirrored_loops(loops=loops)
@@ -287,6 +300,17 @@ class _Diagram_Graph:
 
     def _relate_loops(self, loops):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
+        related = []
+        for loop in loops:
+            if not related:
+                related.append(loop)
+            else:
+                for related_loop in related:
+                    if related_loop.can_contain(loop=loop):
+                        related_loop.add_node(child=loop)
+                        break
+                else:
+                    raise AssertionError("Failed relating loops.")
 
     def _extract_smallest_loops(self, loops):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
@@ -299,7 +323,7 @@ class _Diagram_Graph:
                 # See if smaller or equal loops have all of the loop_nodes combined
                 for loop2 in other_loops:
                     if len(loop2.nodes) <= len(loop.nodes):
-                        loop_nodes = subtract_list(loop_nodes, loop2.nodes)
+                        loop_nodes = subtract_list(loop_nodes, loop2.nodes)  # HERE ** Use links instead of nodes
 
                 if not loop_nodes:
                     loops.remove(loop)
@@ -666,6 +690,9 @@ class Loop(TreeDiagram):
     def nearby_nodes(self, node):
         return self.next_node(node=node), self.prev_node(node=node)
 
+    def all_nodes(self):
+        return set.union(*[loop.nodes_set for loop in self.get_all(gen=True)])
+
     def equals(self, loop):
         return len(self.nodes) == len(loop.nodes) and not (self.nodes_set - loop.nodes_set)
         # return len(self.nodes) == len(loop.nodes) and not subtract_list(self.nodes, loop.nodes)
@@ -685,26 +712,36 @@ class Loop(TreeDiagram):
 
     def get_edge_nodes(self, loop):
         """ Symmetrical. """
-        exclusive = self.get_exclusive_nodes(loop=loop)
+        exclusive = self.get_exclusive_nodes(loop=loop)  # Could be possible that there are 0 exclusive nodes
         return set(flatten(map(self.nearby_nodes, exclusive))) - exclusive
 
     # --- Folding logic below ---
 
     def get_blocked_nodes(self, loop):
-        """ Not symmetrical. """
+        """ Selfs' nodes that loop is blocking.
+            Symmetrical. """
         return self.get_shared_nodes(loop=loop) - self.get_edge_nodes(loop=loop)
 
     def available_nodes(self):
+        """ Set of nodes that are available inside self. """
         nodes = self.nodes_set
         for loop in self.get_children():
             nodes -= self.get_blocked_nodes(loop=loop)
             nodes.update(loop.get_exclusive_nodes(loop=self))
-
         return nodes
 
+    def unavailable_nodes(self):
+        """ Set of nodes that exist but are not available inside self. """
+        return self.all_nodes() - self.available_nodes()
+
     def can_contain(self, loop):
-        assert loop.get_parent(spawn=False) is None
-        return not (self.get_shared_nodes(loop=loop) - self.available_nodes())
+        assert loop.get_parent() is None and loop.get_child() is None
+
+        return not loop.nodes_set.intersection(self.unavailable_nodes())
+
+
+
+
 
 
 

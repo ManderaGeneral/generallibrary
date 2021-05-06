@@ -555,7 +555,8 @@ class AutoInitBases(type):
 
 
 class Recycle:
-    """ Inherit this class to make instantiating two classes with the same args yield the same instance object. """
+    """ Inherit this class to make instantiating two classes with the same args yield the same instance object.
+        Assign _recycle_keys to a dict with keys corresponding to init args. """
     _recycle_keys = None
     _recycle_is_new = None
     _recycle_instances = None

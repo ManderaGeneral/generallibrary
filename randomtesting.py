@@ -15,16 +15,16 @@ class A(NetworkDiagram):
 
 
 # 3 Triangles in grid
-# a = A("a")
-# b = a.add_node("b")
-# c = b.add_node("c")
-# d = c.add_node("d")
-# e = d.add_node("e")
-# a.add_node(c)
-# b.add_node(d)
-# b.add_node(e)
-# print(a.get_loops())
+a = A("a")
+b = a.add_node("b")
+c = b.add_node("c")
+d = c.add_node("d")
+e = d.add_node("e")
+a.add_node(c)
+b.add_node(d)
+b.add_node(e)
 
+print(a.get_links())
 
 # Square with triangle inside
 # a = A("a")
@@ -37,27 +37,30 @@ class A(NetworkDiagram):
 
 
 # Pentagon with square inside
-a = A("a")
-b = a.add_node("b")
-c = b.add_node("c")
-d = c.add_node("d")
-e = d.add_node("e")
-e.add_node(a)
-f = e.add_node("f")
-f.add_node(c)
+# a = A("a")
+# b = a.add_node("b")
+# c = b.add_node("c")
+# d = c.add_node("d")
+# e = d.add_node("e")
+# e.add_node(a)
+# f = e.add_node("f")
+# f.add_node(c)
 
 
-loops = a.get_loops()
-small = loops[0]
-big = loops[1]
-assert len(small.nodes) < len(big.nodes)
+a.graph()
 
+# loops = a.get_loops()
+# small = loops[0]
+# big = loops[1]
+# assert len(small.nodes) < len(big.nodes)
 
-# big.add_node(small)
-# print(big.available_nodes())
+# big.add_node(child=small)
+# print(big.unavailable_nodes())
+# print(small.unavailable_nodes())
+# print(big.all_nodes())
 
-print(big.can_contain(small))
-print(small.can_contain(big))
+# print(big.can_contain(small))
+# print(small.can_contain(big))
 
 
 # a = A("a")
