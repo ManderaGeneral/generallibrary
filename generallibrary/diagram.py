@@ -274,7 +274,12 @@ class _Diagram_Graph:
         loops = self.get_loops()
 
         self._relate_loops(loops=loops)
-        loops[0].get_parent(-1, -1, include_self=True).view()
+        top_loop = loops[0].get_parent(-1, -1, include_self=True)  # type: Loop
+        top_loop.view()
+
+        print(top_loop.available_nodes())  # HERE ** d shouldn't be available - Maybe try zones instead
+        print(top_loop.unavailable_nodes())
+
         return loops
 
     def get_links(self):
@@ -298,34 +303,47 @@ class _Diagram_Graph:
         self._assign_loops_to_nodes(loops=loops)
         return loops
 
+    # def _relate_loops(self, loops):
+    #     """ :param TreeDiagram or NetworkDiagram or Any self: """
+    #     related = []
+    #     for loop in loops:
+    #         if not related:
+    #             related.append(loop)
+    #         else:
+    #             for related_loop in related:
+    #                 if related_loop.can_contain(loop=loop):
+    #                     related_loop.add_node(child=loop)
+    #                     break
+    #             else:
+    #                 raise AssertionError("Failed relating loops.")
+
     def _relate_loops(self, loops):
-        """ :param TreeDiagram or NetworkDiagram or Any self: """
-        related = []
+        """ Prioritize making top loops parents by iterating children horizontally.
+
+            :param TreeDiagram or NetworkDiagram or Any self: """
+        top = Loop()
         for loop in loops:
-            if not related:
-                related.append(loop)
+            for related_loop in top.get_children(depth=-1, include_self=True, vertical=False, gen=True):
+                if related_loop.can_contain(loop=loop):
+                    related_loop.add_node(child=loop)
+                    break
             else:
-                for related_loop in related:
-                    if related_loop.can_contain(loop=loop):
-                        related_loop.add_node(child=loop)
-                        break
-                else:
-                    raise AssertionError("Failed relating loops.")
+                raise AssertionError(f"Failed finding parent for loop {loop}")
 
     def _extract_smallest_loops(self, loops):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
         while True:
             for loop in loops:
-                loop_nodes = loop.nodes.copy()
+                loop_links = loop.get_loop_links()
                 other_loops = loops.copy()
                 other_loops.remove(loop)
 
                 # See if smaller or equal loops have all of the loop_nodes combined
                 for loop2 in other_loops:
                     if len(loop2.nodes) <= len(loop.nodes):
-                        loop_nodes = subtract_list(loop_nodes, loop2.nodes)  # HERE ** Use links instead of nodes
+                        loop_links -= loop2.get_loop_links()
 
-                if not loop_nodes:
+                if not loop_links:
                     loops.remove(loop)
                     break
             else:
@@ -672,14 +690,18 @@ class Loop(TreeDiagram):
         self.nodes = list(nodes)
 
     def __repr__(self):
-        return str(self.nodes)
+        return f"Loop: {self.nodes}"
+
+    def get_loop_links(self):
+        return {frozenset({node, self.next_node(node=node)}) for node in self.nodes}
 
     @property
     def nodes_set(self):
         return set(self.nodes)
 
     def _next_prev_node(self, node, incr):
-        return self.nodes[confineTo(self.nodes.index(node) + incr, 0, len(self.nodes) - 1)]
+        index = confineTo(value=self.nodes.index(node) + incr, minimum=0, maximum=len(self.nodes) - 1, margin=0.5)
+        return self.nodes[index]
 
     def next_node(self, node):
         return self._next_prev_node(node=node, incr=1)

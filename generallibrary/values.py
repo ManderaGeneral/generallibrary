@@ -102,6 +102,11 @@ def doubleRectify(value, minimum, maximum):
         return value - maximum
 
 
+def int_float(n):
+    """ Cast to int if there are no decimals. """
+    return int(n) if n == int(n) else n
+
+
 def confineTo(value, minimum, maximum, margin=0):
     """
     Confine this value, but unlike clamp it subtracts diff * n to create an 'infinite' effect.
@@ -128,7 +133,7 @@ def confineTo(value, minimum, maximum, margin=0):
     signValue = sign(rectifiedValue) * -1
     jumpValue = jumps * valueRange * signValue
 
-    return value + jumpValue
+    return int_float(value + jumpValue)
 
 
 class EnvVar:
