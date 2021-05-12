@@ -1,4 +1,5 @@
 
+from generallibrary.analyze import bayesian
 from generallibrary.iterables import SortedList, get_values, is_iterable, depth, iter_first_value, iter_first_value, join_with_str, extend_list_in_dict, update_dict_in_dict, get_free_index, get_rows, exclusive, inclusive, unique_obj_in_list, combine, remove_duplicates, get_index, get, get_items, split_list, pivot_list, remove, flatten, subtract_list
 from generallibrary.object import getsize
 from generallibrary.text import comma_and_and, plur_sing, replace, match
@@ -10,4 +11,3 @@ from generallibrary.diagram import TreeDiagram, Markdown, NetworkDiagram
 from generallibrary.code import debug, CodeLine, clipboard_copy, clipboard_get, print_link, print_link_to_obj, get_definition_line, get_origin
 from generallibrary.versions import VerInfo, get_installed_packages, package_is_installed, PythonVersion, Ver
 from generallibrary.objinfo.objinfo import ObjInfo, hook, cache_clear
-

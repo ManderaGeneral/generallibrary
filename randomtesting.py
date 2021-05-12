@@ -2,17 +2,146 @@ import pickle
 
 from generallibrary import *
 
+
+
+from generalfile import Path
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+pd.set_option("precision", 2)
+
+# path = Path("C:/Users/Mandera/Desktop/analyzetest/df.tsv")
+# path.spreadsheet.write(df, overwrite=True)
+# path.open_folder()
+
+
+
+aggregations = {
+    "Klick": "mean",
+    "Kr": "mean",
+    "Klick/Kr": "mean",
+}
+
+
+def scatter(df, x, y, *group):
+    print("\n", df)
+
+    plt.figure(f"{y} genom {x} - {', '.join(group) or 'Alla'}")
+
+    if group:
+        df = df.groupby(list(group), as_index=True).aggregate(aggregations)
+        for i, series in df.iterrows():
+            plt.scatter(series[x], series[y], pow(series[y] / series[x], 3) * 10, label=series.name)
+        plt.legend()
+
+    else:
+        plt.scatter(df[x], df[y], pow(df[y] / df[x], 3) * 10)
+
+
+    plt.xlabel(x)
+    plt.ylabel(y)
+    plt.xlim(0, 100)
+    plt.ylim(0, 100)
+
+
+
+entries = combine(
+    Fras=("Klocka", "Ur"),
+    Plats=("Sverige", "Stockholm"),
+    Dag=("12/5-21", "13/5-21", "14/5-21"),
+)
+
+df = pd.DataFrame(entries)
+df["Klick"] = np.random.randint(1, 70, size=len(df))
+df["Kr"] = df["Klick"] * np.random.randint(4, 13, size=len(df)) / 10
+df["Klick/Kr"] = df["Klick"] / df["Kr"]
+
+
+
+scatter(df, "Kr", "Klick")
+# scatter(df, "Kr", "Klick", "Fras")
+# scatter(df, "Kr", "Klick", "Plats")
+scatter(df, "Kr", "Klick", "Fras", "Plats")
+scatter(df, "Kr", "Klick", "Dag")
+
+
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # from generalpackager import Packager
 # Packager().graph()
 
-
-
-class A(NetworkDiagram):
-    def __init__(self, x):
-        self.x = x
-
-    def __repr__(self):
-        return str(self.x)
+# class A(NetworkDiagram):
+#     def __init__(self, x):
+#         self.x = x
+#
+#     def __repr__(self):
+#         return str(self.x)
 
 # process = A("generalprocess")
 # vector = A("generalvector")
@@ -88,17 +217,16 @@ class A(NetworkDiagram):
 # f.add_node(c)
 
 
-# 3 Triangles with 1 center node
-a = A("a")
-b = a.add_node("b")
-c = b.add_node("c")
-d = c.add_node("d")
-c.add_node(a)
-a.add_node(d)
-b.add_node(d)
-
-
-a.graph()
+# 3 Triangles with 1 center node  HERE **
+# a = A("a")
+# b = a.add_node("b")
+# c = b.add_node("c")
+# d = c.add_node("d")
+# c.add_node(a)
+# a.add_node(d)
+# b.add_node(d)
+#
+# a.graph()
 
 
 
