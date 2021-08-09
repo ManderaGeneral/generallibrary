@@ -1,9 +1,7 @@
 
 
-
-
-def bayesian(df):
-    print(df)
+# def bayesian(df):
+#     print(df)
 
 
 
