@@ -379,7 +379,7 @@ class _Diagram_Storage:
 #                 yield from node._yield_all_loops(*nodes)
 
 
-class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, _Diagram_Graph, metaclass=AutoInitBases):
+class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoInitBases):
     """ Core methods of a Diagram. """
     def __init__(self, parent=None):
         # print(hasattr(self, "_children"))
