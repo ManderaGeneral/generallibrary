@@ -120,7 +120,7 @@ class _Diagram_QOL:
             container.remove(self)
             container.insert(index, self)
 
-    @deco_cast_to_self
+    @deco_cast_to_self(if_not_base="_Diagram")
     def add_node(self, child):
         """ Add a node as child, either with one arg being of own type or with args to create a new one.
             Returns child.
@@ -252,7 +252,7 @@ class _Diagram_Global:
         return _traverser(*origins, func=func, depth=depth, flat=flat, filt=filt, traverse_excluded=traverse_excluded, include_self=True, gen=gen, vertical=False, order_func=order_func, spawn=spawn)
 
 
-class _Diagram_Storage:
+class Storable:
     """ Core methods to store, save and load attributes. """
     def save_node(self):
         return pickle.dumps(self)
@@ -379,7 +379,7 @@ class _Diagram_Storage:
 #                 yield from node._yield_all_loops(*nodes)
 
 
-class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoInitBases):
+class _Diagram(_Diagram_Global, _Diagram_QOL, Storable, metaclass=AutoInitBases):
     """ Core methods of a Diagram. """
     def __init__(self, parent=None):
         # print(hasattr(self, "_children"))
@@ -390,7 +390,7 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Storage, metaclass=AutoIn
         if parent is not None:
             self.set_parent(parent=parent)
 
-    @deco_cast_to_self
+    @deco_cast_to_self(if_not_base="_Diagram")
     def set_parent(self, parent):
         """ Set a new parent for this Node.
             Returns parent.

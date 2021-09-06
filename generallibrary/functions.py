@@ -1,5 +1,5 @@
 
-from generallibrary.types import typeChecker
+from generallibrary.types import typeChecker, getBaseClassNames
 from generallibrary.iterables import remove
 
 
@@ -362,16 +362,21 @@ def deco_cast_parameters(**pars_to_cast):
     return _decorator
 
 
-def deco_cast_to_self(func):
-    """ Allows first arg to be same type as self or the args to create a new one. """
-    def _wrapper(self, *args, **kwargs):
-        combined = args + tuple(kwargs.values())
-        if combined and (combined[0] is None or type(combined[0]) == type(self)):
-            arg = combined[0]
-        else:
-            arg = type(self)(*args, **kwargs)
-        return func(self, arg)
-    return wrapper_transfer(func, _wrapper)
+def deco_cast_to_self(if_not_base):
+    """ Cast arg(s) to self's type if if_not_base isn't a base of first arg. """
+    def _deco(func):
+        def _wrapper(self, *args, **kwargs):
+            combined = args + tuple(kwargs.values())
+            # is_same_class = type(combined[0]) == type(self)
+            # if combined and (combined[0] is None or is_same_class):
+            arg_base_names = getBaseClassNames(combined[0], includeSelf=True)
+            if combined and (combined[0] is None or if_not_base in arg_base_names):
+                arg = combined[0]
+            else:
+                arg = type(self)(*args, **kwargs)
+            return func(self, arg)
+        return wrapper_transfer(func, _wrapper)
+    return _deco
 
 
 def deco_bound_defaults(func):
