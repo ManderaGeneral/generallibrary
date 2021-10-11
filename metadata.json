@@ -7,7 +7,8 @@
         "pyperclip",
         "pandas",
         "tabulate",
-        "pytz"
+        "pytz",
+        "dill"
     ],
     "extras_require": {},
     "topics": [
