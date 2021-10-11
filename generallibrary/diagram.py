@@ -6,8 +6,8 @@ from generallibrary.iterables import get, pivot_list, subtract_list, flatten
 
 import pandas
 from itertools import chain
-import pickle
-
+# import pickle
+import dill as pickle  # Can apparently pickle lambdas: https://stackoverflow.com/questions/25348532/can-python-pickle-lambda-functions
 
 def _skip_node_check(node, order_func, filt, traverse_excluded, _all_nodes):
     if node in _all_nodes:
@@ -259,9 +259,11 @@ class Storable:
 
     @staticmethod
     def load_node(pickled_bytes):
+        """ :rtype: TreeDiagram or NetworkDiagram or Any """
         return pickle.loads(pickled_bytes)
 
     def copy_node(self):
+        """ :rtype: TreeDiagram or NetworkDiagram or Any """
         return self.load_node(pickled_bytes=self.save_node())
 
 
@@ -409,7 +411,7 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, Storable, metaclass=AutoInitBases)
         if parent is not None and parent not in self._parents:
             self._parents.append(parent)
             parent._children.append(self)
-        # return self
+
         return parent
 
     def spawn_children(self): pass

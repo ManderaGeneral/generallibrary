@@ -83,7 +83,11 @@ def debug(scope, *evals, print_out=True):
     lines = []
     n = max([len(string) for string in evals])
     for evalStr in evals:
-        lines.append(f"{evalStr:>{n}} = {eval(evalStr, scope)}")
+        try:
+            result = eval(evalStr, scope)
+        except:
+            result = "ERROR"
+        lines.append(f"{evalStr:>{n}} = {result}")
     lines.append("")
     text = "\n".join(lines)
     if print_out:

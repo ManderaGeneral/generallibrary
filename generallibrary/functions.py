@@ -255,7 +255,8 @@ class SigInfo:
     # ========= Other =========
 
     def __repr__(self):
-        return f"<SigInfo for '{self.callableObject.__class__.__name__}' with names '{', '.join(self.names)}'>"
+        return f"<SigInfo for '{self.callableObject.__name__}' with names '{', '.join(self.names)}'>"
+        # return f"<SigInfo for '{self.callableObject.__class__.__name__}' with names '{', '.join(self.names)}'>"
 
 
 ignore = ["+", "-", "*", "/", "(", ")", "sqrt"]
@@ -369,8 +370,7 @@ def deco_cast_to_self(if_not_base):
             combined = args + tuple(kwargs.values())
             # is_same_class = type(combined[0]) == type(self)
             # if combined and (combined[0] is None or is_same_class):
-            arg_base_names = getBaseClassNames(combined[0], includeSelf=True)
-            if combined and (combined[0] is None or if_not_base in arg_base_names):
+            if combined and (combined[0] is None or if_not_base in getBaseClassNames(combined[0], includeSelf=True)):
                 arg = combined[0]
             else:
                 arg = type(self)(*args, **kwargs)
