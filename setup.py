@@ -17,6 +17,7 @@ setup(
         'pandas',
         'tabulate',
         'pytz',
+        'dill',
     ],
     url="https://github.com/ManderaGeneral/generallibrary",
     license="mit",
