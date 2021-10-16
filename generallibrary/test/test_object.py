@@ -1,9 +1,23 @@
 
 from generallibrary.object import *
-from generallibrary.objinfo.objinfo import ObjInfo
+from generallibrary.objinfo.objinfo import ObjInfo, hook
 from generallibrary.functions import initBases, AutoInitBases
 
 import unittest
+
+
+# hook couldn't get foo's parent if defined inside method
+class hook_A:
+    def foo(self):
+        return 1
+class hook_B(hook_A):
+    pass
+hook_glob = 0
+
+hook_bar = []
+def hook_foo():
+    hook_bar.append(1)
+
 
 
 class ObjectTest(unittest.TestCase):
@@ -19,8 +33,31 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(1, B().x)
         self.assertEqual(2, B().y)
 
+    def test_hook_method_base(self):
+        global hook_glob
+        hook_glob = 0
+
+        def change_glob():
+            global hook_glob
+            hook_glob += 1
+
+        hook(hook_B.foo, change_glob, owner=hook_B)
+
+        self.assertEqual(0, hook_glob)
+        hook_A().foo()
+        self.assertEqual(0, hook_glob)
+        hook_B().foo()
+        self.assertEqual(1, hook_glob)
+
+    def test_hook_func(self):
+        hook(hook_foo, lambda: hook_bar.append(0), after=False)
+        hook(hook_foo, lambda: hook_bar.append(2), after=True)
+        hook_foo()
+        self.assertEqual([0, 1, 2], hook_bar)
+
+
     def test_getsize(self):
-        """Hard to make too specific tests I think due to 64-bit vs 32-bit for example."""
+        """ Hard to make too specific tests I think due to 64-bit vs 32-bit for example. """
         x = []
         y = "hi"
         z = [y]

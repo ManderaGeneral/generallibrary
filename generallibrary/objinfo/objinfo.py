@@ -9,6 +9,8 @@ from generallibrary.objinfo.origin import _ObjInfoOrigin
 from generallibrary.objinfo.properties import _ObjInfoProperties
 from generallibrary.objinfo.parents import _ObjInfoParents
 
+from warnings import warn
+
 
 class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties, _ObjInfoParents, TreeDiagram):
     """ Get whether obj is a module, function, class, method, property or variable.
@@ -79,10 +81,16 @@ class _Hook:
         self.after = after
 
 
-def hook(callable_, *funcs, after=False):
+def hook(callable_, *funcs, owner=None, after=False):
     """ Hook into a callable. Stores funcs in callable's instance, class or even module. """
     objInfo = ObjInfo(callable_)
-    owner = objInfo.get_parent().obj
+    if owner is None:
+        parent = objInfo.get_parent()
+        if parent is None:
+            raise AttributeError("Could not resolve owner of callable to hook into. Possibly local function?")
+        if parent.is_class():
+            warn("hook was used on a method without defining owner, prone to mistake as hook will use first base class as owner.", DeprecationWarning)
+        owner = parent.obj
 
     if not hasattr(owner, "hooks"):
         owner.hooks = {}
@@ -101,7 +109,7 @@ def hook(callable_, *funcs, after=False):
 
     if new:
         wrapper_transfer(base=callable_, target=_wrapper)
-        setattr(objInfo.get_parent().obj, objInfo.name, _wrapper)
+        setattr(owner, objInfo.name, _wrapper)
 
     return owner.hooks[objInfo.name]
 

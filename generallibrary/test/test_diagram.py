@@ -1,10 +1,7 @@
 
 from generallibrary.diagram import *
-from generallibrary.objinfo.objinfo import hook
 
 import unittest
-
-
 
 
 class A(TreeDiagram):
