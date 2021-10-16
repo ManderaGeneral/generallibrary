@@ -116,13 +116,14 @@ def get_origin(obj, include_depth=False):
 
 
 # https://stackoverflow.com/questions/26300594/print-code-link-into-pycharms-console
-def print_link(file=None, line=None, print_out=True):
+def print_link(file=None, line=None, print_out=True, add_depth=0):
     """ Print a link in PyCharm to a line in file.
         Defaults to line where this function was called. """
+    level = inspect.stack()[1 + add_depth]
     if file is None:
-        file = inspect.stack()[1].filename
+        file = level.filename
     if line is None:
-        line = inspect.stack()[1].lineno
+        line = level.lineno
     string = f'File "{file}", line {max(line, 1)}'.replace("\\", "/")
 
     if print_out:
@@ -144,6 +145,12 @@ def get_definition_line(obj):
     obj, depth = get_origin(obj=obj, include_depth=True)
     return max(inspect.getsourcelines(obj)[1] + depth, 1)
 
+
+def warn(msg, add_depth=0, print_out=True):
+    link = print_link(print_out=print_out, add_depth=1 + add_depth)
+    if print_out:
+        print(f"Warning: {msg}")
+    return link
 
 
 

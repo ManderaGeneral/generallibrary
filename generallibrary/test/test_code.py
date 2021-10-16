@@ -38,4 +38,6 @@ class CodeTest(unittest.TestCase):
         self.assertIn("line 16", print_link_to_obj(CodeTest.test_CodeLine, print_out=False))
         self.assertIn("unittest/__init__.py\", line 1", print_link_to_obj(unittest, print_out=False))
 
+    def test_warn(self):
+        self.assertIn("line 42", warn("foo"))
 

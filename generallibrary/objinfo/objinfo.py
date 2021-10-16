@@ -2,14 +2,13 @@
 from generallibrary.iterables import extend_list_in_dict, split_list
 from generallibrary.functions import SigInfo, wrapper_transfer, Recycle
 from generallibrary.diagram import TreeDiagram
+from generallibrary.code import warn
 
 from generallibrary.objinfo.children import _ObjInfoChildren
 from generallibrary.objinfo.type import _ObjInfoType
 from generallibrary.objinfo.origin import _ObjInfoOrigin
 from generallibrary.objinfo.properties import _ObjInfoProperties
 from generallibrary.objinfo.parents import _ObjInfoParents
-
-from warnings import warn
 
 
 class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties, _ObjInfoParents, TreeDiagram):
@@ -89,7 +88,7 @@ def hook(callable_, *funcs, owner=None, after=False):
         if parent is None:
             raise AttributeError("Could not resolve owner of callable to hook into. Possibly local function?")
         if parent.is_class():
-            warn("hook was used on a method without defining owner, prone to mistake as hook will use first base class as owner.", DeprecationWarning)
+            warn("hook was used on a method without defining owner, prone to mistake as hook will use first base class as owner.", add_depth=1)
         owner = parent.obj
 
     if not hasattr(owner, "hooks"):
