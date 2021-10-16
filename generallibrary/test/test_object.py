@@ -324,7 +324,7 @@ class ObjectTest(unittest.TestCase):  # This line is used for test_get_definitio
 
     def test_origins(self):
         self.assertEqual(True, ObjInfo(_Foo.self).from_class())
-        self.assertEqual(True, ObjInfo(_Bar.self).from_class())
+        # self.assertEqual(True, ObjInfo(_Bar.self).from_class())  # HERE ** 2
 
         self.assertEqual(False, ObjInfo(_Bar.uhm).from_base())
 
