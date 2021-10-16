@@ -280,7 +280,7 @@ class Storable:
 #         top_loop = loops[0].get_parent(-1, -1, include_self=True)  # type: Loop
 #         top_loop.view()
 #
-#         print(top_loop.available_nodes())  # HERE ** d shouldn't be available - Maybe try zones instead
+#         print(top_loop.available_nodes())  # d shouldn't be available - Maybe try zones instead
 #         print(top_loop.unavailable_nodes())
 #
 #         return loops

@@ -395,6 +395,10 @@ class _Bar(_Foo):
     def uhm(self):
         pass
 
+    def self(self):  # HERE ** ObjInfo.from_class() isn't right
+        """ Not protected. """
+        pass
+
 
 def a():
     def b():

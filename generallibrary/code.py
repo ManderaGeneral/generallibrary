@@ -147,9 +147,10 @@ def get_definition_line(obj):
 
 
 def warn(msg, add_depth=0, print_out=True):
-    link = print_link(print_out=print_out, add_depth=1 + add_depth)
+    link = print_link(print_out=False, add_depth=1 + add_depth)
+    full_msg = f"Warning: {msg}\n    {link}"
     if print_out:
-        print(f"Warning: {msg}")
+        print(full_msg)
     return link
 
 

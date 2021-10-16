@@ -292,7 +292,7 @@ class TreeDiagramTest(unittest.TestCase):
                     Spawn(self.x - 1, parent=self)
 
         # spawn = Spawn(2)
-        # self.assertEqual([], spawn.get_children(spawn=False))  # HERE **
+        # self.assertEqual([], spawn.get_children(spawn=False))
         # self.assertEqual([], spawn.get_children(filt=lambda node: False))
         # self.assertEqual([], spawn.get_children(spawn=False))
 

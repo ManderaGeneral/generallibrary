@@ -65,7 +65,7 @@ class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties
         return id(obj)
 
     def __repr__(self):
-        """ Return a nice represantion string with capitalized type and name. """
+        """ Return a nice representation string with capitalized type and name. """
         return f"{self.type(nice_output=True)}: {self.name}"
 
     ObjInfo = ...
