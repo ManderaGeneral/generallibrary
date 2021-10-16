@@ -19,8 +19,7 @@ def hook_foo():
     hook_bar.append(1)
 
 
-
-class ObjectTest(unittest.TestCase):
+class ObjectTest(unittest.TestCase):  # This line is used for test_get_definition_line
     def test_AutoInitBases(self):
         class A(metaclass=AutoInitBases):
             def __init__(self):
@@ -342,7 +341,7 @@ class ObjectTest(unittest.TestCase):
         self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "self", traverse_excluded=True).from_base())
 
     def test_get_definition_line(self):
-        self.assertEqual(9, ObjInfo(ObjectTest).get_definition_line())
+        self.assertEqual(22, ObjInfo(ObjectTest).get_definition_line())
 
     def test_get_origin(self):
         class FooBar:
