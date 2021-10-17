@@ -5,7 +5,7 @@ import inspect
 class _ObjInfoOrigin:
     """ Only one of these methods starting with 'from_' will return True. """
     def _last_cls_with_name(self):
-        """ Get the last of parent's cls that has this name in it.
+        """ Get the last (bottom-most) of parent's cls that has this name in it.
 
             :param generallibrary.ObjInfo self: """
         last_cls = None
@@ -35,9 +35,18 @@ class _ObjInfoOrigin:
 
     def from_class(self):
         """ Get whether this attribute came directly from it's class.
+            Doesn't matter if direct parent has overridden inherited attr.
+            Sees if bottom-most occurrence is direct parent.
+            # Subset of from_class_with_overrides.
 
             :param generallibrary.ObjInfo self: """
         return self._last_cls_with_name() is getattr(self.get_parent(), "cls", None)
+
+    # def from_class_with_overrides(self):  # This would violate only one from_* being True rule
+    #     """ Get whether this attribute is defined by it's direct parent, even if a base class has it.
+    #
+    #         :param generallibrary.ObjInfo self: """
+    #     return self._last_cls_with_name() is getattr(self.get_parent(), "cls", None)
 
     def from_instance(self):
         """ Get whether this attribute came from the instance.
