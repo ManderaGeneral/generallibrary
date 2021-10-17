@@ -1,6 +1,7 @@
 
 
 from generallibrary.functions import deco_propagate_while
+from generallibrary.types import getBaseClasses
 
 import inspect
 import re
@@ -134,5 +135,19 @@ class _ObjInfoProperties:
                 raise AttributeError(f"'{doc}' is not a proper a sentence from '{print_link_to_obj(self.obj, print_out=False)}'.")
 
         return doc
+
+    def defined_by_parent(self):
+        """ Get whether obj is defined directly by it's parent by seeing if it's unique from parent's base classes'.
+
+            :param generallibrary.ObjInfo self: """
+        if self.get_parent() is None:
+            return False
+
+        for base in getBaseClasses(self.get_parent().obj):
+            base_obj = getattr(base, self.name, None)
+            if self.obj is base_obj:
+                return False
+        return True
+
 
 

@@ -318,6 +318,12 @@ class ObjectTest(unittest.TestCase):  # This line is used for test_get_definitio
         self.assertEqual("Proper.", ObjInfo(proper).doc(only_first_line=True))
         self.assertEqual("Proper.", ObjInfo(proper).doc(require_sentence=True))
 
+    def test_defined_by_parent(self):
+        self.assertEqual(True, ObjInfo(_Foo.self).defined_by_parent())
+        self.assertEqual(True, ObjInfo(_Bar.self).defined_by_parent())
+        self.assertEqual(True, ObjInfo(_Foo._self).defined_by_parent())
+        self.assertEqual(False, ObjInfo(_Bar._self, parent=ObjInfo(_Bar)).defined_by_parent())  # Gotta set parent manually, otherwise it'll be _Foo
+
     def test_file(self):
         self.assertEqual("test_object.py", ObjInfo(_Foo).file(relative=True))
         self.assertEqual("test_object.py", ObjInfo(_Foo.self).file(relative=True))

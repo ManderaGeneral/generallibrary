@@ -62,17 +62,13 @@ class _ObjInfoType:
             :param generallibrary.ObjInfo self: """
         if inspect.ismethod(self.obj) or inspect.ismethoddescriptor(self.obj):
             return True
-
         if self.is_class() or not callable(self.obj):  # Unbound cls and static methods aren't "callable"
             return False
-
         if isinstance(self.obj, MethodWrapperType):
             return True
-
         if parent := self.get_parent():
             if parent.is_class():
                 return True
-
         return False
 
     type_methods = {key: value for key, value in locals().items() if key != "type" and not key.startswith("_")}

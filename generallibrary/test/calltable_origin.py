@@ -41,8 +41,8 @@ callTable.generate_with_funcs(
     from_builtin=lambda objinfo: objinfo.from_builtin(),
     from_base=lambda objinfo: objinfo.from_base(),
     from_class=lambda objinfo: objinfo.from_class(),
-    from_class_with_overrides=lambda objinfo: objinfo.from_class_with_overrides(),
     from_instance=lambda objinfo: objinfo.from_instance(),
+    defined_by_parent=lambda objinfo: objinfo.defined_by_parent(),
 )
 
 
