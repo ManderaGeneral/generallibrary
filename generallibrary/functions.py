@@ -528,9 +528,11 @@ def initBases(cls):
 
         initialized_bases = []
 
-        if getattr(cls_SigInfo["self"], "__init_post__s", None) is None:
-            cls_SigInfo["self"].__init_post__s = []
 
+
+        if not hasattr(cls_SigInfo["self"], "__init_post__s"):
+            cls_SigInfo["self"].__init_post__s = []
+        post_inits = cls_SigInfo["self"].__init_post__s
 
         for base in cls.__bases__ + (cls, ):
             init = cls_init if base is cls else base.__init__
@@ -540,14 +542,13 @@ def initBases(cls):
                     cls_SigInfo.call(child_callable=init)
                 initialized_bases.append(init)
 
+            if getattr(base, "__init_post__", None) and base.__init_post__ not in post_inits:
+                post_inits.append(base.__init_post__)
 
-                if getattr(base, "__init_post__", None) and base.__init_post__ not in cls_SigInfo["self"].__init_post__s:
-                    cls_SigInfo["self"].__init_post__s.append(base.__init_post__)
-        if cls is cls_SigInfo["self"].__class__ and getattr(cls_SigInfo["self"], "__init_post__s", None) is not None and getattr(cls_SigInfo["self"], "_recycle_is_new", True):
-            for post_init in cls_SigInfo["self"].__init_post__s:
+        if cls is cls_SigInfo["self"].__class__ and getattr(cls_SigInfo["self"], "_recycle_is_new", True):
+            for post_init in post_inits:
                 cls_SigInfo.call(child_callable=post_init)
 
-    # cls.__init__ = _wrapper
     cls.__init__ = wrapper_transfer(cls.__init__, _wrapper)
     return cls
 

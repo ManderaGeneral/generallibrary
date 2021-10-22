@@ -238,8 +238,13 @@ class ObjectTest(unittest.TestCase):  # This line is used for test_get_definitio
             def __init_post__(self):
                 glob.append(6)
 
-        C()
-        self.assertEqual([1, 2, 3, 4, 5, 6], glob)
+        @initBases
+        class D(C):
+            def __init_post__(self):
+                glob.append(7)
+
+        D()
+        self.assertEqual([1, 2, 3, 4, 5, 6, 7], glob)
 
     def test_ObjInfo(self):
         def check(bound_method):
