@@ -334,7 +334,7 @@ def subtract_list(a, b):
 def dict_insert(dict_, **kwargs):
     """ Update a dict with new values as normal, except their insertion order will be first.
         Warning: This could potentially be slow, it also duplicates entire dict in memory. """
-    kwargs |= dict_
+    kwargs.update(dict_)
     dict_.clear()
     dict_.update(kwargs)
 
