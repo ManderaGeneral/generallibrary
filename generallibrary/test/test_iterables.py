@@ -302,7 +302,14 @@ class IterablesTest(unittest.TestCase):
         self.assertEqual([], subtract_list([1, 1], [1, 1]))
         self.assertEqual([False], subtract_list([False, True, None], [None, True]))
 
-
+    def test_dict_insert(self):
+        x = {"b": 2}
+        dict_insert(x, a=1)
+        self.assertEqual(["a", "b"], list(x.keys()))
+        x["c"] = 3
+        self.assertEqual(["a", "b", "c"], list(x.keys()))
+        dict_insert(x, d=4, e=5)
+        self.assertEqual(["d", "e", "a", "b", "c"], list(x.keys()))
 
 
 

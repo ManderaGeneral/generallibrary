@@ -279,7 +279,6 @@ def unique_obj_in_list(list_, obj, active):
         if obj in list_:
             list_.remove(obj, )
 
-
 def remove_duplicates(list_, func=None):
     """ Remove all duplicates in a list.
         Set func to use another value than a self hash for determining if duplicate.
@@ -288,7 +287,6 @@ def remove_duplicates(list_, func=None):
         return list(dict.fromkeys(list_))
     else:
         return list({func(obj): obj for obj in list_}.values())
-
 
 def combine(**kwargs):
     """ Create a list of dicts containing every unique combination from given kwargs.
@@ -303,7 +301,6 @@ def combine(**kwargs):
     exec("\n".join(execLines))
     return [] if combinations == [{}] else combinations
 
-
 def split_list(func, *args):
     """ Split args into one list containing all args where func returned True, and rest in the second one. """
     one, two = [], []
@@ -314,12 +311,10 @@ def split_list(func, *args):
             two.append(arg)
     return one, two
 
-
 def pivot_list(list_, index):
     """ Return a new altered list where it's first value is the given index for the original list. """
     index %= len(list_)
     return list_[index:] + list_[:index]
-
 
 def flatten(list_, gen=False):
     """ Flatten a list. """
@@ -327,7 +322,6 @@ def flatten(list_, gen=False):
         return itertools.chain(*list_)
     else:
         return list(flatten(list_=list_, gen=True))
-
 
 def subtract_list(a, b):
     """ Returns a new list with elements in b removed from a. """
@@ -337,7 +331,12 @@ def subtract_list(a, b):
             a.remove(x)
     return a
 
-
+def dict_insert(dict_, **kwargs):
+    """ Update a dict with new values as normal, except their insertion order will be first.
+        Warning: This could potentially be slow, it also duplicates entire dict in memory. """
+    kwargs |= dict_
+    dict_.clear()
+    dict_.update(kwargs)
 
 
 
