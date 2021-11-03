@@ -9,6 +9,8 @@ import functools
 import pandas as pd
 import json
 import importlib
+import subprocess
+import sys
 
 
 def import_module(name, error=True):
@@ -606,4 +608,14 @@ class Recycle:
         if isinstance(cls._recycle_instances, dict):
             cls._recycle_instances.clear()
 
+def terminal(*args, python=False, suppress=False, **kwargs):
+    args = list(args)
+    if python:
+        args.insert(0, sys.executable)
+
+    if suppress:
+        kwargs["stdout"] = subprocess.DEVNULL
+        kwargs["stderr"] = subprocess.DEVNULL
+
+    return subprocess.check_call(args, **kwargs)
 

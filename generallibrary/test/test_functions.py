@@ -384,7 +384,10 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual("pandas", import_module("pandas").__name__)
         self.assertEqual(None, import_module("doesntexist", error=False))
 
-
+    def test_terminal(self):
+        self.assertEqual(0, terminal("-c", "assert 5 == 5", python=True))
+        with self.assertRaises(Exception):
+            self.assertEqual(0, terminal("-c", "assert 5 == 4", python=True, suppress=True))
 
 
 
