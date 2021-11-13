@@ -87,7 +87,7 @@ class _ObjInfoProperties:
         return get_origin(obj=obj, include_depth=include_depth)
 
     def get_definition_line(self):
-        """ Relaying to function.
+        """ Relaying to function with added error hiding.
 
             :param generallibrary.ObjInfo self: """
         from generallibrary.code import get_definition_line
@@ -95,7 +95,7 @@ class _ObjInfoProperties:
         # return get_definition_line(self.obj)
         try:
             return get_definition_line(self.obj)
-        except TypeError:
+        except (TypeError, OSError):
             return 1
 
     def get_lines(self):
