@@ -143,7 +143,11 @@ def print_link_to_obj(obj, print_out=True):
 def get_definition_line(obj):
     """ Get line number of an object's definition. """
     obj, depth = get_origin(obj=obj, include_depth=True)
-    return max(inspect.getsourcelines(obj)[1] + depth, 1)
+    try:
+        return max(inspect.getsourcelines(obj)[1] + depth, 1)
+    except OSError as e:
+        print(obj)
+        raise e
 
 
 def warn(msg, add_depth=0, print_out=True):

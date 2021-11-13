@@ -609,7 +609,7 @@ class Recycle:
             cls._recycle_instances.clear()
 
 def terminal(*args, python=False, suppress=False, **kwargs):
-    args = list(args)
+    args = [str(arg) for arg in args]
     if python:
         args.insert(0, sys.executable)
 
@@ -618,4 +618,11 @@ def terminal(*args, python=False, suppress=False, **kwargs):
         kwargs["stderr"] = subprocess.DEVNULL
 
     return subprocess.check_call(args, **kwargs)
+
+
+
+
+
+
+
 
