@@ -21,11 +21,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel twine
-      - name: Install 5 git repos
+      - name: Install 6 git repos
         run: |
           pip install git+https://github.com/ManderaGeneral/generallibrary.git
           pip install git+https://github.com/ManderaGeneral/generalbrowser.git
           pip install git+https://github.com/ManderaGeneral/generalfile.git
+          pip install git+https://github.com/ManderaGeneral/generalmainframe.git
           pip install git+https://github.com/ManderaGeneral/generalvector.git
           pip install git+https://github.com/ManderaGeneral/generalpackager.git
       - name: Run Packager method 'workflow_unittest'
@@ -47,11 +48,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel twine
-      - name: Install 5 git repos
+      - name: Install 6 git repos
         run: |
           pip install git+https://github.com/ManderaGeneral/generallibrary.git
           pip install git+https://github.com/ManderaGeneral/generalbrowser.git
           pip install git+https://github.com/ManderaGeneral/generalfile.git
+          pip install git+https://github.com/ManderaGeneral/generalmainframe.git
           pip install git+https://github.com/ManderaGeneral/generalvector.git
           pip install git+https://github.com/ManderaGeneral/generalpackager.git
       - name: Run Packager method 'workflow_sync'
