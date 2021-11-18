@@ -13,6 +13,10 @@ jobs:
         python-version: [3.8, 3.9]
         os: [windows-latest, ubuntu-latest]
     steps:
+      - name: Set up Git SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.GIT_SSH }}
       - name: Set up python version ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -26,7 +30,8 @@ jobs:
           pip install git+https://github.com/ManderaGeneral/generallibrary.git
           pip install git+https://github.com/ManderaGeneral/generalbrowser.git
           pip install git+https://github.com/ManderaGeneral/generalfile.git
-          pip install git+https://github.com/ManderaGeneral/generalmainframe.git
+          pip install git+ssh://git@github.com/ManderaGeneral/generalmainframe.git
+          git clone ssh://git@github.com/ManderaGeneral/generalmainframe.git
           pip install git+https://github.com/ManderaGeneral/generalvector.git
           pip install git+https://github.com/ManderaGeneral/generalpackager.git
       - name: Run Packager method 'workflow_unittest'
@@ -40,6 +45,10 @@ jobs:
     needs: unittest
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Git SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.GIT_SSH }}
       - name: Set up python version 3.8
         uses: actions/setup-python@v2
         with:
@@ -53,7 +62,8 @@ jobs:
           pip install git+https://github.com/ManderaGeneral/generallibrary.git
           pip install git+https://github.com/ManderaGeneral/generalbrowser.git
           pip install git+https://github.com/ManderaGeneral/generalfile.git
-          pip install git+https://github.com/ManderaGeneral/generalmainframe.git
+          pip install git+ssh://git@github.com/ManderaGeneral/generalmainframe.git
+          git clone ssh://git@github.com/ManderaGeneral/generalmainframe.git
           pip install git+https://github.com/ManderaGeneral/generalvector.git
           pip install git+https://github.com/ManderaGeneral/generalpackager.git
       - name: Run Packager method 'workflow_sync'
