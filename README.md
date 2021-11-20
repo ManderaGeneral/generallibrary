@@ -1,7 +1,7 @@
 # generallibrary
 Random useful code categorized into modules.
 
-This package and 6 other make up [ManderaGeneral](https://github.com/ManderaGeneral).
+This package and 5 other make up [ManderaGeneral](https://github.com/ManderaGeneral).
 
 ## Information
 | Package                                                            | Ver                                                | Latest Release       | Python                                                                                                                   | Platform        |   Lvl | Todo                                                       | Tests   |
@@ -240,11 +240,11 @@ This package and 6 other make up [ManderaGeneral](https://github.com/ManderaGene
 | Module                                                                                                                      | Message                                                                                                                                                           |
 |:----------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L1'>functions.py</a>      | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L37'>Remove classproperty once 3.8 is no longer supported.</a>  |
-| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L1'>test_time.py</a> | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L33'>Fix time casting to wrong day when past midnight.</a> |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L1'>objinfo.py</a>  | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L19'>Recycle ObjInfo.</a>                                 |
+| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L1'>test_time.py</a> | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L33'>Fix time casting to wrong day when past midnight.</a> |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L1'>versions.py</a>        | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L17'>Use Ver in each part of VerInfo.</a>                        |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L1'>diagram.py</a>          | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L256'>[UnitTest] for Class: Storable</a>                          |
 
 <sup>
-Generated 2021-11-19 19:04 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2021-11-20 22:29 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
