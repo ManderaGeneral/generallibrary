@@ -1,4 +1,7 @@
 {
+    "enabled": true,
+    "private": false,
+    "installable": true,
     "name": "generallibrary",
     "version": "2.8.10",
     "description": "Random useful code categorized into modules.",
@@ -13,5 +16,6 @@
     "extras_require": {},
     "topics": [
         "library"
-    ]
+    ],
+    "manifest": []
 }
