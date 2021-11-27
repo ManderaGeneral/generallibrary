@@ -31,14 +31,14 @@ jobs:
           pip install git+ssh://git@github.com/ManderaGeneral/generalbrowser.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalfile.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalvector.git
-          pip install git+ssh://git@github.com/ManderaGeneral/manderageneral.git
+          pip install git+ssh://git@github.com/ManderaGeneral/generalgui.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalmainframe.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalpackager.git
           git clone ssh://git@github.com/ManderaGeneral/generallibrary.git
           git clone ssh://git@github.com/ManderaGeneral/generalbrowser.git
           git clone ssh://git@github.com/ManderaGeneral/generalfile.git
           git clone ssh://git@github.com/ManderaGeneral/generalvector.git
-          git clone ssh://git@github.com/ManderaGeneral/manderageneral.git
+          git clone ssh://git@github.com/ManderaGeneral/generalgui.git
           git clone ssh://git@github.com/ManderaGeneral/generalmainframe.git
           git clone ssh://git@github.com/ManderaGeneral/generalpackager.git
           git clone ssh://git@github.com/Mandera/Mandera.git
@@ -72,14 +72,14 @@ jobs:
           pip install git+ssh://git@github.com/ManderaGeneral/generalbrowser.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalfile.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalvector.git
-          pip install git+ssh://git@github.com/ManderaGeneral/manderageneral.git
+          pip install git+ssh://git@github.com/ManderaGeneral/generalgui.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalmainframe.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalpackager.git
           git clone ssh://git@github.com/ManderaGeneral/generallibrary.git
           git clone ssh://git@github.com/ManderaGeneral/generalbrowser.git
           git clone ssh://git@github.com/ManderaGeneral/generalfile.git
           git clone ssh://git@github.com/ManderaGeneral/generalvector.git
-          git clone ssh://git@github.com/ManderaGeneral/manderageneral.git
+          git clone ssh://git@github.com/ManderaGeneral/generalgui.git
           git clone ssh://git@github.com/ManderaGeneral/generalmainframe.git
           git clone ssh://git@github.com/ManderaGeneral/generalpackager.git
           git clone ssh://git@github.com/Mandera/Mandera.git
