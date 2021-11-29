@@ -2,7 +2,7 @@
     "enabled": true,
     "private": false,
     "name": "generallibrary",
-    "version": "2.8.11",
+    "version": "2.8.12",
     "description": "Random useful code categorized into modules.",
     "install_requires": [
         "packaging",
