@@ -1,7 +1,6 @@
 {
     "enabled": true,
     "private": false,
-    "installable": true,
     "name": "generallibrary",
     "version": "2.8.11",
     "description": "Random useful code categorized into modules.",
