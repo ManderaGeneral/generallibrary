@@ -28,11 +28,13 @@ class Timer:
         """ Get seconds passed since timer started or was reset. """
         return time.time() - self.start_time
 
-    def print(self, reset=False):
+    def print(self, reset=False, decimals=2):
         """ Print seconds passed. """
-        print(f"Seconds passed: {self.seconds()}")
+        seconds = self.seconds()
+        print(f"Seconds passed: {round(seconds, decimals)}")
         if reset:
             self.reset()
+        return seconds
 
     @classmethod
     def deco(cls, iterations=1):
