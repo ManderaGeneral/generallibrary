@@ -137,7 +137,8 @@ def confineTo(value, minimum, maximum, margin=0):
 
 
 class EnvVar:
-    """ Handles environment variables.
+    """ Handles environment variables, create instances in __init__.py.
+        Example: PACKAGER_GITHUB_API = EnvVar("PACKAGER_GITHUB_API", "secrets.PACKAGER_GITHUB_API")
         actions_name has to be defined if the env var is used for unittesting in the workflow. """
     def __init__(self, name, actions_name=None):
 
@@ -145,7 +146,7 @@ class EnvVar:
             actions_name = "${{ " + actions_name + " }}"
 
         self.name = name
-        self.actions_name = actions_name
+        self.actions_name = actions_name  # Coupled to generalpackager.Packager.get_env
 
     @property
     def value(self):

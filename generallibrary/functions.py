@@ -21,6 +21,28 @@ def import_module(name, error=True):
             raise e
 
 
+def deco_optional_suppress(*exceptions):
+    """ Requires an "error" arg for decorated func.
+        If error is False and a specified exception is caught then it just returns False.
+        Returns True if no exception is raised. """
+    def _deco(func):
+        def _wrapper(*args, **kwargs):
+            sigInfo = SigInfo(func, *args, **kwargs)
+            assert "error" in sigInfo.names
+
+            if sigInfo["error"]:
+                func(*args, **kwargs)
+            else:
+                try:
+                    func(*args, **kwargs)
+                except exceptions:
+                    return False
+            return True
+
+        return _wrapper
+    return _deco
+
+
 def deco_cache():
     """ Enable caching for a method or function.
         Put after possible static/class method deco.

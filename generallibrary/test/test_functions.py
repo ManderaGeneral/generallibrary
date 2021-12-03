@@ -10,6 +10,34 @@ def _orphan():
 
 
 class FunctionsTest(unittest.TestCase):
+    def test_deco_optional_suppress(self):
+        @deco_optional_suppress(ValueError)
+        def a():
+            raise ValueError
+        @deco_optional_suppress(ValueError)
+        def b(error=True):
+            raise ValueError
+        @deco_optional_suppress(ValueError)
+        def c(error=True):
+            pass
+        @deco_optional_suppress(ValueError)
+        def d(error=True):
+            raise AttributeError
+
+        self.assertRaises(AssertionError, a)  # Missing "error" arg
+
+        self.assertRaises(ValueError, b)
+        self.assertIs(False, b(error=False))
+
+        self.assertIs(True, c(error=False))
+        self.assertIs(True, c(error=True))
+
+        # Make sure it only catches specified error
+        with self.assertRaises(AttributeError):
+            d()
+        with self.assertRaises(AttributeError):
+            d(error=False)
+
     def test_classproperty(self):
         class Foo:
             x = 5
