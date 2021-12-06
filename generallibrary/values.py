@@ -7,6 +7,7 @@ import sys
 
 
 def _floor_and_ceil(value, decimals, method):
+    value = round(value, 10)
     if decimals == 0:
         return method(value)
     else:
@@ -16,12 +17,12 @@ def _floor_and_ceil(value, decimals, method):
 
 
 def floor(value, decimals=0):
-    """ Like built-in round() but for floor with decimal arg. """
+    """ Like built-in round() but for floor with decimal arg, maximum precision of 10 decimals. """
     return _floor_and_ceil(value=value, decimals=decimals, method=math.floor)
 
 
 def ceil(value, decimals=0):
-    """ Like built-in round() but for ceil with decimal arg."""
+    """ Like built-in round() but for ceil with decimal arg, maximum precision of 10 decimals."""
     return _floor_and_ceil(value=value, decimals=decimals, method=math.ceil)
 
 

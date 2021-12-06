@@ -5,6 +5,8 @@ from generallibrary import *
 
 # Packager("generallibrary").file_setup.generate()
 
-
-
+ceil
+print(round(0.1561251616, 10))
+# print(ceil(0.56 * 100, 2))
+exit()
 

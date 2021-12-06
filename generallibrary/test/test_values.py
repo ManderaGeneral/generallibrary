@@ -26,6 +26,9 @@ class ValuesTest(unittest.TestCase):
         self.assertEqual(154.2512, floor(154.2512, 5))
 
     def test_ceil(self):
+        self.assertEqual(56, ceil(0.56 * 100))
+        self.assertEqual(0.3, ceil(0.1 + 0.2, 1))
+
         self.assertEqual(6, ceil(5.7))
         self.assertEqual(6, ceil(5.1))
         self.assertEqual(5, ceil(5))
@@ -42,6 +45,7 @@ class ValuesTest(unittest.TestCase):
         self.assertEqual(154.3, ceil(154.2512, 1))
         self.assertEqual(154.26, ceil(154.2512, 2))
         self.assertEqual(154.252, ceil(154.2512, 3))
+        self.assertEqual(154.2512, ceil(154.2512, 4))
         self.assertEqual(154.2512, ceil(154.2512, 4))
 
     def test_clamp(self):
