@@ -4,9 +4,9 @@ Random useful code categorized into modules.
 This package and 6 other make up [ManderaGeneral](https://github.com/ManderaGeneral).
 
 ## Information
-| Package                                                            | Ver                                                | Latest Release       | Python                                                                                                                   | Platform        |   Lvl | Todo                                                       | Tests   |
-|:-------------------------------------------------------------------|:---------------------------------------------------|:---------------------|:-------------------------------------------------------------------------------------------------------------------------|:----------------|------:|:-----------------------------------------------------------|:--------|
-| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.8.13](https://pypi.org/project/generallibrary/) | 2021-12-03 16:15 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu |     0 | [5](https://github.com/ManderaGeneral/generallibrary#Todo) | 99.5 %  |
+| Package                                                            | Ver                                             | Latest Release       | Python                                                                                                                   | Platform        |   Lvl | Todo                                                       | Tests   |
+|:-------------------------------------------------------------------|:------------------------------------------------|:---------------------|:-------------------------------------------------------------------------------------------------------------------------|:----------------|------:|:-----------------------------------------------------------|:--------|
+| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.9](https://pypi.org/project/generallibrary/) | 2021-12-06 14:19 CET | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/) | Windows, Ubuntu |     0 | [5](https://github.com/ManderaGeneral/generallibrary#Todo) | 99.5 %  |
 
 ## Contents
 <pre>
@@ -40,8 +40,8 @@ This package and 6 other make up [ManderaGeneral](https://github.com/ManderaGene
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/time.py#L82'>Method: get_timezone_obj</a>
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/time.py#L86'>Method: now</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L437'>Class: EmptyContext</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L139'>Class: EnvVar</a>
-│  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L152'>Property: value</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L140'>Class: EnvVar</a>
+│  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L153'>Property: value</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/types.py#L185'>Class: HierarchyStorer</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L600'>Class: Markdown</a>
 │  ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L668'>Method: add_code_lines</a>
@@ -170,14 +170,14 @@ This package and 6 other make up [ManderaGeneral](https://github.com/ManderaGene
 │  └─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L154'>Property: pythonVersion</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L116'>Function: cache_clear</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L295'>Function: calculate</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L23'>Function: ceil</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L28'>Function: clamp</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L24'>Function: ceil</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L29'>Function: clamp</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L53'>Class: classproperty</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L10'>Function: clipboard_copy</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L23'>Function: clipboard_get</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L291'>Function: combine</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/text.py#L5'>Function: comma_and_and</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L110'>Function: confineTo</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L111'>Function: confineTo</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L66'>Function: debug</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L406'>Function: deco_bound_defaults</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L46'>Function: deco_cache</a>
@@ -188,11 +188,11 @@ This package and 6 other make up [ManderaGeneral](https://github.com/ManderaGene
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L318'>Function: defaults</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L91'>Function: depth</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L334'>Function: dict_insert</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L85'>Function: doubleRectify</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L86'>Function: doubleRectify</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L261'>Function: exclusive</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L122'>Function: extend_list_in_dict</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L319'>Function: flatten</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L18'>Function: floor</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L19'>Function: floor</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L167'>Function: get</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/types.py#L162'>Function: getBaseClassNames</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/types.py#L132'>Function: getBaseClasses</a>
@@ -201,7 +201,7 @@ This package and 6 other make up [ManderaGeneral](https://github.com/ManderaGene
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L182'>Function: get_index</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L222'>Function: get_installed_packages</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L78'>Function: get_items</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L172'>Function: get_launch_options</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L173'>Function: get_launch_options</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L98'>Function: get_origin</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L228'>Function: get_rows</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L70'>Function: get_values</a>
@@ -211,7 +211,7 @@ This package and 6 other make up [ManderaGeneral](https://github.com/ManderaGene
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L16'>Function: import_module</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L266'>Function: inclusive</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L531'>Function: initBases</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L59'>Function: inrange</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L60'>Function: inrange</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L86'>Function: is_iterable</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L106'>Function: iter_first_value</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L117'>Function: join_with_str</a>
@@ -221,11 +221,11 @@ This package and 6 other make up [ManderaGeneral](https://github.com/ManderaGene
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/text.py#L17'>Function: plur_sing</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L119'>Function: print_link</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L134'>Function: print_link_to_obj</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L73'>Function: rectify</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L74'>Function: rectify</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L194'>Function: remove</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L282'>Function: remove_duplicates</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/text.py#L28'>Function: replace</a>
-├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L42'>Function: sign</a>
+├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/values.py#L43'>Function: sign</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/time.py#L52'>Function: sleep</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/iterables.py#L304'>Function: split_list</a>
 ├─ <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/types.py#L5'>Function: strToDynamicType</a>
@@ -240,12 +240,12 @@ This package and 6 other make up [ManderaGeneral](https://github.com/ManderaGene
 ## Todo
 | Module                                                                                                                      | Message                                                                                                                                                           |
 |:----------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L1'>versions.py</a>        | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L17'>Use Ver in each part of VerInfo.</a>                        |
-| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L1'>test_time.py</a> | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L33'>Fix time casting to wrong day when past midnight.</a> |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L1'>functions.py</a>      | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/functions.py#L59'>Remove classproperty once 3.8 is no longer supported.</a>  |
+| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L1'>test_time.py</a> | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L33'>Fix time casting to wrong day when past midnight.</a> |
+| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L1'>versions.py</a>        | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L17'>Use Ver in each part of VerInfo.</a>                        |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L1'>objinfo.py</a>  | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L19'>Recycle ObjInfo.</a>                                 |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L1'>diagram.py</a>          | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L256'>[UnitTest] for Class: Storable</a>                          |
 
 <sup>
-Generated 2021-12-06 13:15 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2021-12-06 14:19 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
