@@ -1,6 +1,6 @@
 
 from generallibrary.object import *
-from generallibrary.objinfo.objinfo import ObjInfo, hook
+from generallibrary.objinfo.objinfo import ObjInfo, hook, call_base_hooks
 from generallibrary.functions import initBases, AutoInitBases
 
 import unittest
@@ -20,6 +20,20 @@ def hook_foo():
 
 
 class ObjectTest(unittest.TestCase):  # This line is used for test_get_definition_line
+    def test_call_base_hooks(self):
+        x = []
+        class A:
+            def y(self): x.append(1)
+        class B(A):
+            def y(self): x.append(2)
+        class C:
+            def y(self): x.append(3)
+        class D(C, B):
+            def y(self): x.append(4)
+
+        call_base_hooks(D(), "y")
+        self.assertEqual([4, 3, 2, 1], x)
+
     def test_AutoInitBases(self):
         class A(metaclass=AutoInitBases):
             def __init__(self):

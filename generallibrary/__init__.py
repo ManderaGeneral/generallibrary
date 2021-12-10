@@ -10,4 +10,4 @@ from generallibrary.values import floor, ceil, clamp, sign, inrange, rectify, do
 from generallibrary.diagram import TreeDiagram, Markdown, NetworkDiagram, Storable
 from generallibrary.code import debug, CodeLine, clipboard_copy, clipboard_get, print_link, print_link_to_obj, get_definition_line, get_origin
 from generallibrary.versions import VerInfo, get_installed_packages, package_is_installed, PythonVersion, Ver
-from generallibrary.objinfo.objinfo import ObjInfo, hook, cache_clear
+from generallibrary.objinfo.objinfo import ObjInfo, hook, cache_clear, call_base_hooks

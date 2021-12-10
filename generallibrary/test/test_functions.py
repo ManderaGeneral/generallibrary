@@ -23,6 +23,9 @@ class FunctionsTest(unittest.TestCase):
         @deco_optional_suppress(ValueError)
         def d(error=True):
             raise AttributeError
+        @deco_optional_suppress(ValueError, return_bool=False)
+        def e(error=True):
+            return 5
 
         self.assertRaises(AssertionError, a)  # Missing "error" arg
 
@@ -37,6 +40,9 @@ class FunctionsTest(unittest.TestCase):
             d()
         with self.assertRaises(AttributeError):
             d(error=False)
+
+        self.assertEqual(5, e(error=False))
+        self.assertEqual(5, e(error=True))
 
     def test_classproperty(self):
         class Foo:

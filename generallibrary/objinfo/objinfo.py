@@ -3,6 +3,7 @@ from generallibrary.iterables import extend_list_in_dict, split_list
 from generallibrary.functions import SigInfo, wrapper_transfer, Recycle
 from generallibrary.diagram import TreeDiagram
 from generallibrary.code import warn
+from generallibrary.types import getBaseClasses
 
 from generallibrary.objinfo.children import _ObjInfoChildren
 from generallibrary.objinfo.type import _ObjInfoType
@@ -117,3 +118,19 @@ def cache_clear(obj):
     for objInfo in ObjInfo(obj).get_children(depth=-1, include_self=True, gen=True, filt=lambda objInfo: hasattr(objInfo.obj, "cache_clear"), traverse_excluded=True):
         objInfo.obj.cache_clear()
 
+def call_base_hooks(self, name, kwargs=None):
+    """ Call a certain method in each base, ignoring overriding.
+        Method can take kwargs or nothing as args.
+        Kwargs can be updated in each method, returned by this method. """
+    for base in getBaseClasses(self, includeSelf=True):
+        draw_create_hook = getattr(base, name, None)
+        if draw_create_hook:
+            objInfo = ObjInfo(draw_create_hook, parent=ObjInfo(base))
+            if objInfo.defined_by_parent():
+                if kwargs is None:
+                    draw_create_hook(self)
+                else:
+                    hook_return = draw_create_hook(self, kwargs=kwargs)
+                    if hook_return is not None:
+                        kwargs = hook_return
+    return kwargs

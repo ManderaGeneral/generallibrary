@@ -21,23 +21,24 @@ def import_module(name, error=True):
             raise e
 
 
-def deco_optional_suppress(*exceptions):
+def deco_optional_suppress(*exceptions, return_bool=True):
     """ Requires an "error" arg for decorated func.
-        If error is False and a specified exception is caught then it just returns False.
-        Returns True if no exception is raised. """
+        If error is False and a specified exception is caught then it just returns False if return_bool else None.
+        If no exception is raised it returns True if return_bool else func_result. """
     def _deco(func):
         def _wrapper(*args, **kwargs):
             sigInfo = SigInfo(func, *args, **kwargs)
             assert "error" in sigInfo.names
 
             if sigInfo["error"]:
-                func(*args, **kwargs)
+                result = func(*args, **kwargs)
+                return True if return_bool else result
             else:
                 try:
-                    func(*args, **kwargs)
+                    result = func(*args, **kwargs)
                 except exceptions:
-                    return False
-            return True
+                    return False if return_bool else None
+            return True if return_bool else result
 
         return _wrapper
     return _deco
