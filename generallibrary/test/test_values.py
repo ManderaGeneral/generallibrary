@@ -5,6 +5,12 @@ import unittest
 
 
 class ValuesTest(unittest.TestCase):
+    def test_BoolStr(self):
+        self.assertIs(True, bool(BoolStr(True, "foo")))
+        self.assertIs(False, bool(BoolStr(False, "foo")))
+        self.assertEqual("foo", str(BoolStr(True, "foo")))
+        self.assertEqual("foo", str(BoolStr(False, "foo")))
+
     def test_floor(self):
         self.assertEqual(5, floor(5.7))
         self.assertEqual(5, floor(5.1))

@@ -6,6 +6,19 @@ import os
 import sys
 
 
+class BoolStr:
+    """ Boolean and String in one.
+        Useful for validating with a message. """
+    def __init__(self, bool_, str_):
+        self.bool_ = bool_
+        self.str_ = str_
+
+    def __bool__(self):
+        return self.bool_
+
+    def __str__(self):
+        return self.str_
+
 def _floor_and_ceil(value, decimals, method):
     value = round(value, 10)
     if decimals == 0:
