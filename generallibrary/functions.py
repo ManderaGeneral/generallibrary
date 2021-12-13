@@ -587,7 +587,9 @@ class AutoInitBases(type):
 
 class Recycle:
     """ Inherit this class to make instantiating two classes with the same args yield the same instance object.
-        Assign _recycle_keys to a dict with keys corresponding to init args. """
+        Assign _recycle_keys to a dict with keys corresponding to init args and value being a func (str() in most cases) to return json serializable obj.
+        Set to empty dict for singleton.
+        Note: Does not work with pickle. """
     _recycle_keys = None
     _recycle_is_new = None
     _recycle_instances = None
@@ -609,6 +611,7 @@ class Recycle:
             from generallibrary.code import print_link_to_obj
             print_link_to_obj(cls)
             raise AttributeError(f"Attribute _recycle_keys has not been set to a dict for {cls}. Key is attr name, value is callable which is given attribute as arg. Set to empty dict for singleton. ")
+
         if getattr(cls, "_recycle_instances", None) is None:
             cls._recycle_instances = {}
 
