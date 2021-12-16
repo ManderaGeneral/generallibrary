@@ -390,8 +390,8 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, Storable, metaclass=AutoInitBases)
         self._parents = []  # type: list[_Diagram]
 
     # def __init_post__(self, parent=None):
-        if parent is not None:
-            self.set_parent(parent=parent)
+    #     if parent is not None:
+        self.set_parent(parent=parent)
 
     @deco_cast_to_self(if_not_base="_Diagram")
     def set_parent(self, parent):
@@ -595,8 +595,6 @@ class NetworkDiagram(_Diagram):
 
 
 
-
-
 class Markdown(TreeDiagram):
     """ A section for a markdown file, built on TreeDiagram. """
     def __init__(self, *lines, header=None, parent=None):
@@ -688,81 +686,81 @@ class Markdown(TreeDiagram):
         return self
 
 
-class Loop(TreeDiagram):
-    def __init__(self, *nodes):
-        self.nodes = list(nodes)
-
-    def __repr__(self):
-        return f"Loop: {self.nodes}"
-
-    def get_loop_links(self):
-        return {frozenset({node, self.next_node(node=node)}) for node in self.nodes}
-
-    @property
-    def nodes_set(self):
-        return set(self.nodes)
-
-    def _next_prev_node(self, node, incr):
-        index = confineTo(value=self.nodes.index(node) + incr, minimum=0, maximum=len(self.nodes) - 1, margin=0.5)
-        return self.nodes[index]
-
-    def next_node(self, node):
-        return self._next_prev_node(node=node, incr=1)
-
-    def prev_node(self, node):
-        return self._next_prev_node(node=node, incr=-1)
-
-    def nearby_nodes(self, node):
-        return self.next_node(node=node), self.prev_node(node=node)
-
-    def all_nodes(self):
-        return set.union(*[loop.nodes_set for loop in self.get_all(gen=True)])
-
-    def equals(self, loop):
-        return len(self.nodes) == len(loop.nodes) and not (self.nodes_set - loop.nodes_set)
-        # return len(self.nodes) == len(loop.nodes) and not subtract_list(self.nodes, loop.nodes)
-
-    def get_connected_loops(self):
-        loops = set.union(*[node.loops for node in self.nodes])
-        loops.remove(self)
-        return loops
-
-    def get_shared_nodes(self, loop):
-        """ Symmetrical. """
-        return self.nodes_set.intersection(loop.nodes_set)
-
-    def get_exclusive_nodes(self, loop):
-        """ Not symmetrical. """
-        return self.nodes_set - self.get_shared_nodes(loop=loop)
-
-    def get_edge_nodes(self, loop):
-        """ Symmetrical. """
-        exclusive = self.get_exclusive_nodes(loop=loop)  # Could be possible that there are 0 exclusive nodes
-        return set(flatten(map(self.nearby_nodes, exclusive))) - exclusive
-
-    # --- Folding logic below ---
-
-    def get_blocked_nodes(self, loop):
-        """ Selfs' nodes that loop is blocking.
-            Symmetrical. """
-        return self.get_shared_nodes(loop=loop) - self.get_edge_nodes(loop=loop)
-
-    def available_nodes(self):
-        """ Set of nodes that are available inside self. """
-        nodes = self.nodes_set
-        for loop in self.get_children():
-            nodes -= self.get_blocked_nodes(loop=loop)
-            nodes.update(loop.get_exclusive_nodes(loop=self))
-        return nodes
-
-    def unavailable_nodes(self):
-        """ Set of nodes that exist but are not available inside self. """
-        return self.all_nodes() - self.available_nodes()
-
-    def can_contain(self, loop):
-        assert loop.get_parent() is None and loop.get_child() is None
-
-        return not loop.nodes_set.intersection(self.unavailable_nodes())
+# class Loop(TreeDiagram):
+#     def __init__(self, *nodes):
+#         self.nodes = list(nodes)
+#
+#     def __repr__(self):
+#         return f"Loop: {self.nodes}"
+#
+#     def get_loop_links(self):
+#         return {frozenset({node, self.next_node(node=node)}) for node in self.nodes}
+#
+#     @property
+#     def nodes_set(self):
+#         return set(self.nodes)
+#
+#     def _next_prev_node(self, node, incr):
+#         index = confineTo(value=self.nodes.index(node) + incr, minimum=0, maximum=len(self.nodes) - 1, margin=0.5)
+#         return self.nodes[index]
+#
+#     def next_node(self, node):
+#         return self._next_prev_node(node=node, incr=1)
+#
+#     def prev_node(self, node):
+#         return self._next_prev_node(node=node, incr=-1)
+#
+#     def nearby_nodes(self, node):
+#         return self.next_node(node=node), self.prev_node(node=node)
+#
+#     def all_nodes(self):
+#         return set.union(*[loop.nodes_set for loop in self.get_all(gen=True)])
+#
+#     def equals(self, loop):
+#         return len(self.nodes) == len(loop.nodes) and not (self.nodes_set - loop.nodes_set)
+#         # return len(self.nodes) == len(loop.nodes) and not subtract_list(self.nodes, loop.nodes)
+#
+#     def get_connected_loops(self):
+#         loops = set.union(*[node.loops for node in self.nodes])
+#         loops.remove(self)
+#         return loops
+#
+#     def get_shared_nodes(self, loop):
+#         """ Symmetrical. """
+#         return self.nodes_set.intersection(loop.nodes_set)
+#
+#     def get_exclusive_nodes(self, loop):
+#         """ Not symmetrical. """
+#         return self.nodes_set - self.get_shared_nodes(loop=loop)
+#
+#     def get_edge_nodes(self, loop):
+#         """ Symmetrical. """
+#         exclusive = self.get_exclusive_nodes(loop=loop)  # Could be possible that there are 0 exclusive nodes
+#         return set(flatten(map(self.nearby_nodes, exclusive))) - exclusive
+#
+#     # --- Folding logic below ---
+#
+#     def get_blocked_nodes(self, loop):
+#         """ Selfs' nodes that loop is blocking.
+#             Symmetrical. """
+#         return self.get_shared_nodes(loop=loop) - self.get_edge_nodes(loop=loop)
+#
+#     def available_nodes(self):
+#         """ Set of nodes that are available inside self. """
+#         nodes = self.nodes_set
+#         for loop in self.get_children():
+#             nodes -= self.get_blocked_nodes(loop=loop)
+#             nodes.update(loop.get_exclusive_nodes(loop=self))
+#         return nodes
+#
+#     def unavailable_nodes(self):
+#         """ Set of nodes that exist but are not available inside self. """
+#         return self.all_nodes() - self.available_nodes()
+#
+#     def can_contain(self, loop):
+#         assert loop.get_parent() is None and loop.get_child() is None
+#
+#         return not loop.nodes_set.intersection(self.unavailable_nodes())
 
 
 
