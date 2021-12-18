@@ -382,6 +382,24 @@ class TreeDiagramTest(unittest.TestCase):
 
         self.assertEqual([a], a.get_all())
 
+    def test_shared(self):
+        a = A(1)
+        a.shared["x"] = 5
+
+        b = A(2, a)
+        self.assertEqual({"x": 5}, a.shared)
+        self.assertEqual({"x": 5}, b.shared)
+
+        a2 = A(3)
+        b.set_parent(a2)
+        self.assertEqual({"x": 5}, a.shared)
+        self.assertEqual({}, b.shared)
+        self.assertEqual({}, a2.shared)
+
+        b.shared["y"] = 3
+        self.assertEqual({"x": 5}, a.shared)
+        self.assertEqual({"y": 3}, b.shared)
+        self.assertEqual({"y": 3}, a2.shared)
 
 
 

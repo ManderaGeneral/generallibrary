@@ -4,7 +4,6 @@ from generallibrary.values import clamp, confineTo
 from generallibrary.iterables import get, pivot_list, subtract_list, flatten
 
 
-
 import pandas
 from itertools import chain
 # import pickle
@@ -268,129 +267,12 @@ class Storable:
         return self.load_node(pickled_bytes=self.save_node())
 
 
-# class _Diagram_Graph:
-#     def __init__(self):
-#         self.loops = set()
-#
-#     def graph(self):
-#         """ :param TreeDiagram or NetworkDiagram or Any self: """
-#         loops = self.get_loops()
-#
-#         self._relate_loops(loops=loops)
-#         top_loop = loops[0].get_parent(-1, -1, include_self=True)  # type: Loop
-#         top_loop.view()
-#
-#         print(top_loop.available_nodes())  # d shouldn't be available - Maybe try zones instead
-#         print(top_loop.unavailable_nodes())
-#
-#         return loops
-#
-#     def get_links(self):
-#         """ Return a set of sets containing two nodes, paired by child and/or parent.
-#
-#             :param TreeDiagram or NetworkDiagram or Any self: """
-#         links = set()
-#         for node in self.get_all():
-#             links.update({frozenset({node, child}) for child in node.get_children()})
-#             links.update({frozenset({node, parent}) for parent in node.get_parents()})
-#         return links
-#
-#     def get_loops(self):
-#         """ Get a list of all unrelated Loops.
-#
-#             :param TreeDiagram or NetworkDiagram or Any self:
-#             :rtype: list[Loop] """
-#         loops = self._yield_all_loops()
-#         loops = self._exclude_mirrored_loops(loops=loops)
-#         loops = self._extract_smallest_loops(loops=loops)
-#         self._assign_loops_to_nodes(loops=loops)
-#         return loops
-#
-#     # def _relate_loops(self, loops):
-#     #     """ :param TreeDiagram or NetworkDiagram or Any self: """
-#     #     related = []
-#     #     for loop in loops:
-#     #         if not related:
-#     #             related.append(loop)
-#     #         else:
-#     #             for related_loop in related:
-#     #                 if related_loop.can_contain(loop=loop):
-#     #                     related_loop.add_node(child=loop)
-#     #                     break
-#     #             else:
-#     #                 raise AssertionError("Failed relating loops.")
-#
-#     def _relate_loops(self, loops):
-#         """ Prioritize making top loops parents by iterating children horizontally.
-#
-#             :param TreeDiagram or NetworkDiagram or Any self: """
-#         top = Loop()
-#         for loop in loops:
-#             for related_loop in top.get_children(depth=-1, include_self=True, vertical=False, gen=True):
-#                 if related_loop.can_contain(loop=loop):
-#                     related_loop.add_node(child=loop)
-#                     break
-#             else:
-#                 raise AssertionError(f"Failed finding parent for loop {loop}")
-#
-#     def _extract_smallest_loops(self, loops):
-#         """ :param TreeDiagram or NetworkDiagram or Any self: """
-#         while True:
-#             for loop in loops:
-#                 loop_links = loop.get_loop_links()
-#                 other_loops = loops.copy()
-#                 other_loops.remove(loop)
-#
-#                 # See if smaller or equal loops have all of the loop_nodes combined
-#                 for loop2 in other_loops:
-#                     if len(loop2.nodes) <= len(loop.nodes):
-#                         loop_links -= loop2.get_loop_links()
-#
-#                 if not loop_links:
-#                     loops.remove(loop)
-#                     break
-#             else:
-#                 break
-#
-#         return loops
-#
-#     def _assign_loops_to_nodes(self, loops):
-#         """ :param TreeDiagram or NetworkDiagram or Any self: """
-#         for node in self.get_all():
-#             node.loops.clear()
-#         for loop in loops:
-#             for node in loop.nodes:
-#                 node.loops.add(loop)
-#
-#     def _exclude_mirrored_loops(self, loops):
-#         """ :param TreeDiagram or NetworkDiagram or Any self: """
-#         mirrored_loops = []
-#         for loop in loops:
-#             if not any([loop.equals(old_loop) for old_loop in mirrored_loops]):
-#                 mirrored_loops.append(loop)
-#         return mirrored_loops
-#
-#     def _yield_all_loops(self, *nodes):
-#         """ :param TreeDiagram or NetworkDiagram or Any self: """
-#         nodes = list(nodes) + [self]
-#         for node in self.get_nodes():
-#             if node in nodes:
-#                 if node is not nodes[-2]:
-#                     index = nodes.index(node)
-#                     yield Loop(*nodes[index:])
-#             else:
-#                 yield from node._yield_all_loops(*nodes)
-
-
 class _Diagram(_Diagram_Global, _Diagram_QOL, Storable, metaclass=AutoInitBases):
     """ Core methods of a Diagram. """
     def __init__(self, parent=None):
         # print(hasattr(self, "_children"))
         self._children = []  # type: list[_Diagram]
         self._parents = []  # type: list[_Diagram]
-
-    # def __init_post__(self, parent=None):
-    #     if parent is not None:
         self.set_parent(parent=parent)
 
     @deco_cast_to_self(if_not_base="_Diagram")
@@ -412,6 +294,10 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, Storable, metaclass=AutoInitBases)
         if parent is not None and parent not in self._parents:
             self._parents.append(parent)
             parent._children.append(self)
+
+        # Only for TreeDiagram, cannot import hook in this module
+        if hasattr(self, "_set_shared"):
+            self._set_shared()
 
         return parent
 
@@ -501,12 +387,19 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, Storable, metaclass=AutoInitBases)
                 yield node2
 
 
+
 class TreeDiagram(_Diagram):
     """ A Diagram where each node cannot have more than one parent. """
     _single_parent = True
 
+    shared = ...  # For type hinting
+
     def __init__(self, parent=None):
         pass
+
+    def _set_shared(self):
+        """ :param TreeDiagram or NetworkDiagram or Any self: """
+        self.shared = self.get_parent().shared if hasattr(self.get_parent(), "shared") else {}
 
     def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", spawn=False, filt=None, traverse_excluded=False, vertical=True, print_out=True):
         """ Get a printable string showing a clear view of this TreeDiagram structure.
@@ -686,6 +579,122 @@ class Markdown(TreeDiagram):
         return self
 
 
+
+# class _Diagram_Graph:
+#     def __init__(self):
+#         self.loops = set()
+#
+#     def graph(self):
+#         """ :param TreeDiagram or NetworkDiagram or Any self: """
+#         loops = self.get_loops()
+#
+#         self._relate_loops(loops=loops)
+#         top_loop = loops[0].get_parent(-1, -1, include_self=True)  # type: Loop
+#         top_loop.view()
+#
+#         print(top_loop.available_nodes())  # d shouldn't be available - Maybe try zones instead
+#         print(top_loop.unavailable_nodes())
+#
+#         return loops
+#
+#     def get_links(self):
+#         """ Return a set of sets containing two nodes, paired by child and/or parent.
+#
+#             :param TreeDiagram or NetworkDiagram or Any self: """
+#         links = set()
+#         for node in self.get_all():
+#             links.update({frozenset({node, child}) for child in node.get_children()})
+#             links.update({frozenset({node, parent}) for parent in node.get_parents()})
+#         return links
+#
+#     def get_loops(self):
+#         """ Get a list of all unrelated Loops.
+#
+#             :param TreeDiagram or NetworkDiagram or Any self:
+#             :rtype: list[Loop] """
+#         loops = self._yield_all_loops()
+#         loops = self._exclude_mirrored_loops(loops=loops)
+#         loops = self._extract_smallest_loops(loops=loops)
+#         self._assign_loops_to_nodes(loops=loops)
+#         return loops
+#
+#     # def _relate_loops(self, loops):
+#     #     """ :param TreeDiagram or NetworkDiagram or Any self: """
+#     #     related = []
+#     #     for loop in loops:
+#     #         if not related:
+#     #             related.append(loop)
+#     #         else:
+#     #             for related_loop in related:
+#     #                 if related_loop.can_contain(loop=loop):
+#     #                     related_loop.add_node(child=loop)
+#     #                     break
+#     #             else:
+#     #                 raise AssertionError("Failed relating loops.")
+#
+#     def _relate_loops(self, loops):
+#         """ Prioritize making top loops parents by iterating children horizontally.
+#
+#             :param TreeDiagram or NetworkDiagram or Any self: """
+#         top = Loop()
+#         for loop in loops:
+#             for related_loop in top.get_children(depth=-1, include_self=True, vertical=False, gen=True):
+#                 if related_loop.can_contain(loop=loop):
+#                     related_loop.add_node(child=loop)
+#                     break
+#             else:
+#                 raise AssertionError(f"Failed finding parent for loop {loop}")
+#
+#     def _extract_smallest_loops(self, loops):
+#         """ :param TreeDiagram or NetworkDiagram or Any self: """
+#         while True:
+#             for loop in loops:
+#                 loop_links = loop.get_loop_links()
+#                 other_loops = loops.copy()
+#                 other_loops.remove(loop)
+#
+#                 # See if smaller or equal loops have all of the loop_nodes combined
+#                 for loop2 in other_loops:
+#                     if len(loop2.nodes) <= len(loop.nodes):
+#                         loop_links -= loop2.get_loop_links()
+#
+#                 if not loop_links:
+#                     loops.remove(loop)
+#                     break
+#             else:
+#                 break
+#
+#         return loops
+#
+#     def _assign_loops_to_nodes(self, loops):
+#         """ :param TreeDiagram or NetworkDiagram or Any self: """
+#         for node in self.get_all():
+#             node.loops.clear()
+#         for loop in loops:
+#             for node in loop.nodes:
+#                 node.loops.add(loop)
+#
+#     def _exclude_mirrored_loops(self, loops):
+#         """ :param TreeDiagram or NetworkDiagram or Any self: """
+#         mirrored_loops = []
+#         for loop in loops:
+#             if not any([loop.equals(old_loop) for old_loop in mirrored_loops]):
+#                 mirrored_loops.append(loop)
+#         return mirrored_loops
+#
+#     def _yield_all_loops(self, *nodes):
+#         """ :param TreeDiagram or NetworkDiagram or Any self: """
+#         nodes = list(nodes) + [self]
+#         for node in self.get_nodes():
+#             if node in nodes:
+#                 if node is not nodes[-2]:
+#                     index = nodes.index(node)
+#                     yield Loop(*nodes[index:])
+#             else:
+#                 yield from node._yield_all_loops(*nodes)
+
+
+
 # class Loop(TreeDiagram):
 #     def __init__(self, *nodes):
 #         self.nodes = list(nodes)
@@ -764,15 +773,6 @@ class Markdown(TreeDiagram):
 
 
 
-
-
-
-
-
-
-class Zone:
-    def __init__(self, *nodes):
-        self.nodes = nodes
 
 
 
