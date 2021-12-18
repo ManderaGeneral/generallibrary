@@ -1,35 +1,24 @@
 
 from generallibrary import *
 
+import matplotlib.pyplot as plt
+import networkx as nx
 
-class X(TreeDiagram):
-    shared = ...  # For type hinting
+from generalpackager import Packager
 
-    def _set_shared(self):
-        self.shared = self.get_parent().shared if hasattr(self.get_parent(), "shared") else {}
+# create a directed multi-graph
+G = nx.DiGraph()
 
-hook(X.set_parent, X._set_shared, owner=X, after=True)
-
-
-a = X()
-b = X(parent=a)
-
-
-a.shared["a"] = 3
-
-print(b.shared)
-print(X.shared)
+for package in Packager().get_all():
+    for dependant in package.get_children():
+        G.add_edge(package.simple_name, dependant.simple_name)
 
 
+# plot the graph
+plt.figure(figsize=(8, 8))
+nx.draw(G, pos=nx.circular_layout(G), connectionstyle='arc3, rad=-0.1', with_labels=True, node_color="None", node_size=3000, node_shape="s")
 
-
-
-
-
-
-
-
-
+plt.show()  # pause before exiting
 
 
 

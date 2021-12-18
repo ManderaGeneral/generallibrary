@@ -297,7 +297,7 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, Storable, metaclass=AutoInitBases)
 
         # Only for TreeDiagram, cannot import hook in this module
         if hasattr(self, "_set_shared"):
-            self._set_shared()
+            self._set_shared(parent=parent)
 
         return parent
 
@@ -397,9 +397,9 @@ class TreeDiagram(_Diagram):
     def __init__(self, parent=None):
         pass
 
-    def _set_shared(self):
+    def _set_shared(self, parent):
         """ :param TreeDiagram or NetworkDiagram or Any self: """
-        self.shared = self.get_parent().shared if hasattr(self.get_parent(), "shared") else {}
+        self.shared = parent.shared if hasattr(parent, "shared") else {}
 
     def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", spawn=False, filt=None, traverse_excluded=False, vertical=True, print_out=True):
         """ Get a printable string showing a clear view of this TreeDiagram structure.
