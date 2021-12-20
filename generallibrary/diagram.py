@@ -3,11 +3,14 @@ from generallibrary.functions import AutoInitBases, wrapper_transfer, deco_cast_
 from generallibrary.values import clamp, confineTo
 from generallibrary.iterables import get, pivot_list, subtract_list, flatten
 
-
 import pandas
 from itertools import chain
 # import pickle
 import dill as pickle  # Can apparently pickle lambdas: https://stackoverflow.com/questions/25348532/can-python-pickle-lambda-functions
+import matplotlib.pyplot as plt
+import networkx as nx
+from random import uniform
+
 
 def _skip_node_check(node, order_func, filt, traverse_excluded, _all_nodes):
     if node in _all_nodes:
@@ -70,6 +73,24 @@ def _deco_depth(func):
     def _wrapper(node, depth=None, flat=None, filt=None, traverse_excluded=None, include_self=None, gen=None, vertical=None, spawn=None):
         return _traverser(node, func=func, depth=depth, flat=flat, filt=filt, traverse_excluded=traverse_excluded, include_self=include_self, gen=gen, vertical=vertical, spawn=spawn)
     return wrapper_transfer(func, _wrapper)
+
+
+class _Diagram_Visualize:
+    def graph(self, name_func=lambda x: x):
+        """ :param TreeDiagram or NetworkDiagram or Any self:
+            :param name_func: """
+        G = nx.DiGraph()
+
+        for node in self.get_all():
+            color = [uniform(0, 0.7) for _ in range(3)]
+            for dependant in node.get_children():
+                G.add_edge(name_func(node), name_func(dependant), color=color)
+
+        colors = nx.get_edge_attributes(G, 'color').values()
+        plt.figure(figsize=(8, 8))
+        nx.draw(G, pos=nx.circular_layout(G), edge_color=colors, width=2, connectionstyle='arc3, rad=0', with_labels=True, node_color="None", node_size=3000, node_shape="s")
+        plt.show()
+
 
 
 class _Diagram_QOL:
@@ -267,7 +288,7 @@ class Storable:
         return self.load_node(pickled_bytes=self.save_node())
 
 
-class _Diagram(_Diagram_Global, _Diagram_QOL, Storable, metaclass=AutoInitBases):
+class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Visualize, Storable, metaclass=AutoInitBases):
     """ Core methods of a Diagram. """
     def __init__(self, parent=None):
         # print(hasattr(self, "_children"))
