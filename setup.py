@@ -23,6 +23,8 @@ setup(
         'tabulate',
         'pytz',
         'dill',
+        'matplotlib',
+        'networkx',
     ],
     url="https://github.com/ManderaGeneral/generallibrary",
     license="mit",

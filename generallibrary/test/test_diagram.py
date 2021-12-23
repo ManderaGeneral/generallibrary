@@ -401,6 +401,25 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual({"y": 3}, b.shared)
         self.assertEqual({"y": 3}, a2.shared)
 
+    def test_shared_children(self):
+        a = A(1)
+        a.shared["x"] = 5
+        b = A(2, a)
+        self.assertIs(a.shared, b.shared)
+
+        a.set_parent(None)
+        self.assertIs(a.shared, b.shared)
+
+        a2 = A(3)
+        a.set_parent(a2)
+        self.assertIs(a.shared, b.shared)
+        self.assertIs(a.shared, a2.shared)
+
+        old_id = id(a2.shared)
+        a2.set_parent(None)
+        new_id = id(a2.shared)
+        self.assertIsNot(old_id, new_id)
+
 
 
 

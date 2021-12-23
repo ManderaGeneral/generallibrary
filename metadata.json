@@ -10,7 +10,9 @@
         "pandas",
         "tabulate",
         "pytz",
-        "dill"
+        "dill",
+        "matplotlib",
+        "networkx"
     ],
     "extras_require": {},
     "topics": [

@@ -419,8 +419,18 @@ class TreeDiagram(_Diagram):
         pass
 
     def _set_shared(self, parent):
-        """ :param TreeDiagram or NetworkDiagram or Any self: """
-        self.shared = parent.shared if hasattr(parent, "shared") else {}
+        """ A shared dictionary between all connected nodes.
+            Changing a nodes parent will change its own and recursive children's shared dict to its new parent's shared dict.
+            If new parent is None then a new shared dict is created.
+            Shared dicts are never merged, do that explicitly if needed.
+            Todo: Shared dict for NetworkDiagram, resolve logic with multiple parents.
+
+            :param TreeDiagram or NetworkDiagram or Any self: """
+        if getattr(parent, "shared", object()) is not self.shared:
+            new_shared = {} if parent is None else parent.shared
+            for part in self.get_children(depth=-1, gen=True, include_self=True, spawn=False):
+                part.shared = new_shared
+        assert self.shared is not Ellipsis
 
     def view(self, indent=1, relative=False, custom_repr=None, spacer=" ", spawn=False, filt=None, traverse_excluded=False, vertical=True, print_out=True):
         """ Get a printable string showing a clear view of this TreeDiagram structure.
