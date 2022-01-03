@@ -548,7 +548,8 @@ def initBases(cls):
     def _wrapper(*args, **kwargs):
         cls_SigInfo = SigInfo(cls_init, *args, **kwargs)
 
-        if not cls_SigInfo["self"]:
+        if cls_SigInfo["self"] is None:
+            print(cls_SigInfo["self"])
             raise AttributeError(f"{cls} hasn't defined it's `__init__`")
 
         initialized_bases = []

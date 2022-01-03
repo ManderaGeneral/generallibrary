@@ -11,3 +11,4 @@ from generallibrary.diagram import TreeDiagram, Markdown, NetworkDiagram, Storab
 from generallibrary.code import debug, CodeLine, clipboard_copy, clipboard_get, print_link, print_link_to_obj, get_definition_line, get_origin
 from generallibrary.versions import VerInfo, get_installed_packages, package_is_installed, PythonVersion, Ver
 from generallibrary.objinfo.objinfo import ObjInfo, hook, cache_clear, call_base_hooks
+from generallibrary.serialize import dumps, loads
