@@ -7,6 +7,35 @@ import os
 import inspect
 
 
+import inspect
+import logging
+
+
+def get_calling_module(add_depth=2):
+    return inspect.getmodule(inspect.stack()[add_depth][0])
+
+def get_name_from_module(module):
+    if module.__name__ == "__main__":
+        return os.path.splitext(os.path.basename(module.__file__))[0]
+    else:
+        return module.__name__
+
+def log():
+    name = get_name_from_module(get_calling_module())
+    exists = name in logging.Logger.manager.loggerDict
+    logger = logging.getLogger(name)
+
+    if not exists:
+        logger.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(levelname)-s,%(name)-s,%(funcName)-s,%(lineno)d,%(message)s')
+        file_handler = logging.FileHandler(f"{name}.log.csv")
+        file_handler.setFormatter(formatter)
+
+        logger.addHandler(file_handler)
+
+    return logger
+
+
 def clipboard_copy(s):
     """ Copy a string to clipboard.
         Rudely tries to installs xclip on linux if it fails. """

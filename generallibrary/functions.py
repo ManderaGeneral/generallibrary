@@ -16,7 +16,7 @@ import sys
 def import_module(name, error=True):
     try:
         return importlib.import_module(name=name)
-    except ModuleNotFoundError as e:
+    except (ModuleNotFoundError, TypeError) as e:
         if error:
             raise e
 
