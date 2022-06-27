@@ -1,6 +1,7 @@
 
 
 from generallibrary.diagram import TreeDiagram
+from generallibrary.functions import Recycle
 
 import pyperclip
 import os
@@ -9,6 +10,8 @@ import inspect
 
 import inspect
 import logging
+
+from pathlib import Path
 
 
 def get_calling_module(add_depth=2):
@@ -20,20 +23,111 @@ def get_name_from_module(module):
     else:
         return module.__name__
 
-def log():
-    name = get_name_from_module(get_calling_module())
-    exists = name in logging.Logger.manager.loggerDict
-    logger = logging.getLogger(name)
 
-    if not exists:
-        logger.setLevel(logging.INFO)
-        formatter = logging.Formatter('%(levelname)-s,%(name)-s,%(funcName)-s,%(lineno)d,%(message)s')
-        file_handler = logging.FileHandler(f"{name}.log.csv")
-        file_handler.setFormatter(formatter)
+class Log(TreeDiagram, Recycle):
+    ROOT_NAME = "root"
 
-        logger.addHandler(file_handler)
+    @classmethod
+    def _name(cls, name):
+        """ Mimic logging.Logger's naming behaviour """
+        return str(name) if name else cls.ROOT_NAME
 
-    return logger
+    _recycle_keys = {"name": lambda x: Log._name(x)}
+
+    def __init__(self, name=None, parent=None):
+        name = self._name(name)
+        self.name = name
+        self.logger = logging.getLogger(name)
+        assert name == self.logger.name
+        self._init_logger_names()
+
+    def __init_post__(self):
+        print(self.get_parent())
+
+    def _init_logger_names(self):
+        """ Create a shared sorted list of all the available loggers' names. """
+        if "_logger_names_sorted" not in self.shared:
+            self.shared["_logger_names_sorted"] = sorted(self.loggers().keys())
+        self._logger_names_sorted = self.shared["_logger_names_sorted"]
+
+    def debug(self, msg): self.logger.debug(msg)
+    def info(self, msg): self.logger.info(msg)
+    def warning(self, msg): self.logger.warning(msg)
+    def error(self, msg): self.logger.error(msg)
+    def critical(self, msg): self.logger.critical(msg)
+
+    @staticmethod
+    def loggers():
+        return logging.root.manager.loggerDict
+
+    def is_root(self):
+        return self.name == self.ROOT_NAME
+
+    def _logger_is_child(self, name: str):
+        if self.is_root():
+            return "." not in name
+        return name.startswith(self.name) and (name.count(".") - self.name.count(".")) == 1
+
+    def _get_parent_name(self):
+        if self.is_root():
+            return None
+        elif "." not in self.name:
+            return self.ROOT_NAME
+        else:
+            return ".".join(self.name.split(".")[0:-1])
+
+    def spawn_parents(self):
+        if not self.is_root():
+            parent_log = type(self)(name=self._get_parent_name())
+            self.set_parent(parent_log)
+
+    def spawn_children(self):
+        lowest = highest = None
+        for i, name in enumerate(self._logger_names_sorted):
+            if self._logger_is_child(name):
+                if lowest is None:
+                    lowest = i
+                highest = i
+                type(self)(name, parent=self)
+            elif lowest is not None:
+                break
+        if lowest is not None:
+            del self._logger_names_sorted[lowest:highest + 1]
+
+    def __repr__(self):
+        return f"<Log: '{self.name}'>"
+
+
+def testing():
+    Log().info("foobar")
+
+# def configure_logger(name):
+#     # name = get_name_from_module(get_calling_module())
+#     exists = name in logging.Logger.manager.loggerDict
+#     logger = logging.getLogger(name)
+#
+#     if not exists or 1:
+#         log_format = {
+#             "Level": "%(levelname)-s",
+#             "Module": "%(name)-s",
+#             "Time": "%(asctime)-s",
+#             "MS": "%(msecs)-d",
+#             "Function": "%(funcName)-s",
+#             "Line": "%(lineno)d",
+#             "Message": "%(message)s",
+#         }
+#         path = Path(f"{name}.log.csv")
+#         logger.setLevel(logging.INFO)
+#         formatter = logging.Formatter(fmt=",".join(log_format.values()), datefmt="%Y-%m-%d %H:%M:%S")
+#         file_handler = logging.FileHandler(path)
+#         file_handler.setFormatter(formatter)
+#
+#         logger.addHandler(file_handler)
+#
+#         if not path.exists() or not path.stat().st_size:
+#             path.write_text(f'{",".join(log_format.keys())}\n')
+#
+#     return logger
 
 
 def clipboard_copy(s):
