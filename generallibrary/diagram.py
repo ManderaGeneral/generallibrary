@@ -95,9 +95,9 @@ class _Diagram_Visualize:
 
 class _Diagram_QOL:
     """ Quality of life helper methods of Diagram. """
-    def _get_children_or_parents(self, parent, child):
+    def _get_children_or_parents(self, parent, child, spawn):
         if (parent, child) == (None, None):
-            parent = self.get_parent()
+            parent = self.get_parent(spawn=spawn)
 
         if parent:
             return parent._children
@@ -117,17 +117,18 @@ class _Diagram_QOL:
                 if i == index:
                     return node
 
-    def get_index(self, parent=None, child=None):
+    def get_index(self, parent=None, child=None, spawn=None):
         """ Get the index this node has in target node's container. Parent takes precedence if both are defined.
             Defaults to returning index of first parent's children. Returns 0 if orphan.
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param TreeDiagram or NetworkDiagram or Any parent:
             :param TreeDiagram or NetworkDiagram or Any child:
+            :param bool spawn:
             :raises ValueError: If given node doesn't contain self. """
-        return self._get_children_or_parents(parent=parent, child=child).index(self)
+        return self._get_children_or_parents(parent=parent, child=child, spawn=spawn).index(self)
 
-    def set_index(self, index, parent=None, child=None):
+    def set_index(self, index, parent=None, child=None, spawn=None):
         """ Set the index this node has in target node's container. Parent takes precedence if both are defined.
             Defaults to setting index of first parent's children. Nothing happens if orphan and parent is defined.
 
@@ -135,8 +136,9 @@ class _Diagram_QOL:
             :param int index:
             :param TreeDiagram or NetworkDiagram or Any parent:
             :param TreeDiagram or NetworkDiagram or Any child:
+            :param bool spawn:
             :raises ValueError: If given node doesn't contain self. """
-        container = self._get_children_or_parents(parent=parent, child=child)
+        container = self._get_children_or_parents(parent=parent, child=child, spawn=spawn)
         if index != container.index(self):
             container.remove(self)
             container.insert(index, self)
@@ -303,6 +305,9 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Visualize, Storable, meta
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param TreeDiagram or NetworkDiagram or Any parent: """
+        if parent in self._parents:
+            return parent
+
         if self._single_parent or parent is None:
             for old_parent in self._parents:
                 old_parent._children.remove(self)
@@ -397,8 +402,8 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Visualize, Storable, meta
         yield from self._siblings_and_spouses(self.get_parents, self.get_children, spawn=spawn)
 
     def _siblings_and_spouses(self, method1, method2, spawn):
-        # for node1 in method1.__func__(self, gen=True, spawn=spawn):
-        for node1 in method1.__func__(self, gen=True, spawn=True):
+        # for node1 in method1.__func__(self, gen=True, spawn=True):  # Uhh dunno why this is here
+        for node1 in method1.__func__(self, gen=True, spawn=spawn):
             node_list = method2.__func__(node1, gen=False, spawn=spawn)
 
             ordered_node_list = pivot_list(list_=node_list, index=node_list.index(self))
@@ -451,7 +456,7 @@ class TreeDiagram(_Diagram):
                 all_parents.insert(0, node)
 
             for i, parent in enumerate(all_parents):  # type: int, TreeDiagram
-                sibling_index = parent.get_index()
+                sibling_index = parent.get_index(spawn=spawn)
                 if i == 0:
                     if len(parent.get_siblings(spawn=spawn)) == sibling_index:
                         lane = f"└{'─' * indent}{spacer}"

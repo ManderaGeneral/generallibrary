@@ -39,16 +39,6 @@ class Log(TreeDiagram, Recycle):
         self.name = name
         self.logger = logging.getLogger(name)
         assert name == self.logger.name
-        self._init_logger_names()
-
-    def __init_post__(self):
-        print(self.get_parent())
-
-    def _init_logger_names(self):
-        """ Create a shared sorted list of all the available loggers' names. """
-        if "_logger_names_sorted" not in self.shared:
-            self.shared["_logger_names_sorted"] = sorted(self.loggers().keys())
-        self._logger_names_sorted = self.shared["_logger_names_sorted"]
 
     def debug(self, msg): self.logger.debug(msg)
     def info(self, msg): self.logger.info(msg)
@@ -76,23 +66,18 @@ class Log(TreeDiagram, Recycle):
         else:
             return ".".join(self.name.split(".")[0:-1])
 
+    # def spawn_all(self):
+    #     sorted(self.loggers().keys())
+
     def spawn_parents(self):
         if not self.is_root():
             parent_log = type(self)(name=self._get_parent_name())
-            self.set_parent(parent_log)
+            self.set_parent(parent=parent_log)
 
     def spawn_children(self):
-        lowest = highest = None
-        for i, name in enumerate(self._logger_names_sorted):
-            if self._logger_is_child(name):
-                if lowest is None:
-                    lowest = i
-                highest = i
-                type(self)(name, parent=self)
-            elif lowest is not None:
-                break
-        if lowest is not None:
-            del self._logger_names_sorted[lowest:highest + 1]
+        for name, logger in self.loggers().items():
+            if self._logger_is_child(name=name):
+                type(self)(name=name, parent=self)
 
     def __repr__(self):
         return f"<Log: '{self.name}'>"
