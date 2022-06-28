@@ -22,10 +22,10 @@ import logging
 
 
 
-Log().view(spawn=True)
+# Log().view(spawn=True)
 
 
-
+print(Packager("generallibrary").localrepo.pip_install())
 
 
 

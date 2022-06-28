@@ -8,7 +8,7 @@ from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, 
 from generallibrary.functions import SigInfo, calculate, defaults, Operators, deco_cache, deco_cast_parameters, deco_extend, EmptyContext, deco_optional_suppress, deco_bound_defaults, classproperty, CallTable, deco_propagate_while, wrapper_transfer, initBases, AutoInitBases, Recycle, import_module, terminal
 from generallibrary.values import BoolStr, floor, ceil, clamp, sign, inrange, rectify, doubleRectify, confineTo, EnvVar, get_launch_options
 from generallibrary.diagram import TreeDiagram, Markdown, NetworkDiagram, Storable
-from generallibrary.code import debug, CodeLine, clipboard_copy, clipboard_get, print_link, print_link_to_obj, get_definition_line, get_origin
+from generallibrary.code import debug, CodeLine, clipboard_copy, clipboard_get, print_link, print_link_to_obj, get_definition_line, get_origin, Log
 from generallibrary.versions import VerInfo, get_installed_packages, package_is_installed, PythonVersion, Ver
 from generallibrary.objinfo.objinfo import ObjInfo, hook, cache_clear, call_base_hooks
 from generallibrary.serialize import dumps, loads
