@@ -26,6 +26,18 @@ def get_name_from_module(module):
 
 class Log(TreeDiagram, Recycle):
     ROOT_NAME = "root"
+    FILE_FORMAT = {
+        "Level": "%(levelname)-s",
+        "Module": "%(name)-s",
+        "Time": "%(asctime)-s",
+        "MS": "%(msecs)-d",
+        "Function": "%(funcName)-s",
+        "Line": "%(lineno)d",
+        "Message": "%(message)s",
+    }
+    STREAM_FORMAT = FILE_FORMAT.copy()
+    DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 
     @classmethod
     def _name(cls, name):
@@ -45,6 +57,25 @@ class Log(TreeDiagram, Recycle):
     def warning(self, msg): self.logger.warning(msg)
     def error(self, msg): self.logger.error(msg)
     def critical(self, msg): self.logger.critical(msg)
+    
+    def _configure_helper(self, level, delimiter, format, handler):
+        self.logger.setLevel(level=level)
+        formatter = logging.Formatter(fmt=delimiter.join(format.values()), datefmt=self.DATE_FORMAT)
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
+    
+    def _file_handler(self):
+        path = Path(f"{self.name}.log.csv")
+        file_handler = logging.FileHandler(path)
+        if not path.exists() or not path.stat().st_size:
+            path.write_text(f'{",".join(self.FILE_FORMAT.keys())}\n')
+        return file_handler
+    
+    def configure_file(self, level=10):
+        self._configure_helper(level=level, delimiter=",", format=self.FILE_FORMAT, handler=self._file_handler())
+    
+    def configure_stream(self, level=10):
+        self._configure_helper(level=level, delimiter=" : ", format=self.STREAM_FORMAT, handler=logging.StreamHandler())
 
     @staticmethod
     def loggers():
@@ -66,7 +97,7 @@ class Log(TreeDiagram, Recycle):
         else:
             return ".".join(self.name.split(".")[0:-1])
 
-    # def spawn_all(self):
+    # def spawn_all(self):  # Idea here was to spawn all Logs with a sorted list of logger names which is faster
     #     sorted(self.loggers().keys())
 
     def spawn_parents(self):
@@ -85,34 +116,6 @@ class Log(TreeDiagram, Recycle):
 
 def testing():
     Log().info("foobar")
-
-# def configure_logger(name):
-#     # name = get_name_from_module(get_calling_module())
-#     exists = name in logging.Logger.manager.loggerDict
-#     logger = logging.getLogger(name)
-#
-#     if not exists or 1:
-#         log_format = {
-#             "Level": "%(levelname)-s",
-#             "Module": "%(name)-s",
-#             "Time": "%(asctime)-s",
-#             "MS": "%(msecs)-d",
-#             "Function": "%(funcName)-s",
-#             "Line": "%(lineno)d",
-#             "Message": "%(message)s",
-#         }
-#         path = Path(f"{name}.log.csv")
-#         logger.setLevel(logging.INFO)
-#         formatter = logging.Formatter(fmt=",".join(log_format.values()), datefmt="%Y-%m-%d %H:%M:%S")
-#         file_handler = logging.FileHandler(path)
-#         file_handler.setFormatter(formatter)
-#
-#         logger.addHandler(file_handler)
-#
-#         if not path.exists() or not path.stat().st_size:
-#             path.write_text(f'{",".join(log_format.keys())}\n')
-#
-#     return logger
 
 
 def clipboard_copy(s):
