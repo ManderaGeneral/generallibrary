@@ -305,11 +305,13 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Visualize, Storable, meta
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param TreeDiagram or NetworkDiagram or Any parent: """
+        # print("parent", type(parent), parent, parent in self._parents, self._parents, len(self._parents), self._parents[0] if self._parents else "x", type(self._parents[0]) if self._parents else "x")
         if parent in self._parents:
             return parent
 
         if self._single_parent or parent is None:
             for old_parent in self._parents:
+                # print("removing", self, "from children of", old_parent, parent)
                 old_parent._children.remove(self)
             self._parents.clear()
 

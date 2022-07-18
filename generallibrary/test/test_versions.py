@@ -78,7 +78,9 @@ class VersionsTest(unittest.TestCase):
         self.assertEqual(False, package_is_installed("generallibrary", "random_package_not_existing"))
 
     def test_bump(self):
+        self.assertEqual("1.0.0", Ver(1))
         self.assertEqual("1.0.0", Ver(1.0))
+        self.assertEqual("1.0.0", Ver("1"))
         self.assertEqual("1.0.0", Ver("1.0"))
         self.assertEqual("1.0.0", Ver("1.0.0"))
         self.assertEqual("1.0.1", Ver("1.0").bump())

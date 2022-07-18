@@ -56,8 +56,7 @@ class classproperty:
         @classproperty
         def foo(cls):
             return cls.bar
-        https://stackoverflow.com/a/13624858/3936044
-        Todo: Remove classproperty once 3.8 is no longer supported. """
+        https://stackoverflow.com/a/13624858/3936044 """
     def __init__(self, fget):
         self.fget = fget
 
@@ -579,17 +578,21 @@ def initBases(cls):
     return cls
 
 
-class AutoInitBases(type):
-    """ Use as metaclass to automatically call initBases decorator on inheriters. """
-    def __init__(cls, *args, **kwargs):
-        """ :param Any cls: """
-        type.__init__(initBases(cls), *args, **kwargs)
+def auto_deco(deco):
+    """ Automatically call deco on class and all its subclasses. """
+    class AutoDecoMetaClass(type):
+        def __init__(cls, *args, **kwargs):
+            type.__init__(deco(cls), *args, **kwargs)
+    return AutoDecoMetaClass
+
+AutoInitBases = auto_deco(initBases)
 
 
 class Recycle:
     """ Inherit this class to make instantiating two classes with the same args yield the same instance object.
         Assign _recycle_keys to a dict with keys corresponding to init args and value being a func (str() in most cases) to return json serializable obj.
         Set to empty dict for singleton.
+        Stores instances in top most cls.
         Note: Does not work with pickle. """
     _recycle_keys = None
     _recycle_is_new = None

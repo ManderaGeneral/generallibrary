@@ -2,8 +2,8 @@
 import re
 
 
-def comma_and_and(*values, period=True):
-    """ Return a properly formatted string, eg: a, b and c. """
+
+def _comma_and_helper(*values, period, and_or_or):
     period = '.' if period else ''
     len_values = len(values)
     if len_values == 0:
@@ -11,7 +11,15 @@ def comma_and_and(*values, period=True):
     elif len_values == 1:
         return f"{values[0]}{period}"
     else:
-        return f"{', '.join(values[:-1])} and {values[-1]}{period}"
+        return f"{', '.join(values[:-1])} {and_or_or} {values[-1]}{period}"
+
+def comma_and_and(*values, period=True):
+    """ Return a properly formatted string, eg: a, b and c. """
+    return _comma_and_helper(*values, period=period, and_or_or="and")
+
+def comma_and_or(*values, period=True):
+    """ Return a properly formatted string, eg: a, b or c. """
+    return _comma_and_helper(*values, period=period, and_or_or="or")
 
 
 def plur_sing(count, word, suffix=None):

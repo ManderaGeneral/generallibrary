@@ -16,7 +16,15 @@ class Ver(StrictVersion):
     """ Generic version handler.
         Todo: Use Ver in each part of VerInfo. """
     def __init__(self, ver):
+        ver = self._allow_single_digit(ver)
         super().__init__(str(ver))
+
+    @staticmethod
+    def _allow_single_digit(ver):
+        if isinstance(ver, int) or (isinstance(ver, str) and "." not in ver):
+            return float(ver)
+        else:
+            return ver
 
     def bump(self):
         """ Return a new Ver with bumped last value. """
@@ -27,6 +35,13 @@ class Ver(StrictVersion):
         else:
             bulk, micro = re.findall("(.*)(\\d)", str(self))[0]
             return Ver(f"{bulk}{int(micro) + 1}")
+
+    def __dumps__(self):
+        return str(self)
+
+    @staticmethod
+    def __loads__(ver):
+        return Ver(ver=ver)
 
 
 class _OsInfo:
