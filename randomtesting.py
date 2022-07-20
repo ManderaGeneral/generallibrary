@@ -3,12 +3,11 @@ from generallibrary import *
 
 
 class X(DataClass):
-    foo = "bar"
-
-# HERE ** Add methods to get type annotations, then make ConfigFile use this
+    foo: str = "bar"
 
 
-print(X.field_keys())
+
+print(X.field_annotations_dict())
 
 
 

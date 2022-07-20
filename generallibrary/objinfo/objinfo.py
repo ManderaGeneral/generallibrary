@@ -140,6 +140,19 @@ def call_base_hooks(self, name, kwargs=None):
 class _DataClass_Class:
     @classmethod
     @deco_cache()
+    def _fields_as_objinfos(cls) -> list[ObjInfo]:
+        def filt(objinfo: ObjInfo):
+            return objinfo.is_instance()
+        return ObjInfo(cls).get_children(traverse_excluded=True, filt=filt)
+
+    @classmethod
+    @deco_cache()
+    def field_keys(cls) -> list[str]:
+        """ Get a list of field keys defined by subclass. """
+        return [objinfo.name for objinfo in cls._fields_as_objinfos()]
+
+    @classmethod
+    @deco_cache()
     def field_default_values(cls):
         """ Get a list of field values defined by subclass.
 
@@ -153,6 +166,15 @@ class _DataClass_Class:
 
             :param DataClass cls: """
         return {objinfo.name: objinfo.obj for objinfo in cls._fields_as_objinfos()}
+
+    @classmethod
+    @deco_cache()
+    def field_annotations_dict(cls):
+        """ Get a dict of annotations defined by subclass.
+
+            :param DataClass cls: """
+        return {key: annotation for key, annotation in getattr(cls, "__annotations__", {}).items() if key in cls.field_keys()}
+
 
 
 class _DataClass_Instance:
@@ -170,19 +192,7 @@ class _DataClass_Instance:
 
 
 class DataClass(_DataClass_Class, _DataClass_Instance):
-    @classmethod
-    @deco_cache()
-    def _fields_as_objinfos(cls) -> list[ObjInfo]:
-        def filt(objinfo: ObjInfo):
-            return objinfo.is_instance()
-        return ObjInfo(cls).get_children(traverse_excluded=True, filt=filt)
-
-    @classmethod
-    @deco_cache()
-    def field_keys(cls) -> list[str]:
-        """ Get a list of field keys defined by subclass. """
-        return [objinfo.name for objinfo in cls._fields_as_objinfos()]
-
+    pass
 
 
 
