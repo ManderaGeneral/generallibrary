@@ -1,6 +1,6 @@
 
 from generallibrary.iterables import extend_list_in_dict, split_list
-from generallibrary.functions import SigInfo, wrapper_transfer, Recycle
+from generallibrary.functions import SigInfo, wrapper_transfer, deco_cache
 from generallibrary.diagram import TreeDiagram
 from generallibrary.code import warn
 from generallibrary.types import getBaseClasses
@@ -134,3 +134,55 @@ def call_base_hooks(self, name, kwargs=None):
                     if hook_return is not None:
                         kwargs = hook_return
     return kwargs
+
+
+
+class _DataClass_Class:
+    @classmethod
+    @deco_cache()
+    def field_default_values(cls):
+        """ Get a list of field values defined by subclass.
+
+            :param DataClass cls: """
+        return list(cls.field_default_dict().values())
+
+    @classmethod
+    @deco_cache()
+    def field_default_dict(cls):
+        """ Get a list of field values defined by subclass.
+
+            :param DataClass cls: """
+        return {objinfo.name: objinfo.obj for objinfo in cls._fields_as_objinfos()}
+
+
+class _DataClass_Instance:
+    def field_values(self):
+        """ Get a list of field values defined by subclass.
+
+            :param DataClass self: """
+        return list(self.field_dict().values())
+
+    def field_dict(self):
+        """ Get a dict of the key and values defined by subclass.
+
+            :param DataClass self: """
+        return {objinfo.name: getattr(self, objinfo.name) for objinfo in self._fields_as_objinfos()}
+
+
+class DataClass(_DataClass_Class, _DataClass_Instance):
+    @classmethod
+    @deco_cache()
+    def _fields_as_objinfos(cls) -> list[ObjInfo]:
+        def filt(objinfo: ObjInfo):
+            return objinfo.is_instance()
+        return ObjInfo(cls).get_children(traverse_excluded=True, filt=filt)
+
+    @classmethod
+    @deco_cache()
+    def field_keys(cls) -> list[str]:
+        """ Get a list of field keys defined by subclass. """
+        return [objinfo.name for objinfo in cls._fields_as_objinfos()]
+
+
+
+

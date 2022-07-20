@@ -1,32 +1,14 @@
 
 from generallibrary import *
 
-from generalpackager import Packager
+
+class X(DataClass):
+    foo = "bar"
+
+# HERE ** Add methods to get type annotations, then make ConfigFile use this
 
 
-# Packager().graph(name_func=lambda x: x.simple_name)
-
-from generallibrary.code import Log, testing
-
-import logging
-
-
-
-# stream = logging.StreamHandler()
-# logger = logging.getLogger()
-# logger.addHandler(stream)
-# logger.setLevel(10)
-#
-# testing()
-
-
-
-
-# Log().view(spawn=True)
-
-
-print(Packager("generallibrary").localrepo.pip_install())
-
+print(X.field_keys())
 
 
 

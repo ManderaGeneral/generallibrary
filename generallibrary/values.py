@@ -6,6 +6,7 @@ import os
 import sys
 
 
+
 class BoolStr:
     """ Boolean and String in one.
         Useful for validating with a message. """
