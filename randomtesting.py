@@ -7,7 +7,7 @@ class X(DataClass):
 
 
 
-print(X.field_annotations_dict())
+print(X.field_dict_annotations())
 
 
 

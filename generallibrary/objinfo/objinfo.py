@@ -153,15 +153,15 @@ class _DataClass_Class:
 
     @classmethod
     @deco_cache()
-    def field_default_values(cls):
+    def field_values_defaults(cls):
         """ Get a list of field values defined by subclass.
 
             :param DataClass cls: """
-        return list(cls.field_default_dict().values())
+        return list(cls.field_dict_defaults().values())
 
     @classmethod
     @deco_cache()
-    def field_default_dict(cls):
+    def field_dict_defaults(cls):
         """ Get a list of field values defined by subclass.
 
             :param DataClass cls: """
@@ -169,7 +169,7 @@ class _DataClass_Class:
 
     @classmethod
     @deco_cache()
-    def field_annotations_dict(cls):
+    def field_dict_annotations(cls):
         """ Get a dict of annotations defined by subclass.
 
             :param DataClass cls: """

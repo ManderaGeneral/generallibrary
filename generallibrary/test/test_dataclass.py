@@ -22,50 +22,50 @@ class DataClassTest(TestCase):
     def test_field_default_values(self):
         class A(DataClass):
             x = 5
-        self.assertEqual([5], A.field_default_values())
+        self.assertEqual([5], A.field_values_defaults())
 
         class B(A):
             y = "foo"
-        self.assertCountEqual(["foo", 5], B.field_default_values())
+        self.assertCountEqual(["foo", 5], B.field_values_defaults())
 
         class A(DataClass):
             foo: str = "hi"
             bar = [True]
             _private = "six"
 
-        self.assertCountEqual(["hi", [True]], A.field_default_values())
+        self.assertCountEqual(["hi", [True]], A.field_values_defaults())
 
     def test_field_default_dict(self):
         class A(DataClass):
             x = 5
-        self.assertEqual({"x": 5}, A.field_default_dict())
+        self.assertEqual({"x": 5}, A.field_dict_defaults())
 
         class B(A):
             y = "foo"
-        self.assertEqual({"y": "foo", "x": 5}, B.field_default_dict())
+        self.assertEqual({"y": "foo", "x": 5}, B.field_dict_defaults())
 
         class A(DataClass):
             foo: str = "hi"
             bar = [True]
             _private = "six"
 
-        self.assertEqual({"foo": "hi", "bar": [True]}, A.field_default_dict())
+        self.assertEqual({"foo": "hi", "bar": [True]}, A.field_dict_defaults())
 
     def test_field_annotations_dict(self):
         class A(DataClass):
             x = 5
-        self.assertEqual({}, A.field_annotations_dict())
+        self.assertEqual({}, A.field_dict_annotations())
 
         class B(A):
             y = "foo"
-        self.assertEqual({}, B.field_annotations_dict())
+        self.assertEqual({}, B.field_dict_annotations())
 
         class A(DataClass):
             foo: str = "hi"
             bar = [True]
             _private = "six"
 
-        self.assertEqual({"foo": str}, A.field_annotations_dict())
+        self.assertEqual({"foo": str}, A.field_dict_annotations())
 
     def test_field_values(self):
         class A(DataClass):
