@@ -593,6 +593,7 @@ class Recycle:
         Assign _recycle_keys to a dict with keys corresponding to init args and value being a func (str() in most cases) to return json serializable obj.
         Set to empty dict for singleton.
         Stores instances in top most cls.
+        Puts cls.__name__ in key so inheritence returns actual class called.
         Note: Does not work with pickle. """
     _recycle_keys = None
     _recycle_is_new = None
@@ -608,7 +609,9 @@ class Recycle:
     @classmethod
     def _recycle_key(cls, args, kwargs):
         sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
-        return json.dumps([func(sigInfo[name]) for name, func in cls._recycle_keys.items()])
+        recycle_list = [func(sigInfo[name]) for name, func in cls._recycle_keys.items()]
+        recycle_list.append(cls.__name__)
+        return json.dumps(recycle_list)
 
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls._recycle_keys, dict):
@@ -622,10 +625,12 @@ class Recycle:
         key = cls._recycle_key(args, kwargs)
         if is_new := key not in cls._recycle_instances:
             cls._recycle_instances[key] = object.__new__(cls)
+
         cls._recycle_instances[key]._recycle_is_new = is_new
         return cls._recycle_instances[key]
 
     def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
         cls.__init__ = cls._recycle_deco_init(cls.__init__)
 
     def recycle_clear(self):

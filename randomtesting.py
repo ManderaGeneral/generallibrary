@@ -1,14 +1,12 @@
 
 from generallibrary import *
 
+class A(Recycle):
+    _recycle_keys = {"foo": str}
 
-class X(DataClass):
-    foo: str = "bar"
-
-
-
-print(X.field_dict_annotations())
+class B(A):
+    pass
 
 
-
-
+print(A())
+print(B())

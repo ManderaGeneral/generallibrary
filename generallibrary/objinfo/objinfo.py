@@ -11,6 +11,8 @@ from generallibrary.objinfo.origin import _ObjInfoOrigin
 from generallibrary.objinfo.properties import _ObjInfoProperties
 from generallibrary.objinfo.parents import _ObjInfoParents
 
+from typing import Literal, get_args, get_origin
+
 
 class ObjInfo(_ObjInfoChildren, _ObjInfoType, _ObjInfoOrigin, _ObjInfoProperties, _ObjInfoParents, TreeDiagram):
     """ Get whether obj is a module, function, class, method, property or variable.
@@ -174,6 +176,14 @@ class _DataClass_Class:
 
             :param DataClass cls: """
         return {key: annotation for key, annotation in getattr(cls, "__annotations__", {}).items() if key in cls.field_keys()}
+
+    @classmethod
+    @deco_cache()
+    def field_dict_literals(cls):
+        """ Get a dict of the annotation Literals as lists.
+
+            :param DataClass cls: """
+        return {key: list(get_args(annotation)) for key, annotation in cls.field_dict_annotations().items() if get_origin(annotation) is Literal}
 
 
 

@@ -357,6 +357,15 @@ class TreeDiagramTest(unittest.TestCase):
         a.remove_node()
         self.assertIsNot(c, C(3))
 
+    def test_reycle_inheritance(self):
+        class AA(Recycle):
+            _recycle_keys = {}
+
+        class BB(AA):
+            pass
+
+        self.assertIsNot(AA(), BB())
+
     def test_filt(self):
         a = A(1)
         b = a.add_node(2)
