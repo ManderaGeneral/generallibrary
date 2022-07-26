@@ -120,10 +120,21 @@ def cache_clear(obj):
     for objInfo in ObjInfo(obj).get_children(depth=-1, include_self=True, gen=True, filt=lambda objInfo: hasattr(objInfo.obj, "cache_clear"), traverse_excluded=True):
         objInfo.obj.cache_clear()
 
+sentinel = object()
+def get_attrs_from_bases(obj, name, /, ignore=sentinel):
+    """ Get a list of attrs which have the same name from every base. """
+    attrs = []
+    for base in getBaseClasses(obj, includeSelf=True):
+        attr = getattr(base, name, sentinel)
+        if attr is not sentinel and attr not in attrs and (ignore is sentinel or attr != ignore):
+            attrs.append(attr)
+    return attrs
+
 def call_base_hooks(self, name, kwargs=None):
     """ Call a certain method in each base, ignoring overriding.
         Method can take kwargs or nothing as args.
-        Kwargs can be updated in each method, returned by this method. """
+        Kwargs can be updated in each method, returned by this method.
+        Note: This function is pretty scuffed, it's very specific for the GUI I think. """
     for base in getBaseClasses(self, includeSelf=True):
         draw_create_hook = getattr(base, name, None)
         if draw_create_hook:

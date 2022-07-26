@@ -11,6 +11,7 @@ import json
 import importlib
 import subprocess
 import sys
+from collections import ChainMap
 
 
 def import_module(name, error=True):
@@ -609,7 +610,8 @@ class Recycle:
     @classmethod
     def _recycle_key(cls, args, kwargs):
         sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
-        recycle_list = [func(sigInfo[name]) for name, func in cls._recycle_keys.items()]
+        recycle_keys = ChainMap(*get_attrs_from_bases(cls, "_recycle_keys", ignore=None))
+        recycle_list = [func(sigInfo[name]) for name, func in recycle_keys.items()]
         recycle_list.append(cls.__name__)
         return json.dumps(recycle_list)
 
@@ -656,6 +658,7 @@ def terminal(*args, python=False, suppress=False, **kwargs):
 
 
 
+from generallibrary.objinfo.objinfo import get_attrs_from_bases
 
 
 

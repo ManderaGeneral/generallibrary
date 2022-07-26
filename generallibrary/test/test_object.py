@@ -1,6 +1,6 @@
 
 from generallibrary.object import *
-from generallibrary.objinfo.objinfo import ObjInfo, hook, call_base_hooks
+from generallibrary.objinfo.objinfo import ObjInfo, hook, call_base_hooks, get_attrs_from_bases
 from generallibrary.functions import initBases, AutoInitBases
 
 import unittest
@@ -384,6 +384,45 @@ class ObjectTest(unittest.TestCase):  # This line is used for test_get_definitio
         objInfo = ObjInfo(_Foo)
         self.assertEqual(True, "_Foo" in repr(objInfo))
         self.assertEqual(True, "Class" in repr(objInfo))
+
+    def test_get_attrs_from_bases(self):
+        class A:
+            x = 5
+        class B(A):
+            x = 2
+
+        self.assertEqual([2, 5], get_attrs_from_bases(B, "x"))
+        self.assertEqual([2, 5], get_attrs_from_bases(B(), "x"))
+
+        self.assertEqual([5], get_attrs_from_bases(A, "x"))
+        self.assertEqual([5], get_attrs_from_bases(A(), "x"))
+
+        self.assertEqual([2], get_attrs_from_bases(B, "x", ignore=5))
+        self.assertEqual([2], get_attrs_from_bases(B(), "x", ignore=5))
+
+        self.assertEqual([], get_attrs_from_bases(A, "x", ignore=5))
+        self.assertEqual([], get_attrs_from_bases(A, "x", ignore=5))
+
+    def test_get_attrs_from_bases_multiple(self):
+        class A:
+            x = [5]
+        class B:
+            x = ["foo"]
+        class C(A, B):
+            x = ["bar"]
+
+        self.assertEqual([[5]], get_attrs_from_bases(A, "x"))
+        self.assertEqual([[5]], get_attrs_from_bases(A(), "x"))
+
+        self.assertEqual([["foo"]], get_attrs_from_bases(B, "x"))
+        self.assertEqual([["foo"]], get_attrs_from_bases(B(), "x"))
+
+        self.assertEqual([["bar"], [5], ["foo"]], get_attrs_from_bases(C, "x"))
+        self.assertEqual([["bar"], [5], ["foo"]], get_attrs_from_bases(C(), "x"))
+
+        self.assertEqual([], get_attrs_from_bases(C, "doesntexist"))
+        self.assertEqual([], get_attrs_from_bases(C(), "doesntexist"))
+
 
 
 class _Foo:
