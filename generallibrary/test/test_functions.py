@@ -413,7 +413,7 @@ class FunctionsTest(unittest.TestCase):
         C.recycle_clear_all()
         self.assertEqual(0, len(C._recycle_instances))
 
-    def test_reycle_multiple(self):
+    def test_recycle_multiple(self):
         class A(Recycle, metaclass=AutoInitBases):
             _recycle_keys = {"foo": str}
             def __init__(self, foo):
@@ -427,6 +427,21 @@ class FunctionsTest(unittest.TestCase):
         self.assertIsNot(B("a", "a"), B("b", "b"))
         self.assertIsNot(B("a", "a"), B("b", "a"))
 
+        self.assertIs(B("a", "a"), B("a", "a"))
+
+    def test_recycle_no_init(self):
+        class A(Recycle, metaclass=AutoInitBases):
+            pass
+
+        class B(A):
+            _recycle_keys = {"foo": str}
+            def __init__(self, foo, bar):
+                pass
+
+        self.assertIsNot(B("a", "a"), B("b", "b"))
+        self.assertIsNot(B("a", "a"), B("b", "a"))
+
+        self.assertIs(B("a", "a"), B("a", "b"))
         self.assertIs(B("a", "a"), B("a", "a"))
 
 

@@ -4,8 +4,9 @@ from generallibrary import *
 class A(Recycle, metaclass=AutoInitBases):
     _recycle_keys = {"foo": str}
 
-    def __init__(self, foo):
-        self.foo = foo
+    # def __init__(self, foo, bar):
+    #     pass
+
 
 class B(A):
     _recycle_keys = {"bar": str}

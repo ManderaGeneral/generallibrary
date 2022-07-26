@@ -472,7 +472,6 @@ class CallTable:
         for func_name, func in funcs.items():
             columns[func_name] = {}
             for arg_name, arg in args.items():
-                # print(arg, getattr(arg, "__self__", None))
                 try:
                     result = func(arg)
                     if not result:
@@ -562,6 +561,7 @@ def initBases(cls):
 
         for base in cls.__bases__ + (cls, ):
             init = cls_init if base is cls else base.__init__
+            # print(init)
 
             if init is not object.__init__ and init not in initialized_bases:
                 if getattr(cls_SigInfo["self"], "_recycle_is_new", True):
@@ -592,6 +592,7 @@ AutoInitBases = auto_deco(initBases)
 class Recycle:
     """ Inherit this class to make instantiating two classes with the same args yield the same instance object.
         Assign _recycle_keys to a dict with keys corresponding to init args and value being a func (str() in most cases) to return json serializable obj.
+        _recycle_keys are combined in case of inheritence.
         Set to empty dict for singleton.
         Stores instances in top most cls.
         Puts cls.__name__ in key so inheritence returns actual class called.
@@ -633,7 +634,8 @@ class Recycle:
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        cls.__init__ = cls._recycle_deco_init(cls.__init__)
+        if cls.__init__ is not object.__init__:
+            cls.__init__ = cls._recycle_deco_init(cls.__init__)
 
     def recycle_clear(self):
         """ Remove this stored instance from recyclables. """
