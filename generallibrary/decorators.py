@@ -374,3 +374,49 @@ class Operators:
 
             return baseCls
         return _wrapper
+
+
+def deco_require(assertion, message=None):
+    """ Decorator factory to produce decorate which raises AssertionError if assertion returns False.
+
+        :param (object) -> bool assertion: Function that takes self and returns boolean.
+        :param (function) -> str message: Function that takes wrapped function and returns error message. """
+    def _deco(func):
+        def _wrapper(*args, **kwargs):
+            siginfo = SigInfo(func, *args, **kwargs)
+            if not assertion(self=siginfo["self"]):
+                if message is not None:
+                    message_string = message(func=func)
+                else:
+                    message_string = f"{func.__name__} cannot be called unless metadata exists."
+                raise AssertionError(message_string)
+            return siginfo.call()
+        return _wrapper
+    return _deco
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
