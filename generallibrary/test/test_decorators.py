@@ -30,5 +30,20 @@ class DecoratorsTest(unittest.TestCase):
 
         self.assertRaisesRegex(AssertionError, "foo failed", X(2).foo)
 
+    def test_deco_require_no_lambda(self):
+        class X:
+            def __init__(self, x):
+                self.x = x
 
+            def check(self) -> bool:
+                return self.x == 5
+
+            @deco_require(check)
+            def foo(self):
+                return self.x
+
+        self.assertEqual(5, X(5).foo())
+        self.assertRaises(AssertionError, X(2).foo)
+
+        self.assertRaisesRegex(AssertionError, "'foo' requires 'check' function to be True.", X(2).foo)
 

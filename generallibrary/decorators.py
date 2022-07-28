@@ -379,16 +379,19 @@ class Operators:
 def deco_require(assertion, message=None):
     """ Decorator factory to produce decorate which raises AssertionError if assertion returns False.
 
-        :param (object) -> bool assertion: Function that takes self and returns boolean.
+        :param (Any) -> bool assertion: Function that takes self and returns boolean.
         :param (function) -> str message: Function that takes wrapped function and returns error message. """
     def _deco(func):
         def _wrapper(*args, **kwargs):
+            assertion_name = assertion.__name__
             siginfo = SigInfo(func, *args, **kwargs)
             if not assertion(self=siginfo["self"]):
                 if message is not None:
                     message_string = message(func=func)
+                elif assertion_name == "<lambda>":
+                    message_string = f"'{func.__name__}' cannot be called because deco_require failed."
                 else:
-                    message_string = f"{func.__name__} cannot be called unless metadata exists."
+                    message_string = f"'{func.__name__}' requires '{assertion_name}' function to be True."
                 raise AssertionError(message_string)
             return siginfo.call()
         return _wrapper
