@@ -3,6 +3,8 @@ from generallibrary.diagram import *
 
 import unittest
 
+from contextlib import redirect_stdout
+
 
 class A(TreeDiagram):
     def __init__(self, foo, parent=None):
@@ -365,6 +367,12 @@ class TreeDiagramTest(unittest.TestCase):
             pass
 
         self.assertIsNot(AA(), BB())
+
+    def test_recyle_key_error(self):
+        class X(Recycle):
+            pass
+        with redirect_stdout(None):
+            self.assertRaises(AttributeError, X)
 
     def test_filt(self):
         a = A(1)

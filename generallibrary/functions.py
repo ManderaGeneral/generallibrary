@@ -233,28 +233,36 @@ class Recycle:
         return wrapper_transfer(func, _wrapper)
 
     @classmethod
+    def _recycle_key_error(cls):
+        from generallibrary.code import print_link_to_obj
+        print_link_to_obj(cls)
+        raise AttributeError(f"{cls} hasn't configured its '_recycle_keys'.")
+
+    @classmethod
     def _recycle_key(cls, args, kwargs):
         sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
-        recycle_keys = ChainMap(*get_attrs_from_bases(cls, "_recycle_keys", ignore=None))
+        all_recycle_keys = get_attrs_from_bases(cls, "_recycle_keys", ignore=None)
+        recycle_keys = ChainMap(*all_recycle_keys)
         recycle_list = [func(sigInfo[name]) for name, func in recycle_keys.items()]
+
+        if not all_recycle_keys:
+            cls._recycle_key_error()
+
         recycle_list.append(cls.__name__)
         return json.dumps(recycle_list)
 
     def __new__(cls, *args, **kwargs):
-        if not isinstance(cls._recycle_keys, dict):
-            from generallibrary.code import print_link_to_obj
-            print_link_to_obj(cls)
-            raise AttributeError(f"Attribute _recycle_keys has not been set to a dict for {cls}. Key is attr name, value is callable which is given attribute as arg. Set to empty dict for singleton. ")
+        key = cls._recycle_key(args, kwargs)
 
-        if getattr(cls, "_recycle_instances", None) is None:
+        if cls._recycle_instances is None:
             cls._recycle_instances = {}
 
-        key = cls._recycle_key(args, kwargs)
-        if is_new := key not in cls._recycle_instances:
+        is_new = key not in cls._recycle_instances
+        if is_new:
             cls._recycle_instances[key] = object.__new__(cls)
-
-        cls._recycle_instances[key]._recycle_is_new = is_new
-        return cls._recycle_instances[key]
+        instance = cls._recycle_instances[key]
+        instance._recycle_is_new = is_new
+        return instance
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)

@@ -445,6 +445,20 @@ class FunctionsTest(unittest.TestCase):
         self.assertIs(B("a", "a"), B("a", "b"))
         self.assertIs(B("a", "a"), B("a", "a"))
 
+    def test_recycle_keys_only_in_base(self):
+        class A(Recycle):
+            pass
+
+        class B:
+            _recycle_keys = {"foo": str}
+
+        class C(A, B):
+            def __init__(self, foo):
+                pass
+
+        self.assertIsNot(C("a"), C("b"))
+        self.assertIs(C("a"), C("a"))
+
 
     def test_import_module(self):
         self.assertEqual("generallibrary", import_module("generallibrary").__name__)
