@@ -1,5 +1,4 @@
-
-from generallibrary.functions import Operators
+from generallibrary.decorators import Operators
 
 import time
 from datetime import datetime

@@ -1,5 +1,6 @@
 
-from generallibrary.functions import AutoInitBases, wrapper_transfer, deco_cast_to_self, Recycle
+from generallibrary.functions import AutoInitBases, Recycle
+from generallibrary.decorators import deco_cast_to_self, wrapper_transfer
 from generallibrary.values import clamp, confineTo
 from generallibrary.iterables import get, pivot_list, subtract_list, flatten
 

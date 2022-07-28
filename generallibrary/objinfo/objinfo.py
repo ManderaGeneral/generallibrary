@@ -1,6 +1,6 @@
 
 from generallibrary.iterables import extend_list_in_dict, split_list
-from generallibrary.functions import SigInfo, wrapper_transfer, deco_cache
+from generallibrary.decorators import deco_cache, wrapper_transfer, SigInfo
 from generallibrary.diagram import TreeDiagram
 from generallibrary.code import warn
 from generallibrary.types import getBaseClasses

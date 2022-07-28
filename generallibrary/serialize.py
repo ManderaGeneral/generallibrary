@@ -1,5 +1,6 @@
 
-from generallibrary import ObjInfo, SigInfo
+from generallibrary.objinfo.objinfo import ObjInfo
+from generallibrary.decorators import SigInfo
 
 import json
 

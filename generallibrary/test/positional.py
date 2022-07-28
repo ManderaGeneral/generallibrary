@@ -1,6 +1,6 @@
 """ Dynamically ran by unittests if this python version supports positional-only args (3.8) """
 
-from generallibrary.functions import SigInfo
+from generallibrary.decorators import SigInfo
 
 
 def positional(self):

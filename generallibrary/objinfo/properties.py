@@ -1,6 +1,4 @@
-
-
-from generallibrary.functions import deco_propagate_while
+from generallibrary.decorators import deco_propagate_while
 from generallibrary.types import getBaseClasses
 
 import inspect
