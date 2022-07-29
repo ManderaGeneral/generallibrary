@@ -243,7 +243,14 @@ class Recycle:
         sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
         all_recycle_keys = get_attrs_from_bases(cls, "_recycle_keys", ignore=None)
         recycle_keys = ChainMap(*all_recycle_keys)
-        recycle_list = [func(sigInfo[name]) for name, func in recycle_keys.items()]
+
+        recycle_list = []
+        for name, func in recycle_keys.items():
+            func_siginfo = SigInfo(func, cls=cls)
+            par_name = [name for name in func_siginfo.names if name != "cls"][0]
+            func_siginfo[par_name] = sigInfo[name]
+
+            recycle_list.append(func_siginfo.call())
 
         if not all_recycle_keys:
             cls._recycle_key_error()

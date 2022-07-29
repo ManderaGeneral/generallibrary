@@ -459,6 +459,56 @@ class FunctionsTest(unittest.TestCase):
         self.assertIsNot(C("a"), C("b"))
         self.assertIs(C("a"), C("a"))
 
+    def test_recycle_keys_cls_parameter(self):
+        class A(Recycle):
+            VALUE = None
+            _recycle_keys = {"foo": lambda cls, foo: cls.scrub_foo(foo)}
+
+            def __init__(self, foo):
+                pass
+
+            @classmethod
+            def scrub_foo(cls, foo):
+                if foo is None:
+                    return cls.VALUE
+                else:
+                    return foo
+
+        class B(A):
+            VALUE = "Hello"
+
+        self.assertIsNot(B("a"), B("b"))
+        self.assertIs(B("Hello"), B(None))
+        self.assertIsNot(B("Hellos"), B(None))
+
+        self.assertIsNot(A("Hello"), A(None))
+        self.assertIs(A(None), A(None))
+
+    def test_recycle_keys_cls_parameter_switched(self):
+        class A(Recycle):
+            VALUE = None
+            _recycle_keys = {"foo": lambda foo, cls: cls.scrub_foo(foo)}
+
+            def __init__(self, foo):
+                pass
+
+            @classmethod
+            def scrub_foo(cls, foo):
+                if foo is None:
+                    return cls.VALUE
+                else:
+                    return foo
+
+        class B(A):
+            VALUE = "Hello"
+
+        self.assertIsNot(B("a"), B("b"))
+        self.assertIs(B("Hello"), B(None))
+        self.assertIsNot(B("Hellos"), B(None))
+
+        self.assertIsNot(A("Hello"), A(None))
+        self.assertIs(A(None), A(None))
+
 
     def test_import_module(self):
         self.assertEqual("generallibrary", import_module("generallibrary").__name__)

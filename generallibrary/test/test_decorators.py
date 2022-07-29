@@ -1,4 +1,4 @@
-from generallibrary.decorators import deco_require
+from generallibrary.decorators import deco_require, SigInfo
 
 import unittest
 
@@ -47,3 +47,23 @@ class DecoratorsTest(unittest.TestCase):
 
         self.assertRaisesRegex(AssertionError, "'foo' requires 'check' function to be True.", X(2).foo)
 
+    def test_siginfo_custom_parameters_int(self):
+        self.assertEqual(0, SigInfo(int).call())
+        self.assertEqual(5, SigInfo(int, 5).call())
+        self.assertEqual(5, SigInfo(int, "5").call())
+
+    def test_siginfo_custom_parameters_str(self):
+        self.assertEqual("", SigInfo(str).call())
+        self.assertEqual("5", SigInfo(str, 5).call())
+        self.assertEqual("hii", SigInfo(str, "hii").call())
+
+    def test_siginfo_custom_parameters_bool(self):
+        self.assertEqual(False, SigInfo(bool).call())
+        self.assertEqual(True, SigInfo(bool, 5).call())
+        self.assertEqual(False, SigInfo(bool, None).call())
+
+    def test_siginfo_custom_parameters_dict(self):
+        self.assertEqual({}, SigInfo(dict).call())
+        self.assertEqual({"hi": "there", "yo": 5}, SigInfo(dict, [["hi", "there"]], yo=5).call())
+        self.assertEqual({"a": "b"}, SigInfo(dict, ["ab"]).call())
+        self.assertEqual({"a": "b"}, SigInfo(dict, {"a": "b"}).call())

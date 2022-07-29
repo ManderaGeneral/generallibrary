@@ -81,7 +81,43 @@ class SigInfo:
     @deco_cache()
     def parameters(self):
         """ Get list of inspect parameter objects. """
-        return list(inspect.signature(self.callableObject).parameters.values())
+        try:
+            return list(inspect.signature(self.callableObject).parameters.values())
+        except ValueError:
+            return self._custom_signature()
+
+    @deco_cache()
+    def _custom_signature(self):
+        signature_method = getattr(self, f"_signature_{self.callableObject.__name__}", None)
+        if signature_method is None:
+            raise ValueError(f"Missing signature for {self.callableObject}")
+        return signature_method()
+
+    @staticmethod
+    def _signature_int():
+        return [
+            inspect.Parameter(name="x", kind=inspect.Parameter.POSITIONAL_ONLY, default=0),
+            # inspect.Parameter(name="base", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD, default=None),  # Couldn't get base to work
+        ]
+
+    @staticmethod
+    def _signature_str():
+        return [
+            inspect.Parameter(name="object", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD, default=""),
+        ]
+
+    @staticmethod
+    def _signature_bool():
+        return [
+            inspect.Parameter(name="__o", kind=inspect.Parameter.POSITIONAL_ONLY, default=False),
+        ]
+
+    @staticmethod
+    def _signature_dict():
+        return [
+            inspect.Parameter(name="args", kind=inspect.Parameter.VAR_POSITIONAL),
+            inspect.Parameter(name="kwargs", kind=inspect.Parameter.VAR_KEYWORD),
+        ]
 
     @property
     def names(self):
@@ -227,6 +263,7 @@ class SigInfo:
         """ Calls own callableObject or given child callable with filled args and kwargs.
             Unfilled required parameters will get a None value. """
         if child_callable:
+            # return SigInfo(child_callable, *self.unpackedArgs, **self.unpackedKwargs).call()
             return SigInfo(child_callable, **self.allArgs).call()
         else:
             return self.callableObject(*self.unpackedArgs, **self.unpackedKwargs)
