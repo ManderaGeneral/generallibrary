@@ -12,6 +12,9 @@ class ValuesTest(unittest.TestCase):
         self.assertEqual("foo", str(BoolStr(False, "foo")))
 
     def test_floor(self):
+        self.assertEqual("5", str(floor(5.7)))
+        self.assertEqual("5", str(floor(5.001, 2)))
+
         self.assertEqual(5, floor(5.7))
         self.assertEqual(5, floor(5.1))
         self.assertEqual(5, floor(5))
@@ -32,6 +35,9 @@ class ValuesTest(unittest.TestCase):
         self.assertEqual(154.2512, floor(154.2512, 5))
 
     def test_ceil(self):
+        self.assertEqual("6", str(ceil(5.7)))
+        self.assertEqual("6", str(ceil(5.999, 2)))
+
         self.assertEqual(56, ceil(0.56 * 100))
         self.assertEqual(0.3, ceil(0.1 + 0.2, 1))
 
@@ -53,6 +59,13 @@ class ValuesTest(unittest.TestCase):
         self.assertEqual(154.252, ceil(154.2512, 3))
         self.assertEqual(154.2512, ceil(154.2512, 4))
         self.assertEqual(154.2512, ceil(154.2512, 4))
+
+    def test_round(self):
+        self.assertEqual("6", str(round_(5.7)))
+        self.assertEqual("5", str(round_(5.2)))
+        self.assertEqual("6", str(round_(5.999, 2)))
+
+        self.assertEqual(56, round_(0.56 * 100))
 
     def test_clamp(self):
         self.assertEqual(5, clamp(2, 5, 10))

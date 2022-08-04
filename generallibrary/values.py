@@ -27,17 +27,21 @@ def _floor_and_ceil(value, decimals, method):
     else:
         assert int(decimals) == decimals
         factor = pow(10, decimals)
-        return method(value * factor) / factor
+        result = method(value * factor) / factor
+        return int(result) if int(result) == result else result
 
 
 def floor(value, decimals=0):
     """ Like built-in round() but for floor with decimal arg, maximum precision of 10 decimals. """
     return _floor_and_ceil(value=value, decimals=decimals, method=math.floor)
 
-
 def ceil(value, decimals=0):
     """ Like built-in round() but for ceil with decimal arg, maximum precision of 10 decimals."""
     return _floor_and_ceil(value=value, decimals=decimals, method=math.ceil)
+
+def round_(value, decimals=0):
+    """ Like built-in round() but doesn't return 5.0 when using decimals."""
+    return _floor_and_ceil(value=value, decimals=decimals, method=round)
 
 
 def clamp(value, minimum, maximum):

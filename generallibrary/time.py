@@ -23,14 +23,16 @@ class Timer:
         self.start_time = start_time
         return start_time
 
-    def seconds(self):
+    def seconds(self, decimals=None):
         """ Get seconds passed since timer started or was reset. """
-        return time.time() - self.start_time
+        if decimals is None:
+            decimals = 8
+        return round(time.time() - self.start_time, decimals)
 
-    def print(self, reset=False, decimals=8):
+    def print(self, reset=False, decimals=None):
         """ Print seconds passed. """
-        seconds = self.seconds()
-        print(f"Seconds passed: {round(seconds, decimals)}")
+        seconds = self.seconds(decimals=decimals)
+        print(f"Seconds passed: {seconds}")
         if reset:
             self.reset()
         return seconds
