@@ -509,6 +509,20 @@ class FunctionsTest(unittest.TestCase):
         self.assertIsNot(A("Hello"), A(None))
         self.assertIs(A(None), A(None))
 
+    def test_recycle_keys_override(self):
+        class A(Recycle):
+            _recycle_keys = {"foo": lambda foo: foo}
+
+            def __init__(self, foo):
+                pass
+
+        class B(A):
+            _recycle_keys = {"foo": lambda foo: foo.lower()}
+
+        self.assertIsNot(A("a"), A("A"))
+        self.assertIs(A("A"), A("A"))
+        self.assertIs(B("a"), B("A"))
+
 
     def test_import_module(self):
         self.assertEqual("generallibrary", import_module("generallibrary").__name__)

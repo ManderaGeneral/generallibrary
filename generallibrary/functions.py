@@ -242,12 +242,12 @@ class Recycle:
     def _recycle_key(cls, args, kwargs):
         sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
         all_recycle_keys = get_attrs_from_bases(cls, "_recycle_keys", ignore=None)
-        recycle_keys = ChainMap(*all_recycle_keys)
+        recycle_keys = ChainMap(*all_recycle_keys)  # ChainMap will pick left-most if duplicate
 
         recycle_list = []
         for name, func in recycle_keys.items():
             func_siginfo = SigInfo(func, cls=cls)
-            par_name = [name for name in func_siginfo.names if name != "cls"][0]
+            par_name = next(name for name in func_siginfo.names if name != "cls")
             func_siginfo[par_name] = sigInfo[name]
 
             recycle_list.append(func_siginfo.call())
@@ -256,6 +256,7 @@ class Recycle:
             cls._recycle_key_error()
 
         recycle_list.append(cls.__name__)
+        print(recycle_list)
         return json.dumps(recycle_list)
 
     def __new__(cls, *args, **kwargs):

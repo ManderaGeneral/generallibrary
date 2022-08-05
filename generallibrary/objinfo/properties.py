@@ -58,12 +58,16 @@ class _ObjInfoProperties:
         try:
             file = inspect.getfile(obj)
         except TypeError:
-            return
+            return None
 
         if relative:
             top_module = self.get_parent(depth=-1, index=-1)
             if top_module is None:
                 top_module = self
+
+            if top_module.name not in file:
+                return None
+
             split_file = file.split(top_module.name)
             file = f"{top_module.name}{split_file[-1]}"
         return file
