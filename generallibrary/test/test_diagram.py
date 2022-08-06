@@ -293,11 +293,6 @@ class TreeDiagramTest(unittest.TestCase):
                 if not self._children and self.x > 0:
                     Spawn(self.x - 1, parent=self)
 
-        # spawn = Spawn(2)
-        # self.assertEqual([], spawn.get_children(spawn=False))
-        # self.assertEqual([], spawn.get_children(filt=lambda node: False))
-        # self.assertEqual([], spawn.get_children(spawn=False))
-
         self.assertEqual(None, Spawn(2).get_parent(spawn=False))
         self.assertEqual(3, Spawn(2).get_parent().x)
 
@@ -389,6 +384,8 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual([b, c], a.get_children(depth=-1))
         self.assertEqual([c], a.get_children(depth=-1, filt=lambda node: node != b, traverse_excluded=True))
         self.assertEqual([], a.get_children(depth=-1, filt=lambda node: node != b, traverse_excluded=False))
+
+        self.assertEqual([b], a.get_children(filt=lambda node: node == b))
 
     def test_disconnect(self):
         a = A(1)

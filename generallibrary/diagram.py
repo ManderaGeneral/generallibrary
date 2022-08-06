@@ -14,6 +14,8 @@ from random import uniform
 
 
 def _skip_node_check(node, order_func, filt, traverse_excluded, _all_nodes):
+    if not _all_nodes:  # Always traverse self, doesn't mean it will be yielded
+        return False
     if node in _all_nodes:
         return True
     if filt and not traverse_excluded and not filt(node):
@@ -30,9 +32,9 @@ def _traverse(*nodes, func, depth, flat, filt, traverse_excluded, include_self, 
     if not nodes:
         return StopIteration
 
-    if include_self:
+    if include_self:  # Always True when recursing
         if filt and traverse_excluded:
-            filtered_nodes = [node for node in nodes if filt(node)] if filt else nodes
+            filtered_nodes = [node for node in nodes if filt(node)]
         else:
             filtered_nodes = nodes
 
