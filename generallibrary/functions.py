@@ -256,7 +256,6 @@ class Recycle:
             cls._recycle_key_error()
 
         recycle_list.append(cls.__name__)
-        print(recycle_list)
         return json.dumps(recycle_list)
 
     def __new__(cls, *args, **kwargs):

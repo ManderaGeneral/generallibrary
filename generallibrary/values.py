@@ -159,7 +159,10 @@ class EnvVar:
     """ Handles environment variables, create instances in __init__.py.
         Example: PACKAGER_GITHUB_API = EnvVar("PACKAGER_GITHUB_API", "secrets.PACKAGER_GITHUB_API")
         actions_name has to be defined if the env var is used for unittesting in the workflow. """
-    def __init__(self, name, actions_name=None):
+    _sentinel = object()
+
+    def __init__(self, name, actions_name=None, default=_sentinel):
+        self.default = default
 
         if actions_name is not None:
             actions_name = "${{ " + actions_name + " }}"
@@ -171,7 +174,10 @@ class EnvVar:
     def value(self):
         """ Get value of env var through os.environ """
         if self.name not in os.environ:
-            raise KeyError(f"Env var '{self.name}' is not set.")
+            if self.default is self._sentinel:
+                raise KeyError(f"Env var '{self.name}' is not set.")
+            else:
+                return self.default
 
         return os.environ[self.name]
 

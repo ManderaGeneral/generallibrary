@@ -145,6 +145,13 @@ class ValuesTest(unittest.TestCase):
         envVar.value = "foo"
         self.assertEqual("foo", envVar.value)
 
+    def test_EnvVar_default(self):
+        envVar = EnvVar("doesntexist", default=5)
+        self.assertEqual(5, envVar.value)
+
+        envVar.value = "foo"
+        self.assertEqual("foo", envVar.value)
+
     def test_get_launch_options(self):
         launch_options = get_launch_options()
         self.assertEqual(True, not launch_options or launch_options[0] == "discover")
