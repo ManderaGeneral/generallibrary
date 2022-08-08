@@ -28,6 +28,9 @@ class SigInfo:
     def __init__(self, /, callableObject, *args, **kwargs):  # / to end positional only characters, allows us to have "self" in kwargs for unbound methods
         assert callable(callableObject)
 
+        self._args = args
+        self._kwargs = kwargs
+
         self._callableObject = callableObject
         self.allArgs = {**self.defaults, **self._argsToKwargs(args), **kwargs}
 
@@ -259,11 +262,10 @@ class SigInfo:
         """ Can set single keyword argument or entire *args."""
         self.allArgs[name] = value
 
-    def call(self, child_callable=None):
+    def call(self, child_callable=None, args_first=False):
         """ Calls own callableObject or given child callable with filled args and kwargs.
             Unfilled required parameters will get a None value. """
         if child_callable:
-            # return SigInfo(child_callable, *self.unpackedArgs, **self.unpackedKwargs).call()
             return SigInfo(child_callable, **self.allArgs).call()
         else:
             return self.callableObject(*self.unpackedArgs, **self.unpackedKwargs)

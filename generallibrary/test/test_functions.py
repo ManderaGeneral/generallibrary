@@ -394,6 +394,7 @@ class FunctionsTest(unittest.TestCase):
         a.recycle_clear()
         self.assertIsNot(a, A())
 
+    def test_recycle_2(self):
         class B(Recycle):
             _recycle_keys = {"x": str}
             def __init__(self, x):
@@ -401,6 +402,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertIs(B(x=1), B(1))
         self.assertIs(B(x=1).y, B(1).y)
 
+    def test_recycle_diagram(self):
         class C(TreeDiagram, Recycle):
             _recycle_keys = {"x": str}
             def __init__(self, x):

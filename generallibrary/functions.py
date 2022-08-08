@@ -1,6 +1,7 @@
 from generallibrary.decorators import wrapper_transfer, SigInfo
 from generallibrary.iterables import remove
 
+
 import re
 import pandas as pd
 import json
@@ -243,20 +244,21 @@ class Recycle:
         sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
         all_recycle_keys = get_attrs_from_bases(cls, "_recycle_keys", ignore=None)
         recycle_keys = ChainMap(*all_recycle_keys)  # ChainMap will pick left-most if duplicate
-
         recycle_list = []
         for name, func in recycle_keys.items():
             func_siginfo = SigInfo(func, cls=cls)
             par_name = next(name for name in func_siginfo.names if name != "cls")
             func_siginfo[par_name] = sigInfo[name]
-
             recycle_list.append(func_siginfo.call())
 
         if not all_recycle_keys:
             cls._recycle_key_error()
 
         recycle_list.append(cls.__name__)
-        return json.dumps(recycle_list)
+        try:
+            return json.dumps(recycle_list)
+        except TypeError as e:
+            raise TypeError(f"{recycle_list} isn't serializable") from e
 
     def __new__(cls, *args, **kwargs):
         key = cls._recycle_key(args, kwargs)
@@ -300,6 +302,7 @@ def terminal(*args, python=False, suppress=False, **kwargs):
 
 
 from generallibrary.objinfo.objinfo import get_attrs_from_bases
+from generallibrary.code import get_origin
 
 
 
