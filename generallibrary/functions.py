@@ -219,12 +219,19 @@ class Recycle:
         Assign _recycle_keys to a dict with keys corresponding to init args and value being a func (str() in most cases) to return json serializable obj.
         _recycle_keys are combined in case of inheritence.
         Set to empty dict for singleton.
+
+        Any parameter values are used if the parameter name matches.
+        'cls' is always set to the class being initialized.
+        If there's a parameter value missing in _recycle_keys then it looks for a parameter which has the same name as the key in the dict for this func.
+
         Stores instances in top most cls.
-        Puts cls.__name__ in key so inheritence returns actual class called.
+        Puts cls.__name__ in key so inheritence returns actual class called, preventing different class calls to return same instance.
         Note: Does not work with pickle. """
     _recycle_keys = None
     _recycle_is_new = None
     _recycle_instances = None
+
+    _CLS_PAR_NAME = "cls"
 
     @staticmethod
     def _recycle_deco_init(func):
@@ -240,21 +247,47 @@ class Recycle:
         raise AttributeError(f"{cls} hasn't configured its '_recycle_keys'.")
 
     @classmethod
-    def _recycle_key(cls, args, kwargs):
-        sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
-        all_recycle_keys = get_attrs_from_bases(cls, "_recycle_keys", ignore=None)
-        recycle_keys = ChainMap(*all_recycle_keys)  # ChainMap will pick left-most if duplicate
-        recycle_list = []
-        for name, func in recycle_keys.items():
-            func_siginfo = SigInfo(func, cls=cls)
-            par_name = next(name for name in func_siginfo.names if name != "cls")
-            func_siginfo[par_name] = sigInfo[name]
-            recycle_list.append(func_siginfo.call())
+    def assert_max_one_missing_name(cls, siginfo_primary, siginfo_secondary):
+        missing_names = set(siginfo_secondary.names) - set(siginfo_primary.names)
+        missing_names.discard(cls._CLS_PAR_NAME)
+        if len(missing_names) > 1:
+            raise AttributeError(f"Cannot miss more than one name '{missing_names}' for recycle key func {siginfo_secondary.callableObject}.")
 
+    @classmethod
+    def _get_recycle_keys(cls):
+        """ Iterate all bases to extract and combine their _recycle_keys dicts.
+            ChainMap will pick left-most if duplicate. """
+        all_recycle_keys = get_attrs_from_bases(cls, "_recycle_keys", ignore=None)
+        recycle_keys = ChainMap(*all_recycle_keys)
         if not all_recycle_keys:
             cls._recycle_key_error()
+        return recycle_keys
 
+    @classmethod
+    def _recycle_single_func_in_dict(cls, siginfo, name, func):
+        func_siginfo = SigInfo(func)
+        func_siginfo[cls._CLS_PAR_NAME] = cls
+        cls.assert_max_one_missing_name(siginfo, func_siginfo)
+        for name_in_func in func_siginfo.names:
+            if name_in_func == cls._CLS_PAR_NAME:
+                continue
+            elif name_in_func in siginfo.names:
+                func_siginfo[name_in_func] = siginfo[name_in_func]
+            else:
+                if name not in siginfo.names:
+                    raise AttributeError(f"Parameter '{name_in_func}' is missing and so was parameter '{name}' which was the key.")
+                func_siginfo[name_in_func] = siginfo[name]
+        return func_siginfo.call()
+
+    @classmethod
+    def _recycle_key(cls, args, kwargs):
+        sigInfo = SigInfo(cls.__init__, None, *args, **kwargs)
+        recycle_keys = cls._get_recycle_keys()
+        recycle_list = []
+        for name, func in recycle_keys.items():
+            recycle_list.append(cls._recycle_single_func_in_dict(siginfo=sigInfo, name=name, func=func))
         recycle_list.append(cls.__name__)
+
         try:
             return json.dumps(recycle_list)
         except TypeError as e:

@@ -525,6 +525,87 @@ class FunctionsTest(unittest.TestCase):
         self.assertIs(A("A"), A("A"))
         self.assertIs(B("a"), B("A"))
 
+    def test_recycle_keys_more_than_two_pars(self):
+        def x(foo, bar, cls):
+            self.assertEqual(1, foo)
+            self.assertEqual(2, bar)
+            self.assertEqual(A, cls)
+
+        class A(Recycle):
+            _recycle_keys = {"foo": x}
+            def __init__(self, foo, bar):
+                pass
+        A(1, 2)
+
+    def test_recycle_keys_more_than_two_pars_one_missing(self):
+        def x(use_key, bar, cls):
+            self.assertEqual(1, use_key)
+            self.assertEqual(2, bar)
+            self.assertEqual(A, cls)
+
+        class A(Recycle):
+            _recycle_keys = {"foo": x}
+            def __init__(self, foo, bar):
+                pass
+        A(1, 2)
+
+    def test_recycle_keys_more_than_two_pars_two_missing(self):
+        def x(missing1, missing2, cls):
+            pass
+
+        class A(Recycle):
+            _recycle_keys = {"foo": x}
+            def __init__(self, foo, bar):
+                pass
+
+        self.assertRaises(AttributeError, A, 1, 2)
+
+    def test_recycle_keys_more_than_two_pars_one_missing_diff_order(self):
+        def x(bar, use_key, cls):
+            self.assertEqual(1, use_key)
+            self.assertEqual(2, bar)
+            self.assertEqual(A, cls)
+
+        class A(Recycle):
+            _recycle_keys = {"foo": x}
+            def __init__(self, foo, bar):
+                pass
+        A(1, 2)
+
+    def test_recycle_key_not_a_par(self):
+        def x(foo, bar, cls):
+            self.assertEqual(1, foo)
+            self.assertEqual(2, bar)
+            self.assertEqual(A, cls)
+
+        class A(Recycle):
+            _recycle_keys = {"not_a_par": x}
+            def __init__(self, foo, bar):
+                pass
+        A(1, 2)
+
+    def test_recycle_key_not_a_par_one_missing(self):
+        def x(bar, missing, cls):
+            pass
+
+        class A(Recycle):
+            _recycle_keys = {"not_a_par": x}
+            def __init__(self, foo, bar):
+                pass
+        self.assertRaises(AttributeError, A, 1, 2)
+
+    def test_recycle_key_changed_cls_par_name(self):
+        def x(foo, bar, hithere):
+            self.assertEqual(1, foo)
+            self.assertEqual(2, bar)
+            self.assertEqual(A, hithere)
+
+        class A(Recycle):
+            _CLS_PAR_NAME = "hithere"
+            _recycle_keys = {"foo": x}
+            def __init__(self, foo, bar):
+                pass
+        A(1, 2)
 
     def test_import_module(self):
         self.assertEqual("generallibrary", import_module("generallibrary").__name__)
