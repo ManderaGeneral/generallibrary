@@ -110,18 +110,43 @@ class TypesTest(unittest.TestCase):
         self.assertFalse(typeChecker(True, int, error=False))
         self.assertFalse(typeChecker(True, "int", error=False))
 
-    def test_getBasesClasses(self):
+    def test_getBaseClasses(self):
         self.assertEqual([int, object], getBaseClasses(True))
         self.assertEqual(["int", "object"], getBaseClassNames(True))
+        self.assertEqual(["int"], getBaseClassNames(True, includeObject=False))
 
         self.assertEqual([object], getBaseClasses(5))
         self.assertEqual(["object"], getBaseClassNames(5))
+        self.assertEqual([], getBaseClassNames(5, includeObject=False))
 
         self.assertEqual([bool, int, object], getBaseClasses(True, includeSelf=True))
         self.assertEqual(["bool", "int", "object"], getBaseClassNames(True, includeSelf=True))
+        self.assertEqual(["bool", "int"], getBaseClassNames(True, includeSelf=True, includeObject=False))
 
         self.assertEqual([int, object], getBaseClasses(5, includeSelf=True))
         self.assertEqual(["int", "object"], getBaseClassNames(5, includeSelf=True))
+        self.assertEqual(["int"], getBaseClassNames(5, includeSelf=True, includeObject=False))
+
+    def test_getBaseClassesCustom(self):
+        class A:
+            pass
+        class B(A):
+            pass
+
+        self.assertEqual([A, object], getBaseClasses(B))
+        self.assertEqual([B, A, object], getBaseClasses(B, includeSelf=True))
+        self.assertEqual([B, A], getBaseClasses(B, includeSelf=True, includeObject=False))
+
+        self.assertEqual([A, object], getBaseClasses(B()))
+        self.assertEqual([B, A, object], getBaseClasses(B(), includeSelf=True))
+        self.assertEqual([B, A], getBaseClasses(B(), includeSelf=True, includeObject=False))
+
+        b = B()
+        self.assertEqual([b, A, object], getBaseClasses(b, includeInstance=True))
+        self.assertEqual([b, B, A, object], getBaseClasses(b, includeSelf=True, includeInstance=True))
+        self.assertEqual([b, B, A], getBaseClasses(b, includeSelf=True, includeObject=False, includeInstance=True))
+
+
 
     def test_hasMethod(self):
         self.assertEqual(True, hasMethod([], "append"))

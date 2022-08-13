@@ -10,14 +10,14 @@ class DataClassTest(TestCase):
 
         class B(A):
             y = "foo"
-        self.assertCountEqual(["x", "y"], B.field_keys())
+        self.assertEqual(["y", "x"], B.field_keys())
 
         class A(DataClass):
             foo: str = "hi"
             bar = ["there"]
             _private = "six"
 
-        self.assertCountEqual(["foo", "bar"], A.field_keys())
+        self.assertEqual(["foo", "bar"], A.field_keys())
 
     def test_field_default_values(self):
         class A(DataClass):
@@ -26,14 +26,14 @@ class DataClassTest(TestCase):
 
         class B(A):
             y = "foo"
-        self.assertCountEqual(["foo", 5], B.field_values_defaults())
+        self.assertEqual(["foo", 5], B.field_values_defaults())
 
         class A(DataClass):
             foo: str = "hi"
             bar = [True]
             _private = "six"
 
-        self.assertCountEqual(["hi", [True]], A.field_values_defaults())
+        self.assertEqual(["hi", [True]], A.field_values_defaults())
 
     def test_field_default_dict(self):
         class A(DataClass):
@@ -79,11 +79,11 @@ class DataClassTest(TestCase):
             y = "foo"
         a = B()
 
-        self.assertCountEqual([5, "foo"], a.field_values())
+        self.assertEqual(["foo", 5], a.field_values())
         a.x = 3
-        self.assertCountEqual([3, "foo"], a.field_values())
+        self.assertEqual(["foo", 3], a.field_values())
         a.y = True
-        self.assertCountEqual([3, True], a.field_values())
+        self.assertEqual([True, 3], a.field_values())
 
         class A(DataClass):
             foo: str = "hi"
@@ -91,9 +91,9 @@ class DataClassTest(TestCase):
             _private = "six"
         a = A()
 
-        self.assertCountEqual(["hi", [True]], a.field_values())
+        self.assertEqual(["hi", [True]], a.field_values())
         a._private = "yo"
-        self.assertCountEqual(["hi", [True]], a.field_values())
+        self.assertEqual(["hi", [True]], a.field_values())
 
     def test_field_dict(self):
         class A(DataClass):
@@ -107,11 +107,11 @@ class DataClassTest(TestCase):
             y = "foo"
         a = B()
 
-        self.assertCountEqual({"x": 5, "y": "foo"}, a.field_dict())
+        self.assertEqual({"x": 5, "y": "foo"}, a.field_dict())
         a.x = 3
-        self.assertCountEqual({"x": 3, "y": "foo"}, a.field_dict())
+        self.assertEqual({"x": 3, "y": "foo"}, a.field_dict())
         a.y = True
-        self.assertCountEqual({"x": 3, "y": True}, a.field_dict())
+        self.assertEqual({"x": 3, "y": True}, a.field_dict())
 
         class A(DataClass):
             foo: str = "hi"
@@ -119,13 +119,11 @@ class DataClassTest(TestCase):
             _private = "six"
         a = A()
 
-        self.assertCountEqual({"foo": "hi", "bar": [True]}, a.field_dict())
+        self.assertEqual({"foo": "hi", "bar": [True]}, a.field_dict())
         a._private = "yo"
-        self.assertCountEqual({"foo": "hi", "bar": [True]}, a.field_dict())
+        self.assertEqual({"foo": "hi", "bar": [True]}, a.field_dict())
         a.new_one = "hii"
-        self.assertCountEqual({"foo": "hi", "bar": [True]}, a.field_dict())
-
-
+        self.assertEqual({"foo": "hi", "bar": [True]}, a.field_dict())
 
 
 

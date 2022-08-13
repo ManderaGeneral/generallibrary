@@ -129,16 +129,15 @@ def typeChecker(obj, *types, error=True):
         return True
 
 
-def getBaseClasses(obj, includeSelf=False, includeObject=True):
-    """
-    Get all base classes from an object's class.
+def getBaseClasses(obj, includeSelf=False, includeObject=True, includeInstance=False):
+    """ Recursively get all base classes from an object's class.
 
-    :param any obj: Generic obj or class
-    :param includeSelf: Whether to include own class or not
-    :param includeObject: Whether to include object class or not (Every object has object as base)
-    :return: List of classes
-    :rtype: list[type]
-    """
+        :param any obj: Generic obj or class
+        :param includeSelf: Whether to include own class or not
+        :param includeObject: Whether to include object class or not (Every object has object as base)
+        :param includeInstance: Whether to include instance if obj is instance.
+        :return: List of classes
+        :rtype: list[type] """
     if isinstance(obj, type):
         cls = obj
     else:
@@ -156,10 +155,13 @@ def getBaseClasses(obj, includeSelf=False, includeObject=True):
     if not includeObject:
         classes.remove(object)
 
+    if includeInstance and obj is not cls and obj not in classes:
+        classes.insert(0, obj)
+
     return classes
 
 
-def getBaseClassNames(obj, includeSelf=False):
+def getBaseClassNames(obj, includeSelf=False, includeObject=True):
     """
     Get all base classes from an object's class.
 
@@ -168,7 +170,7 @@ def getBaseClassNames(obj, includeSelf=False):
     :return: List of lowered class names
     :rtype: list[str]
     """
-    return [cls.__name__ for cls in getBaseClasses(obj, includeSelf)]
+    return [cls.__name__ for cls in getBaseClasses(obj=obj, includeSelf=includeSelf, includeObject=includeObject)]
 
 
 def hasMethod(obj, method):

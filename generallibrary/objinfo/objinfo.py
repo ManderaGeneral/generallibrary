@@ -1,3 +1,5 @@
+from collections import ChainMap
+from itertools import chain
 
 from generallibrary.iterables import extend_list_in_dict, split_list
 from generallibrary.decorators import deco_cache, wrapper_transfer, SigInfo
@@ -121,10 +123,10 @@ def cache_clear(obj):
         objInfo.obj.cache_clear()
 
 sentinel = object()
-def get_attrs_from_bases(obj, name, /, ignore=sentinel):
+def get_attrs_from_bases(obj, name, /, include_self=True, include_object=True, include_instance=False, ignore=sentinel):
     """ Get a list of attrs which have the same name from every base. """
     attrs = []
-    for base in getBaseClasses(obj, includeSelf=True):
+    for base in getBaseClasses(obj, includeSelf=include_self, includeObject=include_object, includeInstance=include_instance):
         attr = getattr(base, name, sentinel)
         if attr is not sentinel and attr not in attrs and (ignore is sentinel or attr != ignore):
             attrs.append(attr)
@@ -149,14 +151,27 @@ def call_base_hooks(self, name, kwargs=None):
     return kwargs
 
 
+def dir_appearance_order(obj):
+    """ Return list of all attributes as dir does but in the order they appear.
+        Maybe this could replace dir() in ObjInfo. """
+    __dicts__ = get_attrs_from_bases(obj, "__dict__", include_instance=True)
+    return list(ChainMap(*reversed(__dicts__)))
 
 class _DataClass_Class:
     @classmethod
     @deco_cache()
     def _fields_as_objinfos(cls) -> list[ObjInfo]:
+        """ Get list of objinfos representing instance attributes sorted by appearance. """
         def filt(objinfo: ObjInfo):
             return objinfo.is_instance()
-        return ObjInfo(cls).get_children(traverse_excluded=True, filt=filt)
+        objinfos_by_name = {objinfo.name: objinfo for objinfo in ObjInfo(cls).get_children(traverse_excluded=True, filt=filt)}
+
+        # __dicts__ = get_attrs_from_bases(cls, "__dict__")
+        # sorted_objinfos = [objinfos_by_name[name] for name in chain(*__dicts__) if name in objinfos_by_name]
+
+        sorted_objinfos = [objinfos_by_name[name] for name in dir_appearance_order(cls) if name in objinfos_by_name]
+
+        return sorted_objinfos
 
     @classmethod
     @deco_cache()

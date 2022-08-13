@@ -1,6 +1,6 @@
 
 from generallibrary.object import *
-from generallibrary.objinfo.objinfo import ObjInfo, hook, call_base_hooks, get_attrs_from_bases
+from generallibrary.objinfo.objinfo import *
 from generallibrary.functions import initBases, AutoInitBases
 
 import unittest
@@ -423,6 +423,23 @@ class ObjectTest(unittest.TestCase):  # This line is used for test_get_definitio
         self.assertEqual([], get_attrs_from_bases(C, "doesntexist"))
         self.assertEqual([], get_attrs_from_bases(C(), "doesntexist"))
 
+    def test_dir_appearance_order(self):
+        self.assertCountEqual(dir(int), dir_appearance_order(int))
+        self.assertCountEqual(dir(5), dir_appearance_order(2))
+        self.assertCountEqual(dir("hi"), dir_appearance_order("there"))
+
+    def test_dir_appearance_order_custom_cls(self):
+        class A:
+            y = 2
+        class B(A):
+            z = None
+
+            def __init__(self):
+                self.foo = "bar"
+
+        self.assertCountEqual(dir(B), dir_appearance_order(B))
+        self.assertCountEqual(dir(B()), dir_appearance_order(B()))
+        self.assertEqual(["foo", "z", "y"], [name for name in dir_appearance_order(B()) if not name.startswith("_")])
 
 
 class _Foo:
