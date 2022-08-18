@@ -160,23 +160,23 @@ def dir_appearance_order(obj):
 class _DataClass_Class:
     @classmethod
     @deco_cache()
-    def _fields_as_objinfos(cls) -> list[ObjInfo]:
-        """ Get list of objinfos representing instance attributes sorted by appearance. """
+    def _fields_as_objinfos(cls):
+        """ Get list of objinfos representing instance attributes sorted by appearance.
+
+            :rtype: list[ObjInfo] """
         def filt(objinfo: ObjInfo):
             return objinfo.is_instance()
         objinfos_by_name = {objinfo.name: objinfo for objinfo in ObjInfo(cls).get_children(traverse_excluded=True, filt=filt)}
-
-        # __dicts__ = get_attrs_from_bases(cls, "__dict__")
-        # sorted_objinfos = [objinfos_by_name[name] for name in chain(*__dicts__) if name in objinfos_by_name]
-
         sorted_objinfos = [objinfos_by_name[name] for name in dir_appearance_order(cls) if name in objinfos_by_name]
 
         return sorted_objinfos
 
     @classmethod
     @deco_cache()
-    def field_keys(cls) -> list[str]:
-        """ Get a list of field keys defined by subclass. """
+    def field_keys(cls):
+        """ Get a list of field keys defined by subclass.
+
+            :rtype: list[str] """
         return [objinfo.name for objinfo in cls._fields_as_objinfos()]
 
     @classmethod
