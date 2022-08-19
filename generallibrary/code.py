@@ -2,6 +2,7 @@
 
 from generallibrary.diagram import TreeDiagram
 from generallibrary.functions import Recycle
+from generallibrary.iterables import join_with_str
 
 import pyperclip
 import os
@@ -52,11 +53,11 @@ class Log(TreeDiagram, Recycle):
         self.logger = logging.getLogger(name)
         assert name == self.logger.name
 
-    def debug(self, *msg): self.logger.debug(" ".join(msg))
-    def info(self, *msg): self.logger.info(" ".join(msg))
-    def warning(self, *msg): self.logger.warning(" ".join(msg))
-    def error(self, *msg): self.logger.error(" ".join(msg))
-    def critical(self, *msg): self.logger.critical(" ".join(msg))
+    def debug(self, *msg): self.logger.debug(join_with_str(" ", msg))
+    def info(self, *msg): self.logger.info(join_with_str(" ", msg))
+    def warning(self, *msg): self.logger.warning(join_with_str(" ", msg))
+    def error(self, *msg): self.logger.error(join_with_str(" ", msg))
+    def critical(self, *msg): self.logger.critical(join_with_str(" ", msg))
     
     def _configure_helper(self, level, delimiter, format, handler):
         self.logger.setLevel(level=level)
