@@ -52,11 +52,11 @@ class Log(TreeDiagram, Recycle):
         self.logger = logging.getLogger(name)
         assert name == self.logger.name
 
-    def debug(self, msg): self.logger.debug(msg)
-    def info(self, msg): self.logger.info(msg)
-    def warning(self, msg): self.logger.warning(msg)
-    def error(self, msg): self.logger.error(msg)
-    def critical(self, msg): self.logger.critical(msg)
+    def debug(self, *msg): self.logger.debug(" ".join(msg))
+    def info(self, *msg): self.logger.info(" ".join(msg))
+    def warning(self, *msg): self.logger.warning(" ".join(msg))
+    def error(self, *msg): self.logger.error(" ".join(msg))
+    def critical(self, *msg): self.logger.critical(" ".join(msg))
     
     def _configure_helper(self, level, delimiter, format, handler):
         self.logger.setLevel(level=level)
