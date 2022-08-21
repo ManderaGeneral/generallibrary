@@ -59,9 +59,9 @@ class Log(TreeDiagram, Recycle):
     def error(self, *msg): self.logger.error(join_with_str(" ", msg))
     def critical(self, *msg): self.logger.critical(join_with_str(" ", msg))
     
-    def _configure_helper(self, level, delimiter, format, handler):
+    def _configure_helper(self, level, delimiter, format_, handler):
         self.logger.setLevel(level=level)
-        formatter = logging.Formatter(fmt=delimiter.join(format.values()), datefmt=self.DATE_FORMAT)
+        formatter = logging.Formatter(fmt=delimiter.join(format_.values()), datefmt=self.DATE_FORMAT)
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
     
@@ -73,10 +73,11 @@ class Log(TreeDiagram, Recycle):
         return file_handler
     
     def configure_file(self, level=10):
-        self._configure_helper(level=level, delimiter=",", format=self.FILE_FORMAT, handler=self._file_handler())
+        self._configure_helper(level=level, delimiter=",", format_=self.FILE_FORMAT, handler=self._file_handler())
     
     def configure_stream(self, level=10):
-        self._configure_helper(level=level, delimiter=" : ", format=self.STREAM_FORMAT, handler=logging.StreamHandler())
+        self._configure_helper(level=level, delimiter=" : ", format_=self.STREAM_FORMAT,
+                               handler=logging.StreamHandler())
 
     @staticmethod
     def loggers():

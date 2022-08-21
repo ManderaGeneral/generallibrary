@@ -15,6 +15,7 @@ def import_module(name, error=True):
     try:
         return importlib.import_module(name=name)
     except (ModuleNotFoundError, TypeError) as e:
+        Log().debug(f"Module {name} failed to be imported, error msg:", e)
         if error:
             raise e
 
