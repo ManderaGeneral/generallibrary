@@ -336,9 +336,4 @@ def terminal(*args, python=False, suppress=False, **kwargs):
 
 
 from generallibrary.objinfo.objinfo import get_attrs_from_bases
-from generallibrary.code import get_origin
-
-
-
-
-
+from generallibrary.code import get_origin, Log

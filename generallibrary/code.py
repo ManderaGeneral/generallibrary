@@ -116,10 +116,6 @@ class Log(TreeDiagram, Recycle):
         return f"<Log: '{self.name}'>"
 
 
-def testing():
-    Log().info("foobar")
-
-
 def clipboard_copy(s):
     """ Copy a string to clipboard.
         Rudely tries to installs xclip on linux if it fails. """
