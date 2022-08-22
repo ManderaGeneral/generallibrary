@@ -13,11 +13,14 @@ from collections import ChainMap
 
 def import_module(name, error=True):
     try:
-        return importlib.import_module(name=name)
+        module = importlib.import_module(name=name)
     except (ModuleNotFoundError, TypeError) as e:
         Log().debug(f"Module {name} failed to be imported, error msg:", e)
         if error:
             raise e
+    else:
+        if getattr(module, "path", None):  # Got a namespace module without path so filter those out here
+            return module
 
 
 class classproperty:
