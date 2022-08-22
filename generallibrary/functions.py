@@ -19,7 +19,7 @@ def import_module(name, error=True):
         if error:
             raise e
     else:
-        if getattr(module, "path", None):  # Got a namespace module without path so filter those out here
+        if getattr(module, "__file__", None):  # Got a namespace module without __file__ so filter those out here
             return module
 
 
