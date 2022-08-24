@@ -25,21 +25,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel twine
-      - name: Install and clone 7 git repos
+      - name: Install and clone 4 git repos
         run: |
           pip install git+ssh://git@github.com/ManderaGeneral/generallibrary.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalfile.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalvector.git
-          pip install git+ssh://git@github.com/ManderaGeneral/generalgui.git
-          pip install git+ssh://git@github.com/ManderaGeneral/generalbrowser.git
-          pip install git+ssh://git@github.com/ManderaGeneral/generalmainframe.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalpackager.git
           git clone ssh://git@github.com/ManderaGeneral/generallibrary.git
           git clone ssh://git@github.com/ManderaGeneral/generalfile.git
           git clone ssh://git@github.com/ManderaGeneral/generalvector.git
-          git clone ssh://git@github.com/ManderaGeneral/generalgui.git
-          git clone ssh://git@github.com/ManderaGeneral/generalbrowser.git
-          git clone ssh://git@github.com/ManderaGeneral/generalmainframe.git
           git clone ssh://git@github.com/ManderaGeneral/generalpackager.git
           git clone ssh://git@github.com/Mandera/Mandera.git
           git clone ssh://git@github.com/ManderaGeneral/.github.git
@@ -50,7 +44,6 @@ jobs:
           PACKAGER_GITHUB_API: ${{ secrets.PACKAGER_GITHUB_API }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          MANDERAGENERAL_TOKEN: ${{ secrets.MANDERAGENERAL_TOKEN }}
   sync:
     needs: unittest
     runs-on: ubuntu-latest
@@ -67,21 +60,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel twine
-      - name: Install and clone 7 git repos
+      - name: Install and clone 4 git repos
         run: |
           pip install git+ssh://git@github.com/ManderaGeneral/generallibrary.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalfile.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalvector.git
-          pip install git+ssh://git@github.com/ManderaGeneral/generalgui.git
-          pip install git+ssh://git@github.com/ManderaGeneral/generalbrowser.git
-          pip install git+ssh://git@github.com/ManderaGeneral/generalmainframe.git
           pip install git+ssh://git@github.com/ManderaGeneral/generalpackager.git
           git clone ssh://git@github.com/ManderaGeneral/generallibrary.git
           git clone ssh://git@github.com/ManderaGeneral/generalfile.git
           git clone ssh://git@github.com/ManderaGeneral/generalvector.git
-          git clone ssh://git@github.com/ManderaGeneral/generalgui.git
-          git clone ssh://git@github.com/ManderaGeneral/generalbrowser.git
-          git clone ssh://git@github.com/ManderaGeneral/generalmainframe.git
           git clone ssh://git@github.com/ManderaGeneral/generalpackager.git
           git clone ssh://git@github.com/Mandera/Mandera.git
           git clone ssh://git@github.com/ManderaGeneral/.github.git
@@ -92,4 +79,3 @@ jobs:
           PACKAGER_GITHUB_API: ${{ secrets.PACKAGER_GITHUB_API }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          MANDERAGENERAL_TOKEN: ${{ secrets.MANDERAGENERAL_TOKEN }}
