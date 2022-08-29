@@ -415,16 +415,20 @@ class Operators:
         return _wrapper
 
 
-def deco_require(assertion, message=None):
+def deco_require(assertion, message=None, default=None):
     """ Decorator factory to produce decorate which raises AssertionError if assertion returns False.
 
         :param (Any) -> bool assertion: Function that takes self and returns boolean.
-        :param (function) -> str message: Function that takes wrapped function and returns error message. """
+        :param (function) -> str message: Function that takes wrapped function and returns error message.
+        :param default: """
     def _deco(func):
         def _wrapper(*args, **kwargs):
             assertion_name = assertion.__name__
             siginfo = SigInfo(func, *args, **kwargs)
             if not assertion(self=siginfo["self"]):
+                if siginfo["error"] is False:
+                    return default
+
                 if message is not None:
                     message_string = message(func=func)
                 elif assertion_name == "<lambda>":
