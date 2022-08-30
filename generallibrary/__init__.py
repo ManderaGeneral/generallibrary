@@ -13,4 +13,4 @@ from generallibrary.code import debug, CodeLine, clipboard_copy, clipboard_get, 
 from generallibrary.versions import VerInfo, get_installed_packages, package_is_installed, PythonVersion, Ver
 from generallibrary.objinfo.objinfo import ObjInfo, hook, cache_clear, call_base_hooks, DataClass, get_attrs_from_bases, dir_appearance_order
 from generallibrary.serialize import dumps, loads
-from generallibrary.context import DecoContext
+from generallibrary.context import DecoContext, RedirectStdout
