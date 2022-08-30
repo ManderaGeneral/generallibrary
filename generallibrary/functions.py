@@ -91,7 +91,8 @@ def defaults(dictionary, overwriteNone=False, **kwargs):
 
 
 class EmptyContext:
-    """ Class for an empty context manager. """
+    """ Class for an empty context manager.
+        Used for creating a "fake" lock for example in Path. """
     def __enter__(self):
         pass
 
