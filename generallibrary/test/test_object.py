@@ -76,6 +76,23 @@ class ObjectTest(unittest.TestCase):  # This line is used for test_get_definitio
         z = [y]
         self.assertGreater(getsize(z), getsize(x) + getsize(y))  # See that there's overhead
 
+    def test_interconnect(self):
+        class A: pass
+        class B: pass
+        class C: pass
+
+        interconnect(A, B, C)
+
+        self.assertIs(A.A, A)
+        self.assertIs(A.B, B)
+        self.assertIs(A.C, C)
+        self.assertIs(B.A, A)
+        self.assertIs(B.B, B)
+        self.assertIs(B.C, C)
+        self.assertIs(C.A, A)
+        self.assertIs(C.B, B)
+        self.assertIs(C.C, C)
+
     def test_initBases(self):
         # One argument without default
         class Base:

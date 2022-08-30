@@ -31,7 +31,11 @@ def getsize(obj):
         objects = get_referents(*need_referents)
     return size
 
-
+def interconnect(*objs):
+    """ Connect each obj to eachother by their dunder name. """
+    for obj in objs:
+        for obj2 in objs:
+            setattr(obj, obj2.__name__, obj2)
 
 
 
