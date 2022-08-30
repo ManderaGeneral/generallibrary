@@ -58,7 +58,8 @@ class RedirectStdout(DecoContext):
 
         self.original_stdout = sys.stdout
 
-    def _get_output(self) -> list[str]:
+    def _get_output(self):
+        """ :rtype: list[str] """
         return self.stringIO_stdout.getvalue().splitlines()
 
     def _send_to_target(self, target):
