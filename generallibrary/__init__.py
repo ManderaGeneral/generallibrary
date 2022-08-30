@@ -1,7 +1,7 @@
 
 # from generallibrary.analyze import bayesian
 from generallibrary.iterables import SortedList, get_values, is_iterable, depth, iter_first_value, iter_first_value, join_with_str, extend_list_in_dict, update_dict_in_dict, get_free_index, get_rows, exclusive, inclusive, unique_obj_in_list, combine, remove_duplicates, get_index, get, get_items, split_list, pivot_list, remove, flatten, subtract_list, dict_insert
-from generallibrary.object import getsize
+from generallibrary.object import getsize, interconnect
 from generallibrary.text import comma_and_and, comma_and_or, plur_sing, replace, match
 from generallibrary.time import Timer, sleep, Date
 from generallibrary.types import strToDynamicType, typeChecker, getBaseClasses, getBaseClassNames, hasMethod, HierarchyStorer
