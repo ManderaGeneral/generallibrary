@@ -48,6 +48,7 @@ class Log(TreeDiagram, Recycle):
     _recycle_keys = {"name": lambda x: Log._name(x)}
 
     def __init__(self, name=None, parent=None):
+        """ Todo: Make Log use __name__ from previous frame so it doesn't write to root. """
         name = self._name(name)
         self.name = name
         self.logger = logging.getLogger(name)
@@ -73,6 +74,7 @@ class Log(TreeDiagram, Recycle):
         return file_handler
     
     def configure_file(self, level=10):
+        """ Todo: Use another delimiter than , in Log and make sure it can handle quotes. """
         self._configure_helper(level=level, delimiter=",", format_=self.FILE_FORMAT, handler=self._file_handler())
     
     def configure_stream(self, level=10):
