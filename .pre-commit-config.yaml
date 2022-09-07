@@ -1,8 +1,0 @@
-repos:
--   repo: local
-    hooks:
-    -   id: some_test
-        name: script_I_want_to_run
-        entry: python generate.py
-        language: system
-        always_run: true
