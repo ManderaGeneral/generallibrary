@@ -158,10 +158,10 @@ class CodeLine(TreeDiagram):
         """ Generate a list of formatted code lines by iterating stored _Line instances. """
         lines = []
         for codeLine in self.get_all():
+            lines.extend([""] * codeLine.space_before)
             if codeLine.code_str:
-                lines.extend([""] * codeLine.space_before)
                 lines.append(f"{self.indent_str * (len(codeLine.get_parents(depth=-1)) - 1)}{codeLine.code_str}")
-                lines.extend([""] * codeLine.space_after)
+            lines.extend([""] * codeLine.space_after)
 
         if watermark:
             lines.insert(0, "# -------------------- GENERATED CODE --------------------")
