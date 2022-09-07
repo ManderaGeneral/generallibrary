@@ -2,14 +2,20 @@
     "install_requires": [
         "packaging",
         "pyperclip",
-        "pandas",
         "tabulate",
         "pytz",
         "dill",
         "matplotlib",
         "networkx"
     ],
-    "extras_require": {},
+    "extras_require": {
+        "table": [
+            "pandas"
+        ],
+        "full": [
+            "pandas"
+        ]
+    },
     "enabled": true,
     "private": false,
     "name": "generallibrary",

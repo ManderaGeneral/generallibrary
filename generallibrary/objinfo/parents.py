@@ -47,7 +47,7 @@ class _ObjInfoParents:
         """ Get a list of modules that has self.obj as a direct attribute.
 
             :param generallibrary.ObjInfo self: """
-        for module in sys.modules.values():
+        for module in sys.modules.copy().values():
             for key, value in module.__dict__.items():
                 if self.identifier() == self.identifier(obj=value):
                     if self.obj != value:

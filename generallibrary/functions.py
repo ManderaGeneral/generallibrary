@@ -1,28 +1,17 @@
-
-from generallibrary.decorators import wrapper_transfer, SigInfo, deco_require
+from generallibrary.decorators import wrapper_transfer, SigInfo
 from generallibrary.iterables import remove
-from generallibrary.nodeps import package_is_installed
-
 
 import re
-import pandas as pd
+
 import json
-import importlib
 import subprocess
 import sys
 from collections import ChainMap
 
+import pandas as pd
 
-def import_module(name, error=True):
-    try:
-        module = importlib.import_module(name=name)
-    except (ModuleNotFoundError, TypeError) as e:
-        Log().debug(f"Module {name} failed to be imported, error msg:", e)
-        if error:
-            raise e
-    else:
-        if getattr(module, "__file__", None):  # Got a namespace module without __file__ so filter those out here
-            return module
+# pandas = import_module("pandas", error=False)
+# importlib.import_module(name="pandas")
 
 
 class classproperty:
@@ -340,4 +329,3 @@ def terminal(*args, python=False, suppress=False, **kwargs):
 
 
 from generallibrary.objinfo.objinfo import get_attrs_from_bases
-from generallibrary.code import get_origin, Log

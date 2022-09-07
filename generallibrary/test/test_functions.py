@@ -1,7 +1,7 @@
 
 from generallibrary.functions import *
 from generallibrary import VerInfo, cache_clear, TreeDiagram, deco_optional_suppress, deco_cache, deco_cast_parameters, \
-    deco_bound_defaults, deco_extend, deco_propagate_while, Operators, wrapper_transfer, SigInfo
+    deco_bound_defaults, deco_extend, deco_propagate_while, Operators, wrapper_transfer, SigInfo, import_module
 
 import unittest
 
@@ -609,7 +609,7 @@ class FunctionsTest(unittest.TestCase):
 
     def test_import_module(self):
         self.assertEqual("generallibrary", import_module("generallibrary").__name__)
-        self.assertEqual("pandas", import_module("pandas").__name__)
+        self.assertEqual("packaging", import_module("packaging").__name__)
         self.assertEqual(None, import_module("doesntexist", error=False))
 
     def test_terminal(self):

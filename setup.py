@@ -18,7 +18,6 @@ setup(
     install_requires=[
         'packaging',
         'pyperclip',
-        'pandas',
         'tabulate',
         'pytz',
         'dill',
@@ -29,7 +28,10 @@ setup(
     license="mit",
     python_requires=">=3.8, <3.10",
     packages=find_namespace_packages(exclude=("build*", "dist*")),
-    extras_require={},
+    extras_require={
+        'table': ['pandas'],
+        'full': ['pandas'],
+    },
     classifiers=[
         'Topic :: Software Development :: Libraries',
         'Programming Language :: Python :: 3.8',

@@ -3,22 +3,16 @@ from generalfile import Path
 from generallibrary import *
 
 
-CallTable()
+# import pandas
+# print(pandas)
+# pandas.func()
 
-
-
-
-# y = RedirectStdout(lambda x: Path("foo").write(x, overwrite=True))
+# print(CallTable().generate())
 #
-#
-# with y:
-#     print("hi")
-#     print("there")
+# import pytest
+# pytest.skip
 
 
-# import importlib_metadata
-#
-# print(importlib_metadata.metadata('pandas').get_all('Provides-Extra'))
 
 
 
