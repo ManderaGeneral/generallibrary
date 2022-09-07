@@ -19,7 +19,7 @@ class CodeTest(unittest.TestCase):
         codeLine2 = CodeLine("print(5)", space_before=1, parent=codeLine)
         CodeLine("print(5)", space_after=2, parent=codeLine2)
 
-        self.assertEqual(9, len(codeLine.get_lines()))
+        self.assertEqual(8, len(codeLine.get_lines()))
 
     def test_debug(self):
         x, y, z = 1, 2, 3

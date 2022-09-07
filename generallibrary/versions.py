@@ -11,6 +11,7 @@ from packaging import version
 import pkg_resources
 from distutils.version import StrictVersion
 import re
+from importlib.util import find_spec
 
 
 class Ver(StrictVersion):
@@ -242,6 +243,8 @@ def get_installed_packages():
 
 def package_is_installed(*names):
     """ Returns whether a package is installed. """
-    return all([name in get_installed_packages() for name in names])
-
+    for name in names:
+        if find_spec(name) is None:
+            return False
+    return True
 
