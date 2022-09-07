@@ -21,7 +21,7 @@ class DecoratorsTest(unittest.TestCase):
             def __init__(self, x):
                 self.x = x
 
-            @deco_require(lambda self: self.x == 5, lambda func: f"{func.__name__} failed")
+            @deco_require(lambda self: self.x == 5, message=lambda func: f"{func.__name__} failed")
             def foo(self):
                 return self.x
 
@@ -46,6 +46,117 @@ class DecoratorsTest(unittest.TestCase):
         self.assertRaises(AssertionError, X(2).foo)
 
         self.assertRaisesRegex(AssertionError, "'foo' requires 'check' function to be True.", X(2).foo)
+
+    def test_deco_require_function(self):
+        def check():
+            return True
+
+        @deco_require(check)
+        def x():
+            return 5
+
+        self.assertEqual(5, x())
+
+    def test_deco_require_non_callable(self):
+        @deco_require(True)
+        def x():
+            return 5
+
+        self.assertEqual(5, x())
+
+    def test_deco_require_non_callable_false(self):
+        @deco_require(False)
+        def x():
+            return 5
+
+        self.assertRaises(AssertionError, x)
+
+    def test_deco_require_args(self):
+        def check(val):
+            return val == 3
+
+        @deco_require(check, 3)
+        def x():
+            return 5
+
+        self.assertEqual(5, x())
+
+    def test_deco_require_args_false(self):
+        def check(val):
+            return val == 3
+
+        @deco_require(check, 4)
+        def x():
+            return 5
+
+        self.assertRaises(AssertionError, x)
+
+    def test_deco_require_kwargs(self):
+        def check(val):
+            return val == 3
+
+        @deco_require(check, val=3)
+        def x():
+            return 5
+
+        self.assertEqual(5, x())
+
+    def test_deco_require_kwargs_false(self):
+        def check(val):
+            return val == 3
+
+        @deco_require(check, val=4)
+        def x():
+            return 5
+
+        self.assertRaises(AssertionError, x)
+
+    def test_deco_require_args_and_kwargs(self):
+        def check(a, b):
+            return a == 2 and b == 3
+
+        @deco_require(check, 2, b=3)
+        def x():
+            return 5
+
+        self.assertEqual(5, x())
+
+    def test_deco_require_args_and_kwargs_false(self):
+        def check(a, b):
+            return a == 2 and b == 3
+
+        @deco_require(check, 3, b=4)
+        def x():
+            return 5
+
+        self.assertRaises(AssertionError, x)
+
+    def test_deco_require_args_from_func(self):
+        def check(val):
+            return val == 3
+
+        @deco_require(check)
+        def x(val):
+            return 5
+
+        self.assertEqual(5, x(3))
+        self.assertEqual(5, x(val=3))
+        self.assertRaises(AssertionError, x, 4)
+        self.assertRaises(AssertionError, x, val=4)
+
+    def test_deco_require_args_from_func_combined(self):
+        def check(val2, val):
+            return val == 3 and val2 == 4
+
+        @deco_require(check, 4)
+        def x(val):
+            return 5
+
+        self.assertEqual(5, x(3))
+        self.assertEqual(5, x(val=3))
+        self.assertRaises(AssertionError, x, 4)
+        self.assertRaises(AssertionError, x, val=4)
+
 
     def test_siginfo_custom_parameters_int(self):
         self.assertEqual(0, SigInfo(int).call())

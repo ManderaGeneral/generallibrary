@@ -1,4 +1,4 @@
-
+from generallibrary import get_installed_packages, package_is_installed
 from generallibrary.versions import *
 
 import unittest

@@ -1,5 +1,7 @@
-from generallibrary.decorators import wrapper_transfer, SigInfo
+
+from generallibrary.decorators import wrapper_transfer, SigInfo, deco_require
 from generallibrary.iterables import remove
+from generallibrary.nodeps import package_is_installed
 
 
 import re
@@ -98,7 +100,6 @@ class EmptyContext:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
-
 
 class CallTable:
     """ Create a markdown table of functions and arguments. """
@@ -336,7 +337,6 @@ def terminal(*args, python=False, suppress=False, **kwargs):
         kwargs["stderr"] = subprocess.DEVNULL
 
     return subprocess.check_call(args, **kwargs)
-
 
 
 from generallibrary.objinfo.objinfo import get_attrs_from_bases

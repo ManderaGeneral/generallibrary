@@ -1,8 +1,11 @@
 from generalfile import Path
 
 from generallibrary import *
-import sys
-from io import StringIO
+
+
+CallTable()
+
+
 
 
 # y = RedirectStdout(lambda x: Path("foo").write(x, overwrite=True))
@@ -13,9 +16,9 @@ from io import StringIO
 #     print("there")
 
 
-import importlib_metadata
-
-print(importlib_metadata.metadata('pandas').get_all('Provides-Extra'))
+# import importlib_metadata
+#
+# print(importlib_metadata.metadata('pandas').get_all('Provides-Extra'))
 
 
 

@@ -8,10 +8,8 @@ from generallibrary.functions import initBases
 from generallibrary.decorators import Operators
 
 from packaging import version
-import pkg_resources
 from distutils.version import StrictVersion
 import re
-from importlib.util import find_spec
 
 
 class Ver(StrictVersion):
@@ -235,16 +233,4 @@ class PythonVersion(DuckTyping):
             Protect variable."""
         return self._version
 
-
-def get_installed_packages():
-    """ Get a list of all installed packages as strings. """
-    return [pkg.key for pkg in pkg_resources.working_set]
-
-
-def package_is_installed(*names):
-    """ Returns whether a package is installed. """
-    for name in names:
-        if find_spec(name) is None:
-            return False
-    return True
 
