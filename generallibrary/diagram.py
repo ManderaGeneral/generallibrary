@@ -13,6 +13,15 @@ import networkx as nx
 from random import uniform
 
 
+def _default_filt(node):
+    return True
+
+def _filter(nodes, filt):
+    if filt is None:
+        filt = _default_filt
+    return [node for node in nodes if filt(node)]
+
+
 def _skip_node_check(node, order_func, filt, traverse_excluded, _all_nodes):
     if not _all_nodes:  # Always traverse self, doesn't mean it will be yielded
         return False
@@ -120,7 +129,7 @@ class _Diagram_QOL:
                 if i == index:
                     return node
 
-    def get_index(self, parent=None, child=None, spawn=None):
+    def get_index(self, parent=None, child=None, spawn=None, filt=None):
         """ Get the index this node has in target node's container. Parent takes precedence if both are defined.
             Defaults to returning index of first parent's children. Returns 0 if orphan.
 
@@ -129,7 +138,9 @@ class _Diagram_QOL:
             :param TreeDiagram or NetworkDiagram or Any child:
             :param bool spawn:
             :raises ValueError: If given node doesn't contain self. """
-        return self._get_children_or_parents(parent=parent, child=child, spawn=spawn).index(self)
+        nodes = self._get_children_or_parents(parent=parent, child=child, spawn=spawn)
+        nodes = _filter(nodes=nodes, filt=filt)
+        return nodes.index(self)
 
     def set_index(self, index, parent=None, child=None, spawn=None):
         """ Set the index this node has in target node's container. Parent takes precedence if both are defined.
@@ -404,12 +415,11 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Visualize, Storable, meta
             :param bool or None vertical: True - Whether to traverse one node at a time, or layer by layer.
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
             :rtype: list[TreeDiagram or NetworkDiagram or Any] """
-        yield from self._siblings_and_spouses(self.get_parents, self.get_children, spawn=spawn)
+        yield from self._siblings_and_spouses(self.get_parents, self.get_children, spawn=spawn, filt=filt)
 
-    def _siblings_and_spouses(self, method1, method2, spawn):
-        # for node1 in method1.__func__(self, gen=True, spawn=True):  # Uhh dunno why this is here
-        for node1 in method1.__func__(self, gen=True, spawn=spawn):
-            node_list = method2.__func__(node1, gen=False, spawn=spawn)
+    def _siblings_and_spouses(self, method1, method2, spawn, filt):
+        for node1 in method1.__func__(self, gen=True, spawn=spawn, filt=filt):
+            node_list = method2.__func__(node1, gen=False, spawn=spawn, filt=filt)
 
             ordered_node_list = pivot_list(list_=node_list, index=node_list.index(self))
             ordered_node_list.remove(self, )
@@ -454,21 +464,21 @@ class TreeDiagram(_Diagram):
         lines = []
         for node in top.get_children(depth=-1, gen=True, include_self=True, spawn=spawn, filt=filt, traverse_excluded=traverse_excluded, vertical=vertical):
             lanes = []
-            all_parents = node.get_parents(depth=-1, spawn=spawn)
+            all_parents = node.get_parents(depth=-1, spawn=spawn, filt=filt)
 
             if all_parents:
                 del all_parents[-1]
                 all_parents.insert(0, node)
 
             for i, parent in enumerate(all_parents):  # type: int, TreeDiagram
-                sibling_index = parent.get_index(spawn=spawn)
+                sibling_index = parent.get_index(spawn=spawn, filt=filt)
                 if i == 0:
-                    if len(parent.get_siblings(spawn=spawn)) == sibling_index:
+                    if len(parent.get_siblings(spawn=spawn, filt=filt)) == sibling_index:
                         lane = f"└{'─' * indent}{spacer}"
                     else:
                         lane = f"├{'─' * indent}{spacer}"
                 else:
-                    if len(parent.get_siblings(spawn=spawn)) == sibling_index:
+                    if len(parent.get_siblings(spawn=spawn, filt=filt)) == sibling_index:
                         lane = f"{spacer}{spacer * indent}{spacer}"
                     else:
                         lane = f"│{spacer * indent}{spacer}"
@@ -511,7 +521,7 @@ class NetworkDiagram(_Diagram):
             :param bool or None vertical: True - Whether to traverse one node at a time, or layer by layer.
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
             :rtype: list[TreeDiagram or NetworkDiagram or Any] """
-        yield from self._siblings_and_spouses(self.get_children, self.get_parents, spawn=spawn)
+        yield from self._siblings_and_spouses(self.get_children, self.get_parents, spawn=spawn, filt=filt)
 
     def get_spouse(self, index=None, depth=None, filt=None, traverse_excluded=None, include_self=None, spawn=None):
         """ Singular QOL alternative for get_spouses().

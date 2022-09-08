@@ -221,6 +221,7 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(1, len(d.view(print_out=False).splitlines()))
 
         self.assertEqual(4, len(a.view(relative=True, print_out=False).splitlines()))
+        self.assertEqual(3, len(a.view(filt=lambda x: x is not d, print_out=False).splitlines()))
 
     def test_markdown(self):
         self.assertEqual("foo\nbar", str(Markdown().add_lines("foo", "bar")))
