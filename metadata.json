@@ -12,13 +12,16 @@
     "extras_require": {
         "table": [
             "pandas"
+        ],
+        "full": [
+            "pandas"
         ]
     },
     "enabled": true,
     "private": false,
     "name": "generallibrary",
     "target": "python",
-    "version": "2.9.6",
+    "version": "2.9.7",
     "description": "Random useful code categorized into modules.",
     "topics": [
         "library"
