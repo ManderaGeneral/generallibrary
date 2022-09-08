@@ -572,14 +572,17 @@ class Markdown(TreeDiagram):
     def get_section_lines(self):
         """ Get a list of all lines in this section. """
         lines = self.lines.copy()
-        if self.header and lines:
+        if self.header and (lines or self.get_children()):
             lines.insert(0, f"{'#' * clamp(1 + len(self.get_parents(depth=-1)), 1, 6)} {self.header}")
         return lines
 
     def add_lines(self, *lines):
         """ Add lines to list, using splitlines. """
         for line in lines:  # type: str
-            self.lines.extend(str(line).splitlines())
+            if not line:
+                self.lines.append("")
+            else:
+                self.lines.extend(str(line).splitlines())
         return self
 
     def get_all_lines(self):
@@ -607,10 +610,10 @@ class Markdown(TreeDiagram):
         self.add_lines(*[f"{'  ' * indent} - {item}" for item in items])
         return self
     
-    def add_code_lines(self, *lines):
+    def add_code_lines(self, *lines, lang=None):
         """ Add code lines, wrapped by quotes. """
         self.add_lines(*lines)
-        self.wrap_with_tags("```")
+        self.wrap_with_tags("```", lang=lang)
         return self
 
     def add_pre_lines(self, *lines):
@@ -618,11 +621,11 @@ class Markdown(TreeDiagram):
         self.wrap_with_tags("pre")
         return self
 
-    def wrap_with_tags(self, *tags):
-        non_tags = "```",
+    def wrap_with_tags(self, *tags, lang=None):
+        non_tags = ["```"]
         for tag in tags:
             if tag in non_tags:
-                self.lines.insert(0, tag)
+                self.lines.insert(0, f"{tag} {lang}" if lang else tag)
                 self.lines.append(tag)
             else:
                 self.lines.insert(0, f"<{tag}>")
