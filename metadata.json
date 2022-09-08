@@ -21,7 +21,7 @@
     "private": false,
     "name": "generallibrary",
     "target": "python",
-    "version": "2.9.7",
+    "version": "2.9.8",
     "description": "Random useful code categorized into modules.",
     "topics": [
         "library"
