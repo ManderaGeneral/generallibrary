@@ -1,4 +1,3 @@
-from generallibrary import get_installed_packages, package_is_installed
 from generallibrary.versions import *
 
 import unittest
@@ -70,12 +69,6 @@ class VersionsTest(unittest.TestCase):
     def test_conditionalFunctionalities(self):
         verInfo = VerInfo()
         self.assertEqual(1, sum((verInfo.pathRootHasColon, verInfo.pathRootIsDelimiter)))
-
-    def test_packages(self):
-        self.assertEqual(True, len(get_installed_packages()) > 0)
-        self.assertEqual(True, package_is_installed("generallibrary"))
-        self.assertEqual(True, package_is_installed("generallibrary", "pyperclip"))
-        self.assertEqual(False, package_is_installed("generallibrary", "random_package_not_existing"))
 
     def test_bump(self):
         self.assertEqual("1.0.0", Ver(1))
