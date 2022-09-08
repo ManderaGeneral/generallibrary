@@ -562,7 +562,7 @@ class Markdown(TreeDiagram):
     def get_section_lines(self):
         """ Get a list of all lines in this section. """
         lines = self.lines.copy()
-        if self.header:
+        if self.header and lines:
             lines.insert(0, f"{'#' * clamp(1 + len(self.get_parents(depth=-1)), 1, 6)} {self.header}")
         return lines
 
