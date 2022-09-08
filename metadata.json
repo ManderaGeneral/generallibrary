@@ -1,5 +1,6 @@
 {
     "install_requires": [
+        "generalimport",
         "packaging",
         "pyperclip",
         "tabulate",
@@ -10,9 +11,6 @@
     ],
     "extras_require": {
         "table": [
-            "pandas"
-        ],
-        "full": [
             "pandas"
         ]
     },

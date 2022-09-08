@@ -13,6 +13,12 @@ from generallibrary import *
 # pytest.skip
 
 
+from generalpackager import Packager
+
+print(Packager.create_blank_locally_python("../generalimport"))
+
+
+
 
 
 
