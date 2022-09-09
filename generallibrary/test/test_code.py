@@ -1,6 +1,6 @@
 
 from generallibrary.code import *
-from generallibrary.versions import VerInfo
+from generallibrary import VerInfo
 
 import unittest
 

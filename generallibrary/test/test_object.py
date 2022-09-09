@@ -1,4 +1,5 @@
 
+import generallibrary
 from generallibrary.object import *
 from generallibrary.objinfo.objinfo import *
 from generallibrary.functions import initBases, AutoInitBases
@@ -383,7 +384,7 @@ class ObjectTest(unittest.TestCase):  # This line is used for test_get_definitio
         self.assertEqual(True, objInfo.get_child(filt=lambda node: node.name == "self", traverse_excluded=True).from_base())
 
     def test_get_definition_line(self):
-        self.assertEqual(22, ObjInfo(ObjectTest).get_definition_line())
+        self.assertEqual(23, ObjInfo(ObjectTest).get_definition_line())
 
     def test_get_origin(self):
         class FooBar:

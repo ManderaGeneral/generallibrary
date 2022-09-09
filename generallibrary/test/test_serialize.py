@@ -1,4 +1,5 @@
 
+import generallibrary
 from generallibrary.serialize import *
 
 import unittest

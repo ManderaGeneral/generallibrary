@@ -1,3 +1,4 @@
+
 from generallibrary.decorators import wrapper_transfer, SigInfo
 from generallibrary.iterables import remove
 
@@ -9,9 +10,6 @@ import sys
 from collections import ChainMap
 
 import pandas as pd
-
-# pandas = import_module("pandas", error=False)
-# importlib.import_module(name="pandas")
 
 
 class classproperty:

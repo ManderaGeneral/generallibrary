@@ -19,7 +19,6 @@ setup(
         'generalimport',
         'packaging',
         'pyperclip',
-        'tabulate',
         'pytz',
         'dill',
         'matplotlib',
@@ -29,8 +28,8 @@ setup(
     license="mit",
     packages=find_namespace_packages(exclude=("build*", "dist*")),
     extras_require={
-        'table': ['pandas'],
-        'full': ['pandas'],
+        'table': ['pandas', 'tabulate'],
+        'full': ['pandas', 'tabulate'],
     },
     classifiers=[
         'Topic :: Software Development :: Libraries',

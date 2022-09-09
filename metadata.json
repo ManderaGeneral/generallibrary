@@ -3,7 +3,6 @@
         "generalimport",
         "packaging",
         "pyperclip",
-        "tabulate",
         "pytz",
         "dill",
         "matplotlib",
@@ -11,7 +10,8 @@
     ],
     "extras_require": {
         "table": [
-            "pandas"
+            "pandas",
+            "tabulate"
         ],
         "full": [
             "pandas"
