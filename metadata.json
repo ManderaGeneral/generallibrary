@@ -14,14 +14,15 @@
             "tabulate"
         ],
         "full": [
-            "pandas"
+            "pandas",
+            "tabulate"
         ]
     },
     "enabled": true,
     "private": false,
     "name": "generallibrary",
     "target": "python",
-    "version": "2.9.8",
+    "version": "2.9.9",
     "description": "Random useful code categorized into modules.",
     "topics": [
         "library"
