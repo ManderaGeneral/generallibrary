@@ -112,19 +112,33 @@ class _Diagram_Visualize:
             connections.update(((node, child) for child in node.get_children()))
         return connections
 
-    def _mermaid(self, nodes):
-        return f"{nodes.index(self)}([{self}])"
 
-    def mermaid(self):
-        """ Return a mermaid markdown string.
+
+    def _mermaid_repr(self, nodes, repr_func=None):
+        index = nodes.index(self)
+        self_str = repr_func(self) if repr_func else self
+        return f"{index}([{self_str}])"
+
+    def mermaid(self, repr_func=None, url_func=None, highlight_self=None):
+        """ Return a mermaid markdown object.
 
             :param TreeDiagram or NetworkDiagram or Any self: """
         nodes = self.get_all()
         mermaid = ["```mermaid", "flowchart LR"]
         for parent, child in self.get_connections():
-            mermaid.append(f"{child._mermaid(nodes)} --> {parent._mermaid(nodes)}")
+            parent_str = parent._mermaid_repr(nodes=nodes, repr_func=repr_func)
+            child_str = child._mermaid_repr(nodes=nodes, repr_func=repr_func)
+            mermaid.append(f"{parent_str} --> {child_str}")
+
+        if url_func is not None:
+            for i, node in enumerate(nodes):
+                mermaid.append(f'click {i} "{url_func(node)}"')
+
+        if highlight_self:
+            mermaid.append(f"style {nodes.index(self)} fill:#482")
+
         mermaid.append("```")
-        return "\n".join(mermaid)
+        return Markdown(*mermaid)
 
 
 
@@ -624,6 +638,7 @@ class Markdown(TreeDiagram):
     def add_table_lines(self, *dicts, sort_by=None):
         """ Add a table to the lines with packed dicts using pandas `to_markdown`. """
         df = pandas.DataFrame(dicts)
+
         if sort_by is not None:
             df = df.sort_values(by=sort_by)
 
