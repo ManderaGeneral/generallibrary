@@ -435,6 +435,28 @@ class TreeDiagramTest(unittest.TestCase):
         new_id = id(a2.shared)
         self.assertIsNot(old_id, new_id)
 
+    def test_mermaid_tree(self):
+        class X(TreeDiagram):
+            def __str__(self):
+                return "hi"
+        a = X()
+        b = a.add_node()
+        c = b.add_node()
+        c2 = b.add_node()
+        self.assertIn("hi", a.mermaid())
+
+    def test_mermaid_network(self):
+        class X(TreeDiagram):
+            def __str__(self):
+                return "hi"
+        a = X()
+        b = a.add_node()
+        c = b.add_node()
+        c.add_node(a)
+        self.assertIn("hi", a.mermaid())
+
+
+
 
 
 

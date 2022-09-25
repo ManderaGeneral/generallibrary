@@ -103,6 +103,31 @@ class _Diagram_Visualize:
         nx.draw(G, pos=nx.circular_layout(G), edge_color=colors, width=2, connectionstyle='arc3, rad=0', with_labels=True, node_color="None", node_size=3000, node_shape="s")
         plt.show()
 
+    def get_connections(self):
+        """ Return a set of pairs where first is parent and second is child.
+
+            :param TreeDiagram or NetworkDiagram or Any self: """
+        connections = set()
+        for node in self.get_all():
+            connections.update(((node, child) for child in node.get_children()))
+        return connections
+
+    def _mermaid(self, nodes):
+        return f"{nodes.index(self)}([{self}])"
+
+    def mermaid(self):
+        """ Return a mermaid markdown string.
+
+            :param TreeDiagram or NetworkDiagram or Any self: """
+        nodes = self.get_all()
+        mermaid = ["```mermaid", "flowchart LR"]
+        for parent, child in self.get_connections():
+            mermaid.append(f"{child._mermaid(nodes)} --> {parent._mermaid(nodes)}")
+        mermaid.append("```")
+        return "\n".join(mermaid)
+
+
+
 
 
 class _Diagram_QOL:

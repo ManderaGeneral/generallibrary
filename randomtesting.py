@@ -3,22 +3,18 @@ from generalfile import Path
 from generallibrary import *
 
 
-# import pandas
-# print(pandas)
-# pandas.func()
 
-# print(CallTable().generate())
-#
-# import pytest
-# pytest.skip
+class X(TreeDiagram):
+    def __str__(self):
+        return "hi"
 
+a = X()
 
-from generalpackager import Packager
+b = a.add_node()
+c = b.add_node()
+c.add_node(a)
 
-print(Packager.create_blank_locally_python("../generalimport"))
-
-
-
+Path("hi.md").text.write(a.mermaid(), overwrite=True)
 
 
 
