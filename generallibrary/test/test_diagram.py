@@ -438,6 +438,17 @@ class TreeDiagramTest(unittest.TestCase):
         new_id = id(a2.shared)
         self.assertIsNot(old_id, new_id)
 
+    def test_get_ordered_filt(self):
+        a = A(1)
+        b = A(2, a)
+        b2 = A(22, a)
+        c = A(3, b)
+        c2 = A(33, b)
+
+        self.assertEqual([a, b, b2, c, c2], a.get_ordered(filt=lambda a: a.foo > 1))
+        self.assertEqual([b, c, c2], b.get_ordered(filt=lambda a: a.foo > 1))
+        self.assertEqual([b, c, c2], c.get_ordered(filt=lambda a: a.foo > 1))
+
     def test_mermaid_tree(self):
         class X(TreeDiagram):
             def __str__(self):

@@ -31,6 +31,8 @@ def _skip_node_check(node, order_func, filt, traverse_excluded, _all_nodes):
         return True
     if order_func:
         for order_node in order_func(node):
+            if filt and not filt(order_node):
+                continue
             if order_node not in _all_nodes:
                 return True
     return False
@@ -103,29 +105,33 @@ class _Diagram_Visualize:
         nx.draw(G, pos=nx.circular_layout(G), edge_color=colors, width=2, connectionstyle='arc3, rad=0', with_labels=True, node_color="None", node_size=3000, node_shape="s")
         plt.show()
 
-    def get_connections(self):
-        """ Return a set of pairs where first is parent and second is child.
+    def get_connections(self, nodes):
+        """ Return a set of pairs from given nodes where first is parent and second is child.
 
             :param TreeDiagram or NetworkDiagram or Any self: """
         connections = set()
-        for node in self.get_all():
-            connections.update(((node, child) for child in node.get_children()))
+        for node in nodes:
+            connections.update((node, child) for child in node.get_children() if child in nodes)
         return connections
 
 
 
     def _mermaid_repr(self, nodes, repr_func=None):
+        if self not in nodes:
+            print(self, nodes)
         index = nodes.index(self)
         self_str = repr_func(self) if repr_func else self
         return f"{index}([{self_str}])"
 
-    def mermaid(self, repr_func=None, url_func=None, highlight_self=None):
+    def mermaid(self, nodes=None, repr_func=None, url_func=None, highlight_self=None):
         """ Return a mermaid markdown object.
 
             :param TreeDiagram or NetworkDiagram or Any self: """
-        nodes = self.get_all()
+        if nodes is None:
+            nodes = self.get_all()
+
         mermaid = ["```mermaid", "flowchart LR"]
-        for parent, child in self.get_connections():
+        for parent, child in self.get_connections(nodes=nodes):
             parent_str = parent._mermaid_repr(nodes=nodes, repr_func=repr_func)
             child_str = child._mermaid_repr(nodes=nodes, repr_func=repr_func)
             mermaid.append(f"{parent_str} --> {child_str}")
@@ -320,7 +326,7 @@ class _Diagram_Global:
         if depth is None:
             depth = -1
 
-        origins = [node for node in self.get_all() if not node.get_parents()]
+        origins = [node for node in self.get_all(filt=filt) if not node.get_parents(filt=filt)]
         if not origins:
             raise AttributeError("Could not find any orphan nodes.")
         func = self.get_children.__func__
