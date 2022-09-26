@@ -50,9 +50,9 @@ class _ObjInfoParents:
         for module in sys.modules.copy().values():
             for key, value in module.__dict__.items():
                 if self.identifier() == self.identifier(obj=value):
-                    if self.obj != value:
-                        print("Values don't match even though their identifier does.", self.obj, value, self.identifier(), self.identifier(obj=value))
-                        # raise AttributeError("Values don't match even though their identifier does.")
+                    # if self.obj != value:
+                    #     print("Values don't match even though their identifier does.", self.obj, value, self.identifier(), self.identifier(obj=value))
+                    #     raise AttributeError("Values don't match even though their identifier does.")
                     yield module, key
 
     @classmethod
