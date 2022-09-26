@@ -1,3 +1,4 @@
+from unittest import skip
 
 from generallibrary.diagram import *
 
@@ -397,6 +398,7 @@ class TreeDiagramTest(unittest.TestCase):
 
         self.assertEqual([a], a.get_all())
 
+    @skip("Disabled TreeDiagram's shared, it tripled execution time.")
     def test_shared(self):
         a = A(1)
         a.shared["x"] = 5
@@ -416,6 +418,7 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual({"y": 3}, b.shared)
         self.assertEqual({"y": 3}, a2.shared)
 
+    @skip("Disabled TreeDiagram's shared, it tripled execution time.")
     def test_shared_children(self):
         a = A(1)
         a.shared["x"] = 5
@@ -446,7 +449,7 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertIn("hi", a.mermaid())
 
     def test_mermaid_network(self):
-        class X(TreeDiagram):
+        class X(NetworkDiagram):
             def __str__(self):
                 return "hi"
         a = X()

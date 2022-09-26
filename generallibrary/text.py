@@ -48,3 +48,24 @@ def match(string, *patterns):
         Uses regex and * is treated as wildcard. """
     return any(re.search(replace(_pattern(pattern), **{r"\*": ".+"}), string, re.IGNORECASE) for pattern in patterns)
 
+
+# Had an idea here to create a convention where you can define different name lengths for your class and then use this func to retrieve with fallbacks
+# def name(obj, length: Literal["full", None, "short", "abbr"]=None):
+#     if length is None:
+#         key = "name"
+#     else:
+#     if hasattr(obj, f"name_length")
+
+
+
+
+
+
+
+
+
+
+
+
+
+

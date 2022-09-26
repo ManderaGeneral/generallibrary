@@ -5,7 +5,7 @@ from datetime import datetime
 import pytz
 from dateutil import parser
 from dateutil.tz import gettz
-import timeit
+from timeit import default_timer
 
 
 class Timer:
@@ -41,13 +41,20 @@ class Timer:
     def deco(cls, iterations=1):
         def _deco(func):
             def _wrapper(*args, **kwargs):
-                timer = timeit.default_timer()
+                timer = default_timer()
                 for _ in range(iterations):
                     result = func(*args, **kwargs)
-                print(f"Seconds for {iterations} iterations of '{func.__name__}': {timeit.default_timer() - timer}")
+                print(f"Seconds for {iterations} iterations of '{func.__name__}': {default_timer() - timer}")
                 return result
             return _wrapper
         return _deco
+
+    def __enter__(self):
+        self.time = default_timer()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        stop = default_timer()
+        print(f"Time: {stop - self.time} seconds")
 
 
 def sleep(seconds):

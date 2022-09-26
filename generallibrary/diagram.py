@@ -377,8 +377,8 @@ class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Visualize, Storable, meta
             parent._children.append(self)
 
         # Only for TreeDiagram, cannot import hook in this module
-        if hasattr(self, "_set_shared"):
-            self._set_shared(parent=parent)
+        # if hasattr(self, "_set_shared"):
+        #     self._set_shared(parent=parent)
 
         return parent
 
