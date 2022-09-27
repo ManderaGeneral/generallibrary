@@ -207,7 +207,13 @@ def auto_deco(deco):
 AutoInitBases = auto_deco(initBases)
 
 
-class Recycle:
+class HierarchyStorer:
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        setattr(HierarchyStorer, cls.__name__, cls)
+
+
+class Recycle(HierarchyStorer):
     """ Inherit this class to make instantiating two classes with the same args yield the same instance object.
         Assign _recycle_keys to a dict with keys corresponding to init args and value being a func (str() in most cases) to return json serializable obj.
         _recycle_keys are combined in case of inheritence.

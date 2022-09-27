@@ -1,5 +1,4 @@
-
-from generallibrary.functions import AutoInitBases, Recycle
+from generallibrary.functions import AutoInitBases, HierarchyStorer
 from generallibrary.decorators import deco_cast_to_self, wrapper_transfer
 from generallibrary.values import clamp, confineTo
 from generallibrary.iterables import get, pivot_list, subtract_list, flatten
@@ -349,7 +348,7 @@ class Storable:
         return self.load_node(pickled_bytes=self.save_node())
 
 
-class _Diagram(_Diagram_Global, _Diagram_QOL, _Diagram_Visualize, Storable, metaclass=AutoInitBases):
+class _Diagram(HierarchyStorer, _Diagram_Global, _Diagram_QOL, _Diagram_Visualize, Storable, metaclass=AutoInitBases):
     """ Core methods of a Diagram. """
     def __init__(self, parent=None):
         # print(hasattr(self, "_children"))

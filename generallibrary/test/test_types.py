@@ -159,22 +159,6 @@ class TypesTest(unittest.TestCase):
         self.assertEqual(True, hasMethod("hello", "__contains__"))
         self.assertEqual(False, hasMethod("hello", "__module__"))
 
-    def test_HierarchyStorer(self):
-        class Base(metaclass=HierarchyStorer, base="Base"):
-            pass
-        class A(Base):
-            pass
-        class B(A):
-            pass
-
-        self.assertIs(A, Base.A)
-        self.assertIs(B, Base.B)
-        self.assertIs(A, A.A)
-        self.assertIs(B, B.B)
-        self.assertIs(Base, A.Base)
-        self.assertIs(Base, B.Base)
-
-
 
 
 

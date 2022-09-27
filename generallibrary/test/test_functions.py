@@ -612,7 +612,25 @@ class FunctionsTest(unittest.TestCase):
         with self.assertRaises(Exception):
             self.assertEqual(0, terminal("-c", "assert 5 == 4", python=True, suppress=True))
 
+    def test_HierarchyStorer(self):
+        class A(HierarchyStorer):
+            pass
+        class B(A):
+            pass
+        class B2(A):
+            pass
 
+        self.assertIs(A, A.A)
+        self.assertIs(B, A.B)
+        self.assertIs(B2, A.B2)
+
+        self.assertIs(A, B.A)
+        self.assertIs(B, B.B)
+        self.assertIs(B2, B.B2)
+
+        self.assertIs(A, B2.A)
+        self.assertIs(B, B2.B)
+        self.assertIs(B2, B2.B2)
 
 
 

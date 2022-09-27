@@ -184,32 +184,5 @@ def hasMethod(obj, method):
     return attr and callable(attr)
 
 
-class HierarchyStorer(type):
-    """ A metaclass that automatically stores references to all inheriters.
-        By inheritence each inheriter gets it too.
-
-        Example:
-            class Base(metaclass=HierarchyStorer, base="Base"):
-            class A(Base):
-            class B(A):
-
-            Defines Base.A, Base.B, A.Base, B.Base
-            """
-    _base_name = ...
-
-    def __new__(mcs, name, bases, clsdict, base=None):
-        if base is not None:
-            mcs._base_name = base
-        return type.__new__(mcs, name, bases, clsdict)
-
-    def __init__(cls, name, bases, clsdict, *_, **__):
-        base_cls = [base for base in getBaseClasses(cls, includeSelf=True) if base.__name__ == cls._base_name][0]
-        setattr(base_cls, name, cls)
-        type.__init__(cls, name, bases, clsdict)
-
-        # Store all inheriters (including base_cls) in a list in base_cls.
-        if getattr(base_cls, "_inheriters", None) is None:
-            base_cls._inheriters = []
-        base_cls._inheriters.append(cls)
 
 

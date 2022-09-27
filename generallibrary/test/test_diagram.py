@@ -1,6 +1,7 @@
 from unittest import skip
 
 from generallibrary.diagram import *
+from generallibrary.functions import Recycle
 
 import unittest
 
@@ -331,8 +332,6 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual([], b.get_children())
 
     def test_remove_node_recycle(self):
-        from generallibrary.functions import Recycle
-
         class C(TreeDiagram, Recycle):
             _recycle_keys = {"x": str}
 
@@ -357,6 +356,7 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertIsNot(c, C(3))
 
     def test_recycle_inheritance(self):
+
         class AA(Recycle):
             _recycle_keys = {}
 
@@ -468,11 +468,6 @@ class TreeDiagramTest(unittest.TestCase):
         c = b.add_node()
         c.add_node(a)
         self.assertIn("hi", a.mermaid())
-
-
-
-
-
 
 
 
