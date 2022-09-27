@@ -140,7 +140,7 @@ class _Diagram_Visualize:
             for i, node in enumerate(nodes):
                 mermaid.append(f'click {i} "{url_func(node)}"')
 
-        if highlight_self:
+        if highlight_self and self in nodes:
             mermaid.append(f"style {nodes.index(self)} fill:#482")
 
         mermaid.append("```")
