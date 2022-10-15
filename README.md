@@ -16,10 +16,11 @@ Random useful code categorized into modules.
 ```mermaid
 flowchart LR
 2([file]) --> 4([packager])
-0([import]) --> 1([library])
 1([library]) --> 4([packager])
-1([library]) --> 3([vector])
+0([import]) --> 1([library])
+0([import]) --> 2([file])
 1([library]) --> 2([file])
+1([library]) --> 3([vector])
 click 0 "https://github.com/ManderaGeneral/generalimport"
 click 1 "https://github.com/ManderaGeneral/generallibrary"
 click 2 "https://github.com/ManderaGeneral/generalfile"
@@ -44,7 +45,7 @@ style 1 fill:#482
 ## Information
 | Package                                                            | Ver                                                | Latest Release        | Python                                                                                                                                                                                  | Platform        | Cover   |
 |:-------------------------------------------------------------------|:---------------------------------------------------|:----------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|:--------|
-| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.9.10](https://pypi.org/project/generallibrary/) | 2022-10-07 16:07 CEST | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/), [3.10](https://www.python.org/downloads/release/python-3100/) | Windows, Ubuntu | 92.7 %  |
+| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.9.10](https://pypi.org/project/generallibrary/) | 2022-10-07 16:07 CEST | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/), [3.10](https://www.python.org/downloads/release/python-3100/) | Windows, Ubuntu | 92.6 %  |
 
 
 ## Attributes
@@ -302,13 +303,13 @@ Pull requests are not wanted, please discuss with me before investing any time
 ## Todo
 | Module                                                                                                                      | Message                                                                                                                                                                        |
 |:----------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L1'>test_time.py</a> | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L34'>Fix time casting to wrong day when past midnight.</a>              |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L1'>versions.py</a>        | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L17'>Use Ver in each part of VerInfo.</a>                                     |
+| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L1'>test_time.py</a> | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L34'>Fix time casting to wrong day when past midnight.</a>              |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L1'>objinfo.py</a>  | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L24'>Recycle ObjInfo.</a>                                              |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L1'>diagram.py</a>          | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L490'>Shared dict for NetworkDiagram, resolve logic with multiple parents.</a> |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L1'>code.py</a>                | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L51'>Make Log use __name__ from previous frame so it doesn't write to root.</a>   |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L1'>code.py</a>                | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L77'>Use another delimiter than , in Log and make sure it can handle quotes.</a>  |
 
 <sup>
-Generated 2022-10-08 15:59 CEST for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2022-10-15 08:45 CEST for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
