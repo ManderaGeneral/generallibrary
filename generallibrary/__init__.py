@@ -1,7 +1,7 @@
 
 from generalimport import *
 
-generalimport("pandas", "tabulate")
+generalimport("pandas")
 
 # from generallibrary.analyze import bayesian
 from generallibrary.iterables import SortedList, get_values, is_iterable, depth, iter_first_value, iter_first_value, join_with_str, extend_list_in_dict, update_dict_in_dict, get_free_index, get_rows, exclusive, inclusive, unique_obj_in_list, combine, remove_duplicates, get_index, get, get_items, split_list, pivot_list, remove, flatten, subtract_list, dict_insert
