@@ -585,10 +585,13 @@ class NetworkDiagram(_Diagram):
 
 class Markdown(TreeDiagram):
     """ A section for a markdown file, built on TreeDiagram. """
-    def __init__(self, *lines, header=None, parent=None):
+    def __init__(self, *lines, header=None, parent=None, collapsible=False):
         self.header = header
         self.lines = []
         self.add_lines(*lines)
+        self.tags_pre = []
+        self.tags_post = []
+        self.collapsible = collapsible
 
     def __str__(self):
         return '\n'.join(self.get_all_lines())
@@ -613,11 +616,27 @@ class Markdown(TreeDiagram):
             return f"<a href='{link}'>{text}</a>"
         return f"[{text}]({link})"
 
+    def format_header(self, use_tags=False):
+        parents = len(self.get_parents(depth=-1))
+        size = clamp(1 + parents, 1, 6)
+        if use_tags:
+            return f"<h{size}>{self.header}</h{size}>"
+        else:
+            return f"{'#' * size} {self.header}"
+
+    def update_collapsible(self):
+        self.tags_pre = [tag for tag in self.tags_pre if "detail" not in tag]
+        self.tags_post = [tag for tag in self.tags_post if "detail" not in tag]
+        if self.collapsible:
+            self.wrap_with_tags(f"<details>\n<summary>{self.format_header(use_tags=True)}</summary>\n", "</details>")
+
     def get_section_lines(self):
         """ Get a list of all lines in this section. """
-        lines = self.lines.copy()
-        if self.header and (lines or self.get_children()):
-            lines.insert(0, f"{'#' * clamp(1 + len(self.get_parents(depth=-1)), 1, 6)} {self.header}")
+        self.update_collapsible()
+        lines = self.tags_pre.copy()
+        if self.header and not self.collapsible and (self.lines or self.get_children()):
+            lines.append(self.format_header())
+        lines += self.lines + self.tags_post
         return lines
 
     def add_lines(self, *lines):
@@ -658,23 +677,17 @@ class Markdown(TreeDiagram):
     def add_code_lines(self, *lines, lang=None):
         """ Add code lines, wrapped by quotes. """
         self.add_lines(*lines)
-        self.wrap_with_tags("```", lang=lang)
+        self.wrap_with_tags(f"```{lang if lang else ''}", "```")
         return self
 
     def add_pre_lines(self, *lines):
         self.add_lines(*lines)
-        self.wrap_with_tags("pre")
+        self.wrap_with_tags("<pre>", "</pre>")
         return self
 
-    def wrap_with_tags(self, *tags, lang=None):
-        non_tags = ["```"]
-        for tag in tags:
-            if tag in non_tags:
-                self.lines.insert(0, f"{tag} {lang}" if lang else tag)
-                self.lines.append(tag)
-            else:
-                self.lines.insert(0, f"<{tag}>")
-                self.lines.append(f"</{tag}>")
+    def wrap_with_tags(self, pre, post):
+        self.tags_pre.append(pre)
+        self.tags_post.insert(0, post)
         return self
 
 

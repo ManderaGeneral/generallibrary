@@ -1,7 +1,6 @@
-from generalfile import Path
-
 from generallibrary import *
 
-with Timer():
-    sleep(1)
+from generalfile import Path
 
+
+Path("hi.md").text.write(Markdown("hi", header="hello", collapsible=True), overwrite=True)

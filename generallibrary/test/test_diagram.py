@@ -235,8 +235,8 @@ class TreeDiagramTest(unittest.TestCase):
 
         markdown = Markdown()
         markdown.add_node("foo", "bar")
-        markdown.add_node(Markdown("hello", "there").wrap_with_tags("```"))
-        markdown.add_node(Markdown("hi", "yo").wrap_with_tags("pre"))
+        markdown.add_node(Markdown("hello", "there").wrap_with_tags("```", "```"))
+        markdown.add_node(Markdown("hi", "yo").wrap_with_tags("<pre>", "</pre>"))
         self.assertEqual(['foo', 'bar', '', '```', 'hello', 'there', '```', '', '<pre>', 'hi', 'yo', '</pre>'], markdown.get_all_lines())
 
         markdown1 = Markdown("line1", header="header1")
@@ -244,6 +244,12 @@ class TreeDiagramTest(unittest.TestCase):
         self.assertEqual(['# header1', 'line1'], markdown1.get_section_lines())
         self.assertEqual(['## header2', 'line2'], markdown1.get_child().get_section_lines())
         self.assertEqual(['# header1', 'line1', '', '## header2', 'line2'], markdown1.get_all_lines())
+
+    def test_markdown_collapsible(self):
+        markdown = Markdown("hi", header="hello", collapsible=True)
+        self.assertIn("<h1>", markdown)
+        self.assertIn("hello", markdown)
+        self.assertIn("hi", markdown)
 
     def test_network_diagram(self):
         a1 = A(1)
