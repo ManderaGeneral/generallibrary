@@ -1,5 +1,5 @@
 from generallibrary.functions import AutoInitBases, HierarchyStorer
-from generallibrary.decorators import deco_cast_to_self, wrapper_transfer
+from generallibrary.decorators import deco_cast_to_self, wrapper_transfer, deco_cache
 from generallibrary.values import clamp, confineTo
 from generallibrary.iterables import get, pivot_list, subtract_list, flatten
 
@@ -637,33 +637,47 @@ class Markdown(TreeDiagram):
             return f"{'#' * size} {self.header}"
 
     def update_collapsible(self):
+        """ Remove detail from tags and then re-add it, not pretty. """
         self.tags_pre = [tag for tag in self.tags_pre if "detail" not in tag]
         self.tags_post = [tag for tag in self.tags_post if "detail" not in tag]
         if self.collapsible is not None:
             open_ = " open" if self.collapsible is False else ""
-            self.wrap_with_tags(f"<details{open_}>\n<summary>{self.format_header(use_tags=True)}</summary>\n", "</details>")
+            self.wrap_with_tags(f"<details{open_}>\n<summary>{self.format_header(use_tags=True)}</summary>\n", "</details>\n")
 
     def get_tags_post(self):
         """ Make closing tags wrap children. """
         if self.get_children():
             return
 
-        yield from self.tags_post
+        if self.render():
+            yield from self.tags_post
 
         prev_node = self
         for parent in self.get_parents(depth=-1, gen=True):
             if parent.get_child(index=-1) is not prev_node:
                 return
-            yield from parent.tags_post
+            if parent.render():
+                yield from parent.tags_post
             prev_node = parent
+
+    @deco_cache()
+    def render(self):
+        """ Whether to return any tags or lines for this node. """
+        for markdown in self.get_children(depth=-1, gen=True, include_self=True):
+            if markdown.lines:
+                return True
 
     def get_section_lines(self):
         """ Get a list of all lines in this section including closing tags from parents. """
+        if not self.render():
+            return []
+
         self.update_collapsible()
 
         lines = []
-        if self.header and self.collapsible is None and (self.lines or self.get_children()):
+        if self.header and self.collapsible is None:
             lines.append(self.format_header())
+
         lines += self.tags_pre
         lines += self.lines
         lines += list(self.get_tags_post())

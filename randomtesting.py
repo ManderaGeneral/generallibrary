@@ -5,9 +5,9 @@ from generalfile import Path
 
 # Path("hi.md").text.write(Markdown("hi", header="hello", collapsible=True), overwrite=True)
 
-a = Markdown("hi", collapsible=True).wrap_with_tags("```")
+a = Markdown("a")
+a.add_node("b").add_node("c")
+a.add_node("d")
 
-a.add_node("hello", collapsible=True).wrap_with_tags("<>")
-
-a.get_all_lines()
+print(a)
 
