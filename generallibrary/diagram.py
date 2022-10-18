@@ -585,7 +585,7 @@ class NetworkDiagram(_Diagram):
 
 class Markdown(TreeDiagram):
     """ A section for a markdown file, built on TreeDiagram. """
-    def __init__(self, *lines, header=None, parent=None, collapsible=False):
+    def __init__(self, *lines, header=None, parent=None, collapsible=None):
         self.header = header
         self.lines = []
         self.add_lines(*lines)
@@ -617,6 +617,9 @@ class Markdown(TreeDiagram):
         return f"[{text}]({link})"
 
     def format_header(self, use_tags=False):
+        if self.header is None:
+            return ""
+
         parents = len(self.get_parents(depth=-1))
         size = clamp(1 + parents, 1, 6)
         if use_tags:
@@ -627,16 +630,34 @@ class Markdown(TreeDiagram):
     def update_collapsible(self):
         self.tags_pre = [tag for tag in self.tags_pre if "detail" not in tag]
         self.tags_post = [tag for tag in self.tags_post if "detail" not in tag]
-        if self.collapsible:
-            self.wrap_with_tags(f"<details>\n<summary>{self.format_header(use_tags=True)}</summary>\n", "</details>")
+        if self.collapsible is not None:
+            open_ = " open" if self.collapsible is False else ""
+            self.wrap_with_tags(f"<details{open_}>\n<summary>{self.format_header(use_tags=True)}</summary>\n", "</details>")
+
+    def get_tags_post(self):
+        """ Make closing tags wrap children. """
+        if self.get_children():
+            return
+
+        yield from self.tags_post
+
+        prev_node = self
+        for parent in self.get_parents(depth=-1, gen=True):
+            if parent.get_child(index=-1) is not prev_node:
+                return
+            yield from parent.tags_post
+            prev_node = parent
 
     def get_section_lines(self):
-        """ Get a list of all lines in this section. """
+        """ Get a list of all lines in this section including closing tags from parents. """
         self.update_collapsible()
-        lines = self.tags_pre.copy()
-        if self.header and not self.collapsible and (self.lines or self.get_children()):
+
+        lines = []
+        if self.header and self.collapsible is None and (self.lines or self.get_children()):
             lines.append(self.format_header())
-        lines += self.lines + self.tags_post
+        lines += self.tags_pre
+        lines += self.lines
+        lines += list(self.get_tags_post())
         return lines
 
     def add_lines(self, *lines):
@@ -653,7 +674,8 @@ class Markdown(TreeDiagram):
 
             :rtype: list[str] """
         lines = []
-        for markdown in self.get_all():
+        for markdown in self.get_ordered():
+            print(markdown.lines)
             if lines:
                 lines.append("")
             lines.extend(markdown.get_section_lines())
@@ -685,9 +707,11 @@ class Markdown(TreeDiagram):
         self.wrap_with_tags("<pre>", "</pre>")
         return self
 
-    def wrap_with_tags(self, pre, post):
-        self.tags_pre.append(pre)
-        self.tags_post.insert(0, post)
+    def wrap_with_tags(self, pre, post=None):
+        if post is None:
+            post = pre
+        self.tags_pre.insert(0, pre)
+        self.tags_post.append(post)
         return self
 
 
