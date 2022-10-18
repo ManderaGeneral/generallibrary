@@ -310,27 +310,36 @@ class _Diagram_Global:
         func = self.get_nodes.__func__
         return _traverser(self, func=func, depth=depth, flat=flat, filt=filt, traverse_excluded=traverse_excluded, include_self=True, gen=gen, vertical=True, spawn=spawn)
 
-    def get_ordered(self, depth=None, flat=None, filt=None, traverse_excluded=None, gen=None, spawn=None):
+    def get_ordered(self, depth=None, flat=None, filt=None, gen=None, traverse_excluded=None, include_self=None, vertical=None, spawn=None):
         """ Top to Bottom horizontally.
             Starts with orphan nodes and traverses to return/yield children nodes which have had their respective parents already returned/yielded.
 
             :param TreeDiagram or NetworkDiagram or Any self:
-            :param int or None depth: -1 - Depth of 0 will return/yield single direct layer. Get unlimited with -1.
+            :param int or None depth: 0 - Depth of 0 will return/yield single direct layer. Get unlimited with -1. Previous layers are included.
             :param bool or None flat: True - Whether to return/yield nodes directly or in lists. Ignored if vertical.
             :param filt: Optional functional filter, expects 1 node as argument. Applies filter to ALL nodes, including self. See traverse_excluded.
-            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
             :param bool or None gen: False - Whether to return a generator or list.
+            :param bool or None traverse_excluded: False - Whether to traverse a node even though it has been filtered out from result.
+            :param bool or None include_self: True
+            :param bool or None vertical: False - Whether to traverse one node at a time, or layer by layer.
             :param bool or None spawn: True - Whether to call spawn_* hooks when using get_children or get_parents.
             :rtype: list[TreeDiagram or NetworkDiagram or Any] """
+        if include_self is None:
+            include_self = True
+
+        if vertical is None:
+            vertical = False
+
         if depth is None:
             depth = -1
 
         origins = [node for node in self.get_all(filt=filt) if not node.get_parents(filt=filt)]
         if not origins:
             raise AttributeError("Could not find any orphan nodes.")
+
         func = self.get_children.__func__
         order_func = self.get_parents.__func__
-        return _traverser(*origins, func=func, depth=depth, flat=flat, filt=filt, traverse_excluded=traverse_excluded, include_self=True, gen=gen, vertical=False, order_func=order_func, spawn=spawn)
+        return _traverser(*origins, func=func, depth=depth, flat=flat, filt=filt, traverse_excluded=traverse_excluded, include_self=include_self, gen=gen, vertical=vertical, order_func=order_func, spawn=spawn)
 
 
 class Storable:
