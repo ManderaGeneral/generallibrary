@@ -683,7 +683,7 @@ class Markdown(TreeDiagram):
 
             :rtype: list[str] """
         lines = []
-        for markdown in self.get_ordered():
+        for markdown in self.get_ordered(vertical=True):
             print(markdown.lines)
             if lines:
                 lines.append("")
