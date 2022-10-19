@@ -12,10 +12,6 @@
         "table": [
             "pandas",
             "tabulate"
-        ],
-        "full": [
-            "pandas",
-            "tabulate"
         ]
     },
     "enabled": true,
@@ -27,5 +23,6 @@
     "topics": [
         "library"
     ],
-    "manifest": []
+    "manifest": [],
+    "contribute": false
 }
