@@ -1,10 +1,9 @@
 from collections import ChainMap
-from itertools import chain
+from warnings import warn
 
 from generallibrary.iterables import extend_list_in_dict, split_list
 from generallibrary.decorators import deco_cache, wrapper_transfer, SigInfo
 from generallibrary.diagram import TreeDiagram
-from generallibrary.code import warn
 from generallibrary.types import getBaseClasses
 
 from generallibrary.objinfo.children import _ObjInfoChildren
@@ -93,7 +92,7 @@ def hook(callable_, *funcs, owner=None, after=False):
         if parent is None:
             raise AttributeError("Could not resolve owner of callable to hook into. Possibly local function?")
         if parent.is_class():
-            warn("hook was used on a method without defining owner, prone to mistake as hook will use first base class as owner.", add_depth=1)
+            warn("hook was used on a method without defining owner, prone to mistake as hook will use first base class as owner.")
         owner = parent.obj
 
     if not hasattr(owner, "hooks"):
