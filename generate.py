@@ -1,8 +1,10 @@
 
+from generallibrary import Log
 from generalpackager import Packager
 
 if __name__ == "__main__":
-    Packager("generallibrary").generate_localfiles(print_out=True)
+    Log("root").configure_stream(level=20)
+    Packager("generallibrary").generate_localfiles(print_out=20)
 
 
 
