@@ -1,6 +1,6 @@
 from generallibrary.decorators import Operators
-
-import time
+from generallibrary.context import DecoContext
+from time import sleep as old_sleep
 from datetime import datetime
 import pytz
 from dateutil import parser
@@ -8,60 +8,37 @@ from dateutil.tz import gettz
 from timeit import default_timer
 
 
-class Timer:
-    """ Callable class to easily time things and print. """
-    def __init__(self, start_time=None):
-        """ Returns a started Timer instance.
+class Timer(DecoContext):
+    TIMER_FUNC = default_timer
+    UNIT = "seconds"
 
-            :param float start_time: Defaults to time in seconds since epoch (time.time()) """
-        self.start_time = self.reset(start_time=start_time)
+    def __init__(self, func, print_out=True):
+        self.print_out = print_out
+        self.start_time = self.before()
 
-    def reset(self, start_time=None):
-        """ Reset and start timer. """
-        if start_time is None:
-            start_time = time.time()
-        self.start_time = start_time
-        return start_time
+    def _prettify_time(self, time):
+        """ Could do some unit conversion and stuff here. """
+        return f"{time} {self.UNIT}"
 
-    def seconds(self, decimals=None):
-        """ Get seconds passed since timer started or was reset. """
-        if decimals is None:
-            decimals = 8
-        return round(time.time() - self.start_time, decimals)
+    def time(self):
+        time = self.TIMER_FUNC() - self.start_time
+        if self.print_out:
+            print(f"Time taken: {self._prettify_time(time=time)}")
+        return time
 
-    def print(self, reset=False, decimals=None):
-        """ Print seconds passed. """
-        seconds = self.seconds(decimals=decimals)
-        print(f"Seconds passed: {seconds}")
-        if reset:
-            self.reset()
-        return seconds
+    def before(self):
+        self.start_time = self.TIMER_FUNC()
+        return self.start_time
 
-    @classmethod
-    def deco(cls, iterations=1):
-        def _deco(func):
-            def _wrapper(*args, **kwargs):
-                timer = default_timer()
-                for _ in range(iterations):
-                    result = func(*args, **kwargs)
-                print(f"Seconds for {iterations} iterations of '{func.__name__}': {default_timer() - timer}")
-                return result
-            return _wrapper
-        return _deco
-
-    def __enter__(self):
-        self.time = default_timer()
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        stop = default_timer()
-        print(f"Time: {stop - self.time} seconds")
+    def after(self):
+        return self.time()
 
 
 def sleep(seconds):
     """ Normal sleep function from time package.
 
         :param float seconds: Time in seconds to sleep. """
-    time.sleep(seconds)
+    old_sleep(seconds)
 
 
 @Operators.deco_define_comparisons(lambda date: date.datetime)
@@ -72,19 +49,19 @@ class Date:
 
     def __init__(self, date):
         if isinstance(date, Date):
-            datetime = date.datetime
+            datetime_ = date.datetime
         else:
             if isinstance(date, str):
-                datetime = parser.parse(date, tzinfos={"CET": gettz("CET"), "CEST": gettz("CEST")})
+                datetime_ = parser.parse(date, tzinfos={"CET": gettz("CET"), "CEST": gettz("CEST")})
             else:
-                datetime = date
+                datetime_ = date
 
-            if str(datetime.tzinfo) != self.timezone:
-                datetime = self.get_timezone_obj().localize(datetime.replace(tzinfo=None))
+            if str(datetime_.tzinfo) != self.timezone:
+                datetime_ = self.get_timezone_obj().localize(datetime_.replace(tzinfo=None))
 
-            datetime = datetime.replace(second=0, microsecond=0)
+            datetime_ = datetime_.replace(second=0, microsecond=0)
 
-        self.datetime = datetime
+        self.datetime = datetime_
 
     @classmethod
     def get_timezone_obj(cls):
