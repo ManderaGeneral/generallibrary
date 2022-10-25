@@ -6,6 +6,15 @@ import pytz
 from dateutil import parser
 from dateutil.tz import gettz
 from timeit import default_timer
+from logging import getLogger
+
+
+def print_or_log(print_out, msg):
+    log = print_out in (10, 20, 30, 40, 50)
+    if log:
+        getLogger(__name__).log(level=print_out, msg=msg)
+    else:
+        print(msg)
 
 
 class Timer(DecoContext):
@@ -16,14 +25,15 @@ class Timer(DecoContext):
         self.print_out = print_out
         self.start_time = self.before()
 
-    def _prettify_time(self, time):
-        """ Could do some unit conversion and stuff here. """
-        return f"{time} {self.UNIT}"
+    def output_time(self, time):
+        """ Could do some unit conversion here. """
+        msg = f"Time taken: {time} {self.UNIT}"
+        print_or_log(print_out=self.print_out, msg=msg)
 
     def time(self):
         time = self.TIMER_FUNC() - self.start_time
         if self.print_out:
-            print(f"Time taken: {self._prettify_time(time=time)}")
+            self.output_time(time=time)
         return time
 
     def before(self):
