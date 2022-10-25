@@ -30,6 +30,36 @@ class TestContext(TestCase):
         x()
         self.assertEqual([1, 2, 3], glob)
 
+    def test_decocontext_simple_deco_on_method(self):
+        glob = []
+        class X(DecoContext):
+            def before(self):
+                glob.append(1)
+            def after(self):
+                glob.append(3)
+
+        class Y:
+            @X
+            def x(self):
+                glob.append(2)
+        Y().x()
+        self.assertEqual([1, 2, 3], glob)
+
+    def test_decocontext_simple_deco_on_method_called(self):
+        glob = []
+        class X(DecoContext):
+            def before(self):
+                glob.append(1)
+            def after(self):
+                glob.append(3)
+
+        class Y:
+            @X()
+            def x(self):
+                glob.append(2)
+        Y().x()
+        self.assertEqual([1, 2, 3], glob)
+
     def test_decocontext_simple_context(self):
         glob = []
         class X(DecoContext):
@@ -176,4 +206,20 @@ class TestRedirectStdout(TestCase):
         @RedirectStdout
         def y():
             print("ERROR - This shouldn't print (Hard to find though...)")
+
+    def test_redirect_method(self):
+        class X:
+            @RedirectStdout()
+            def y(self):
+                print("ERROR - This shouldn't print (Hard to find though...)")
+
+        X().y()
+
+    def test_redirect_method_without_call_and_func_arg(self):
+        class X:
+            @RedirectStdout
+            def y(self):
+                print("ERROR - This shouldn't print (Hard to find though...)")
+
+        self.assertRaises(AssertionError, X().y)
 

@@ -1,12 +1,13 @@
 import sys
+from functools import partial
 from io import StringIO
-from generallibrary import AutoInitBases
+from generallibrary.functions import AutoInitBases
 
 
 class DecoContext(metaclass=AutoInitBases):
     """ A base class which is both contextmanager and decorator.
         Just define before and after.
-        Optionally define dunder init.
+        Optionally define dunder init, put 'func' as first arg if method should be decoratable without call.
         Works with func being first parameter and without func parameter at all. """
     def __init__(self, func=None):
         self.func = func
@@ -17,11 +18,16 @@ class DecoContext(metaclass=AutoInitBases):
     def after(self, *args, **kwargs):
         ...
 
+    def __get__(self, instance, owner):
+        return partial(self.__call__, instance)
+
     def __call__(self, *args, **kwargs):
         # print(self, args, kwargs)
         if self.func is None and args and callable(args[0]):
             self.func = args[0]
             return self
+
+        assert self.func, f"{type(self).__name__}.__init__ needs 'func' as first arg for decorating method without call."
 
         self.before()
         try:
