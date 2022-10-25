@@ -6,23 +6,15 @@ from generallibrary.iterables import join_with_str
 
 import pyperclip
 import os
-import inspect
-
-
+import sys
 import inspect
 import logging
 
 from pathlib import Path
 
 
-def get_calling_module(add_depth=2):
-    return inspect.getmodule(inspect.stack()[add_depth][0])
-
-def get_name_from_module(module):
-    if module.__name__ == "__main__":
-        return os.path.splitext(os.path.basename(module.__file__))[0]
-    else:
-        return module.__name__
+def _name_from_frames():
+    return sys._getframe(7).f_globals["__name__"]
 
 
 class Log(TreeDiagram, Recycle):
@@ -43,7 +35,7 @@ class Log(TreeDiagram, Recycle):
     @classmethod
     def _name(cls, name):
         """ Mimic logging.Logger's naming behaviour """
-        return str(name) if name else cls.ROOT_NAME
+        return str(name) if name else _name_from_frames()
 
     _recycle_keys = {"name": lambda x: Log._name(x)}
 
@@ -54,11 +46,12 @@ class Log(TreeDiagram, Recycle):
         self.logger = logging.getLogger(name)
         assert name == self.logger.name
 
-    def debug(self, *msg): self.logger.debug(join_with_str(" ", msg))
-    def info(self, *msg): self.logger.info(join_with_str(" ", msg))
-    def warning(self, *msg): self.logger.warning(join_with_str(" ", msg))
-    def error(self, *msg): self.logger.error(join_with_str(" ", msg))
-    def critical(self, *msg): self.logger.critical(join_with_str(" ", msg))
+
+    def debug(self, *msg):      self.logger.debug(join_with_str(" ", msg))
+    def info(self, *msg):       self.logger.info(join_with_str(" ", msg))
+    def warning(self, *msg):    self.logger.warning(join_with_str(" ", msg))
+    def error(self, *msg):      self.logger.error(join_with_str(" ", msg))
+    def critical(self, *msg):   self.logger.critical(join_with_str(" ", msg))
     
     def _configure_helper(self, level, delimiter, format_, handler):
         self.logger.setLevel(level=level)
@@ -256,14 +249,6 @@ def get_definition_line(obj):
     """ Get line number of an object's definition. """
     obj, depth = get_origin(obj=obj, include_depth=True)
     return max(inspect.getsourcelines(obj)[1] + depth, 1)
-
-
-def warn(msg, add_depth=0, print_out=True):
-    link = print_link(print_out=False, add_depth=1 + add_depth)
-    full_msg = f"Warning: {msg}\n    {link}"
-    if print_out:
-        print(full_msg)
-    return link
 
 
 
