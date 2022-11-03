@@ -320,16 +320,21 @@ class Recycle:
         if isinstance(cls._recycle_instances, dict):
             cls._recycle_instances.clear()
 
-def terminal(*args, python=False, suppress=False, **kwargs):
+def _decode_subprocess(byte_string):
+    return byte_string.decode(sys.stdout.encoding)
+
+def terminal(*args, python=False, error=True, **kwargs):
     args = [str(arg) for arg in args]
     if python:
         args.insert(0, sys.executable)
 
-    if suppress:
-        kwargs["stdout"] = subprocess.DEVNULL
-        kwargs["stderr"] = subprocess.DEVNULL
-
-    return subprocess.check_call(args, **kwargs)
+    try:
+        byte_string = subprocess.check_output(args, stderr=subprocess.STDOUT, **kwargs)
+    except subprocess.CalledProcessError as exception:
+        if error:
+            raise
+        return _decode_subprocess(byte_string=exception.output)
+    return _decode_subprocess(byte_string=byte_string)  # https://stackoverflow.com/a/24638593/3936044
 
 
 from generallibrary.objinfo.objinfo import get_attrs_from_bases

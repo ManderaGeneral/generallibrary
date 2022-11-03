@@ -608,9 +608,10 @@ class FunctionsTest(unittest.TestCase):
         A(1, 2)
 
     def test_terminal(self):
-        self.assertEqual(0, terminal("-c", "assert 5 == 5", python=True))
+        self.assertEqual("", terminal("-c", "assert 5 == 5", python=True))
         with self.assertRaises(Exception):
-            self.assertEqual(0, terminal("-c", "assert 5 == 4", python=True, suppress=True))
+            terminal("-c", "assert 5 == 4", python=True)
+        self.assertIn("AssertionError", terminal("-c", "assert 4 == 5", python=True, error=False))
 
     def test_HierarchyStorer(self):
         class A(HierarchyStorer):
