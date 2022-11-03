@@ -323,7 +323,8 @@ class Recycle:
 def _decode_subprocess(byte_string):
     return byte_string.decode(sys.stdout.encoding)
 
-def terminal(*args, python=False, error=True, **kwargs):
+_sentinel = object()
+def terminal(*args, python=False, error=True, default=_sentinel, **kwargs):
     args = [str(arg) for arg in args]
     if python:
         args.insert(0, sys.executable)
@@ -331,8 +332,10 @@ def terminal(*args, python=False, error=True, **kwargs):
     try:
         byte_string = subprocess.check_output(args, stderr=subprocess.STDOUT, **kwargs)
     except subprocess.CalledProcessError as exception:
-        if error:
+        if error and default is _sentinel:
             raise
+        elif default is not _sentinel:
+            return default
         return _decode_subprocess(byte_string=exception.output)
     return _decode_subprocess(byte_string=byte_string)  # https://stackoverflow.com/a/24638593/3936044
 
