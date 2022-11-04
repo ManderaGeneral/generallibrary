@@ -321,23 +321,63 @@ class Recycle:
             cls._recycle_instances.clear()
 
 def _decode_subprocess(byte_string):
+    if type(byte_string) is not bytes:
+        return byte_string
     return byte_string.decode(sys.stdout.encoding)
 
-_sentinel = object()
-def terminal(*args, python=False, error=True, default=_sentinel, **kwargs):
+def _call(args, kwargs, python, capture_output):
     args = [str(arg) for arg in args]
     if python:
         args.insert(0, sys.executable)
 
+    if capture_output:
+        return subprocess.check_output(args=args, stderr=subprocess.STDOUT, **kwargs)
+    else:
+        return subprocess.check_call(args=args, **kwargs)
+
+_sentinel = object()
+def terminal(*args, python=False, error=True, default=_sentinel, capture_output=True, **kwargs):
     try:
-        byte_string = subprocess.check_output(args, stderr=subprocess.STDOUT, **kwargs)
+        byte_string = _call(args=args, kwargs=kwargs, python=python, capture_output=capture_output)
     except subprocess.CalledProcessError as exception:
-        if error and default is _sentinel:
-            raise
-        elif default is not _sentinel:
+        if default is _sentinel:
+            if error:
+                raise
+        else:
             return default
         return _decode_subprocess(byte_string=exception.output)
     return _decode_subprocess(byte_string=byte_string)  # https://stackoverflow.com/a/24638593/3936044
 
 
 from generallibrary.objinfo.objinfo import get_attrs_from_bases
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
