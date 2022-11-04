@@ -342,7 +342,7 @@ def terminal(*args, python=False, error=True, default=_sentinel, capture_output=
     except subprocess.CalledProcessError as exception:
         if default is _sentinel:
             if error:
-                raise
+                raise ChildProcessError(_decode_subprocess(byte_string=exception.output))
         else:
             return default
         return _decode_subprocess(byte_string=exception.output)
