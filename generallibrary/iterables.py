@@ -89,7 +89,7 @@ def is_iterable(obj):
 
 def depth(obj, _depth=0):
     """ Get depth of an object by recursively checking the first value. """
-    if obj and is_iterable(obj):
+    if obj and is_iterable(obj) and type(obj) is not str:
         obj = iter_first_value(iterable=obj)
         return depth(obj=obj, _depth=_depth + 1)
     return _depth
@@ -101,7 +101,6 @@ def iter_first_value(iterable, default=None):
             return iterable[x]
         else:
             return x
-
     return default
 
 
