@@ -87,21 +87,12 @@ def is_iterable(obj):
     """ Get whether an obj is iterable. """
     return hasattr(obj, "__iter__")
 
-
-def depth(obj):
+def depth(obj, _depth=0):
     """ Get depth of an object by recursively checking the first value. """
-    sentinel = object()
-    depth = 0
-    while True:
-        if not is_iterable(obj=obj):
-            break
-        first_value = iter_first_value(iterable=obj, default=sentinel)
-        if first_value == obj or first_value is sentinel:
-            break
-        obj = first_value
-        depth += 1
-    return depth
-
+    if obj and is_iterable(obj):
+        obj = iter_first_value(iterable=obj)
+        return depth(obj=obj, _depth=_depth + 1)
+    return _depth
 
 def iter_first_value(iterable, default=None):
     """ Get first 'random' value of an iterable or default value. """
