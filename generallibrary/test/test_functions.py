@@ -613,6 +613,7 @@ class FunctionsTest(unittest.TestCase):
             terminal("-c", "assert 5 == 4", python=True)
         self.assertIn("AssertionError", terminal("-c", "assert 4 == 5", python=True, error=False))
         self.assertEqual(0, terminal("-c", "assert 5 == 5", python=True, capture_output=False))
+        # self.assertEqual(0, terminal("-c", "assert 5 == 4", python=True, capture_output=False, error=False))
 
 
     def test_HierarchyStorer(self):

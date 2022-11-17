@@ -1,3 +1,4 @@
+from typing import Union
 
 from generallibrary.decorators import wrapper_transfer, SigInfo
 from generallibrary.iterables import remove
@@ -340,13 +341,73 @@ def terminal(*args, python=False, error=True, default=_sentinel, capture_output=
     try:
         byte_string = _call(args=args, kwargs=kwargs, python=python, capture_output=capture_output)
     except subprocess.CalledProcessError as exception:
+        # return exception
         if default is _sentinel:
             if error:
                 raise ChildProcessError(_decode_subprocess(byte_string=exception.output))
         else:
             return default
         return _decode_subprocess(byte_string=exception.output)
-    return _decode_subprocess(byte_string=byte_string)  # https://stackoverflow.com/a/24638593/3936044
+    return _decode_subprocess(byte_string=byte_string)
+
+
+class Terminal:
+    ERROR = subprocess.CalledProcessError
+    SENTINEL = object()
+
+    def __init__(self, *args, python=False, error=True, capture_output=True, **kwargs):
+        self.args = args
+        self.python = python
+        self.error = error
+        self.capture_output = capture_output
+        self.kwargs = kwargs
+
+        self._response: Union[object, bytes, subprocess.CalledProcessError] = self.SENTINEL
+        self.call()
+
+    def _call(self):
+        if self.capture_output:
+            return subprocess.check_output(args=self.get_args(), stderr=subprocess.STDOUT, **self.kwargs)
+        else:
+            return subprocess.check_call(args=self.get_args(), **self.kwargs)
+
+    def call(self):
+        try:
+            self._response = self._call()
+        except self.ERROR as exception:
+            if self.error:
+                raise
+            self._response = exception
+
+    def success(self):
+        return type(self._response) is not self.ERROR
+
+    def output(self):
+        """ Return string on success or error message on fail. """
+        if self.success():
+            return self._decode(self._response)
+        else:
+            return self._decode(self._response.output)
+
+    def returncode(self):
+        if self.success():
+            return 0
+        else:
+            return self._response.returncode
+
+    @staticmethod
+    def _decode(byte_string):
+        # https://stackoverflow.com/a/24638593/3936044
+        if type(byte_string) is not bytes:
+            return byte_string
+        return byte_string.decode(sys.stdout.encoding)
+
+    def get_args(self):
+        args = [str(arg) for arg in self.args]
+        if self.python:
+            args.insert(0, sys.executable)
+        return args
+
 
 
 from generallibrary.objinfo.objinfo import get_attrs_from_bases

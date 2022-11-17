@@ -1,8 +1,12 @@
+from functools import partial
+
 from generallibrary import *
 
-from generalpackager import Packager
+# print(type(terminal("-c", "assert False", python=True)))
 
-print(terminal("-c", "assert 5 == 5", python=True, capture_output=False, default="hi"))
+print(Terminal("-c", "print(5)", python=True, error=False, capture_output=False).success())
+
+# Maybe terminal could be a class instead?
 
 
-# Log("root").view(spawn=True)
+from subprocess import CalledProcessError
