@@ -83,13 +83,16 @@ def get_items(obj):
         return enumerate(obj)
 
 
-def is_iterable(obj):
-    """ Get whether an obj is iterable. """
+def is_iterable(obj, normal=False):
+    """ Get whether an obj is iterable.
+        Set normal to True to not return True for objects such as strings. """
+    if normal and type(obj) is str:
+        return False
     return hasattr(obj, "__iter__")
 
 def depth(obj, _depth=0):
     """ Get depth of an object by recursively checking the first value. """
-    if obj and is_iterable(obj) and type(obj) is not str:
+    if obj and is_iterable(obj, normal=True):
         obj = iter_first_value(iterable=obj)
         return depth(obj=obj, _depth=_depth + 1)
     return _depth

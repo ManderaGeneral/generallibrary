@@ -33,6 +33,8 @@ class IterablesTest(unittest.TestCase):
         self.assertTrue(is_iterable({"a": 5, "b": 2}))
         self.assertTrue(is_iterable("test"))
 
+        self.assertFalse(is_iterable("test", normal=True))
+
         self.assertFalse(is_iterable(None))
         self.assertFalse(is_iterable(5))
         self.assertFalse(is_iterable(51.2))
