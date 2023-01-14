@@ -351,7 +351,32 @@ def terminal(*args, python=False, error=True, default=_sentinel, capture_output=
     return _decode_subprocess(byte_string=byte_string)
 
 
-class Terminal:
+
+class _Result_Terminal:
+    success = None
+    fail = None
+    string_result = None
+    code_result = None
+    error_result = None
+
+    @staticmethod
+    def _decode(byte_string):
+        # https://stackoverflow.com/a/24638593/3936044
+        if type(byte_string) is not bytes:
+            return byte_string
+        return byte_string.decode(sys.stdout.encoding)
+
+    def _process_result(self, success=None, error=None):
+        self.success = error is None
+        self.fail = not self.success
+        self.string_result = self._decode(error.output if success is None else success)
+        self.code_result = error.returncode if error else 0
+        self.error_result = error
+
+
+class Terminal(_Result_Terminal):
+    """ One-time use terminal call. """
+
     ERROR = subprocess.CalledProcessError
     SENTINEL = object()
 
@@ -362,7 +387,6 @@ class Terminal:
         self.capture_output = capture_output
         self.kwargs = kwargs
 
-        self._response: Union[object, bytes, subprocess.CalledProcessError] = self.SENTINEL
         self.call()
 
     def _call(self):
@@ -373,34 +397,11 @@ class Terminal:
 
     def call(self):
         try:
-            self._response = self._call()
+            self._process_result(success=self._call())
         except self.ERROR as exception:
             if self.error:
                 raise
-            self._response = exception
-
-    def success(self):
-        return type(self._response) is not self.ERROR
-
-    def output(self):
-        """ Return string on success or error message on fail. """
-        if self.success():
-            return self._decode(self._response)
-        else:
-            return self._decode(self._response.output)
-
-    def returncode(self):
-        if self.success():
-            return 0
-        else:
-            return self._response.returncode
-
-    @staticmethod
-    def _decode(byte_string):
-        # https://stackoverflow.com/a/24638593/3936044
-        if type(byte_string) is not bytes:
-            return byte_string
-        return byte_string.decode(sys.stdout.encoding)
+            self._process_result(error=exception)
 
     def get_args(self):
         args = [str(arg) for arg in self.args]

@@ -615,6 +615,24 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(0, terminal("-c", "assert 5 == 5", python=True, capture_output=False))
         # self.assertEqual(0, terminal("-c", "assert 5 == 4", python=True, capture_output=False, error=False))
 
+    def test_Terminal_assert_pass(self):
+        x = Terminal("-c", "assert 5 == 5", python=True)
+        self.assertEqual("", x.string_result)
+        self.assertEqual(0, x.code_result)
+        self.assertEqual(True, x.success)
+        self.assertEqual(False, x.fail)
+        self.assertEqual(None, x.error_result)
+
+    def test_Terminal_assert_fail(self):
+        x = Terminal("-c", "assert 4 == 5", python=True, error=False)
+        self.assertIn("Error", x.string_result)
+        self.assertEqual(1, x.code_result)
+        self.assertEqual(False, x.success)
+        self.assertEqual(type(x.error_result).__name__, "CalledProcessError")
+
+    def test_Terminal_assert_error(self):
+        with self.assertRaises(Exception):
+            Terminal("-c", "assert 5 == 4", python=True)
 
     def test_HierarchyStorer(self):
         class A(HierarchyStorer):
