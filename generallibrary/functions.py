@@ -369,21 +369,30 @@ class _Result_Terminal:
     def _process_result(self, success=None, error=None):
         self.success = error is None
         self.fail = not self.success
-        self.string_result = self._decode(error.output if success is None else success)
+
+        if self.success:
+            self.string_result = success
+        elif self.default is self.SENTINEL:
+            self.string_result = error.output
+        else:
+            self.string_result = self.default
+
         self.code_result = error.returncode if error else 0
         self.error_result = error
 
 
 class Terminal(_Result_Terminal):
-    """ One-time use terminal call. """
+    """ One-time use terminal call.
+        If error and sentinel is defined then string_result will be set to default. Success will still be False. """
 
     ERROR = subprocess.CalledProcessError
     SENTINEL = object()
 
-    def __init__(self, *args, python=False, error=True, capture_output=True, **kwargs):
+    def __init__(self, *args, python=False, error=True, default=SENTINEL, capture_output=True, **kwargs):
         self.args = args
         self.python = python
-        self.error = error
+        self.raise_error = error
+        self.default = default
         self.capture_output = capture_output
         self.kwargs = kwargs
 
@@ -399,7 +408,7 @@ class Terminal(_Result_Terminal):
         try:
             self._process_result(success=self._call())
         except self.ERROR as exception:
-            if self.error:
+            if self.raise_error and self.default is self.SENTINEL:
                 raise
             self._process_result(error=exception)
 
