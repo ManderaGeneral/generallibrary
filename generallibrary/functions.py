@@ -389,7 +389,12 @@ class Terminal(_Result_Terminal):
     ERROR = subprocess.CalledProcessError
     SENTINEL = object()
 
-    def __init__(self, *args, python=False, error=True, default=SENTINEL, capture_output=True, **kwargs):
+    capture_output = True
+
+    def __init__(self, *args, python=False, error=True, default=SENTINEL, capture_output=None, **kwargs):
+        if capture_output is None:
+            capture_output = Terminal.capture_output
+
         self.args = args
         self.python = python
         self.raise_error = error
