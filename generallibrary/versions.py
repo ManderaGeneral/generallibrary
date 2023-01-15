@@ -3,38 +3,37 @@ Get and define python versions.
 Get Operating System.
 Get package info?
 """
-
+from generallibrary import join_with_str
 from generallibrary.functions import initBases
 from generallibrary.decorators import Operators
 
-from packaging import version
-from distutils.version import StrictVersion
-import re
 
-
-class Ver(StrictVersion):
-    """ Generic version handler.
-        Todo: Use Ver in each part of VerInfo. """
+@Operators.deco_define_comparisons(lambda left: Ver(left).three_parts())
+class Ver:
     def __init__(self, ver):
-        ver = self._allow_single_digit(ver)
-        super().__init__(str(ver))
+        self.parts = self.parse_ver_string(ver=ver)
 
     @staticmethod
-    def _allow_single_digit(ver):
-        if isinstance(ver, int) or (isinstance(ver, str) and "." not in ver):
-            return float(ver)
-        else:
-            return ver
+    def parse_ver_string(ver):
+        """ Simple parsing for now with only major, minor and micro.
+            Truncates rest. """
+        parts = str(ver).split(".")
+        parts = parts[0:3]
+        parts = [int(part) for part in parts]
+        return parts
+
+    def three_parts(self):
+        return self.parts + [0] * (3 - len(self.parts))
 
     def bump(self):
-        """ Return a new Ver with bumped last value. """
-        if str(self).count(".") == 0:
-            return f"{self}.0.1"
-        elif str(self).count(".") == 1:
-            return f"{self}.1"
-        else:
-            bulk, micro = re.findall("(.*)(\\d)", str(self))[0]
-            return Ver(f"{bulk}{int(micro) + 1}")
+        """ Return a new Ver with bumped micro. """
+        ver = Ver(str(self))
+        ver.parts = ver.three_parts()
+        ver.parts[-1] += 1
+        return ver
+
+    def __str__(self):
+        return join_with_str(".", self.parts)
 
     def __dumps__(self):
         return str(self)
@@ -42,6 +41,40 @@ class Ver(StrictVersion):
     @staticmethod
     def __loads__(ver):
         return Ver(ver=ver)
+
+
+
+
+# class Ver(Version):
+#     """ Generic version handler.
+#         Todo: Use Ver in each part of VerInfo. """
+#     def __init__(self, ver):
+#         ver = self._allow_single_digit(ver)
+#         super().__init__(str(ver))
+#
+#     @staticmethod
+#     def _allow_single_digit(ver):
+#         if isinstance(ver, int) or (isinstance(ver, str) and "." not in ver):
+#             return float(ver)
+#         else:
+#             return ver
+#
+#     def bump(self):
+#         """ Return a new Ver with bumped last value. """
+#         if str(self).count(".") == 0:
+#             return f"{self}.0.1"
+#         elif str(self).count(".") == 1:
+#             return f"{self}.1"
+#         else:
+#             bulk, micro = re.findall("(.*)(\\d)", str(self))[0]
+#             return Ver(f"{bulk}{int(micro) + 1}")
+#
+#     def __dumps__(self):
+#         return str(self)
+#
+#     @staticmethod
+#     def __loads__(ver):
+#         return Ver(ver=ver)
 
 
 class _OsInfo:
@@ -168,7 +201,7 @@ class _PythonInfo:
     @property
     def pythonVersion(self):
         """ Returns a PythonVersion object that can be used to compare directly to an int, float or str. """
-        return PythonVersion(self.pythonString)
+        return Ver(self.pythonString)
 
 
 class _ConditionalFunctionalities:
@@ -221,16 +254,5 @@ class DuckTyping:
         Would have to deal with syntax error by some importing technique then I guess. """
 
 
-@Operators.deco_define_comparisons(lambda left: left.version, lambda right: version.parse(str(right)))
-class PythonVersion(DuckTyping):
-    """ Used by VerInfo.pythonVersion to easily compare python versions to int, float or string. """
-    def __init__(self, pythonString):
-        self._version = version.parse(pythonString)
-
-    @property
-    def version(self):
-        """ Get python version.
-            Protect variable."""
-        return self._version
 
 

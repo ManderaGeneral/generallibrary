@@ -15,7 +15,7 @@ from generallibrary.decorators import deco_optional_suppress, deco_cache, deco_c
 from generallibrary.values import BoolStr, floor, ceil, round_, clamp, sign, inrange, rectify, doubleRectify, confineTo, EnvVar, get_launch_options
 from generallibrary.diagram import TreeDiagram, Markdown, NetworkDiagram, Storable
 from generallibrary.code import debug, CodeLine, clipboard_copy, clipboard_get, print_link, print_link_to_obj, get_definition_line, get_origin, Log
-from generallibrary.versions import VerInfo, PythonVersion, Ver
+from generallibrary.versions import VerInfo, Ver
 from generallibrary.objinfo.objinfo import ObjInfo, hook, cache_clear, call_base_hooks, DataClass, get_attrs_from_bases, dir_appearance_order
 from generallibrary.serialize import dumps, loads
 from generallibrary.context import DecoContext, RedirectStdout
