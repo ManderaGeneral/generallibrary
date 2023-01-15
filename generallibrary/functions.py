@@ -367,13 +367,14 @@ class _Result_Terminal:
         return byte_string.decode(sys.stdout.encoding)
 
     def _process_result(self, success=None, error=None):
+        """ :param generallibrary.Terminal self: """
         self.success = error is None
         self.fail = not self.success
 
         if self.success:
-            self.string_result = success
+            self.string_result = str(success, "utf-8")
         elif self.default is self.SENTINEL:
-            self.string_result = error.output
+            self.string_result = str(error.output, "utf-8")
         else:
             self.string_result = self.default
 

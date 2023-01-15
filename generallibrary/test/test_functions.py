@@ -617,6 +617,7 @@ class FunctionsTest(unittest.TestCase):
 
     def test_Terminal_assert_pass(self):
         x = Terminal("-c", "assert 5 == 5", python=True)
+        self.assertEqual(str, type(x.string_result))
         self.assertEqual("", x.string_result)
         self.assertEqual(0, x.code_result)
         self.assertEqual(True, x.success)
@@ -625,6 +626,7 @@ class FunctionsTest(unittest.TestCase):
 
     def test_Terminal_assert_fail(self):
         x = Terminal("-c", "assert 4 == 5", python=True, error=False)
+        self.assertEqual(str, type(x.string_result))
         self.assertIn("Error", x.string_result)
         self.assertEqual(1, x.code_result)
         self.assertEqual(False, x.success)
