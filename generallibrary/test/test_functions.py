@@ -1,7 +1,7 @@
 
 from generallibrary.functions import *
 from generallibrary import VerInfo, cache_clear, TreeDiagram, deco_optional_suppress, deco_cache, deco_cast_parameters, \
-    deco_bound_defaults, deco_extend, deco_propagate_while, Operators, wrapper_transfer, SigInfo
+    deco_bound_defaults, deco_extend, deco_propagate_while, Operators, wrapper_transfer, SigInfo, RedirectStdout
 
 import unittest
 
@@ -635,6 +635,23 @@ class FunctionsTest(unittest.TestCase):
     def test_Terminal_assert_error(self):
         with self.assertRaises(Exception):
             Terminal("-c", "assert 5 == 4", python=True)
+
+    def test_Terminal_no_capture_pass(self):
+        x = Terminal("-c", "assert 5 == 5", python=True, capture_output=False)
+        self.assertEqual(str, type(x.string_result))
+        self.assertEqual("", x.string_result)
+        self.assertEqual(0, x.code_result)
+        self.assertEqual(True, x.success)
+        self.assertEqual(False, x.fail)
+        self.assertEqual(None, x.error_result)
+
+    def test_Terminal_no_capture_fail(self):
+        x = Terminal("-c", "assert 4 == 5", python=True, error=False, capture_output=False)  # Would be nice to redirect Stderr here
+        self.assertEqual(str, type(x.string_result))
+        self.assertIn("non-zero", x.string_result)
+        self.assertEqual(1, x.code_result)
+        self.assertEqual(False, x.success)
+        self.assertEqual(type(x.error_result).__name__, "CalledProcessError")
 
     def test_HierarchyStorer(self):
         class A(HierarchyStorer):

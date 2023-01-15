@@ -374,7 +374,7 @@ class _Result_Terminal:
         if self.success:
             self.string_result = str(success, "utf-8")
         elif self.default is self.SENTINEL:
-            self.string_result = str(error.output, "utf-8")
+            self.string_result = str(error) if error.output is None else str(error.output, "utf-8")
         else:
             self.string_result = self.default
 
@@ -403,7 +403,8 @@ class Terminal(_Result_Terminal):
         if self.capture_output:
             return subprocess.check_output(args=self.get_args(), stderr=subprocess.STDOUT, **self.kwargs)
         else:
-            return subprocess.check_call(args=self.get_args(), **self.kwargs)
+            subprocess.check_call(args=self.get_args(), **self.kwargs)
+            return b""
 
     def call(self):
         try:
