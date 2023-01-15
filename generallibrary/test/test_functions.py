@@ -648,7 +648,7 @@ class FunctionsTest(unittest.TestCase):
     def test_Terminal_no_capture_fail(self):
         x = Terminal("-c", "assert 4 == 5", python=True, error=False, capture_output=False)  # Would be nice to redirect Stderr here
         self.assertEqual(str, type(x.string_result))
-        self.assertIn("non-zero", x.string_result)
+        self.assertIn("AssertionError", x.string_result)
         self.assertEqual(1, x.code_result)
         self.assertEqual(False, x.success)
         self.assertEqual(type(x.error_result).__name__, "CalledProcessError")

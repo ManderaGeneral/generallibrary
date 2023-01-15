@@ -366,20 +366,20 @@ class _Result_Terminal:
             return byte_string
         return byte_string.decode(sys.stdout.encoding)
 
-    def _process_result(self, success=None, error=None):
+    def _process_result(self, result):
         """ :param generallibrary.Terminal self: """
-        self.success = error is None
-        self.fail = not self.success
-
-        if self.success:
-            self.string_result = str(success, "utf-8")
-        elif self.default is self.SENTINEL:
-            self.string_result = str(error) if error.output is None else str(error.output, "utf-8")
+        if type(result) is subprocess.CalledProcessError:
+            self.success = False
+            self.fail = True
+            self.code_result = result.returncode
+            self.error_result = result
+            self.string_result = str(result.output, "utf-8")
         else:
-            self.string_result = self.default
-
-        self.code_result = error.returncode if error else 0
-        self.error_result = error
+            self.success = True
+            self.fail = False
+            self.code_result = 0
+            self.error_result = None
+            self.string_result = str(result, "utf-8") if self.default is self.SENTINEL else self.default
 
 
 class Terminal(_Result_Terminal):
@@ -404,20 +404,26 @@ class Terminal(_Result_Terminal):
 
         self.call()
 
-    def _call(self):
-        if self.capture_output:
-            return subprocess.check_output(args=self.get_args(), stderr=subprocess.STDOUT, **self.kwargs)
-        else:
-            subprocess.check_call(args=self.get_args(), **self.kwargs)
-            return b""
-
     def call(self):
+        self._process_result(result=self._call())
+        self._print_output()
+
+    def _print_output(self):
+        if self.fail and self.raise_error and self.default is self.SENTINEL:
+            print(self.string_result, file=sys.stderr)
+            raise self.error_result
+
+        if not self.capture_output:
+            if self.success:
+                print(self.string_result)
+            else:
+                print(self.string_result, file=sys.stderr)
+
+    def _call(self):
         try:
-            self._process_result(success=self._call())
+            return subprocess.check_output(args=self.get_args(), stderr=subprocess.STDOUT, **self.kwargs)
         except self.ERROR as exception:
-            if self.raise_error and self.default is self.SENTINEL:
-                raise
-            self._process_result(error=exception)
+            return exception
 
     def get_args(self):
         args = [str(arg) for arg in self.args]
