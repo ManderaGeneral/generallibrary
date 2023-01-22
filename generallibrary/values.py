@@ -184,7 +184,7 @@ class EnvVar:
     @value.setter
     def value(self, value):
         """ Set value of an env var in os.environ. """
-        os.environ[self.name] = value
+        os.environ[self.name] = str(value)
 
     def __str__(self):
         return self.value

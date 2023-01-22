@@ -35,6 +35,9 @@ class Ver:
     def __str__(self):
         return join_with_str(".", self.parts)
 
+    def __repr__(self):
+        return f"<Ver: {self}>"
+
     def __dumps__(self):
         return str(self)
 

@@ -384,7 +384,8 @@ class _Result_Terminal:
 
 class Terminal(_Result_Terminal):
     """ One-time use terminal call.
-        If error and sentinel is defined then string_result will be set to default. Success will still be False. """
+        If error and sentinel is defined then string_result will be set to default. Success will still be False.
+        Setting python to True will insert `sys.executable` as the first argument. It's either global interpreter or activated venv. """
 
     ERROR = subprocess.CalledProcessError
     SENTINEL = object()
@@ -426,10 +427,11 @@ class Terminal(_Result_Terminal):
             return exception
 
     def get_args(self):
-        args = [str(arg) for arg in self.args]
+        args = self.args.copy()
         if self.python:
-            args.insert(0, sys.executable)
-        return args
+            executable = sys.executable if self.python is True else self.python
+            args.insert(0, executable)
+        return [str(arg) for arg in args]
 
 
 

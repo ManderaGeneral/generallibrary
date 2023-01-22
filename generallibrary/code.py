@@ -40,7 +40,8 @@ class Log(TreeDiagram, Recycle):
     _recycle_keys = {"name": lambda x: Log._name(x)}
 
     def __init__(self, name=None, parent=None):
-        """ Todo: Make Log use __name__ from previous frame so it doesn't write to root. """
+        """ Set name to 'root' for everything.
+            Todo: Make Log use __name__ from previous frame so it doesn't write to root. """
         name = self._name(name)
         self.name = name
         self.logger = logging.getLogger(name)
