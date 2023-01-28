@@ -12,4 +12,4 @@ from generallibrary import *
 
 # print(Terminal("-c", "print(5)", python=True, error=False, capture_output=False))
 
-Terminal("-c", "assert 4 == 5", python=True, capture_output=False)
+print(Terminal("-c", "assert 4 == 5", python=True, capture_output=True, error=False).string_result)

@@ -368,18 +368,23 @@ class _Result_Terminal:
 
     def _process_result(self, result):
         """ :param generallibrary.Terminal self: """
+        # from generallibrary import debug
+        # debug(locals(), "result", 'str(result, "utf-8")', "str(result)", "str(result, 'ASCII')")
+        # print(str(result, 'ASCII'))
+        # print(result.strip())
+        # print(result.decode("cp1252"))
         if type(result) is subprocess.CalledProcessError:
             self.success = False
             self.fail = True
             self.code_result = result.returncode
             self.error_result = result
-            self.string_result = str(result.output, "utf-8")
+            self.string_result = str(result.output.strip(), "utf-8")
         else:
             self.success = True
             self.fail = False
             self.code_result = 0
             self.error_result = None
-            self.string_result = str(result, "utf-8") if self.default is self.SENTINEL else self.default
+            self.string_result = str(result.strip(), "utf-8") if self.default is self.SENTINEL else self.default
 
 
 class Terminal(_Result_Terminal):
@@ -427,7 +432,7 @@ class Terminal(_Result_Terminal):
             return exception
 
     def get_args(self):
-        args = self.args.copy()
+        args = list(self.args)
         if self.python:
             executable = sys.executable if self.python is True else self.python
             args.insert(0, executable)
