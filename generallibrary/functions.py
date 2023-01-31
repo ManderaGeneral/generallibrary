@@ -368,18 +368,22 @@ class _Result_Terminal:
 
     def _process_result(self, result):
         """ :param generallibrary.Terminal self: """
-        if type(result) is subprocess.CalledProcessError:
+        if type(result) is self.ERROR:
             self.success = False
-            self.fail = True
             self.code_result = result.returncode
             self.error_result = result
             self.string_result = str(result.output.strip(), "utf-8")
+        elif isinstance(result, Exception):
+            self.success = False
+            self.code_result = 1
+            self.error_result = result
+            self.string_result = str(result)
         else:
             self.success = True
-            self.fail = False
             self.code_result = 0
             self.error_result = None
             self.string_result = str(result.strip(), "utf-8") if self.default is self.SENTINEL else self.default
+        self.fail = not self.success
 
 
 class Terminal(_Result_Terminal):
