@@ -8,7 +8,6 @@ from generallibrary import *
 # print(depth({'test': {'foo': 'bar', 'number': 2, 'hi': ['a', 'b', 3], "uh": None}}))
 
 
-# print(type(terminal("-c", "assert False", python=True)))
 
 # print(Terminal("-c", "print(5)", python=True, error=False, capture_output=False))
 

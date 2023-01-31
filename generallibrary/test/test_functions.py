@@ -607,14 +607,6 @@ class FunctionsTest(unittest.TestCase):
                 pass
         A(1, 2)
 
-    def test_terminal(self):
-        self.assertEqual("", terminal("-c", "assert 5 == 5", python=True))
-        with self.assertRaises(Exception):
-            terminal("-c", "assert 5 == 4", python=True)
-        self.assertIn("AssertionError", terminal("-c", "assert 4 == 5", python=True, error=False))
-        self.assertEqual(0, terminal("-c", "assert 5 == 5", python=True, capture_output=False))
-        # self.assertEqual(0, terminal("-c", "assert 5 == 4", python=True, capture_output=False, error=False))
-
     def test_Terminal_assert_pass(self):
         x = Terminal("-c", "assert 5 == 5", python=True)
         self.assertEqual(str, type(x.string_result))

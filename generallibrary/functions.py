@@ -321,36 +321,6 @@ class Recycle:
         if isinstance(cls._recycle_instances, dict):
             cls._recycle_instances.clear()
 
-def _decode_subprocess(byte_string):
-    if type(byte_string) is not bytes:
-        return byte_string
-    return byte_string.decode(sys.stdout.encoding)
-
-def _call(args, kwargs, python, capture_output):
-    args = [str(arg) for arg in args]
-    if python:
-        args.insert(0, sys.executable)
-
-    if capture_output:
-        return subprocess.check_output(args=args, stderr=subprocess.STDOUT, **kwargs)
-    else:
-        return subprocess.check_call(args=args, **kwargs)
-
-_sentinel = object()
-def terminal(*args, python=False, error=True, default=_sentinel, capture_output=True, **kwargs):
-    try:
-        byte_string = _call(args=args, kwargs=kwargs, python=python, capture_output=capture_output)
-    except subprocess.CalledProcessError as exception:
-        # return exception
-        if default is _sentinel:
-            if error:
-                raise ChildProcessError(_decode_subprocess(byte_string=exception.output))
-        else:
-            return default
-        return _decode_subprocess(byte_string=exception.output)
-    return _decode_subprocess(byte_string=byte_string)
-
-
 
 class _Result_Terminal:
     success = None
@@ -391,8 +361,7 @@ class Terminal(_Result_Terminal):
         If error and sentinel is defined then string_result will be set to default. Success will still be False.
         Setting python to True will insert `sys.executable` as the first argument. It's either global interpreter or activated venv. """
 
-    ERROR = Exception  # An OSError was raised as well so let's just catch everything
-    # ERROR = subprocess.CalledProcessError
+    ERROR = subprocess.CalledProcessError
     SENTINEL = object()
 
     capture_output = True
@@ -429,6 +398,8 @@ class Terminal(_Result_Terminal):
         try:
             return subprocess.check_output(args=self.get_args(), stderr=subprocess.STDOUT, **self.kwargs)
         except self.ERROR as exception:
+            return exception
+        except Exception as exception:
             return exception
 
     def get_args(self):
