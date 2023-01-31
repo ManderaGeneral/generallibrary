@@ -368,11 +368,6 @@ class _Result_Terminal:
 
     def _process_result(self, result):
         """ :param generallibrary.Terminal self: """
-        # from generallibrary import debug
-        # debug(locals(), "result", 'str(result, "utf-8")', "str(result)", "str(result, 'ASCII')")
-        # print(str(result, 'ASCII'))
-        # print(result.strip())
-        # print(result.decode("cp1252"))
         if type(result) is subprocess.CalledProcessError:
             self.success = False
             self.fail = True
@@ -392,7 +387,8 @@ class Terminal(_Result_Terminal):
         If error and sentinel is defined then string_result will be set to default. Success will still be False.
         Setting python to True will insert `sys.executable` as the first argument. It's either global interpreter or activated venv. """
 
-    ERROR = subprocess.CalledProcessError
+    ERROR = Exception  # An OSError was raised as well so let's just catch everything
+    # ERROR = subprocess.CalledProcessError
     SENTINEL = object()
 
     capture_output = True
