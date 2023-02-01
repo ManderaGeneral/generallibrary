@@ -187,8 +187,7 @@ class EnvVar:
         os.environ[self.name] = str(value)
 
     def remove(self):
-        if self.name in os.environ:
-            os.environ.remove(self.name)
+        os.environ.pop(self.name, None)
 
     def __str__(self):
         return self.value
