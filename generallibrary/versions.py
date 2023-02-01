@@ -251,6 +251,14 @@ class _ConditionalFunctionalities:
             :param VerInfo self: """
         return ";" if self.windows else ":"
 
+    @property
+    def venv_script_path(self):
+        """ Get relative path from venv to script folder.
+
+            :param VerInfo self: """
+        return "Scripts" if self.windows else "bin"
+
+
 
 @initBases
 class VerInfo(_OsInfo, _PythonInfo, _ConditionalFunctionalities):
