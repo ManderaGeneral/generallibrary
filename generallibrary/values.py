@@ -186,6 +186,10 @@ class EnvVar:
         """ Set value of an env var in os.environ. """
         os.environ[self.name] = str(value)
 
+    def remove(self):
+        if self.name in os.environ:
+            os.environ.remove(self.name)
+
     def __str__(self):
         return self.value
 
