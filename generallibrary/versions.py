@@ -244,6 +244,13 @@ class _ConditionalFunctionalities:
             :param VerInfo self: """
         return self.windows
 
+    @property
+    def env_var_path_delimiter(self):
+        """ Get string delimiter for Environment Variable PATH.
+
+            :param VerInfo self: """
+        return ";" if self.windows else ":"
+
 
 @initBases
 class VerInfo(_OsInfo, _PythonInfo, _ConditionalFunctionalities):
