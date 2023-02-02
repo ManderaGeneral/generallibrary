@@ -11,7 +11,7 @@ setup(
     name="generallibrary",
     author='Rickard "Mandera" Abraham',
     author_email="rickard.abraham@gmail.com",
-    version="2.9.11",
+    version="2.9.12",
     description="Random useful code categorized into modules.",
     long_description=long_description,
     long_description_content_type="text/markdown",
