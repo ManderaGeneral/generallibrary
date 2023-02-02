@@ -23,18 +23,20 @@ Random useful code categorized into modules.
 
 ```mermaid
 flowchart LR
-1([library]) --> 3([vector])
-1([library]) --> 4([packager])
-0([import]) --> 2([file])
-1([library]) --> 2([file])
-0([import]) --> 1([library])
-2([file]) --> 4([packager])
+2([library]) --> 4([vector])
+0([import]) --> 3([file])
+2([library]) --> 3([file])
+0([import]) --> 2([library])
+2([library]) --> 5([packager])
+1([tool]) --> 2([library])
+3([file]) --> 5([packager])
 click 0 "https://github.com/ManderaGeneral/generalimport"
-click 1 "https://github.com/ManderaGeneral/generallibrary"
-click 2 "https://github.com/ManderaGeneral/generalfile"
-click 3 "https://github.com/ManderaGeneral/generalvector"
-click 4 "https://github.com/ManderaGeneral/generalpackager"
-style 1 fill:#482
+click 1 "https://github.com/ManderaGeneral/generaltool"
+click 2 "https://github.com/ManderaGeneral/generallibrary"
+click 3 "https://github.com/ManderaGeneral/generalfile"
+click 4 "https://github.com/ManderaGeneral/generalvector"
+click 5 "https://github.com/ManderaGeneral/generalpackager"
+style 2 fill:#482
 ```
 </details>
 
@@ -45,6 +47,7 @@ style 1 fill:#482
 | `pip install`                                                      | `generallibrary`   | `generallibrary[table]`   | `generallibrary[full]`   |
 |:-------------------------------------------------------------------|:-------------------|:--------------------------|:-------------------------|
 | <a href='https://pypi.org/project/generalimport'>generalimport</a> | ✔️                 | ✔️                        | ✔️                       |
+| <a href='https://pypi.org/project/generaltool'>generaltool</a>     | ✔️                 | ✔️                        | ✔️                       |
 | <a href='https://pypi.org/project/packaging'>packaging</a>         | ✔️                 | ✔️                        | ✔️                       |
 | <a href='https://pypi.org/project/pyperclip'>pyperclip</a>         | ✔️                 | ✔️                        | ✔️                       |
 | <a href='https://pypi.org/project/pytz'>pytz</a>                   | ✔️                 | ✔️                        | ✔️                       |
@@ -61,7 +64,7 @@ style 1 fill:#482
 
 | Package                                                            | Ver                                                | Latest Release        | Python                                                                                                                                                                                                                                                 | Platform        | Cover   |
 |:-------------------------------------------------------------------|:---------------------------------------------------|:----------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------|:--------|
-| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.9.11](https://pypi.org/project/generallibrary/) | 2022-10-27 16:21 CEST | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/), [3.10](https://www.python.org/downloads/release/python-3100/), [3.11](https://www.python.org/downloads/release/python-3110/) | Windows, Ubuntu | 93.2 %  |
+| [generallibrary](https://github.com/ManderaGeneral/generallibrary) | [2.9.11](https://pypi.org/project/generallibrary/) | 2022-10-27 16:21 CEST | [3.8](https://www.python.org/downloads/release/python-380/), [3.9](https://www.python.org/downloads/release/python-390/), [3.10](https://www.python.org/downloads/release/python-3100/), [3.11](https://www.python.org/downloads/release/python-3110/) | Windows, Ubuntu | ❌       |
 </details>
 
 
@@ -338,17 +341,17 @@ Pull requests are currently not wanted, please discuss with me before investing 
 
 | Module                                                                                                                      | Message                                                                                                                                                                        |
 |:----------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L1'>versions.py</a>        | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L53'>Use Ver in each part of VerInfo.</a>                                     |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L1'>code.py</a>                | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L44'>Make Log use __name__ from previous frame so it doesn't write to root.</a>   |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L1'>code.py</a>                | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/code.py#L71'>Use another delimiter than , in Log and make sure it can handle quotes.</a>  |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L1'>diagram.py</a>          | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/diagram.py#L499'>Shared dict for NetworkDiagram, resolve logic with multiple parents.</a> |
-| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L1'>test_time.py</a> | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L61'>Fix time casting to wrong day when past midnight.</a>              |
 | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L1'>objinfo.py</a>  | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/objinfo/objinfo.py#L23'>Recycle ObjInfo.</a>                                              |
+| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L1'>versions.py</a>        | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/versions.py#L53'>Use Ver in each part of VerInfo.</a>                                     |
+| <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L1'>test_time.py</a> | <a href='https://github.com/ManderaGeneral/generallibrary/blob/master/generallibrary/test/test_time.py#L61'>Fix time casting to wrong day when past midnight.</a>              |
 </details>
 
 
 <sup>
-Generated 2023-02-01 16:27 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
+Generated 2023-02-02 12:30 CET for commit <a href='https://github.com/ManderaGeneral/generallibrary/commit/master'>master</a>.
 </sup>
 </details>
 

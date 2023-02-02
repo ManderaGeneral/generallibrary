@@ -17,6 +17,7 @@ setup(
     long_description_content_type="text/markdown",
     install_requires=[
         'generalimport',
+        'generaltool',
         'packaging',
         'pyperclip',
         'pytz',

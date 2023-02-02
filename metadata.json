@@ -1,6 +1,7 @@
 {
     "install_requires": [
         "generalimport",
+        "generaltool",
         "packaging",
         "pyperclip",
         "pytz",
