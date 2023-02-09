@@ -213,33 +213,16 @@ def get_launch_options():
     return args
 
 
+class Crud:
+    def __init__(self, obj, instance, value=None):
+        self.obj = obj
+        self.value = value
+        self.instance = instance
 
+    def set(self): ...
 
+    def unset(self): ...
 
+    def set_value(self, value): ...
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def unset_value(self, value): ...
