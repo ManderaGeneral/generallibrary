@@ -1,6 +1,8 @@
 import sys
 from functools import partial
 from io import StringIO
+
+from time import sleep
 from generallibrary.functions import AutoInitBases
 
 
@@ -9,6 +11,9 @@ class DecoContext(metaclass=AutoInitBases):
         Just define before and after.
         Optionally define dunder init, put 'func' as first arg if method should be decoratable without call.
         Works with func being first parameter and without func parameter at all. """
+    SENTINEL = object()
+    TRY_AGAIN_CD = 0.1
+
     def __init__(self, func=None):
         self.func = func
 
@@ -18,8 +23,31 @@ class DecoContext(metaclass=AutoInitBases):
     def after(self, *args, **kwargs):
         ...
 
+    def run_func_again(self, result, exception):
+        """ For decorators. """
+        ...
+
     def __get__(self, instance, owner):
         return partial(self.__call__, instance)
+
+    def _call(self, args, kwargs):
+        result = exception = self.SENTINEL
+
+        try:
+            result = self.func(*args, **kwargs)
+        except Exception as e:
+            exception = e
+        finally:
+            if self.run_func_again(result=result, exception=exception):
+                sleep(self.TRY_AGAIN_CD)
+                return self._call(args, kwargs)
+
+            self.after()
+
+            if exception is not self.SENTINEL:
+                raise exception
+
+            return result
 
     def __call__(self, *args, **kwargs):
         # print(self, args, kwargs)
@@ -30,11 +58,7 @@ class DecoContext(metaclass=AutoInitBases):
         assert self.func, f"{type(self).__name__}.__init__ needs 'func' as first arg for decorating method without call."
 
         self.before()
-        try:
-            result = self.func(*args, **kwargs)
-        finally:
-            self.after()
-        return result
+        return self._call(args=args, kwargs=kwargs)
 
     def __enter__(self):
         return self.before()
