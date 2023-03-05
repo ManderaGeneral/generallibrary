@@ -183,6 +183,40 @@ class TestContext(TestCase):
         self.assertRaises(Exception, x)
         self.assertEqual([1, 2, 3], glob)
 
+    def test_decocontext_error_cleanup_context(self):
+        glob = []
+        class X(DecoContext):
+            def before(self):
+                glob.append(1)
+            def after(self):
+                glob.append(3)
+
+        with self.assertRaises(Exception):
+            with X():
+                glob.append(2)
+                raise Exception
+
+        self.assertEqual([1, 2, 3], glob)
+
+    def test_decocontext_error_cleanup_deco(self):
+        glob = []
+        class X(DecoContext):
+            def before(self):
+                glob.append(1)
+            def after(self):
+                glob.append(3)
+
+        class Y:
+            @X()
+            def y(self):
+                glob.append(2)
+                raise Exception
+
+        with self.assertRaises(Exception):
+            Y().y()
+
+        self.assertEqual([1, 2, 3], glob)
+
 class TestRedirectStdout(TestCase):
     def test_redirect_simple_context_list(self):
         x = []
