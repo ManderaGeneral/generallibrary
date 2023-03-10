@@ -1,4 +1,3 @@
-from typing import Union
 
 from generallibrary.decorators import wrapper_transfer, SigInfo
 from generallibrary.iterables import remove
@@ -407,12 +406,15 @@ class Terminal(_Result_Terminal):
         if self.python:
             executable = sys.executable if self.python is True else self.python
             args.insert(0, executable)
-        return [str(arg) for arg in args]
+        args = [str(arg) for arg in args]
 
+        if args[0] in ("npm", "jest") and VerInfo().windows:
+            args[0] = f"{args[0]}.cmd"
+        return args
 
 
 from generallibrary.objinfo.objinfo import get_attrs_from_bases
-
+from generallibrary.versions import VerInfo
 
 
 
