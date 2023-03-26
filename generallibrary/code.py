@@ -114,15 +114,16 @@ class Log(TreeDiagram, Recycle):
 
 def clipboard_copy(s):
     """ Copy a string to clipboard.
-        Rudely tries to installs xclip on linux if it fails. """
+        Rudely tries to install xclip on linux if it fails. """
     def _call():
-        return pyperclip.copy(s)
+        pyperclip.copy(s)
+        return s
 
     try:
-        _call()
+        return _call()
     except pyperclip.PyperclipException:
         os.system("sudo apt-get install xclip")
-        _call()
+        return _call()
 
 
 def clipboard_get():
