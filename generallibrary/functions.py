@@ -354,6 +354,10 @@ class _Result_Terminal:
             self.string_result = str(result.strip(), "utf-8") if self.default is self.SENTINEL else self.default
         self.fail = not self.success
 
+    def json(self):
+        return json.loads(self.string_result)
+
+
 
 class Terminal(_Result_Terminal):
     """ One-time use terminal call.
