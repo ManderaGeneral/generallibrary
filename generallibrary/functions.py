@@ -393,9 +393,9 @@ class Terminal(_Result_Terminal):
 
         if not self.capture_output:
             if self.success:
-                print("Terminal success", self.string_result)
+                print("Terminal success", self.args, self.string_result)
             else:
-                print("Terminal fail", self.string_result, file=sys.stderr)
+                print("Terminal fail", self.args, self.string_result, file=sys.stderr)
 
     def _call(self):
         try:
