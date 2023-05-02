@@ -153,6 +153,10 @@ class ValuesTest(unittest.TestCase):
         envVar.value = "foo"
         self.assertEqual("foo", envVar.value)
 
+    def test_EnvVar_skip(self):
+        envVar = EnvVar("skip this test", skip_test_on_missing=True)
+        x = envVar.value
+
     def test_get_launch_options(self):
         launch_options = get_launch_options()
         self.assertEqual(True, not launch_options or launch_options[0] == "discover")
