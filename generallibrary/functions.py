@@ -1,5 +1,6 @@
 from generallibrary.decorators import wrapper_transfer, SigInfo
 from generallibrary.iterables import remove
+from generallibrary.values import EnvVar
 
 import re
 
@@ -436,7 +437,6 @@ class Terminal(_Result_Terminal):
 
 from generallibrary.objinfo.objinfo import get_attrs_from_bases
 from generallibrary.versions import VerInfo
-from generallibrary.values import EnvVar
 
 
 
