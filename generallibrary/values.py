@@ -176,19 +176,26 @@ class EnvVar:
         if self._actions_name:
             return "${{ " + self._actions_name + " }}"
 
-    @property
-    def error_cls(self):
+    def error_object(self):
         if self.skip_test_on_missing:
-            return MissingEnvVarError
+            error = MissingEnvVarError
         else:
-            return KeyError
+            error = KeyError
+        return error(f"Env var '{self.name}' is not set.")
+
+    def env_var_is_missing(self):
+        return self.name not in os.environ
+
+    def raise_error_if_missing(self):
+        if self.env_var_is_missing():
+            raise self.error_object()
 
     @property
     def value(self):
         """ Get value of env var through os.environ """
-        if self.name not in os.environ:
+        if self.env_var_is_missing():
             if self.default is self._sentinel:
-                raise self.error_cls(f"Env var '{self.name}' is not set.")
+                raise self.error_object()
             else:
                 return self.default
 

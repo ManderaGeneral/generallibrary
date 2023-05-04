@@ -1,4 +1,3 @@
-
 from generallibrary.decorators import wrapper_transfer, SigInfo
 from generallibrary.iterables import remove
 
@@ -358,6 +357,15 @@ class _Result_Terminal:
         return json.loads(self.string_result)
 
 
+class SkipTestInstance:
+    def __init__(self, program, env_var_name):
+        self.program = program
+        self.env_var = EnvVar(name=env_var_name, skip_test_on_missing=True)
+
+    def check_program(self, program):
+        if self.program == program:
+            self.env_var.raise_error_if_missing()
+
 
 class Terminal(_Result_Terminal):
     """ One-time use terminal call.
@@ -368,6 +376,10 @@ class Terminal(_Result_Terminal):
     SENTINEL = object()
 
     capture_output = True
+
+    SKIPS = (
+        SkipTestInstance(program="gh", env_var="GH_TOKEN"),
+    )
 
     def __init__(self, *args, python=False, error=True, default=SENTINEL, capture_output=None, **kwargs):
         if capture_output is None:
@@ -383,8 +395,13 @@ class Terminal(_Result_Terminal):
         self.call()
 
     def call(self):
+        self._check_skips()
         self._process_result(result=self._call())
         self._print_output()
+
+    def _check_skips(self):
+        for skip in self.SKIPS:
+            skip.check_program(program=self.args[0])
 
     def _print_output(self):
         if self.fail and self.raise_error and self.default is self.SENTINEL:
@@ -419,7 +436,7 @@ class Terminal(_Result_Terminal):
 
 from generallibrary.objinfo.objinfo import get_attrs_from_bases
 from generallibrary.versions import VerInfo
-
+from generallibrary.values import EnvVar
 
 
 
