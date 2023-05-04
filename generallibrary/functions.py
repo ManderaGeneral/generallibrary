@@ -378,7 +378,7 @@ class Terminal(_Result_Terminal):
     capture_output = True
 
     SKIPS = (
-        SkipTestInstance(program="gh", env_var="GH_TOKEN"),
+        SkipTestInstance(program="gh", env_var_name="GH_TOKEN"),
     )
 
     def __init__(self, *args, python=False, error=True, default=SENTINEL, capture_output=None, **kwargs):
