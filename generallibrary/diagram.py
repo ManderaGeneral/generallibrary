@@ -208,7 +208,8 @@ class _Diagram_QOL:
 
             :param TreeDiagram or NetworkDiagram or Any self:
             :param TreeDiagram or NetworkDiagram or Any child: """
-        child.set_parent(parent=self)
+        if child is not None:
+            child.set_parent(parent=self)
         return child
 
     def remove_node(self):
