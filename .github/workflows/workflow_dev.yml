@@ -34,18 +34,9 @@ jobs:
         run: |
           mkdir repos
           cd repos
-          git clone https://github.com/${{ github.repository_owner }}/generalimport.git -b ${{ github.ref_name }} || \
-          git clone https://github.com/${{ github.repository_owner }}/generalimport.git || \
-          git clone https://github.com/ManderaGeneral/generalimport.git -b ${{ github.ref_name }} || \
-          git clone https://github.com/ManderaGeneral/generalimport.git
-          git clone https://github.com/${{ github.repository_owner }}/generaltool.git -b ${{ github.ref_name }} || \
-          git clone https://github.com/${{ github.repository_owner }}/generaltool.git || \
-          git clone https://github.com/ManderaGeneral/generaltool.git -b ${{ github.ref_name }} || \
-          git clone https://github.com/ManderaGeneral/generaltool.git
-          git clone https://github.com/${{ github.repository_owner }}/generallibrary.git -b ${{ github.ref_name }} || \
-          git clone https://github.com/${{ github.repository_owner }}/generallibrary.git || \
-          git clone https://github.com/ManderaGeneral/generallibrary.git -b ${{ github.ref_name }} || \
-          git clone https://github.com/ManderaGeneral/generallibrary.git
+          git clone https://github.com/${{ github.repository_owner }}/generalimport.git -b ${{ github.ref_name }} || git clone https://github.com/${{ github.repository_owner }}/generalimport.git || git clone https://github.com/ManderaGeneral/generalimport.git -b ${{ github.ref_name }} || git clone https://github.com/ManderaGeneral/generalimport.git
+          git clone https://github.com/${{ github.repository_owner }}/generaltool.git -b ${{ github.ref_name }} || git clone https://github.com/${{ github.repository_owner }}/generaltool.git || git clone https://github.com/ManderaGeneral/generaltool.git -b ${{ github.ref_name }} || git clone https://github.com/ManderaGeneral/generaltool.git
+          git clone https://github.com/${{ github.repository_owner }}/generallibrary.git -b ${{ github.ref_name }} || git clone https://github.com/${{ github.repository_owner }}/generallibrary.git || git clone https://github.com/ManderaGeneral/generallibrary.git -b ${{ github.ref_name }} || git clone https://github.com/ManderaGeneral/generallibrary.git
       - name: Install 3 repos
         run: |
           cd repos
