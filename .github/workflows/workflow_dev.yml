@@ -43,7 +43,8 @@ jobs:
           pip install -e generalimport[full]
           pip install -e generaltool[full]
           pip install -e generallibrary[full]
-      - name: Run Packager method 'workflow_unittest'
+      - name: Run unittests
         run: |
-          python -m unittest discover repos/generallibrary/generallibrary/test
+          cd repos/generallibrary/generallibrary/test
+          python -m unittest discover
 
