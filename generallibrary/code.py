@@ -154,8 +154,10 @@ class CodeLine(TreeDiagram):
         lines = []
         for codeLine in self.get_all():
             lines.extend([""] * codeLine.space_before)
-            if codeLine.code_str:
-                lines.append(f"{self.indent_str * (len(codeLine.get_parents(depth=-1)) - 1)}{codeLine.code_str}")
+
+            lines_in_codeline = codeLine.code_str.splitlines()
+            for line in lines_in_codeline:
+                lines.append(f"{self.indent_str * (len(codeLine.get_parents(depth=-1)) - 1)}{line}")
             lines.extend([""] * codeLine.space_after)
 
         if watermark:
