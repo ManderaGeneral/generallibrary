@@ -1,5 +1,3 @@
-import logging
-
 from generallibrary.decorators import wrapper_transfer, SigInfo
 from generallibrary.iterables import remove
 from generallibrary.values import EnvVar
@@ -407,7 +405,7 @@ class Terminal(_Result_Terminal):
             skip.check_program(program=self.args[0])
 
     def _print_output(self):
-        logger = logging.getLogger(__name__)
+        logger = Log(__name__)
         if self.fail and self.raise_error and self.default is self.SENTINEL:
             logger.error(self.string_result)
             raise self.error_result
@@ -440,7 +438,7 @@ class Terminal(_Result_Terminal):
 
 from generallibrary.objinfo.objinfo import get_attrs_from_bases
 from generallibrary.versions import VerInfo
-
+from generallibrary.code import Log
 
 
 
