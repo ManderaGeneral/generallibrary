@@ -19,7 +19,7 @@
     "enabled": true,
     "private": false,
     "name": "generallibrary",
-    "version": "2.9.12",
+    "version": "2.9.13",
     "description": "Random useful code categorized into modules.",
     "topics": [
         "library"
