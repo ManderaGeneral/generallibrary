@@ -13,6 +13,12 @@ class Ver:
     def __init__(self, ver):
         self.parts = self.parse_ver_string(ver=ver)
 
+    def startswith(self, obj, *args):
+        return str(self).startswith(str(obj), *args)
+
+    def endswith(self, obj, *args):
+        return str(self).endswith(str(obj), *args)
+
     @staticmethod
     def parse_ver_string(ver):
         """ Simple parsing for now with only major, minor and micro.
