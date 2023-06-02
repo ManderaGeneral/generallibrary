@@ -46,5 +46,5 @@ jobs:
       - name: Run unittests
         run: |
           cd repos/generallibrary/generallibrary/test
-          python -m unittest discover
+          python -m unittest discover -v
 
