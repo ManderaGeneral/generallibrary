@@ -34,7 +34,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade setuptools wheel twine
-      - name: Clone 6 repos
+      - name: Clone 5 repos
         run: |
           mkdir repos
           cd repos
@@ -42,16 +42,14 @@ jobs:
           git clone ssh://git@github.com/ManderaGeneral/generaltool.git
           git clone ssh://git@github.com/ManderaGeneral/generallibrary.git
           git clone ssh://git@github.com/ManderaGeneral/generalfile.git
-          git clone ssh://git@github.com/ManderaGeneral/generalvector.git
           git clone ssh://git@github.com/ManderaGeneral/generalpackager.git
-      - name: Install 6 repos
+      - name: Install 5 repos
         run: |
           cd repos
           pip install -e generalimport[full]
           pip install -e generaltool[full]
           pip install -e generallibrary[full]
           pip install -e generalfile[full]
-          pip install -e generalvector[full]
           pip install -e generalpackager[full]
       - name: Run Packager method 'workflow_unittest'
         run: |
@@ -80,7 +78,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade setuptools wheel twine
-      - name: Clone 8 repos
+      - name: Clone 7 repos
         run: |
           mkdir repos
           cd repos
@@ -88,18 +86,16 @@ jobs:
           git clone ssh://git@github.com/ManderaGeneral/generaltool.git
           git clone ssh://git@github.com/ManderaGeneral/generallibrary.git
           git clone ssh://git@github.com/ManderaGeneral/generalfile.git
-          git clone ssh://git@github.com/ManderaGeneral/generalvector.git
           git clone ssh://git@github.com/ManderaGeneral/generalpackager.git
           git clone ssh://git@github.com/Mandera/Mandera.git
           git clone ssh://git@github.com/ManderaGeneral/.github.git
-      - name: Install 6 repos
+      - name: Install 5 repos
         run: |
           cd repos
           pip install -e generalimport[full]
           pip install -e generaltool[full]
           pip install -e generallibrary[full]
           pip install -e generalfile[full]
-          pip install -e generalvector[full]
           pip install -e generalpackager[full]
       - name: Run Packager method 'workflow_sync'
         run: |

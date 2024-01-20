@@ -22,15 +22,14 @@ setup(
         'pyperclip',
         'pytz',
         'dill',
-        'matplotlib',
-        'networkx',
     ],
     url="https://github.com/ManderaGeneral/generallibrary",
     license="mit",
     packages=find_namespace_packages(exclude=("build*", "dist*")),
     extras_require={
         'table': ['pandas', 'tabulate'],
-        'full': ['pandas', 'tabulate'],
+        'graph': ['matplotlib', 'networkx'],
+        'full': ['matplotlib', 'networkx', 'pandas', 'tabulate'],
     },
     classifiers=[
         'Topic :: Software Development :: Libraries',

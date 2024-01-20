@@ -6,14 +6,16 @@
         "packaging",
         "pyperclip",
         "pytz",
-        "dill",
-        "matplotlib",
-        "networkx"
+        "dill"
     ],
     "extras_require": {
         "table": [
             "pandas",
             "tabulate"
+        ],
+        "graph": [
+            "matplotlib",
+            "networkx"
         ]
     },
     "enabled": true,
